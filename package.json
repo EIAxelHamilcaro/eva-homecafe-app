@@ -1,0 +1,41 @@
+{
+  "name": "eva-homecafe-app",
+  "private": true,
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev --filter=nextjs",
+    "dev:expo": "turbo dev --filter=expo",
+    "android": "pnpm --filter expo android",
+    "ios": "pnpm --filter expo ios",
+    "dev:all": "turbo dev",
+    "db": "docker compose up -d postgres",
+    "db:migrate": "turbo db:migrate",
+    "db:generate": "turbo db:generate",
+    "db:push": "turbo db:push",
+    "db:studio": "turbo db:studio",
+    "ui:add": "turbo ui:add",
+    "format": "biome format . --write",
+    "lint": "biome lint .",
+    "check": "biome check .",
+    "fix": "biome check --write .",
+    "ci:check": "biome ci .",
+    "clean": "turbo clean && rm -rf node_modules",
+    "type-check": "turbo type-check",
+    "test": "turbo test",
+    "test:watch": "turbo test:watch",
+    "test:coverage": "turbo test:coverage",
+    "setup": "pnpm install && pnpm db && pnpm db:push",
+    "validate": "pnpm type-check && pnpm check && pnpm test",
+    "quick-check": "pnpm type-check && pnpm check",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.3.10",
+    "husky": "^9.1.7",
+    "turbo": "latest"
+  },
+  "packageManager": "pnpm@10.26.2",
+  "engines": {
+    "node": ">=24.12.0"
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "expo": {
+    "name": "HomeCafe",
+    "slug": "eva-homecafe-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "scheme": "evahomecafeapp",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FFFAF5"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.axelhamil.evahomecafeapp",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FFFAF5"
+      },
+      "package": "com.axelhamil.evahomecafeapp",
+      "edgeToEdgeEnabled": true
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    },
+    "plugins": ["expo-router"],
+    "extra": {
+      "eas": {
+        "projectId": "a0f414e1-1e01-466c-b13c-fa2655305af5"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/a0f414e1-1e01-466c-b13c-fa2655305af5"
+    }
+  }
+}
