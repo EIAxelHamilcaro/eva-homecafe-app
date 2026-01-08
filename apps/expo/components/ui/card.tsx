@@ -1,6 +1,6 @@
 import { Text, type TextProps, View, type ViewProps } from "react-native";
 
-import { cn } from "../../libs/utils";
+import { cn } from "../../src/libs/utils";
 
 type CardProps = ViewProps & {
   className?: string;

@@ -26,8 +26,9 @@ export class User extends Aggregate<IUserProps> {
   static create(
     props: Omit<IUserProps, "emailVerified"> & { emailVerified?: boolean },
     id?: UUID<string | number>,
-  ): User {
+  ): Result<User> {
     const newId = id ?? new UUID<string>();
+
     const user = new User(
       {
         ...props,
@@ -48,7 +49,7 @@ export class User extends Aggregate<IUserProps> {
       );
     }
 
-    return user;
+    return Result.ok(user);
   }
 
   static reconstitute(props: IUserProps, id: UserId): User {
@@ -64,15 +65,5 @@ export class User extends Aggregate<IUserProps> {
     this._props.updatedAt = new Date();
     this.addEvent(new UserVerifiedEvent(this.id.value.toString()));
     return Result.ok();
-  }
-
-  updateName(name: Name): void {
-    this._props.name = name;
-    this._props.updatedAt = new Date();
-  }
-
-  updateImage(image: Option<string>): void {
-    this._props.image = image;
-    this._props.updatedAt = new Date();
   }
 }

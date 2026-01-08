@@ -1,6 +1,4 @@
-import { ScrollView, Text } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Button } from "@/components/ui/button";
+import { Button } from "components/ui/button";
 import {
   Card,
   CardContent,
@@ -8,7 +6,9 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "components/ui/card";
+import { ScrollView, Text } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
   return (

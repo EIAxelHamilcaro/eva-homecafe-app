@@ -7,7 +7,7 @@ import {
   Text,
 } from "react-native";
 
-import { cn } from "../../libs/utils";
+import { cn } from "../../src/libs/utils";
 
 const buttonVariants = cva(
   "flex-row items-center justify-center gap-2 rounded-xl",

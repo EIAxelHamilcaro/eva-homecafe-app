@@ -12,9 +12,10 @@ import type { User } from "@/domain/user/user.aggregate";
 import { Email } from "@/domain/user/value-objects/email.vo";
 import { Password } from "@/domain/user/value-objects/password.vo";
 
-export class SignInUseCase
-  implements UseCase<ISignInInputDto, ISignInOutputDto>
-{
+export class SignInUseCase implements UseCase<
+  ISignInInputDto,
+  ISignInOutputDto
+> {
   constructor(
     private readonly userRepo: IUserRepository,
     private readonly authProvider: IAuthProvider,

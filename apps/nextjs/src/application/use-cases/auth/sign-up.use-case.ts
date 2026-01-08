@@ -13,9 +13,10 @@ import { Email } from "@/domain/user/value-objects/email.vo";
 import { Name } from "@/domain/user/value-objects/name.vo";
 import { Password } from "@/domain/user/value-objects/password.vo";
 
-export class SignUpUseCase
-  implements UseCase<ISignUpInputDto, ISignUpOutputDto>
-{
+export class SignUpUseCase implements UseCase<
+  ISignUpInputDto,
+  ISignUpOutputDto
+> {
   constructor(
     private readonly userRepo: IUserRepository,
     private readonly authProvider: IAuthProvider,
@@ -32,14 +33,15 @@ export class SignUpUseCase
     const emailAvailable = await this.checkEmailAvailable(input.email);
     if (emailAvailable.isFailure) return Result.fail(emailAvailable.getError());
 
-    const user = User.create({
+    const userResult = User.create({
       email: emailResult.getValue(),
       name: nameResult.getValue(),
       image: Option.fromNullable(input.image),
     });
+    if (userResult.isFailure) return Result.fail(userResult.getError());
 
     const authResult = await this.authProvider.signUp(
-      user,
+      userResult.getValue(),
       passwordResult.getValue(),
     );
     if (authResult.isFailure) return Result.fail(authResult.getError());
