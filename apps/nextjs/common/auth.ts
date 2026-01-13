@@ -3,6 +3,10 @@ import * as schema from "@packages/drizzle/schema";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
+import { ResendService } from "@/adapters/services/email/resend.service";
+import { EmailTemplates } from "@/adapters/services/email/templates";
+
+const emailProvider = new ResendService();
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -17,6 +21,14 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     minPasswordLength: 8,
+    sendResetPassword: async ({ user, url }) => {
+      const template = EmailTemplates.passwordReset(url);
+      await emailProvider.send({
+        to: user.email,
+        subject: template.subject,
+        html: template.html,
+      });
+    },
   },
   session: {
     expiresIn: 60 * 60 * 24 * 7, // 7 days

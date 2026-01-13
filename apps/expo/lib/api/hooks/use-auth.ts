@@ -94,3 +94,26 @@ export function useSignOut() {
     },
   });
 }
+
+export interface ForgotPasswordInput {
+  email: string;
+}
+
+export function useForgotPassword() {
+  return useMutation({
+    mutationFn: (input: ForgotPasswordInput) =>
+      api.post<{ message: string }>("/api/v1/auth/forgot-password", input),
+  });
+}
+
+export interface ResetPasswordInput {
+  token: string;
+  password: string;
+}
+
+export function useResetPassword() {
+  return useMutation({
+    mutationFn: (input: ResetPasswordInput) =>
+      api.post<{ message: string }>("/api/v1/auth/reset-password", input),
+  });
+}

@@ -32,4 +32,11 @@ export interface IAuthProvider {
   getSession(headers: Headers): Promise<Result<Option<AuthSession>>>;
 
   verifyEmail(userId: string): Promise<Result<void>>;
+
+  requestPasswordReset(
+    email: string,
+    redirectTo?: string,
+  ): Promise<Result<void>>;
+
+  resetPassword(token: string, newPassword: string): Promise<Result<void>>;
 }

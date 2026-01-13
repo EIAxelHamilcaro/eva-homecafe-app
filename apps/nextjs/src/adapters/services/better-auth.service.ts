@@ -110,6 +110,34 @@ export class BetterAuthService implements IAuthProvider {
     }
   }
 
+  async requestPasswordReset(
+    email: string,
+    redirectTo?: string,
+  ): Promise<Result<void>> {
+    try {
+      await auth.api.requestPasswordReset({
+        body: { email, redirectTo: redirectTo ?? "/reset-password" },
+      });
+      return Result.ok();
+    } catch {
+      return Result.ok();
+    }
+  }
+
+  async resetPassword(
+    token: string,
+    newPassword: string,
+  ): Promise<Result<void>> {
+    try {
+      await auth.api.resetPassword({
+        body: { token, newPassword },
+      });
+      return Result.ok();
+    } catch (error) {
+      return Result.fail(`Reset password failed: ${error}`);
+    }
+  }
+
   private mapUserToDomain(betterAuthUser: BetterAuthUser): Result<User> {
     const emailResult = Email.create(betterAuthUser.email);
     const nameResult = Name.create(betterAuthUser.name);

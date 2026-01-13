@@ -1,7 +1,10 @@
 import { createModule } from "@evyweb/ioctopus";
-import { BetterAuthService } from "@/adapters/auth/better-auth.service";
 import { DrizzleUserRepository } from "@/adapters/repositories/user.repository";
+import { BetterAuthService } from "@/adapters/services/better-auth.service";
+import { ResendService } from "@/adapters/services/email/resend.service";
+import { ForgotPasswordUseCase } from "@/application/use-cases/auth/forgot-password.use-case";
 import { GetSessionUseCase } from "@/application/use-cases/auth/get-session.use-case";
+import { ResetPasswordUseCase } from "@/application/use-cases/auth/reset-password.use-case";
 import { SignInUseCase } from "@/application/use-cases/auth/sign-in.use-case";
 import { SignOutUseCase } from "@/application/use-cases/auth/sign-out.use-case";
 import { SignUpUseCase } from "@/application/use-cases/auth/sign-up.use-case";
@@ -13,6 +16,7 @@ export const createAuthModule = () => {
 
   authModule.bind(DI_SYMBOLS.IUserRepository).toClass(DrizzleUserRepository);
   authModule.bind(DI_SYMBOLS.IAuthProvider).toClass(BetterAuthService);
+  authModule.bind(DI_SYMBOLS.IEmailProvider).toClass(ResendService);
 
   authModule
     .bind(DI_SYMBOLS.SignInUseCase)
@@ -42,6 +46,14 @@ export const createAuthModule = () => {
       DI_SYMBOLS.IUserRepository,
       DI_SYMBOLS.IAuthProvider,
     ]);
+
+  authModule
+    .bind(DI_SYMBOLS.ForgotPasswordUseCase)
+    .toClass(ForgotPasswordUseCase, [DI_SYMBOLS.IAuthProvider]);
+
+  authModule
+    .bind(DI_SYMBOLS.ResetPasswordUseCase)
+    .toClass(ResetPasswordUseCase, [DI_SYMBOLS.IAuthProvider]);
 
   return authModule;
 };

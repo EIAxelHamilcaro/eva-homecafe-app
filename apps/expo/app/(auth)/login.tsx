@@ -1,69 +1,53 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "components/ui/button";
 import { Input, PasswordInput } from "components/ui/input";
+import { Logo } from "components/ui/logo";
 import { Link, router } from "expo-router";
 import { ApiError } from "lib/api/client";
 import { useSignIn } from "lib/api/hooks/use-auth";
-import { useState } from "react";
+import { type SignInFormData, signInSchema } from "lib/validations/auth";
+import { Controller, useForm } from "react-hook-form";
 import {
   KeyboardAvoidingView,
   Platform,
   Pressable,
-  ScrollView,
   Text,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function LoginScreen() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState<{
-    email?: string;
-    password?: string;
-  }>({});
+  const {
+    control,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = useForm<SignInFormData>({
+    resolver: zodResolver(signInSchema),
+    defaultValues: { email: "", password: "" },
+  });
 
   const signInMutation = useSignIn();
 
-  const validate = (): boolean => {
-    const newErrors: typeof errors = {};
-
-    if (!email.trim()) {
-      newErrors.email = "L'email est requis";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      newErrors.email = "Email invalide";
-    }
-
-    if (!password) {
-      newErrors.password = "Le mot de passe est requis";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleLogin = () => {
-    if (validate()) {
-      signInMutation.mutate(
-        { email, password },
-        {
-          onSuccess: () => {
-            router.replace("/");
-          },
-          onError: (error) => {
-            if (error instanceof ApiError) {
-              if (error.code === "INVALID_CREDENTIALS") {
-                setErrors({ email: "Email ou mot de passe incorrect" });
-              } else if (error.code === "USER_NOT_FOUND") {
-                setErrors({ email: "Aucun compte trouvé avec cet email" });
-              } else {
-                setErrors({ email: error.message });
-              }
-            }
-          },
-        },
-      );
-    }
+  const onSubmit = (data: SignInFormData) => {
+    signInMutation.mutate(data, {
+      onSuccess: () => {
+        router.replace("/");
+      },
+      onError: (error) => {
+        if (error instanceof ApiError) {
+          if (error.code === "INVALID_CREDENTIALS") {
+            setError("email", { message: "Email ou mot de passe incorrect" });
+          } else if (error.code === "USER_NOT_FOUND") {
+            setError("email", {
+              message: "Aucun compte trouvé avec cet email",
+            });
+          } else {
+            setError("email", { message: error.message });
+          }
+        }
+      },
+    });
   };
 
   return (
@@ -72,18 +56,10 @@ export default function LoginScreen() {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1"
       >
-        <ScrollView
-          className="flex-1"
-          contentContainerClassName="pb-8"
-          keyboardShouldPersistTaps="handled"
-        >
+        <View className="flex-1">
           {/* Header with Logo */}
           <View className="flex-row items-center justify-between px-5 py-4">
-            <View className="h-16 w-28 items-center justify-center">
-              <Text className="text-xl font-bold text-homecafe-pink">
-                homecafé
-              </Text>
-            </View>
+            <Logo width={100} />
             <Link href="/(auth)/register" asChild>
               <Pressable className="rounded-full bg-homecafe-pink px-4 py-2">
                 <Text className="text-sm font-normal text-primary-foreground">
@@ -93,12 +69,9 @@ export default function LoginScreen() {
             </Link>
           </View>
 
-          {/* Hero Image Placeholder */}
-          <View className="mx-6 h-60 items-center justify-center overflow-hidden rounded-3xl bg-homecafe-pink-light">
-            <Text className="text-4xl">☕</Text>
-            <Text className="mt-2 text-lg text-homecafe-grey-dark">
-              HomeCafé
-            </Text>
+          {/* Hero Image */}
+          <View className="mx-6 h-40 items-center justify-center overflow-hidden rounded-3xl bg-homecafe-pink-light">
+            <Logo width={180} />
           </View>
 
           {/* Welcome Header */}
@@ -110,42 +83,56 @@ export default function LoginScreen() {
 
           {/* Form */}
           <View className="gap-4 px-10 pt-6">
-            <Input
-              label="E-mail"
-              placeholder="votre@email.com"
-              value={email}
-              onChangeText={setEmail}
-              error={errors.email}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoComplete="email"
+            <Controller
+              control={control}
+              name="email"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Input
+                  label="E-mail"
+                  placeholder="votre@email.com"
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  error={errors.email?.message}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoComplete="email"
+                />
+              )}
             />
 
-            <PasswordInput
-              label="Mot de passe"
-              placeholder="••••••••••••••••••"
-              value={password}
-              onChangeText={setPassword}
-              error={errors.password}
-              showPassword={showPassword}
-              onTogglePassword={() => setShowPassword(!showPassword)}
-              autoComplete="current-password"
+            <Controller
+              control={control}
+              name="password"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <PasswordInput
+                  label="Mot de passe"
+                  placeholder="••••••••••••••••••"
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  error={errors.password?.message}
+                  autoComplete="current-password"
+                />
+              )}
             />
           </View>
 
           {/* Forgot Password */}
           <View className="px-10 pt-2">
-            <Pressable>
-              <Text className="text-sm text-homecafe-blue">
-                Mot de passe oublié ?
-              </Text>
-            </Pressable>
+            <Link href="/(auth)/forgot-password" asChild>
+              <Pressable>
+                <Text className="text-sm text-homecafe-blue">
+                  Mot de passe oublié ?
+                </Text>
+              </Pressable>
+            </Link>
           </View>
 
           {/* Login Button */}
           <View className="px-10 pt-4">
             <Button
-              onPress={handleLogin}
+              onPress={handleSubmit(onSubmit)}
               loading={signInMutation.isPending}
               className="rounded-full bg-homecafe-pink"
             >
@@ -164,58 +151,7 @@ export default function LoginScreen() {
               </Pressable>
             </Link>
           </View>
-
-          {/* Footer */}
-          <View className="mt-12 items-center gap-6 bg-card px-10 py-10">
-            <View className="h-16 w-56 items-center justify-center">
-              <Text className="text-2xl font-bold text-homecafe-pink">
-                homecafé
-              </Text>
-            </View>
-
-            {/* Footer Links */}
-            <View className="flex-row gap-8">
-              <Link href="/(auth)/register" asChild>
-                <Pressable>
-                  <Text className="text-xl font-medium text-homecafe-orange">
-                    Inscription
-                  </Text>
-                </Pressable>
-              </Link>
-              <Pressable>
-                <Text className="text-xl font-medium text-homecafe-blue">
-                  Contact
-                </Text>
-              </Pressable>
-            </View>
-
-            {/* Social Media */}
-            <View className="flex-row gap-4">
-              <Pressable className="size-10 items-center justify-center rounded-full bg-homecafe-pink">
-                <Text className="text-primary-foreground">f</Text>
-              </Pressable>
-              <Pressable className="size-10 items-center justify-center rounded-full bg-homecafe-pink">
-                <Text className="text-primary-foreground">in</Text>
-              </Pressable>
-              <Pressable className="size-10 items-center justify-center rounded-full bg-homecafe-pink">
-                <Text className="text-primary-foreground">X</Text>
-              </Pressable>
-            </View>
-
-            {/* Divider */}
-            <View className="h-px w-full bg-homecafe-grey-light" />
-
-            {/* Copyright */}
-            <Text className="text-center text-sm text-homecafe-grey-muted">
-              <Text className="text-homecafe-blue">
-                Copyright © 2023 BRIX Templates | All Rights Reserved |{" "}
-              </Text>
-              <Text className="text-foreground">Terms and Conditions </Text>
-              <Text className="text-homecafe-blue">| </Text>
-              <Text className="text-foreground">Privacy Policy</Text>
-            </Text>
-          </View>
-        </ScrollView>
+        </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
