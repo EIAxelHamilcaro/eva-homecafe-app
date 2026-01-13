@@ -1,9 +1,9 @@
-import { type Href, Redirect } from "expo-router";
+import { Redirect, Stack } from "expo-router";
 import { ActivityIndicator, View } from "react-native";
 
 import { useAuth } from "src/providers/auth-provider";
 
-export default function RootIndex() {
+export default function ProtectedLayout() {
   const { isAuthenticated, isLoading } = useAuth();
 
   if (isLoading) {
@@ -14,9 +14,16 @@ export default function RootIndex() {
     );
   }
 
-  if (isAuthenticated) {
-    return <Redirect href={"/(protected)" as Href} />;
+  if (!isAuthenticated) {
+    return <Redirect href="/(auth)/register" />;
   }
 
-  return <Redirect href="/(auth)/register" />;
+  return (
+    <Stack
+      screenOptions={{
+        headerShown: false,
+        animation: "fade",
+      }}
+    />
+  );
 }

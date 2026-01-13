@@ -10,17 +10,21 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // HomeCafe Brand Colors
+        // HomeCafe Brand Colors (from Figma)
         homecafe: {
-          pink: "#FFB6C1",
+          pink: "#F691C3",
           "pink-light": "#FFE4E8",
           "pink-dark": "#E91E63",
           cream: "#FFF8F0",
           beige: "#F5E6D3",
           green: "#4CAF50",
           "green-light": "#C8E6C9",
-          orange: "#FF9800",
+          orange: "#F46604",
           "orange-light": "#FFE0B2",
+          blue: "#0062DD",
+          "grey-dark": "#7A7A7A",
+          "grey-light": "#DADADA",
+          "grey-muted": "#6E7191",
         },
         // Semantic Colors
         background: "#FFFAF5",
@@ -29,7 +33,7 @@ module.exports = {
         "card-foreground": "#3D2E2E",
         popover: "#FFFFFF",
         "popover-foreground": "#3D2E2E",
-        primary: "#FFB6C1",
+        primary: "#F691C3",
         "primary-foreground": "#FFFFFF",
         secondary: "#F5E6D3",
         "secondary-foreground": "#5D4E4E",

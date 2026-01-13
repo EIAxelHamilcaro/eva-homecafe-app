@@ -2,7 +2,7 @@ import { Button } from "components/ui/button";
 import { Input, PasswordInput } from "components/ui/input";
 import { Link, router } from "expo-router";
 import { ApiError } from "lib/api/client";
-import { useSignIn } from "lib/api/hooks/use-auth";
+import { useSignUp } from "lib/api/hooks/use-auth";
 import { useState } from "react";
 import {
   KeyboardAvoidingView,
@@ -14,19 +14,25 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function LoginScreen() {
+export default function RegisterScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<{
     email?: string;
     password?: string;
+    name?: string;
   }>({});
 
-  const signInMutation = useSignIn();
+  const signUpMutation = useSignUp();
 
   const validate = (): boolean => {
     const newErrors: typeof errors = {};
+
+    if (!name.trim()) {
+      newErrors.name = "Le nom est requis";
+    }
 
     if (!email.trim()) {
       newErrors.email = "L'email est requis";
@@ -36,29 +42,31 @@ export default function LoginScreen() {
 
     if (!password) {
       newErrors.password = "Le mot de passe est requis";
+    } else if (password.length < 8) {
+      newErrors.password = "Minimum 8 caractères";
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleLogin = () => {
+  const handleRegister = () => {
     if (validate()) {
-      signInMutation.mutate(
-        { email, password },
+      signUpMutation.mutate(
+        { email, password, name },
         {
           onSuccess: () => {
             router.replace("/");
           },
           onError: (error) => {
             if (error instanceof ApiError) {
-              if (error.code === "INVALID_CREDENTIALS") {
-                setErrors({ email: "Email ou mot de passe incorrect" });
-              } else if (error.code === "USER_NOT_FOUND") {
-                setErrors({ email: "Aucun compte trouvé avec cet email" });
+              if (error.code === "EMAIL_ALREADY_EXISTS") {
+                setErrors({ email: "Cet email est déjà utilisé" });
               } else {
                 setErrors({ email: error.message });
               }
+            } else {
+              setErrors({ email: "Une erreur est survenue" });
             }
           },
         },
@@ -84,10 +92,10 @@ export default function LoginScreen() {
                 homecafé
               </Text>
             </View>
-            <Link href="/(auth)/register" asChild>
+            <Link href="/(auth)/login" asChild>
               <Pressable className="rounded-full bg-homecafe-pink px-4 py-2">
                 <Text className="text-sm font-normal text-primary-foreground">
-                  S'inscrire
+                  S'identifier
                 </Text>
               </Pressable>
             </Link>
@@ -104,12 +112,21 @@ export default function LoginScreen() {
           {/* Welcome Header */}
           <View className="px-10 pt-8">
             <Text className="text-2xl font-medium text-homecafe-grey-dark">
-              Bon retour !
+              Bienvenue !
             </Text>
           </View>
 
           {/* Form */}
           <View className="gap-4 px-10 pt-6">
+            <Input
+              label="Nom"
+              placeholder="Votre nom"
+              value={name}
+              onChangeText={setName}
+              error={errors.name}
+              autoCapitalize="words"
+            />
+
             <Input
               label="E-mail"
               placeholder="votre@email.com"
@@ -129,37 +146,35 @@ export default function LoginScreen() {
               error={errors.password}
               showPassword={showPassword}
               onTogglePassword={() => setShowPassword(!showPassword)}
-              autoComplete="current-password"
+              autoComplete="new-password"
             />
           </View>
 
-          {/* Forgot Password */}
-          <View className="px-10 pt-2">
-            <Pressable>
-              <Text className="text-sm text-homecafe-blue">
-                Mot de passe oublié ?
-              </Text>
-            </Pressable>
-          </View>
-
-          {/* Login Button */}
+          {/* Register Button */}
           <View className="px-10 pt-4">
             <Button
-              onPress={handleLogin}
-              loading={signInMutation.isPending}
+              onPress={handleRegister}
+              loading={signUpMutation.isPending}
               className="rounded-full bg-homecafe-pink"
             >
-              Se connecter
+              S'inscrire
             </Button>
           </View>
 
-          {/* Not a member yet */}
+          {/* Legal Mentions */}
+          <View className="px-10 pt-3">
+            <Text className="text-[10px] text-homecafe-grey-dark">
+              Mentions légales
+            </Text>
+          </View>
+
+          {/* Already a member */}
           <View className="flex-row items-center gap-1 px-10 pt-4">
-            <Text className="text-sm text-foreground">Pas encore membre ?</Text>
-            <Link href="/(auth)/register" asChild>
+            <Text className="text-sm text-foreground">Déjà membre ?</Text>
+            <Link href="/(auth)/login" asChild>
               <Pressable>
                 <Text className="text-sm font-normal text-homecafe-blue">
-                  Inscris-toi
+                  Connecte-toi
                 </Text>
               </Pressable>
             </Link>
@@ -175,13 +190,9 @@ export default function LoginScreen() {
 
             {/* Footer Links */}
             <View className="flex-row gap-8">
-              <Link href="/(auth)/register" asChild>
-                <Pressable>
-                  <Text className="text-xl font-medium text-homecafe-orange">
-                    Inscription
-                  </Text>
-                </Pressable>
-              </Link>
+              <Text className="text-xl font-medium text-homecafe-orange">
+                Inscription
+              </Text>
               <Pressable>
                 <Text className="text-xl font-medium text-homecafe-blue">
                   Contact

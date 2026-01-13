@@ -13,10 +13,9 @@ import { Email } from "@/domain/user/value-objects/email.vo";
 import { Name } from "@/domain/user/value-objects/name.vo";
 import { Password } from "@/domain/user/value-objects/password.vo";
 
-export class SignUpUseCase implements UseCase<
-  ISignUpInputDto,
-  ISignUpOutputDto
-> {
+export class SignUpUseCase
+  implements UseCase<ISignUpInputDto, ISignUpOutputDto>
+{
   constructor(
     private readonly userRepo: IUserRepository,
     private readonly authProvider: IAuthProvider,
