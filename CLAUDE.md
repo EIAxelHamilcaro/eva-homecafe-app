@@ -1,77 +1,99 @@
 # CLAUDE.md
 
-## App Context: HomeCafe
+## Quick Start
 
-**Application**: HomeCafe - Gamified wellness and productivity app
+### 1. Setup (2 min)
+```bash
+git clone <repo>
+cd nextjs-clean-architecture-starter
+pnpm install
+pnpm db           # Start PostgreSQL
+pnpm db:push      # Push schema
+pnpm dev          # Start dev server
+```
 
-### Description
+### 2. Generate PRD (Interactive)
+```
+/feature-prd
+```
+Conversational domain discovery with EventStorming + structured PRD generation.
 
-HomeCafe is a lifestyle app that helps users structure their daily routine with warmth. Inspired by the cozy café atmosphere, it combines:
+### 3. Generate Code
+```
+/gen-domain [aggregate spec]
+/gen-usecase [use case spec]
+/gen-tests [use case name]
+```
 
-**Core Features:**
-- **Personal Dashboard**: Overview with progress statistics (goals achieved, percentages, metrics)
-- **Calendar & Planning**: Daily tracking with graphical visualization (green/red bars for success/failure)
-- **Gamification System**: Badges, rewards, and levels to motivate users
-- **Messaging**: Communication between community members
-- **Profile & QR Code**: User identification and profile sharing
-- **Blog/Articles**: Lifestyle content and tips (coffee, wellness, productivity)
-- **Notifications**: Personalized reminders and alerts
-- **Settings**: Dark mode, notification preferences, customization
+### 4. Implement & Test
+Claude writes the implementation. Run:
+```bash
+pnpm test
+pnpm check:all
+```
 
-**Visual Theme:**
-- Soft palette with pink, beige, and green tones
-- Warm illustrations (coffee, plants, cozy elements)
-- Rounded and welcoming UI
-- Stylized "homecafé" logo
+### Example: Add "Bookmark" Feature
 
-### Design Resources (Figma)
+1. `/feature-prd` → "Users can bookmark articles" (interactive discovery)
+2. `/gen-domain Bookmark with userId, articleId, createdAt`
+3. `/gen-usecase CreateBookmark`
+4. `/gen-tests CreateBookmarkUseCase`
+5. `pnpm test` → All green
 
-- **Mobile Web**: https://www.figma.com/design/OWDUW6CjzQDvqBTssiwz76/DashBox?node-id=584-13524
-- **Desktop Web**: https://www.figma.com/design/OWDUW6CjzQDvqBTssiwz76/DashBox?node-id=584-8655
-- **Tablet Web**: https://www.figma.com/design/OWDUW6CjzQDvqBTssiwz76/DashBox?node-id=584-10881
-
-### Development Strategy
-
-1. **Mobile First (Expo)** - Start with native mobile app
-2. **Web Later (Next.js)** - Web versions (mobile/tablet/desktop) afterward
+---
 
 ## Prerequisites
 
-**Read first:** @packages/ddd-kit/src/ (Result, Option, Entity) • @packages/test/ • @apps/nextjs/src/
+**Read first:** `packages/ddd-kit/src/` (Result, Option, Entity) • `packages/test/`
 
 ## Project Overview
 
 Production-ready monorepo: Clean Architecture + DDD. Optimized for AI development.
-Backend server is a RESTful API built with Next.js.
 
-**Stack**: Next.js 15 • Expo • TypeScript • Drizzle • PostgreSQL • BetterAuth • shadcn/ui • Tailwind 4
+**Stack**: Next.js 16 • TypeScript • Drizzle • PostgreSQL • BetterAuth • shadcn/ui • Tailwind 4
 
 ### Reference Implementation
 
 **Complete auth example** (100% Claude Code): Sign up/in/out, sessions, email verification, protected routes.
 
 Study these files:
-- @apps/nextjs/src/domain/user/ - Aggregate, VOs, events
-- @apps/nextjs/src/application/use-cases/auth/ - All auth use cases
-- @apps/nextjs/src/application/ports/ - IAuthProvider, IUserRepository
-- @apps/nextjs/src/adapters/auth/ - BetterAuth service
-- @apps/nextjs/src/adapters/guards/ - requireAuth()
-- @apps/nextjs/src/pages/ - Pages
+- `src/domain/user/` - Aggregate, VOs, events
+- `src/application/use-cases/auth/` - All auth use cases
+- `src/application/ports/` - IAuthProvider, IUserRepository
+- `src/adapters/services/auth/` - BetterAuth service
+- `src/adapters/guards/` - requireAuth()
+- `app/(auth)/` + `app/(protected)/` - Pages
 
 ## Commands
 
 ```bash
-pnpm dev          # Dev (runs db:generate)
-pnpm build        # Build all
-pnpm type-check   # Type check
-pnpm fix          # Lint/format
-pnpm db           # Start PostgreSQL
-pnpm db:push      # Push schema
-pnpm test         # Run tests
-pnpm ui:add       # Add shadcn component
+# Development
+pnpm dev              # Dev server (Next.js)
+pnpm build            # Build all
+
+# Quality
+pnpm type-check       # TypeScript check
+pnpm check            # Biome lint + format check
+pnpm fix              # Auto-fix lint/format issues
+pnpm check:duplication # Code duplication check
+pnpm check:unused     # Unused code check (knip)
+pnpm check:all        # Run all checks + tests
+
+# Testing
+pnpm test             # Run tests
+pnpm test:watch       # Watch mode
+pnpm test:coverage    # With coverage
+
+# Database
+pnpm db               # Start PostgreSQL
+pnpm db:push          # Push schema
+pnpm db:generate      # Generate migrations
+
+# UI
+pnpm ui:add           # Add shadcn component
 ```
 
-## Architecture (Next.js Backend)
+## Architecture
 
 ```
 Domain (Core)     → Entities, VOs, Aggregates, Events
@@ -88,24 +110,32 @@ Infrastructure    → DB, DI config
 ```
 apps/nextjs/
 ├── src/
-│   ├── domain/           # Entities, VOs, Events, Errors
+│   ├── domain/           # Entities, VOs, Events
 │   ├── application/
 │   │   ├── use-cases/    # Business logic
 │   │   ├── ports/        # Interfaces (IXxxRepository, IXxxProvider)
 │   │   └── dto/          # Zod schemas
 │   └── adapters/
-│       ├── auth/         # Auth provider impl
 │       ├── actions/      # Server actions
 │       ├── controllers/  # HTTP handlers
 │       ├── guards/       # Auth middleware
 │       ├── repositories/ # DB impl
 │       ├── mappers/      # Domain ↔ DB
-│       └── queries/      # CQRS reads with direct DB access
+│       ├── queries/      # CQRS reads
+│       └── services/     # External service implementations
+│           ├── auth/     # Auth provider (BetterAuth)
+│           ├── llm/      # LLM provider (AI SDK)
+│           └── email/    # Email service
 ├── common/
 │   ├── auth.ts           # BetterAuth config
 │   └── di/               # DI container + modules
 └── app/api/auth/[...all]/ # BetterAuth route
 ```
+
+**Adapters organization:**
+- `services/` - All external service implementations grouped together (auth, llm, email, etc.)
+- Each service in its own subfolder under `services/`
+- Avoids proliferation of top-level adapter folders
 
 ### CQRS
 
@@ -143,74 +173,48 @@ match(option, { Some: v => ..., None: () => ... })
 ### ValueObject<T>
 
 ```typescript
-const emailSchema = z
-  .string()
-  .email("Invalid email format")
-  .min(1, "Email is required")
-  .max(255, "Email must be less than 255 characters")
-  .transform((v) => v.toLowerCase().trim());
-
 export class Email extends ValueObject<string> {
   protected validate(value: string): Result<string> {
-    const result = emailSchema.safeParse(value);
-    if (!result.success) {
-      return Result.fail(result.error.issues[0]?.message ?? "Invalid email");
-    }
-    return Result.ok(result.data);
+    if (!value.includes('@')) return Result.fail('Invalid email')
+    return Result.ok(value)
   }
 }
 
 const result = Email.create('test@example.com')  // Result<Email>
-if (result.isFailure) return Result.fail(result.getError());
-result.getValue().value  // 'test@example.com'
+email.value  // 'test@example.com'
 ```
 
 ### Entity & Aggregate
 
 ```typescript
+export class UserId extends UUID<string | number> {
+  protected [Symbol.toStringTag] = "UserId";
+  static create(id: UUID<string | number>): UserId { return new UserId(id.value); }
+}
+
 export class User extends Aggregate<IUserProps> {
-  private constructor(props: IUserProps, id?: UUID<string | number>) {
-    super(props, id);
-  }
+  get id(): UserId { return UserId.create(this._id) }  // Only getter needed!
 
-  get id(): UserId {
-    return UserId.create(this._id);
-  }
-
-  static create(props: ICreateUserProps, id?: UUID<string | number>): Result<User> {
-    const newId = id ?? new UUID<string>();
-    const user = new User({ ...props, emailVerified: false }, newId);
-
-    if (!id) {
-      user.addEvent(new UserCreatedEvent(user.id.value.toString(), props.email.value, props.name.value));
-    }
-    return Result.ok(user);
-  }
-
-  static reconstitute(props: IUserProps, id: UserId): User {
-    return new User(props, id);
-  }
-
-  verify(): Result<void, DomainError> {
-    if (this.get("emailVerified")) {
-      return Result.fail(new UserAlreadyVerifiedError());
-    }
-    this._props.emailVerified = true;
-    this.touch();
-    this.addEvent(new UserVerifiedEvent(this.id.value.toString()));
-    return Result.ok();
+  static create(props, id?): User {
+    return new User({ ...props, createdAt: new Date() }, id ?? new UUID());
   }
 
   updateName(name: Name): void {
     this._props.name = name;
-    this.touch();
-  }
-
-  private touch(): void {
     this._props.updatedAt = new Date();
   }
 }
+
+// Entity API - use get() for property access, NOT custom getters
+entity.get('propertyName')  // Returns typed property value
+entity._id / entity._props  // Direct access (internal use)
+entity.getProps() / entity.toObject() / entity.clone({...})
+
+// Aggregate API
+aggregate.domainEvents / aggregate.addEvent(e) / aggregate.clearEvents()
 ```
+
+**Minimal getters pattern:** Only define `get id()` getter. Access all other properties via `entity.get('propName')` method inherited from Entity/Aggregate base class.
 
 ### BaseRepository<T>
 
@@ -233,177 +237,11 @@ interface PaginatedResult<T> {
   data: T[];
   pagination: { page, limit, total, totalPages, hasNextPage, hasPreviousPage }
 }
+const DEFAULT_PAGINATION = { page: 1, limit: 20 }
+createPaginatedResult(data, params, total)  // Helper
 ```
 
-## Error Handling
-
-### Domain Errors
-
-```typescript
-// @apps/nextjs/src/domain/errors/domain-error.ts
-export abstract class DomainError extends Error {
-  abstract readonly code: string;
-
-  constructor(message: string) {
-    super(message);
-    this.name = this.constructor.name;
-  }
-}
-
-// @apps/nextjs/src/domain/user/errors/user.errors.ts
-export class UserAlreadyVerifiedError extends DomainError {
-  readonly code = "USER_ALREADY_VERIFIED";
-  constructor() {
-    super("User is already verified");
-  }
-}
-
-export class UserNotFoundError extends DomainError {
-  readonly code = "USER_NOT_FOUND";
-  constructor() {
-    super("User not found");
-  }
-}
-
-export class InvalidCredentialsError extends DomainError {
-  readonly code = "INVALID_CREDENTIALS";
-  constructor() {
-    super("Invalid email or password");
-  }
-}
-```
-
-### Usage in Controllers
-
-```typescript
-if (result.isFailure) {
-  const error = result.getError();
-
-  const statusMap: Record<string, number> = {
-    USER_NOT_FOUND: 404,
-    USER_ALREADY_VERIFIED: 409,
-    INVALID_CREDENTIALS: 401,
-  };
-
-  const status = error instanceof DomainError ? (statusMap[error.code] ?? 400) : 500;
-  return NextResponse.json({ error: error.message, code: error.code }, { status });
-}
-```
-
-## Testing (BDD)
-
-Test behaviors via Use Cases, not units.
-
-### Test Setup
-
-```typescript
-// @apps/nextjs/src/test/setup.ts
-import { Container } from "@packages/di";
-import { DI_SYMBOLS } from "@/common/di/symbols";
-
-export function createTestContainer() {
-  const container = new Container();
-  container.bind(DI_SYMBOLS.IUserRepository).toConstant(createMockUserRepository());
-  container.bind(DI_SYMBOLS.IAuthProvider).toConstant(createMockAuthProvider());
-  container.bind(DI_SYMBOLS.IEventBus).toConstant(createMockEventBus());
-  return container;
-}
-
-export function createMockUserRepository(): IUserRepository {
-  return {
-    create: vi.fn(),
-    update: vi.fn(),
-    delete: vi.fn(),
-    findById: vi.fn(),
-    findByEmail: vi.fn(),
-    findAll: vi.fn(),
-    exists: vi.fn(),
-    count: vi.fn(),
-  };
-}
-```
-
-### Use Case Test Example
-
-```typescript
-describe("SignInUseCase", () => {
-  let useCase: SignInUseCase;
-  let mockUserRepo: IUserRepository;
-  let mockAuthProvider: IAuthProvider;
-
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mockUserRepo = createMockUserRepository();
-    mockAuthProvider = createMockAuthProvider();
-    useCase = new SignInUseCase(mockUserRepo, mockAuthProvider);
-  });
-
-  it("should sign in user when credentials are valid", async () => {
-    const user = UserMother.verified();
-    mockUserRepo.findByEmail.mockResolvedValue(Result.ok(Option.some(user)));
-    mockAuthProvider.signIn.mockResolvedValue(Result.ok({ user, token: "jwt-token" }));
-
-    const result = await useCase.execute({
-      email: "test@example.com",
-      password: "ValidPass123!",
-    });
-
-    expect(result.isSuccess).toBe(true);
-    expect(result.getValue().token).toBe("jwt-token");
-  });
-
-  it("should fail when user not found", async () => {
-    mockUserRepo.findByEmail.mockResolvedValue(Result.ok(Option.none()));
-
-    const result = await useCase.execute({
-      email: "unknown@example.com",
-      password: "ValidPass123!",
-    });
-
-    expect(result.isFailure).toBe(true);
-    expect(result.getError()).toBeInstanceOf(UserNotFoundError);
-  });
-});
-```
-
-### Test Mothers (Fixtures)
-
-```typescript
-// @apps/nextjs/src/test/mothers/user.mother.ts
-export class UserMother {
-  static default(): User {
-    return User.create({
-      email: Email.create("test@example.com").getValue(),
-      name: Name.create("Test User").getValue(),
-      image: Option.none(),
-    }).getValue();
-  }
-
-  static verified(): User {
-    const user = this.default();
-    user.verify();
-    return user;
-  }
-
-  static withEmail(email: string): User {
-    return User.create({
-      email: Email.create(email).getValue(),
-      name: Name.create("Test User").getValue(),
-      image: Option.none(),
-    }).getValue();
-  }
-}
-```
-
-### Testing Rules
-
-- One test file per Use Case
-- Mock at repository/port level
-- Test all Result/Option states
-- Name tests as behaviors ("should X when Y")
-- Use Test Mothers for fixtures
-
-## Use Cases
+### Use Cases
 
 ```typescript
 export class SignInUseCase implements UseCase<Input, Output> {
@@ -412,381 +250,91 @@ export class SignInUseCase implements UseCase<Input, Output> {
     private readonly authProvider: IAuthProvider,
   ) {}
 
-  async execute(input: Input): Promise<Result<Output>> {
+  async execute(input): Promise<Result<Output>> {
     const emailResult = Email.create(input.email);
     const passwordResult = Password.create(input.password);
     const combined = Result.combine([emailResult, passwordResult]);
     if (combined.isFailure) return Result.fail(combined.getError());
 
-    const userResult = await this.findUser(emailResult.getValue());
+    const userResult = await this.checkUserExists(emailResult.getValue());
     if (userResult.isFailure) return Result.fail(userResult.getError());
 
-    const authResult = await this.authProvider.signIn(
-      userResult.getValue(),
-      passwordResult.getValue(),
-    );
+    const authResult = await this.authProvider.signIn(userResult.getValue(), passwordResult.getValue());
     if (authResult.isFailure) return Result.fail(authResult.getError());
 
     return Result.ok(this.toDto(authResult.getValue()));
   }
 
-  private async findUser(email: Email): Promise<Result<User>> {
+  private async checkUserExists(email: Email): Promise<Result<User>> {
     const result = await this.userRepo.findByEmail(email.value);
     if (result.isFailure) return Result.fail(result.getError());
 
     return match<User, Result<User>>(result.getValue(), {
       Some: (user) => Result.ok(user),
-      None: () => Result.fail(new UserNotFoundError()),
+      None: () => Result.fail("Email not found"),
     });
   }
+
+  private toDto(response): Output { /* map to DTO */ }
 }
 ```
 
-## DTOs
+### DTOs
+
+Common schemas in `dto/common.dto.ts`, feature DTOs compose them:
 
 ```typescript
 // common.dto.ts
-export const userDtoSchema = z.object({
-  id: z.string(),
-  email: z.string(),
-  name: z.string(),
-  emailVerified: z.boolean(),
-  image: z.string().nullable(),
-});
+export const userDtoSchema = z.object({ id: z.string(), email: z.string(), name: z.string() });
 
 // sign-in.dto.ts
-export const signInInputDtoSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
-  rememberMe: z.boolean().optional(),
-});
-
-export const signInOutputDtoSchema = z.object({
-  user: userDtoSchema,
-  token: z.string(),
-});
+export const signInInputDtoSchema = z.object({ email: z.email(), password: z.string().min(8) });
+export const signInOutputDtoSchema = z.object({ user: userDtoSchema, token: z.string() });
+export type ISignInInputDto = z.infer<typeof signInInputDtoSchema>;
 ```
 
-## Ports
+### Ports
 
 ```typescript
 export interface IAuthProvider {
+  signIn(user: User, password: Password): Promise<Result<AuthResponse>>;
   signUp(user: User, password: Password): Promise<Result<AuthResponse>>;
-  signIn(user: User, password: Password, rememberMe?: boolean): Promise<Result<AuthResponse>>;
   signOut(headers: Headers): Promise<Result<void>>;
   getSession(headers: Headers): Promise<Result<Option<AuthSession>>>;
-  verifyEmail(userId: string): Promise<Result<void>>;
 }
 ```
 
-## DI
+### DI
 
 ```typescript
+// modules/auth.module.ts
 export const createAuthModule = () => {
-  const authModule = createModule();
-
-  authModule.bind(DI_SYMBOLS.IUserRepository).toClass(DrizzleUserRepository);
-  authModule.bind(DI_SYMBOLS.IAuthProvider).toClass(BetterAuthService);
-  authModule.bind(DI_SYMBOLS.SignInUseCase).toClass(SignInUseCase, [
-    DI_SYMBOLS.IUserRepository,
-    DI_SYMBOLS.IAuthProvider,
-  ]);
-
-  return authModule;
+  const m = createModule();
+  m.bind(DI_SYMBOLS.IUserRepository).toClass(DrizzleUserRepository);
+  m.bind(DI_SYMBOLS.SignInUseCase).toClass(SignInUseCase, [DI_SYMBOLS.IUserRepository, DI_SYMBOLS.IAuthProvider]);
+  return m;
 };
 
 // Usage
 const useCase = getInjection("SignInUseCase");
 ```
 
-## Guards
+### Guards
 
 ```typescript
 export async function requireAuth(redirectTo = "/login"): Promise<IGetSessionOutputDto> {
-  const guardResult = await authGuard();
+  const headersList = await headers();
+  const useCase = getInjection("GetSessionUseCase");
+  const result = await useCase.execute(headersList);
 
-  if (!guardResult.authenticated) {
-    redirect(redirectTo);
-  }
+  if (result.isFailure) redirect(redirectTo);
 
-  return guardResult.session;
-}
-```
-
-## Expo (Mobile Client)
-
-Expo = pure API client. No domain logic, just UI + API calls to Next.js backend.
-
-### Structure
-
-```
-apps/expo/
-├── app/                    # Expo Router (file-based routing)
-│   ├── (auth)/             # Public routes (login, register)
-│   ├── (protected)/        # Authenticated routes
-│   └── _layout.tsx         # Root layout + auth provider
-├── components/
-│   └── ui/                 # NativeWind components (Button, Input, Card...)
-├── lib/
-│   ├── api/                # API client + hooks
-│   │   ├── client.ts       # Fetch wrapper with auth
-│   │   └── hooks/          # React Query hooks (useAuth, useUser...)
-│   ├── auth/               # Auth context + SecureStore
-│   └── utils.ts            # cn(), helpers
-└── constants/              # Colors, config
-```
-
-### API Client
-
-```typescript
-// @apps/expo/lib/api/client.ts
-import * as SecureStore from "expo-secure-store";
-
-const API_URL = process.env.EXPO_PUBLIC_API_URL;
-
-class ApiClient {
-  private async getToken(): Promise<string | null> {
-    return SecureStore.getItemAsync("auth_token");
-  }
-
-  async fetch<T>(endpoint: string, options?: RequestInit): Promise<T> {
-    const token = await this.getToken();
-
-    const response = await fetch(`${API_URL}${endpoint}`, {
-      ...options,
-      headers: {
-        "Content-Type": "application/json",
-        ...(token && { Authorization: `Bearer ${token}` }),
-        ...options?.headers,
-      },
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new ApiError(error.message, error.code, response.status);
-    }
-
-    return response.json();
-  }
-
-  get<T>(endpoint: string) {
-    return this.fetch<T>(endpoint, { method: "GET" });
-  }
-
-  post<T>(endpoint: string, body: unknown) {
-    return this.fetch<T>(endpoint, { method: "POST", body: JSON.stringify(body) });
-  }
-}
-
-export const api = new ApiClient();
-
-export class ApiError extends Error {
-  constructor(
-    message: string,
-    public readonly code: string,
-    public readonly status: number,
-  ) {
-    super(message);
-  }
-}
-```
-
-### Auth Context
-
-```typescript
-// @apps/expo/lib/auth/auth-context.tsx
-import * as SecureStore from "expo-secure-store";
-import { createContext, useContext, useEffect, useState } from "react";
-import { api } from "@/lib/api/client";
-
-interface User {
-  id: string;
-  email: string;
-  name: string;
-  image: string | null;
-}
-
-interface AuthContextType {
-  user: User | null;
-  isLoading: boolean;
-  signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string, name: string) => Promise<void>;
-  signOut: () => Promise<void>;
-}
-
-const AuthContext = createContext<AuthContextType | null>(null);
-
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    checkAuth();
-  }, []);
-
-  async function checkAuth() {
-    try {
-      const token = await SecureStore.getItemAsync("auth_token");
-      if (token) {
-        const data = await api.get<{ user: User }>("/api/auth/session");
-        setUser(data.user);
-      }
-    } catch {
-      await SecureStore.deleteItemAsync("auth_token");
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  async function signIn(email: string, password: string) {
-    const data = await api.post<{ user: User; token: string }>("/api/auth/sign-in", { email, password });
-    await SecureStore.setItemAsync("auth_token", data.token);
-    setUser(data.user);
-  }
-
-  async function signOut() {
-    await api.post("/api/auth/sign-out", {});
-    await SecureStore.deleteItemAsync("auth_token");
-    setUser(null);
-  }
-
-  return (
-    <AuthContext.Provider value={{ user, isLoading, signIn, signUp, signOut }}>
-      {children}
-    </AuthContext.Provider>
-  );
-}
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) throw new Error("useAuth must be used within AuthProvider");
-  return context;
-};
-```
-
-### Protected Routes
-
-```typescript
-// @apps/expo/app/(protected)/_layout.tsx
-import { Redirect, Stack } from "expo-router";
-import { useAuth } from "@/lib/auth/auth-context";
-
-export default function ProtectedLayout() {
-  const { user, isLoading } = useAuth();
-
-  if (isLoading) return <LoadingScreen />;
-  if (!user) return <Redirect href="/login" />;
-
-  return <Stack />;
-}
-```
-
-### React Query Hooks
-
-```typescript
-// @apps/expo/lib/api/hooks/use-user.ts
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { api } from "@/lib/api/client";
-
-export function useUser(userId: string) {
-  return useQuery({
-    queryKey: ["user", userId],
-    queryFn: () => api.get(`/api/users/${userId}`),
-  });
-}
-
-export function useUpdateProfile() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (data: { name: string }) => api.put("/api/users/profile", data),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["user"] }),
+  return match<IGetSessionOutputDto, IGetSessionOutputDto>(result.getValue(), {
+    Some: (session) => session,
+    None: () => redirect(redirectTo),
   });
 }
 ```
-
-### UI Components (NativeWind)
-
-```typescript
-// @apps/expo/components/ui/button.tsx
-import { Pressable, Text } from "react-native";
-import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "@/lib/utils";
-
-const buttonVariants = cva(
-  "flex-row items-center justify-center rounded-xl active:opacity-80",
-  {
-    variants: {
-      variant: {
-        default: "bg-primary",
-        secondary: "bg-secondary",
-        outline: "border-2 border-border bg-transparent",
-        ghost: "bg-transparent",
-      },
-      size: {
-        default: "h-14 px-6",
-        sm: "h-11 px-4",
-        lg: "h-16 px-8",
-      },
-    },
-    defaultVariants: { variant: "default", size: "default" },
-  }
-);
-
-interface ButtonProps extends VariantProps<typeof buttonVariants> {
-  children: React.ReactNode;
-  onPress?: () => void;
-  disabled?: boolean;
-  className?: string;
-}
-
-export function Button({ children, variant, size, onPress, disabled, className }: ButtonProps) {
-  return (
-    <Pressable
-      onPress={onPress}
-      disabled={disabled}
-      className={cn(buttonVariants({ variant, size }), disabled && "opacity-50", className)}
-    >
-      <Text className="font-semibold text-base text-primary-foreground">{children}</Text>
-    </Pressable>
-  );
-}
-```
-
-### Expo Rules
-
-- **No domain logic** — Expo is a pure UI client
-- **API calls only** — All business logic lives in Next.js
-- **SecureStore for tokens** — Never AsyncStorage for sensitive data
-- **NativeWind for styling** — Tailwind syntax, native performance
-- **Expo Router** — File-based routing like Next.js
-- **React Query** — Server state management
-- **Match web design** — Follow Figma mockups, adapt for native UX
-
-## Page Structure (Next.js)
-
-Pages = orchestration only. Logic in `_components/`.
-
-```
-app/(auth)/login/
-├── page.tsx              # Composes LoginForm
-└── _components/
-    └── login-form.tsx    # Client component with logic
-```
-
-**Rules**: Pages compose • Logic in _components • Server by default • Guards in layouts
-
-## UI (Next.js)
-
-**shadcn/ui first**: `pnpm ui:add button form input`
-
-## Monorepo
-
-- `apps/nextjs/` - Web + API (backend)
-- `apps/expo/` - Mobile (client only)
-- `packages/ddd-kit/` - DDD primitives
-- `packages/drizzle/` - DB schema
-- `packages/ui/` - Web components
 
 ## Key Rules
 
@@ -798,4 +346,839 @@ app/(auth)/login/
 6. **All deps injected** via DI
 7. **No index.ts barrels** → import directly
 8. **No comments** → self-documenting code
-9. **Expo = client only** → no domain logic, API calls to Next.js
+9. **Only `get id()` getter** → Use `entity.get('propName')` method for all property access. No other getters needed.
+
+## Templates
+
+### Aggregate Template
+
+```typescript
+// src/domain/{name}/{name}.aggregate.ts
+import { Aggregate, UUID } from "@packages/ddd-kit";
+import { {Name}Id } from "./{name}-id";
+import { {Name}CreatedEvent } from "./events/{name}-created.event";
+
+interface I{Name}Props {
+  // Add properties
+  createdAt: Date;
+  updatedAt?: Date;
+}
+
+export class {Name} extends Aggregate<I{Name}Props> {
+  get id(): {Name}Id {
+    return {Name}Id.create(this._id);
+  }
+
+  // No other getters - use this.get('propName') or entity.get('propName')
+
+  static create(
+    props: Omit<I{Name}Props, "createdAt" | "updatedAt">,
+    id?: UUID
+  ): {Name} {
+    const entity = new {Name}(
+      { ...props, createdAt: new Date() },
+      id ?? new UUID()
+    );
+    entity.addEvent(new {Name}CreatedEvent(entity));
+    return entity;
+  }
+
+  static reconstitute(props: I{Name}Props, id: UUID): {Name} {
+    return new {Name}(props, id);
+  }
+
+  // Add methods that modify state
+}
+```
+
+### Value Object Template
+
+```typescript
+// src/domain/{aggregate}/value-objects/{name}.vo.ts
+import { ValueObject, Result } from "@packages/ddd-kit";
+import { z } from "zod";
+
+const schema = z.string().min(1).max(100);
+
+export class {Name} extends ValueObject<string> {
+  protected validate(value: string): Result<string> {
+    const result = schema.safeParse(value);
+    if (!result.success) {
+      return Result.fail(result.error.errors[0].message);
+    }
+    return Result.ok(result.data);
+  }
+}
+```
+
+### UseCase Template
+
+```typescript
+// src/application/use-cases/{domain}/{name}.use-case.ts
+import { UseCase, Result, match } from "@packages/ddd-kit";
+import type { IEventDispatcher } from "@/application/ports/event-dispatcher.port";
+import type { I{Name}InputDto, I{Name}OutputDto } from "@/application/dto/{domain}/{name}.dto";
+
+export class {Name}UseCase implements UseCase<I{Name}InputDto, I{Name}OutputDto> {
+  constructor(
+    private readonly repo: IRepository,
+    private readonly eventDispatcher: IEventDispatcher,
+  ) {}
+
+  async execute(input: I{Name}InputDto): Promise<Result<I{Name}OutputDto>> {
+    // 1. Validate & create VOs
+    // 2. Business logic
+    // 3. Persist
+    // 4. Dispatch events
+    // 5. Return DTO
+  }
+}
+```
+
+### Test Template
+
+```typescript
+// src/application/use-cases/{domain}/__tests__/{name}.use-case.test.ts
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { Result, Option } from "@packages/ddd-kit";
+
+describe("{Name}UseCase", () => {
+  let useCase: {Name}UseCase;
+  let mockRepo: MockRepo;
+  let mockEventDispatcher: IEventDispatcher;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockRepo = { method: vi.fn() };
+    mockEventDispatcher = { dispatch: vi.fn(), dispatchAll: vi.fn() };
+    useCase = new {Name}UseCase(mockRepo, mockEventDispatcher);
+  });
+
+  describe("happy path", () => {
+    it("should {action} when {condition}", async () => {
+      // Arrange
+      mockRepo.method.mockResolvedValue(Result.ok(value));
+
+      // Act
+      const result = await useCase.execute(input);
+
+      // Assert
+      expect(result.isSuccess).toBe(true);
+    });
+  });
+
+  describe("validation errors", () => {
+    it("should fail when {field} is invalid", async () => {
+      const result = await useCase.execute({ ...input, field: "invalid" });
+      expect(result.isFailure).toBe(true);
+    });
+  });
+
+  describe("error handling", () => {
+    it("should fail when repository returns error", async () => {
+      mockRepo.method.mockResolvedValue(Result.fail("Database error"));
+      const result = await useCase.execute(input);
+      expect(result.isFailure).toBe(true);
+    });
+  });
+});
+```
+
+### Domain Event Template
+
+```typescript
+// src/domain/{aggregate}/events/{name}.event.ts
+import { BaseDomainEvent } from "@packages/ddd-kit";
+
+interface I{Name}EventPayload {
+  aggregateId: string;
+  // Add payload fields
+}
+
+export class {Name}Event extends BaseDomainEvent<I{Name}EventPayload> {
+  readonly eventType = "{aggregate}.{action}";
+
+  constructor(aggregate: {Aggregate}) {
+    super();
+    this.aggregateId = aggregate.id.value;
+    this.payload = {
+      aggregateId: aggregate.id.value,
+      // Map payload fields
+    };
+  }
+}
+```
+
+## Testing: BDD
+
+Test behaviors via Use Cases, not units.
+
+```typescript
+describe('CreateUserUseCase', () => {
+  const mockUserRepo: IUserRepository = { create: vi.fn(), findByEmail: vi.fn() }
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    container.bind('IUserRepository').toConstant(mockUserRepo);
+  })
+
+  it('should create user when email is unique', async () => {
+    mockUserRepo.findByEmail.mockResolvedValue(Result.ok(Option.none()));
+    mockUserRepo.create.mockResolvedValue(Result.ok(mockUser));
+
+    const result = await getInjection('CreateUserUseCase').execute({ email: 'new@test.com' });
+
+    expect(result.isSuccess).toBe(true);
+    expect(mockUserRepo.create).toHaveBeenCalledOnce();
+  })
+})
+```
+
+**Rules**: One file per Use Case • Mock at repository level • Test Result/Option states • Name as behaviors
+
+## Page Structure
+
+Pages = orchestration only. Logic in `_components/`.
+
+```
+app/(auth)/login/
+├── page.tsx              # Composes LoginForm
+└── _components/
+    └── login-form.tsx    # Client component with logic
+```
+
+```typescript
+// page.tsx - Server Component
+export default async function DashboardPage() {
+  const session = await requireAuth();
+  return <ProfileCard user={session.user} />;
+}
+```
+
+**Rules**: Pages compose • Logic in _components • Server by default • Guards in layouts
+
+## UI
+
+**shadcn/ui first**: `pnpm ui:add button form input`
+
+```
+packages/ui/src/components/ui/  # shadcn (auto-generated)
+```
+
+## Monorepo
+
+- `apps/nextjs/` - Web + API
+- `packages/ddd-kit/` - DDD primitives
+- `packages/drizzle/` - DB schema
+- `packages/ui/` - Shared components
+
+## Environment
+
+`.env`: `DATABASE_URL` - PostgreSQL connection
+
+## Development Workflow
+
+### Interactive Flow
+
+```
+┌─────────────────┐
+│   Feature PRD   │  /feature-prd
+│  (Discovery +   │  → EventStorming + Structured PRD
+│   Specification)│
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│  Domain Layer   │  /gen-domain
+│  (Aggregates)   │  → Entities, VOs, Events
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│ Application     │  /gen-usecase
+│  (Use Cases)    │  → UseCases, DTOs, DI
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│    Testing      │  /gen-tests
+│  (BDD Tests)    │  → Comprehensive tests
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│   Validation    │  pnpm check:all
+│  (Quality)      │  → lint, types, tests, duplication
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│    Deploy       │  git commit && git push
+│  (Production)   │  → CI/CD
+└─────────────────┘
+```
+
+### Autonomous Flow (Ralph Wiggum)
+
+For complex features, use the autonomous agent loop:
+
+```
+┌─────────────────┐
+│   Feature PRD   │  /feature-prd
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│   Create Plan   │  /create-plan
+│  (plan.md +     │  → JSON tasks + PROMPT.md
+│   PROMPT.md)    │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│ Create Activity │  /create-activity
+│  (activity.md)  │  → Session log template
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────────────────────┐
+│      Autonomous Agent Loop      │
+│  ┌────────────────────────────┐ │
+│  │ Read activity.md (state)   │ │
+│  └─────────────┬──────────────┘ │
+│                │                │
+│                ▼                │
+│  ┌────────────────────────────┐ │
+│  │ Find next task in plan.md │ │
+│  │     (passes: false)        │ │
+│  └─────────────┬──────────────┘ │
+│                │                │
+│                ▼                │
+│  ┌────────────────────────────┐ │
+│  │ Complete task steps        │ │
+│  │ Update plan.md + log       │ │
+│  │ Git commit                 │ │
+│  └─────────────┬──────────────┘ │
+│                │                │
+│                ▼                │
+│           [Repeat]              │
+└─────────────────────────────────┘
+```
+
+### Step Details
+
+#### 1. Feature PRD
+Conversational domain discovery:
+- EventStorming (Events, Commands, Aggregates, Policies)
+- 10 essential aspects covered
+- Structured PRD with implementation checklist
+
+#### 2. Domain Layer
+Generated files:
+- `src/domain/{feature}/{feature}.aggregate.ts`
+- `src/domain/{feature}/value-objects/*.vo.ts`
+- `src/domain/{feature}/events/*.event.ts`
+
+#### 3. Application Layer
+Generated files:
+- `src/application/use-cases/{feature}/*.use-case.ts`
+- `src/application/dto/{feature}/*.dto.ts`
+- `common/di/modules/{feature}.module.ts`
+
+#### 4. Testing
+Generated files:
+- `src/application/use-cases/{feature}/__tests__/*.test.ts`
+
+#### 5. Validation
+Quality checks:
+- `pnpm check` - Code style
+- `pnpm type-check` - TypeScript
+- `pnpm test` - All tests
+- `pnpm check:duplication` - No copy-paste
+- `pnpm check:unused` - No dead code
+
+## Skills Reference
+
+### /feature-prd
+**Purpose:** Conversational PRD with EventStorming discovery
+
+**Usage:**
+```
+/feature-prd
+```
+
+**Process:**
+1. EventStorming discovery (Events, Commands, Aggregates, Policies)
+2. Feature deep dive (10 essential aspects)
+3. Technology research (WebSearch, Context7)
+4. PRD generation with implementation checklist
+
+**Output:** Comprehensive PRD with domain model, use cases, API, file locations
+
+---
+
+### /create-plan
+**Purpose:** Generate plan.md + PROMPT.md for autonomous workflow
+
+**Usage:**
+```
+/create-plan
+```
+
+**Output:**
+- `plan.md` - JSON task list with steps and passes:false/true
+- `PROMPT.md` - Agent instructions for Ralph Wiggum loop
+
+---
+
+### /create-activity
+**Purpose:** Initialize activity.md for session logging
+
+**Usage:**
+```
+/create-activity
+```
+
+**Output:** `activity.md` with status tracking and session log template
+
+---
+
+### /gen-domain
+**Purpose:** Generate domain layer code
+
+**Usage:**
+```
+/gen-domain [Aggregate] with [properties]
+```
+
+**Output:** Aggregate, VOs, Events files
+
+**Example:**
+```
+/gen-domain Notification with userId, type, message, readAt
+```
+
+---
+
+### /gen-usecase
+**Purpose:** Generate use case with DTOs and DI
+
+**Usage:**
+```
+/gen-usecase [UseCaseName]: [description]
+```
+
+**Output:** UseCase, DTOs, DI registration
+
+**Example:**
+```
+/gen-usecase MarkNotificationRead: marks a notification as read for user
+```
+
+---
+
+### /gen-tests
+**Purpose:** Generate BDD tests for use case
+
+**Usage:**
+```
+/gen-tests [UseCaseName]
+```
+
+**Output:** Comprehensive test file
+
+## Agents Reference
+
+### feature-architect
+**Purpose:** Design feature architecture before implementation
+
+**When to use:**
+- Starting a new feature
+- Unsure about structure
+- Want to follow existing patterns
+
+**What it does:**
+1. Analyzes existing codebase patterns
+2. Proposes file structure
+3. Identifies needed components
+4. Creates implementation blueprint
+
+**Invoke:**
+```
+Use the feature-architect agent to design [feature name]
+```
+
+---
+
+### code-reviewer
+**Purpose:** Review code for issues before commit
+
+**When to use:**
+- After implementing feature
+- Before creating PR
+- Want quality check
+
+**What it does:**
+1. Checks Clean Architecture compliance
+2. Verifies DDD patterns
+3. Finds bugs and code smells
+4. Suggests improvements
+
+**Invoke:**
+```
+Use the code-reviewer agent to review [file or feature]
+```
+
+**Output:** Issues by severity with fixes
+
+---
+
+### test-writer
+**Purpose:** Generate comprehensive tests
+
+**When to use:**
+- After implementing use case
+- Need more test coverage
+- Want BDD-style tests
+
+**What it does:**
+1. Analyzes implementation
+2. Identifies all code paths
+3. Writes comprehensive tests
+4. Covers edge cases
+
+**Invoke:**
+```
+Use the test-writer agent to write tests for [use case]
+```
+
+---
+
+### doc-writer
+**Purpose:** Update documentation
+
+**When to use:**
+- After adding feature
+- After changing patterns
+- README needs update
+
+**What it does:**
+1. Identifies affected docs
+2. Updates CLAUDE.md sections
+3. Updates README
+4. Keeps examples current
+
+**Invoke:**
+```
+Use the doc-writer agent to update docs for [feature]
+```
+
+## Decision Trees
+
+### Entity vs Aggregate
+
+```
+Does it have a unique identity?
+├─ No → Value Object
+└─ Yes → Does it own other entities?
+         ├─ No → Entity
+         └─ Yes → Does it need domain events?
+                  ├─ No → Entity (root of group)
+                  └─ Yes → Aggregate
+```
+
+**Examples:**
+- Email → Value Object (no identity)
+- Address → Entity (identity, no children)
+- User → Aggregate (has identity, owns sessions, emits events)
+- Order → Aggregate (owns OrderItems, emits events)
+
+---
+
+### Result vs Option
+
+```
+Can the operation fail with an error message?
+├─ Yes → Result<T>
+│        └─ Multiple failure reasons? → Result<T, ErrorEnum>
+└─ No → Is the value optional/nullable?
+        ├─ Yes → Option<T>
+        └─ No → Plain T
+```
+
+**Examples:**
+- `Email.create()` → `Result<Email>` (can fail: invalid format)
+- `findById()` → `Result<Option<User>>` (can fail: DB error, can be missing)
+- `user.name` → `Name` (required, validated at creation)
+- `user.bio` → `Option<Bio>` (optional, no error if missing)
+
+---
+
+### When to Emit Domain Events
+
+```
+Is this a significant business state change?
+├─ No → Don't emit
+└─ Yes → Should other parts of system react?
+         ├─ No → Don't emit
+         └─ Yes → Emit event
+                  └─ Dispatch AFTER repository.save()
+```
+
+**Emit for:**
+- User registration (send welcome email)
+- Subscription created (provision resources)
+- Payment failed (notify user)
+
+**Don't emit for:**
+- User updated name (no side effects)
+- Internal state changes
+
+---
+
+### Repository vs Query
+
+```
+Need to modify data?
+├─ Yes → Repository (through Use Case)
+└─ No → Need domain logic?
+        ├─ Yes → Repository (returns Aggregate)
+        └─ No → Is this a simple read?
+                ├─ Yes → Query (direct ORM)
+                └─ No → Repository + DTO
+```
+
+**Use Repository when:**
+- Creating/updating entities
+- Need to apply business rules
+- Need aggregate with full state
+
+**Use Query when:**
+- Dashboard statistics
+- List views with filters
+- Reports
+- No business logic needed
+
+---
+
+### CQRS Decision
+
+```
+Command or Query?
+
+Command (write):
+Controller → UseCase → Aggregate → Repository
+                            ↓
+                   EventDispatcher → Handlers
+
+Query (read):
+Controller → Query → Database
+                ↓
+            DTO Response
+```
+
+## Domain Events
+
+### Overview
+
+Domain events capture significant business state changes. They enable:
+- Loose coupling between components
+- Side effects (emails, notifications)
+- Audit logging
+- Event-driven workflows
+
+### Event Structure
+
+```typescript
+// src/domain/user/events/user-created.event.ts
+export class UserCreatedEvent extends DomainEvent<{
+  userId: string;
+  email: string;
+  name: string;
+}> {
+  readonly eventType = "user.created";
+
+  constructor(user: User) {
+    super();
+    this.aggregateId = user.id.value;
+    this.payload = {
+      userId: user.id.value,
+      email: user.email.value,
+      name: user.name.value,
+    };
+  }
+}
+```
+
+### Emitting Events
+
+Events are added in aggregate methods, NOT dispatched:
+
+```typescript
+// In aggregate
+static create(props: CreateProps): User {
+  const user = new User({ ...props, createdAt: new Date() }, new UUID());
+  user.addEvent(new UserCreatedEvent(user)); // Added, not dispatched!
+  return user;
+}
+
+verifyEmail(): void {
+  this._props.emailVerified = true;
+  this.addEvent(new UserEmailVerifiedEvent(this));
+}
+```
+
+### Dispatching Events
+
+**CRITICAL:** Events dispatch AFTER successful persistence:
+
+```typescript
+// In use case
+async execute(input: Input): Promise<Result<Output>> {
+  // 1. Create aggregate (events added internally)
+  const user = User.create(props);
+
+  // 2. Persist FIRST
+  const saveResult = await this.userRepo.create(user);
+  if (saveResult.isFailure) {
+    return Result.fail(saveResult.getError());
+    // Events NOT dispatched on failure!
+  }
+
+  // 3. Dispatch AFTER save succeeds
+  await this.eventDispatcher.dispatchAll(user.domainEvents);
+  user.clearEvents();
+
+  return Result.ok(dto);
+}
+```
+
+### Event Handlers
+
+```typescript
+// src/application/event-handlers/send-welcome-email.handler.ts
+export class SendWelcomeEmailHandler implements IEventHandler<UserCreatedEvent> {
+  readonly eventType = "user.created";
+
+  constructor(private readonly emailService: IEmailService) {}
+
+  async handle(event: UserCreatedEvent): Promise<void> {
+    await this.emailService.sendWelcomeEmail({
+      to: event.payload.email,
+      name: event.payload.name,
+    });
+  }
+}
+```
+
+### Event Flow Diagram
+
+```
+User.create()
+    │
+    ▼
+addEvent(UserCreatedEvent)
+    │
+    ▼
+userRepo.create(user)  ──────► DB Insert
+    │
+    │ (on success)
+    ▼
+eventDispatcher.dispatchAll()
+    │
+    ▼
+SendWelcomeEmailHandler.handle()
+    │
+    ▼
+emailService.sendWelcomeEmail()
+```
+
+### Best Practices
+
+1. **Event naming:** Past tense (UserCreated, OrderPlaced)
+2. **Payload:** Include all data handlers need (avoid lookups)
+3. **Idempotency:** Handlers should be safe to retry
+4. **Error isolation:** One handler failure shouldn't block others
+5. **Testing:** Verify events emitted and handlers called
+
+## AI Guidance
+
+### Effective Prompts
+
+#### For New Features
+```
+"Create a [Feature] feature with:
+- [Aggregate] aggregate
+- [Events] domain events
+- [UseCases] use cases
+Follow the existing auth pattern."
+```
+
+#### For Bug Fixes
+```
+"Fix [issue] in [file].
+The expected behavior is [X].
+The current behavior is [Y]."
+```
+
+#### For Refactoring
+```
+"Refactor [code] to:
+- Follow [pattern]
+- Match [existing example]
+Keep the same behavior."
+```
+
+---
+
+### What Claude Should Do
+
+**Do ask Claude to:**
+- Generate domain entities following patterns
+- Write use cases with proper DI
+- Create BDD tests
+- Update documentation
+- Review code for architecture violations
+
+**Expect Claude to:**
+- Use Result<T> for fallible operations
+- Use Option<T> for nullable values
+- Emit events in aggregates
+- Dispatch events after save
+- Mock at repository level in tests
+
+---
+
+### What Claude Should NOT Do
+
+**Don't ask Claude to:**
+- Skip tests
+- Use `any` types
+- Throw exceptions in domain
+- Import adapters in domain
+- Create index.ts barrels
+- Add comments everywhere
+
+**Claude should refuse:**
+- Breaking Clean Architecture layers
+- Skipping event dispatch
+- Using null instead of Option
+- Mixing queries and commands
+
+---
+
+### Context Claude Needs
+
+When asking for help, provide:
+1. **Feature name** - What you're building
+2. **Business context** - Why it exists
+3. **Reference** - Similar existing code to follow
+4. **Constraints** - Any specific requirements
+
+Example:
+```
+"Add subscription billing feature.
+Business: Users pay monthly for premium features.
+Reference: Follow the auth flow pattern.
+Constraints: Must integrate with Stripe webhooks."
+```
