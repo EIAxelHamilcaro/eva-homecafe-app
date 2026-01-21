@@ -427,15 +427,6 @@ Friend invitations (email + QR code), notifications system with real-time update
     "passes": true
   },
   {
-    "id": "35 bis",
-    "category": "ui",
-    "description": "Profile UI",
-    "steps": [
-      "I want the exact UI implementation with .claude/screenshots/profile.png",
-    ],
-    "passes": false
-  },
-  {
     "id": 36,
     "category": "application",
     "description": "Create GetPendingRequests Use Case",
@@ -563,7 +554,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Implement all port methods using Drizzle",
       "Include user joins for friend details"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 47,
@@ -837,7 +828,16 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Manual testing of full flow"
     ],
     "passes": false
-  }
+  },
+  {
+    "id": 71,
+    "category": "ui",
+    "description": "Profile UI",
+    "steps": [
+      "I want the exact UI implementation with .claude/screenshots/profile.png",
+    ],
+    "passes": false
+  },
 ]
 ```
 

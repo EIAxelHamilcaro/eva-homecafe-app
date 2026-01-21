@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 45/70
-**Current Task:** Task 46 - Create FriendRequest Repository
+**Tasks Completed:** 46/70
+**Current Task:** Task 47 - Create InviteToken Repository
 **Current Phase:** Phase 2 - Friends & Notifications
 
 ---
@@ -16,7 +16,7 @@
 | Domain | 7 | 7 |
 | Application | 18 | 18 |
 | Infrastructure | 6 | 6 |
-| Adapter | 10 | 5 |
+| Adapter | 10 | 6 |
 | API | 3 | 1 |
 | Expo | 19 | 5 |
 | Testing | 4 | 1 |
@@ -771,6 +771,34 @@ Mapper functions:
   - Converts ID to string
 
 Type inference: Uses `typeof notificationTable.$inferSelect` for record type
+
+Type check: PASSED
+
+**Task 46 Completed: Create FriendRequest Repository**
+
+Files created:
+- `src/adapters/repositories/friend-request.repository.ts`
+
+Repository methods implemented:
+- `create()` - Creates new friend request in database (with transaction support)
+- `update()` - Updates existing friend request (status, respondedAt)
+- `delete()` - Deletes friend request by id
+- `findById()` - Finds friend request by FriendRequestId (returns Option)
+- `findByUsers()` - Finds request between two users (either direction)
+- `findPendingForUser()` - Paginated pending requests where user is receiver
+- `findFriendsForUser()` - Paginated accepted friendships where user is sender or receiver
+- `existsBetweenUsers()` - Checks if any request exists between two users
+- `findAll()` - Paginated list of all friend requests
+- `findMany()` - Filtered paginated list by senderId/receiverId
+- `findBy()` - Find by partial props (delegates to findByUsers)
+- `exists()` - Check if friend request exists by id
+- `count()` - Count total friend requests
+
+Key patterns used:
+- `and()`, `or()`, `eq()`, `desc()` operators from drizzle-orm for complex queries
+- `FriendRequestStatusEnum.PENDING/ACCEPTED` for status filtering
+- Transaction support via `getDb(trx)` pattern
+- `DEFAULT_PAGINATION`, `createPaginatedResult()` for pagination
 
 Type check: PASSED
 
