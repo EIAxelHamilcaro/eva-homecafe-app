@@ -332,7 +332,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
       "Define REACTION_TYPES constant",
       "Define API response types"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "expo",
@@ -342,7 +342,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
       "Create SSE client with reconnection logic",
       "Handle events: message:new, reaction:added, etc."
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "expo",
@@ -352,7 +352,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
       "useConversations(): list",
       "useCreateConversation(): mutation"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "expo",

@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 28
-**Current Task:** Task 29 (Expo - Create constants/chat.ts)
+**Tasks Completed:** 31
+**Current Task:** Task 32 (Expo - Create React Query hooks - messages)
 
 ---
 
@@ -580,3 +580,53 @@
 - Created `adapters/queries/search-recipients.query.ts` with searchRecipients function
 - Created `adapters/controllers/chat/recipients.controller.ts` with searchRecipientsController
 - Created `app/api/v1/chat/recipients/route.ts` with GET handler
+
+### 2026-01-21 - Task 29: Create constants/chat.ts with types
+
+**Status:** PASSED
+
+**Implementation Summary:**
+- Created `apps/expo/constants/chat.ts` with all chat-related TypeScript types
+- **Constants:**
+  - `REACTION_EMOJIS` - array of allowed emoji reactions ["👍", "❤️", "😂", "😮", "😢", "🎉"]
+  - `ALLOWED_IMAGE_TYPES` - supported image MIME types
+  - `MAX_IMAGE_SIZE` - 50MB limit in bytes
+- **Core types:**
+  - `Dimensions`, `Attachment`, `Reaction`, `Participant`, `MessagePreview`
+  - `Conversation`, `Message`, `Pagination`
+- **API request/response types:**
+  - `GetConversationsResponse`, `CreateConversationInput`, `CreateConversationResponse`
+  - `GetMessagesResponse`, `SendMessageInput`, `SendMessageResponse`
+  - `AddReactionInput`, `AddReactionResponse`, `UploadMediaResponse`
+  - `Recipient`, `SearchRecipientsResponse`
+- **SSE event types:**
+  - `SSEEventType` union type for all event names
+  - Individual event interfaces: `SSEMessageNewEvent`, `SSEMessageUpdatedEvent`, `SSEMessageDeletedEvent`
+  - `SSEReactionAddedEvent`, `SSEReactionRemovedEvent`
+  - `SSEConversationReadEvent`, `SSEConversationCreatedEvent`
+  - `SSEEvent` discriminated union of all event types
+- Types use ISO date strings for serialized dates (JSON-compatible)
+- `pnpm type-check` and `pnpm check` both pass
+
+**Changes Made:**
+- Created `apps/expo/constants/chat.ts` with comprehensive chat type definitions
+
+### 2026-01-21 - Task 31: Create React Query hooks - conversations
+
+**Status:** PASSED
+
+**Implementation Summary:**
+- Created `apps/expo/lib/api/hooks/use-conversations.ts`
+  - `conversationKeys` - query key factory following existing patterns (all, list, detail)
+  - `useConversations(options?)` - query hook for fetching paginated conversations
+    - Accepts optional `page` and `limit` params (defaults: page=1, limit=20)
+    - Calls `GET /api/v1/chat/conversations` endpoint
+  - `useCreateConversation()` - mutation hook for creating/getting conversations
+    - Accepts `CreateConversationInput` with `recipientId`
+    - Calls `POST /api/v1/chat/conversations` endpoint
+    - Invalidates all conversation queries on success
+- Follows existing hook patterns from `use-user.ts` (query keys, queryClient usage, type imports)
+- `pnpm type-check` and `pnpm check` both pass
+
+**Changes Made:**
+- Created `apps/expo/lib/api/hooks/use-conversations.ts`
