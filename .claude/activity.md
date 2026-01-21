@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 60/70
-**Current Task:** Task 61 - Add Notifications Tab to Layout
+**Tasks Completed:** 61/70
+**Current Task:** Task 62 - Create Friends List Screen
 **Current Phase:** Phase 2 - Friends & Notifications
 
 ---
@@ -18,7 +18,7 @@
 | Infrastructure | 6 | 6 |
 | Adapter | 10 | 10 |
 | API | 3 | 3 |
-| Expo | 19 | 10 |
+| Expo | 19 | 11 |
 | Testing | 4 | 1 |
 | Validation | 3 | 2 |
 
@@ -978,6 +978,22 @@ Expo SSE Hook (`apps/expo/lib/sse/use-sse.ts`):
 - Already handles 'notification' event type
 - handleNotification() invalidates notificationKeys.all on event
 - Full event switch case for all event types
+
+Type check: PASSED
+
+**Task 61 Completed: Add Notifications Tab to Layout**
+
+Modified file:
+- `apps/expo/app/(protected)/(tabs)/_layout.tsx`
+
+Changes:
+- Added Bell icon import from lucide-react-native
+- Added useUnreadCount hook to fetch unread notification count
+- Created NotificationBadge component with pink badge for unread count
+- Added Notifications tab between Messages and Profile
+- Badge shows count (capped at 99+) when unread > 0
+
+Tab order: Accueil → Messages → Notifications → Profil
 
 Type check: PASSED
 

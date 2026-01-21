@@ -1,8 +1,36 @@
 import { Tabs } from "expo-router";
-import { Home, MessageCircle, User } from "lucide-react-native";
-import { Platform, View } from "react-native";
+import { Bell, Home, MessageCircle, User } from "lucide-react-native";
+import { Platform, Text, View } from "react-native";
+
+import { useUnreadCount } from "@/lib/api/hooks/use-notifications";
+
+function NotificationBadge({
+  count,
+  color,
+  focused,
+}: {
+  count: number;
+  color: string;
+  focused: boolean;
+}) {
+  return (
+    <View>
+      <Bell size={24} color={color} fill={focused ? color : "transparent"} />
+      {count > 0 && (
+        <View className="absolute -right-2 -top-1 min-w-[18px] items-center justify-center rounded-full bg-homecafe-pink px-1">
+          <Text className="text-xs font-semibold text-white">
+            {count > 99 ? "99+" : count}
+          </Text>
+        </View>
+      )}
+    </View>
+  );
+}
 
 export default function TabLayout() {
+  const { data: unreadData } = useUnreadCount();
+  const unreadCount = unreadData?.unreadCount ?? 0;
+
   return (
     <Tabs
       screenOptions={{
@@ -50,6 +78,19 @@ export default function TabLayout() {
                 fill={focused ? color : "transparent"}
               />
             </View>
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="notifications"
+        options={{
+          title: "Notifications",
+          tabBarIcon: ({ color, focused }) => (
+            <NotificationBadge
+              count={unreadCount}
+              color={color}
+              focused={focused}
+            />
           ),
         }}
       />
