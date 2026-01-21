@@ -45,5 +45,15 @@
   - Bound GetNotificationsUseCase and MarkNotificationReadUseCase
   - Both use cases depend only on INotificationRepository (already registered in friend.module.ts)
 
+#### Task 50: Create Notification Controller
+- **Status**: Completed
+- **Files Created**:
+  - `apps/nextjs/src/adapters/controllers/notification/notification.controller.ts`
+- **Details**:
+  - Implemented 3 handlers: getNotifications, markAsRead, getUnreadCount
+  - Used `getAuthenticatedUser()` helper pattern for authentication
+  - Proper Zod validation and error handling
+  - getUnreadCount reuses GetNotificationsUseCase with minimal pagination
+
 ### Validation
 - `pnpm type-check`: Passed
