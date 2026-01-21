@@ -1,0 +1,243 @@
+export const REACTION_EMOJIS = ["👍", "❤️", "😂", "😮", "😢", "🎉"] as const;
+export type ReactionEmoji = (typeof REACTION_EMOJIS)[number];
+
+export const ALLOWED_IMAGE_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/gif",
+  "image/webp",
+] as const;
+export type AllowedImageType = (typeof ALLOWED_IMAGE_TYPES)[number];
+
+export const MAX_IMAGE_SIZE = 50 * 1024 * 1024; // 50MB in bytes
+
+export interface Dimensions {
+  width: number;
+  height: number;
+}
+
+export interface Attachment {
+  id: string;
+  url: string;
+  mimeType: string;
+  size: number;
+  filename: string;
+  dimensions: Dimensions | null;
+}
+
+export interface Reaction {
+  userId: string;
+  emoji: ReactionEmoji;
+  createdAt: string;
+}
+
+export interface Participant {
+  userId: string;
+  joinedAt: string;
+  lastReadAt: string | null;
+}
+
+export interface MessagePreview {
+  messageId: string;
+  content: string;
+  senderId: string;
+  sentAt: string;
+  hasAttachments: boolean;
+}
+
+export interface Conversation {
+  id: string;
+  participants: Participant[];
+  createdBy: string;
+  lastMessage: MessagePreview | null;
+  unreadCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Message {
+  id: string;
+  conversationId: string;
+  senderId: string;
+  content: string | null;
+  attachments: Attachment[];
+  reactions: Reaction[];
+  createdAt: string;
+  updatedAt: string;
+  editedAt: string | null;
+  deletedAt: string | null;
+}
+
+export interface Pagination {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
+export interface GetConversationsResponse {
+  conversations: Conversation[];
+  pagination: Pagination;
+}
+
+export interface CreateConversationInput {
+  recipientId: string;
+}
+
+export interface CreateConversationResponse {
+  conversationId: string;
+  isNew: boolean;
+}
+
+export interface GetMessagesResponse {
+  messages: Message[];
+  pagination: Pagination;
+}
+
+export interface SendMessageInput {
+  content?: string;
+  attachments?: Attachment[];
+}
+
+export interface SendMessageResponse {
+  messageId: string;
+  conversationId: string;
+  senderId: string;
+  content: string | null;
+  attachments: Attachment[];
+  createdAt: string;
+}
+
+export interface AddReactionInput {
+  emoji: ReactionEmoji;
+}
+
+export interface AddReactionResponse {
+  messageId: string;
+  userId: string;
+  emoji: ReactionEmoji;
+  action: "added" | "removed";
+}
+
+export interface UploadMediaResponse {
+  id: string;
+  url: string;
+  mimeType: string;
+  size: number;
+  filename: string;
+  dimensions: Dimensions | null;
+}
+
+export interface Recipient {
+  id: string;
+  name: string;
+  email: string;
+  image: string | null;
+}
+
+export interface SearchRecipientsResponse {
+  recipients: Recipient[];
+}
+
+export type SSEEventType =
+  | "connected"
+  | "message_sent"
+  | "reaction_added"
+  | "reaction_removed"
+  | "conversation_read"
+  | "conversation_created"
+  | "notification"
+  | "ping";
+
+export interface SSEConnectedEvent {
+  type: "connected";
+  data: {
+    userId: string;
+    connectionCount: number;
+  };
+  timestamp: string;
+}
+
+export interface SSEMessageSentEvent {
+  type: "message_sent";
+  data: {
+    messageId: string;
+    conversationId: string;
+    senderId: string;
+    content: string | null;
+    hasAttachments: boolean;
+  };
+  timestamp: string;
+}
+
+export interface SSEReactionAddedEvent {
+  type: "reaction_added";
+  data: {
+    messageId: string;
+    conversationId: string;
+    userId: string;
+    emoji: string;
+  };
+  timestamp: string;
+}
+
+export interface SSEReactionRemovedEvent {
+  type: "reaction_removed";
+  data: {
+    messageId: string;
+    conversationId: string;
+    userId: string;
+    emoji: string;
+  };
+  timestamp: string;
+}
+
+export interface SSEConversationReadEvent {
+  type: "conversation_read";
+  data: {
+    conversationId: string;
+    userId: string;
+    readAt: string;
+  };
+  timestamp: string;
+}
+
+export interface SSEConversationCreatedEvent {
+  type: "conversation_created";
+  data: {
+    conversationId: string;
+    createdBy: string;
+    participantIds: string[];
+  };
+  timestamp: string;
+}
+
+export interface SSEPingEvent {
+  type: "ping";
+  data: null;
+  timestamp: string;
+}
+
+export interface SSENotificationEvent {
+  type: "notification";
+  data: {
+    notificationId: string;
+    userId: string;
+    notificationType: string;
+    title: string;
+    body: string;
+  };
+  timestamp: string;
+}
+
+export type SSEEvent =
+  | SSEConnectedEvent
+  | SSEMessageSentEvent
+  | SSEReactionAddedEvent
+  | SSEReactionRemovedEvent
+  | SSEConversationReadEvent
+  | SSEConversationCreatedEvent
+  | SSENotificationEvent
+  | SSEPingEvent;

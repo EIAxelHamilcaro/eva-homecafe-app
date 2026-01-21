@@ -48,3 +48,17 @@ export class TooManyAttachmentsError extends DomainError {
     super(`Maximum ${max} attachments allowed per message`);
   }
 }
+
+export class ContentTooLongError extends DomainError {
+  readonly code = "CONTENT_TOO_LONG";
+  constructor(maxLength: number) {
+    super(`Message content must be less than ${maxLength} characters`);
+  }
+}
+
+export class InvalidReactionEmojiError extends DomainError {
+  readonly code = "INVALID_REACTION_EMOJI";
+  constructor(emoji: string) {
+    super(`Invalid reaction emoji: ${emoji}`);
+  }
+}

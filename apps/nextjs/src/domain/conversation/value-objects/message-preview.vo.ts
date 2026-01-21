@@ -2,11 +2,11 @@ import { Result, ValueObject } from "@packages/ddd-kit";
 import { z } from "zod";
 
 const messagePreviewSchema = z.object({
-  messageId: z.uuid("Invalid message ID format"),
+  messageId: z.string().min(1, "Message ID is required"),
   content: z
     .string()
     .max(100, "Preview content must be less than 100 characters"),
-  senderId: z.uuid("Invalid sender ID format"),
+  senderId: z.string().min(1, "Sender ID is required"),
   sentAt: z.date(),
   hasAttachments: z.boolean(),
 });

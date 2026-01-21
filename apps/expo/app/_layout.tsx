@@ -10,6 +10,7 @@ export default function RootLayout() {
         <Stack.Screen name="index" />
         <Stack.Screen name="(auth)" />
         <Stack.Screen name="(protected)" />
+        <Stack.Screen name="invite/[token]" />
       </Stack>
       <StatusBar style="dark" />
     </Providers>

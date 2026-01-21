@@ -91,8 +91,82 @@ class ApiClient {
     });
   }
 
+  patch<T>(endpoint: string, body?: unknown): Promise<T> {
+    return this.fetch<T>(endpoint, {
+      method: "PATCH",
+      body: body ? JSON.stringify(body) : undefined,
+    });
+  }
+
   delete<T>(endpoint: string): Promise<T> {
     return this.fetch<T>(endpoint, { method: "DELETE" });
+  }
+
+  async uploadFile<T>(
+    endpoint: string,
+    formData: FormData,
+    onProgress?: (progress: number) => void,
+  ): Promise<T> {
+    const token = await this.getToken();
+    const headers: Record<string, string> = {};
+
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+
+      if (onProgress) {
+        xhr.upload.addEventListener("progress", (event) => {
+          if (event.lengthComputable) {
+            const progress = Math.round((event.loaded / event.total) * 100);
+            onProgress(progress);
+          }
+        });
+      }
+
+      xhr.addEventListener("load", () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          try {
+            const data = JSON.parse(xhr.responseText) as T;
+            resolve(data);
+          } catch {
+            reject(
+              new ApiError("Invalid JSON response", "PARSE_ERROR", xhr.status),
+            );
+          }
+        } else {
+          try {
+            const data = JSON.parse(xhr.responseText) as {
+              error?: string;
+              code?: string;
+            };
+            reject(
+              new ApiError(
+                data.error ?? "An error occurred",
+                data.code ?? "UNKNOWN_ERROR",
+                xhr.status,
+              ),
+            );
+          } catch {
+            reject(new ApiError("Upload failed", "UPLOAD_ERROR", xhr.status));
+          }
+        }
+      });
+
+      xhr.addEventListener("error", () => {
+        reject(new ApiError("Network error", "NETWORK_ERROR", 0));
+      });
+
+      xhr.open("POST", `${API_URL}${endpoint}`);
+
+      for (const [key, value] of Object.entries(headers)) {
+        xhr.setRequestHeader(key, value);
+      }
+
+      xhr.send(formData);
+    });
   }
 }
 
