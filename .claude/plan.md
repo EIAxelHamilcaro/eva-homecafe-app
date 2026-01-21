@@ -117,7 +117,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Update only provided fields (displayName, bio, avatarUrl)",
       "Dispatch ProfileUpdatedEvent"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 9,

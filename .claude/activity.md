@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 7/70
-**Current Task:** Task 8 - Create UpdateProfile Use Case
+**Tasks Completed:** 8/70
+**Current Task:** Task 9 - Create Drizzle Schema for Profile
 **Current Phase:** Phase 1 - Profile Feature
 
 ---
@@ -14,7 +14,7 @@
 | Category | Total | Completed |
 |----------|-------|-----------|
 | Domain | 7 | 3 |
-| Application | 18 | 4 |
+| Application | 18 | 5 |
 | Infrastructure | 6 | 0 |
 | Adapter | 10 | 0 |
 | API | 3 | 0 |
@@ -100,5 +100,20 @@ Use case responsibilities:
 - Find profile by userId
 - Return profile DTO or null (nullable output)
 - Uses match pattern for Option handling
+
+Type check: PASSED
+
+**Task 8 Completed: UpdateProfile Use Case**
+
+Files created:
+- `src/application/use-cases/profile/update-profile.use-case.ts`
+
+Use case responsibilities:
+- Find profile by userId
+- Verify profile exists (fail if not found)
+- Update only provided fields (displayName, bio, avatarUrl)
+- Handle nullable bio (can be set to null to clear)
+- Persist updated profile
+- Return updated profile DTO
 
 Type check: PASSED
