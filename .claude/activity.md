@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 3
-**Current Task:** None (task 3 completed)
+**Tasks Completed:** 4
+**Current Task:** None (task 4 completed)
 
 ---
 
@@ -59,3 +59,25 @@
 - Added `dimensions` field to `MediaAttachment` VO with Zod validation for image width/height
 - Added `IDimensions` interface export
 - Added `get dimensions(): Option<IDimensions>` getter
+
+### 2026-01-21 - Task 4: Review WatchedLists
+
+**Status:** PASSED
+
+**Review Summary:**
+- **AttachmentsList** ✅ - Added max 10 items validation
+  - Override `add()` to check count before adding
+  - Changed `static create()` to return `Result<AttachmentsList>` with validation
+  - Inherits `getNewItems()`, `getRemovedItems()` from WatchedList base class
+  - `compareItems()` compares by attachment `id`
+- **ReactionsList** ✅ - Already properly implemented
+  - `compareItems()` ensures unique per user+emoji combination
+  - Helper methods: `findByUserAndEmoji`, `hasUserReactedWith`, `getReactionsByEmoji`, `getReactionsByUser`
+  - Inherits `add()`, `remove()`, `getNewItems()`, `getRemovedItems()` from WatchedList base class
+- Updated `Message.create()` to handle `Result<AttachmentsList>` return type
+- Removed redundant `TooManyAttachmentsError` check from `Message.create()` (now handled by AttachmentsList)
+- `pnpm type-check` and `pnpm check` both pass
+
+**Changes Made:**
+- `attachments.list.ts`: Added `MAX_ATTACHMENTS = 10` constant, changed `create()` to return `Result`, added `add()` override with max check
+- `message.entity.ts`: Updated to handle `Result<AttachmentsList>`, removed unused `TooManyAttachmentsError` import

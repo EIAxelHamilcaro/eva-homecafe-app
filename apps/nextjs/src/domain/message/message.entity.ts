@@ -3,7 +3,6 @@ import {
   DuplicateReactionError,
   EmptyMessageError,
   ReactionNotFoundError,
-  TooManyAttachmentsError,
 } from "./errors/message.errors";
 import { MessageReactionAddedEvent } from "./events/message-reaction-added.event";
 import { MessageReactionRemovedEvent } from "./events/message-reaction-removed.event";
@@ -15,8 +14,6 @@ import { Reaction } from "./value-objects/reaction.vo";
 import type { ReactionEmoji } from "./value-objects/reaction-type.vo";
 import { AttachmentsList } from "./watched-lists/attachments.list";
 import { ReactionsList } from "./watched-lists/reactions.list";
-
-const MAX_ATTACHMENTS = 10;
 
 export interface IMessageProps {
   conversationId: string;
@@ -50,14 +47,14 @@ export class Message extends Aggregate<IMessageProps> {
     props: ICreateMessageProps,
     id?: UUID<string | number>,
   ): Result<Message> {
-    const attachmentsList = AttachmentsList.create(props.attachments ?? []);
+    const attachmentsResult = AttachmentsList.create(props.attachments ?? []);
+    if (attachmentsResult.isFailure) {
+      return Result.fail(attachmentsResult.getError());
+    }
+    const attachmentsList = attachmentsResult.getValue();
 
     if (props.content.isNone() && attachmentsList.count() === 0) {
       return Result.fail(new EmptyMessageError().message);
-    }
-
-    if (attachmentsList.count() > MAX_ATTACHMENTS) {
-      return Result.fail(new TooManyAttachmentsError(MAX_ATTACHMENTS).message);
     }
 
     const newId = id ?? new UUID<string>();
