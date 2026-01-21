@@ -730,7 +730,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Show friend avatar, name, email",
       "Add button to navigate to add friend"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 63,

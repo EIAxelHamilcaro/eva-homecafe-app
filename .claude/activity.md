@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 61/70
-**Current Task:** Task 62 - Create Friends List Screen
+**Tasks Completed:** 62/70
+**Current Task:** Task 63 - Create Add Friend Screen
 **Current Phase:** Phase 2 - Friends & Notifications
 
 ---
@@ -18,7 +18,7 @@
 | Infrastructure | 6 | 6 |
 | Adapter | 10 | 10 |
 | API | 3 | 3 |
-| Expo | 19 | 11 |
+| Expo | 19 | 12 |
 | Testing | 4 | 1 |
 | Validation | 3 | 2 |
 
@@ -1020,5 +1020,24 @@ Features implemented:
 - SSE real-time updates via useSSE() hook
 - Loading skeleton with shimmer animation
 - Empty state for no notifications
+
+Type check: PASSED
+
+**Task 62 Completed: Create Friends List Screen**
+
+Files modified:
+- `apps/expo/app/(protected)/friends/index.tsx` - Full implementation
+
+Features implemented:
+- FlatList for friend display with pull-to-refresh
+- FriendItem component showing avatar (or initial), displayName/name/email, and email
+- EmptyState with CTA button to add friends
+- FriendListSkeleton for loading state
+- Plus (+) button in header to navigate to add friend screen
+- Uses useFriends() hook for data fetching
+- Avatar URL handling (relative/absolute URLs)
+
+Also created placeholder:
+- `apps/expo/app/(protected)/friends/add.tsx` - Placeholder for Task 63
 
 Type check: PASSED
