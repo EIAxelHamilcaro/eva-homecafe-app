@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 32/70
-**Current Task:** Task 33 - Create SendFriendRequest Use Case
+**Tasks Completed:** 33/70
+**Current Task:** Task 34 - Create RespondFriendRequest Use Case
 **Current Phase:** Phase 2 - Friends & Notifications
 
 ---
@@ -14,7 +14,7 @@
 | Category | Total | Completed |
 |----------|-------|-----------|
 | Domain | 7 | 7 |
-| Application | 18 | 10 |
+| Application | 18 | 11 |
 | Infrastructure | 6 | 3 |
 | Adapter | 10 | 3 |
 | API | 3 | 1 |
@@ -492,6 +492,27 @@ Files created:
 - `src/application/dto/notification/notification.dto.ts` - Shared schemas: notificationDtoSchema, notificationTypeSchema
 - `src/application/dto/notification/get-notifications.dto.ts` - Input: userId, unreadOnly, pagination, Output: notifications array, unreadCount, pagination
 - `src/application/dto/notification/mark-notification-read.dto.ts` - Input: notificationId, userId, Output: success, message
+
+Type check: PASSED
+
+**Task 33 Completed: SendFriendRequest Use Case**
+
+Files created:
+- `src/application/use-cases/friend/send-friend-request.use-case.ts`
+
+Use case responsibilities:
+- Inject IUserRepository, IFriendRequestRepository, INotificationRepository, IEmailProvider, appUrl
+- Look up receiver by email in user repository
+- If user exists:
+  - Validate sender is not the receiver (cannot friend yourself)
+  - Check no existing friend request between users
+  - Create FriendRequest aggregate (pending status)
+  - Create Notification for receiver (friend_request type)
+  - Return status: "request_sent" or "already_friends"
+- If user doesn't exist:
+  - Send invitation email via IEmailProvider with signup link
+  - Return status: "invitation_sent"
+- Uses match pattern for Option handling
 
 Type check: PASSED
 

@@ -400,7 +400,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Return Result with 'request_sent' or 'invitation_sent' status",
       "Dispatch domain events"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 34,
