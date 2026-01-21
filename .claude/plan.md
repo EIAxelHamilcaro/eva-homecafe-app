@@ -139,7 +139,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
       "Output: messages with reactions, attachments",
       "Verify user is participant"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "application",

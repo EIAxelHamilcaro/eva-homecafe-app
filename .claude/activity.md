@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 10
-**Current Task:** None (task 10 completed)
+**Tasks Completed:** 11
+**Current Task:** None (task 11 completed)
 
 ---
 
@@ -212,3 +212,26 @@
 **Changes Made:**
 - Created `dto/chat/create-conversation.dto.ts` with input/output schemas and types
 - Created `use-cases/chat/create-conversation.use-case.ts` with CreateConversationUseCase class
+
+### 2026-01-21 - Task 11: Create GetMessages use case
+
+**Status:** PASSED
+
+**Implementation Summary:**
+- Created `apps/nextjs/src/application/dto/chat/get-messages.dto.ts`
+  - `IGetMessagesInputDto` - conversationId, userId, pagination (optional)
+  - `IGetMessagesOutputDto` - messages array with pagination metadata
+  - `IMessageDto` - id, conversationId, senderId, content, attachments, reactions, timestamps
+  - `IAttachmentDto` - id, url, mimeType, size, filename, dimensions (nullable)
+  - `IReactionDto` - userId, emoji, createdAt
+- Created `apps/nextjs/src/application/use-cases/chat/get-messages.use-case.ts`
+  - Implements `UseCase<IGetMessagesInputDto, IGetMessagesOutputDto>`
+  - **User access validation:** Verifies user is a participant in the conversation before returning messages
+  - **Conversation lookup:** Uses `IConversationRepository.findById()` to validate access
+  - **Message retrieval:** Uses `IMessageRepository.findByConversation()` with pagination
+  - **DTO mapping:** Properly maps Message entities to DTOs with attachments, reactions, and Option handling
+- `pnpm type-check` and `pnpm check` both pass
+
+**Changes Made:**
+- Created `dto/chat/get-messages.dto.ts` with input/output schemas and types
+- Created `use-cases/chat/get-messages.use-case.ts` with GetMessagesUseCase class
