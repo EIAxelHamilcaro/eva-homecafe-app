@@ -570,7 +570,7 @@
       "Create src/adapters/controllers/friend/friend.controller.ts",
       "Implement sendRequest, respondRequest, getFriends, getPendingRequests, getInviteLink, acceptInvite handlers"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 50,
@@ -603,7 +603,7 @@
       "Bind IEmailProvider for SendFriendRequest",
       "Register in common/di/container.ts"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 53,
