@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 39/70
-**Current Task:** Task 40 - Create MarkNotificationRead Use Case
+**Tasks Completed:** 40/70
+**Current Task:** Task 41 - Create Drizzle Schema for Friends
 **Current Phase:** Phase 2 - Friends & Notifications
 
 ---
@@ -14,7 +14,7 @@
 | Category | Total | Completed |
 |----------|-------|-----------|
 | Domain | 7 | 7 |
-| Application | 18 | 17 |
+| Application | 18 | 18 |
 | Infrastructure | 6 | 3 |
 | Adapter | 10 | 3 |
 | API | 3 | 1 |
@@ -631,4 +631,25 @@ Key patterns:
 - Notification type cast to enum string union for DTO
 
 Type check: PASSED
+
+**Task 40 Completed: MarkNotificationRead Use Case**
+
+Files created:
+- `src/application/use-cases/notification/mark-notification-read.use-case.ts`
+
+Use case responsibilities:
+- Inject INotificationRepository
+- Find notification by ID (NotificationId)
+- Verify current user owns the notification (userId check)
+- Handle idempotent read (return success if already read)
+- Call markAsRead() on aggregate and persist
+
+Key patterns:
+- Uses NotificationId.create(new UUID(stringId)) for domain ID conversion
+- Uses notification.isRead getter to check current state
+- Returns user-friendly messages for success cases
+
+Type check: PASSED
+
+**APPLICATION LAYER COMPLETE** - All 18 application tasks completed!
 
