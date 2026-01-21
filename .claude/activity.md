@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 34
-**Current Task:** Task 35 (Screens - Create new message screen)
+**Tasks Completed:** 35
+**Current Task:** Task 36 (Screens - Create conversation screen - base)
 
 ---
 
@@ -751,3 +751,30 @@
 - Created `apps/expo/app/(protected)/messages/new.tsx` (placeholder)
 - Created `apps/expo/app/(protected)/messages/[conversationId].tsx` (placeholder)
 - Updated `.expo/types/router.d.ts` via export command
+
+### 2026-01-21 - Task 35: Create new message screen
+
+**Status:** PASSED
+
+**Implementation Summary:**
+- Updated `apps/expo/app/(protected)/messages/new.tsx` from placeholder to full implementation
+  - Header with back button (ChevronLeft), "Nouveau message" title, and close button (X)
+  - Search input with placeholder "Tape le nom de la personne ici..."
+  - "Suggestions" label section
+  - FlatList of recipients with search functionality
+  - Uses `useSearchRecipients` hook with minimum 2 character query
+  - Uses `useCreateConversation` mutation to create/get conversation on recipient select
+  - Navigation: `router.replace()` to conversation screen on select
+  - Loading states: search loading indicator, conversation creation overlay
+  - Empty states: "Tapez au moins 2 caractères" and "Aucun résultat trouvé"
+  - `keyboardShouldPersistTaps="handled"` for proper tap handling
+- Created `apps/expo/app/(protected)/messages/_components/recipient-item.tsx`
+  - Displays recipient row with avatar, name, and message icon (PenSquare)
+  - Avatar with color generated from userId hash (same algorithm as conversation-item)
+  - Initials from recipient name (max 2 characters)
+  - Pressable with active state styling
+- `pnpm type-check` and `pnpm check` both pass
+
+**Changes Made:**
+- Updated `apps/expo/app/(protected)/messages/new.tsx` with full screen implementation
+- Created `apps/expo/app/(protected)/messages/_components/recipient-item.tsx`

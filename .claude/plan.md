@@ -397,7 +397,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
       "RecipientItem component",
       "Navigation to conversation on select"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "screens",
