@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 43/70
-**Current Task:** Task 44 - Create FriendRequest Mapper
+**Tasks Completed:** 44/70
+**Current Task:** Task 45 - Create Notification Mapper
 **Current Phase:** Phase 2 - Friends & Notifications
 
 ---
@@ -16,7 +16,7 @@
 | Domain | 7 | 7 |
 | Application | 18 | 18 |
 | Infrastructure | 6 | 6 |
-| Adapter | 10 | 3 |
+| Adapter | 10 | 4 |
 | API | 3 | 1 |
 | Expo | 19 | 5 |
 | Testing | 4 | 1 |
@@ -733,4 +733,23 @@ Indexes created:
 - `notification_user_id_read_at_idx`
 
 **INFRASTRUCTURE LAYER COMPLETE** - All 6 infrastructure tasks completed!
+
+**Task 44 Completed: Create FriendRequest Mapper**
+
+Files created:
+- `src/adapters/mappers/friend-request.mapper.ts`
+
+Mapper functions:
+- `friendRequestToDomain(record)` - Converts DB record to FriendRequest aggregate
+  - Reconstitutes FriendRequestStatus VO from string
+  - Uses Option.fromNullable() for respondedAt (nullable timestamp)
+  - Creates FriendRequestId from UUID
+- `friendRequestToPersistence(friendRequest)` - Converts FriendRequest aggregate to DB record
+  - Extracts status value from VO
+  - Handles Option<Date> for respondedAt (converts to Date | null)
+  - Converts ID to string
+
+Type inference: Uses `typeof friendRequestTable.$inferSelect` for record type
+
+Type check: PASSED
 

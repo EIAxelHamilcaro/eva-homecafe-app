@@ -541,7 +541,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Create src/adapters/mappers/friend-request.mapper.ts",
       "Implement toDomain() and toPersistence() methods"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 45,
