@@ -1391,3 +1391,32 @@ Reviewed plan.md for first task with `passes: false`. Found 3 remaining tasks:
 3. Create 2 test users, test all chat functionality
 4. Mark tasks 45, 47, 48 as `passes: true` when verified
 
+### 2026-01-21 - Agent Session (Repeat Check)
+
+**Status:** BLOCKED
+
+**Summary:**
+Reviewed plan.md again. The first task with `passes: false` is Task 45 (Test on iOS Simulator at line 511-512).
+
+**All 3 remaining tasks require manual human testing:**
+1. **Task 45** - Test on iOS Simulator (conversations, new message, conversation screens)
+2. **Task 47** - Test on Android Emulator (same tests + keyboard handling + image picker)
+3. **Task 48** - Test SSE realtime (2 sessions, message delivery, reactions, reconnection)
+
+**Why these cannot be automated:**
+- Require physical simulators/emulators running on macOS/Windows
+- Require visual inspection of UI elements, animations, layout
+- Require touch/click interactions with native mobile components
+- Require network testing between multiple authenticated sessions
+- Require human judgment to verify "correct" behavior
+
+**Code Quality Verification:**
+All automated checks pass - the chat feature implementation is complete.
+
+**Next Steps for Human Tester:**
+1. Start backend: `cd apps/nextjs && pnpm dev`
+2. Start iOS: `cd apps/expo && pnpm ios` (requires macOS + Xcode)
+3. Start Android: `cd apps/expo && pnpm android` (requires Android Studio)
+4. Test all screens manually per task checklists
+5. Update plan.md: change `passes: false` to `passes: true` for each verified task
+
