@@ -30,7 +30,11 @@ export function useConversations(options?: UseConversationsOptions) {
   });
 }
 
-export function useCreateConversation() {
+export interface UseCreateConversationOptions {
+  onError?: () => void;
+}
+
+export function useCreateConversation(options?: UseCreateConversationOptions) {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -38,6 +42,9 @@ export function useCreateConversation() {
       api.post<CreateConversationResponse>("/api/v1/chat/conversations", input),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: conversationKeys.all });
+    },
+    onError: () => {
+      options?.onError?.();
     },
   });
 }

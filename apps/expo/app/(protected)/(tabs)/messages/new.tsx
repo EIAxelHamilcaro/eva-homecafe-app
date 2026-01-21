@@ -14,6 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import type { Recipient } from "@/constants/chat";
 import { useCreateConversation } from "@/lib/api/hooks/use-conversations";
 import { useSearchRecipients } from "@/lib/api/hooks/use-recipients";
+import { useToast } from "@/lib/toast/toast-context";
 
 import {
   NoSearchResultsEmpty,
@@ -24,8 +25,13 @@ import { RecipientListSkeleton } from "./_components/skeleton";
 
 export default function NewMessageScreen() {
   const router = useRouter();
+  const { showToast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
-  const createConversation = useCreateConversation();
+  const createConversation = useCreateConversation({
+    onError: () => {
+      showToast("Impossible de créer la conversation", "error");
+    },
+  });
 
   const { data, isLoading } = useSearchRecipients({
     query: searchQuery,

@@ -69,11 +69,13 @@ function getMimeTypeFromExtension(extension: string): string {
 export interface UseMultipleMediaUploadOptions {
   onProgress?: (progress: number) => void;
   onFileProgress?: (index: number, progress: number) => void;
+  onError?: () => void;
 }
 
 export function useMultipleMediaUpload(
   options?: UseMultipleMediaUploadOptions,
 ) {
+  const { onError } = options ?? {};
   const [progress, setProgress] = useState(0);
   const [fileProgresses, setFileProgresses] = useState<number[]>([]);
 
@@ -129,6 +131,9 @@ export function useMultipleMediaUpload(
       options?.onProgress?.(100);
 
       return results;
+    },
+    onError: () => {
+      onError?.();
     },
     onSettled: () => {
       setProgress(0);

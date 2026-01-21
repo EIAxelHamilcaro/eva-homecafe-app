@@ -17,6 +17,7 @@ import { useMultipleMediaUpload } from "@/lib/api/hooks/use-media-upload";
 import { useMessages, useSendMessage } from "@/lib/api/hooks/use-messages";
 import { useToggleReaction } from "@/lib/api/hooks/use-reactions";
 import { useSSE } from "@/lib/sse/use-sse";
+import { useToast } from "@/lib/toast/toast-context";
 import { useAuth } from "@/src/providers/auth-provider";
 
 import { DateSeparator } from "./_components/date-separator";
@@ -75,6 +76,7 @@ export default function ConversationScreen() {
   const { conversationId } = useLocalSearchParams<{ conversationId: string }>();
   const router = useRouter();
   const { user } = useAuth();
+  const { showToast } = useToast();
 
   const [selectedMessageId, setSelectedMessageId] = useState<string | null>(
     null,
@@ -101,14 +103,24 @@ export default function ConversationScreen() {
   const sendMessage = useSendMessage({
     conversationId: conversationId ?? "",
     senderId: user?.id ?? "",
+    onError: () => {
+      showToast("Impossible d'envoyer le message", "error");
+    },
   });
 
-  const uploadMedia = useMultipleMediaUpload();
+  const uploadMedia = useMultipleMediaUpload({
+    onError: () => {
+      showToast("Échec de l'envoi des images", "error");
+    },
+  });
 
   const toggleReaction = useToggleReaction({
     conversationId: conversationId ?? "",
     messageId: selectedMessageId ?? "",
     userId: user?.id ?? "",
+    onError: () => {
+      showToast("Impossible d'ajouter la réaction", "error");
+    },
   });
 
   useSSE({

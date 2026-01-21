@@ -478,7 +478,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
       "Toast notifications for errors",
       "Offline handling"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "polish",

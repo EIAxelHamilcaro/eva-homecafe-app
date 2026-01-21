@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 41
-**Current Task:** Task 42 (Polish - Add error handling and retry)
+**Tasks Completed:** 42
+**Current Task:** Task 43 (Polish - Timestamp formatting and preview)
 
 ---
 
@@ -1034,4 +1034,75 @@
 - Moved `apps/expo/app/(protected)/messages/` to `apps/expo/app/(protected)/(tabs)/messages/`
 - Updated `apps/expo/app/(protected)/_layout.tsx` to use Slot
 - Removed old `apps/expo/app/(protected)/index.tsx` and `apps/expo/app/(protected)/messages/` directory
+
+### 2026-01-21 - Task 41: Add loading and empty states
+
+**Status:** PASSED
+
+**Implementation Summary:**
+- Created comprehensive skeleton loaders with shimmer animation effect
+- Created empty state components for all chat screens
+- Created ErrorBoundary class component and ErrorState functional component
+- Integrated all loading and empty states into screens
+
+**Changes Made:**
+- Created `apps/expo/app/(protected)/(tabs)/messages/_components/skeleton.tsx`
+  - ShimmerEffect with animated opacity (0.3-0.7)
+  - ConversationSkeleton and ConversationListSkeleton
+  - MessageSkeleton (sent/received variants) and MessageListSkeleton
+  - RecipientSkeleton and RecipientListSkeleton
+- Created `apps/expo/app/(protected)/(tabs)/messages/_components/empty-state.tsx`
+  - NoConversationsEmpty with MessageSquare icon
+  - NoMessagesEmpty with Send icon
+  - SearchPromptEmpty and NoSearchResultsEmpty with Search/UserX icons
+- Created `apps/expo/app/(protected)/(tabs)/messages/_components/error-boundary.tsx`
+  - ErrorBoundary class component with getDerivedStateFromError
+  - ErrorState functional component with retry button
+  - AlertTriangle icon and French error messages
+- Updated index.tsx, new.tsx, [conversationId].tsx with:
+  - Loading states with skeleton components
+  - Error states with ErrorState component
+  - ErrorBoundary wrappers
+  - Empty states with corresponding components
+
+### 2026-01-21 - Task 42: Add error handling and retry
+
+**Status:** PASSED
+
+**Implementation Summary:**
+- Created global toast notification system for error feedback
+- Created network/offline detection with banner UI
+- Added onError callbacks to all mutation hooks
+- Integrated toast notifications into chat screens
+
+**Changes Made:**
+- Created `apps/expo/lib/toast/toast-context.tsx`
+  - ToastProvider with state management
+  - ToastItem with fade/slide animations
+  - useToast hook returning showToast/hideToast
+  - Toast types: success, error, info, warning with color coding
+  - Auto-dismiss with configurable duration (default 3s)
+- Created `apps/expo/lib/network/network-context.tsx`
+  - NetworkProvider with connection checking
+  - Platform-specific health check URLs (Apple/Google)
+  - Promise.race timeout pattern for React Native compatibility
+  - Auto-check on app state change (returning to foreground)
+  - useNetwork hook returning isOnline, isChecking, checkConnection
+- Created `apps/expo/lib/network/offline-banner.tsx`
+  - OfflineBanner with slide animation
+  - Gray banner with WifiOff icon
+  - French text "Pas de connexion internet"
+  - Tap to retry functionality
+- Updated `apps/expo/src/providers.tsx`
+  - Added NetworkProvider and ToastProvider to provider chain
+  - Added OfflineBanner component
+- Updated hooks with onError callback support:
+  - `use-messages.ts` - UseSendMessageOptions.onError
+  - `use-reactions.ts` - UseToggleReactionOptions.onError
+  - `use-media-upload.ts` - UseMultipleMediaUploadOptions.onError
+  - `use-conversations.ts` - UseCreateConversationOptions.onError
+- Updated screens with toast error handling:
+  - `[conversationId].tsx` - sendMessage, uploadMedia, toggleReaction errors
+  - `new.tsx` - createConversation errors
+- `pnpm type-check` and `pnpm check` both pass
 

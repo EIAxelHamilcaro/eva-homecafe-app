@@ -51,10 +51,11 @@ export function useMessages(
 export interface UseSendMessageOptions {
   conversationId: string;
   senderId: string;
+  onError?: () => void;
 }
 
 export function useSendMessage(options: UseSendMessageOptions) {
-  const { conversationId, senderId } = options;
+  const { conversationId, senderId, onError } = options;
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -110,6 +111,7 @@ export function useSendMessage(options: UseSendMessageOptions) {
           context.previousMessages,
         );
       }
+      onError?.();
     },
     onSettled: () => {
       queryClient.invalidateQueries({

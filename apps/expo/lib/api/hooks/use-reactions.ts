@@ -17,10 +17,11 @@ export interface UseToggleReactionOptions {
   conversationId: string;
   messageId: string;
   userId: string;
+  onError?: () => void;
 }
 
 export function useToggleReaction(options: UseToggleReactionOptions) {
-  const { conversationId, messageId, userId } = options;
+  const { conversationId, messageId, userId, onError } = options;
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -89,6 +90,7 @@ export function useToggleReaction(options: UseToggleReactionOptions) {
           context.previousMessages,
         );
       }
+      onError?.();
     },
     onSettled: () => {
       queryClient.invalidateQueries({
