@@ -192,7 +192,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Create app/api/profile/route.ts (GET current user profile, POST create, PATCH update)",
       "Create app/api/profile/[userId]/route.ts (GET profile by userId - for viewing other profiles)"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 16,

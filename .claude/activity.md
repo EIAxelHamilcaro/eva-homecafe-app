@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 14/70
-**Current Task:** Task 15 - Create Profile API Routes
+**Tasks Completed:** 15/70
+**Current Task:** Task 16 - Create Expo Profile Types
 **Current Phase:** Phase 1 - Profile Feature
 
 ---
@@ -17,7 +17,7 @@
 | Application | 18 | 5 |
 | Infrastructure | 6 | 3 |
 | Adapter | 10 | 3 |
-| API | 3 | 0 |
+| API | 3 | 1 |
 | Expo | 19 | 0 |
 | Testing | 4 | 0 |
 | Validation | 3 | 0 |
@@ -209,5 +209,19 @@ DI bindings:
 - `CreateProfileUseCase` → `CreateProfileUseCase` (depends on IProfileRepository)
 - `GetProfileUseCase` → `GetProfileUseCase` (depends on IProfileRepository)
 - `UpdateProfileUseCase` → `UpdateProfileUseCase` (depends on IProfileRepository)
+
+Type check: PASSED
+
+**Task 15 Completed: Create Profile API Routes**
+
+Files created:
+- `app/api/v1/profile/route.ts` - GET (current user profile), POST (create), PATCH (update)
+- `app/api/v1/profile/[userId]/route.ts` - GET (profile by userId for viewing other profiles)
+
+Routes:
+- `GET /api/v1/profile` - Get current authenticated user's profile
+- `POST /api/v1/profile` - Create profile for current user
+- `PATCH /api/v1/profile` - Update current user's profile
+- `GET /api/v1/profile/:userId` - Get profile by userId
 
 Type check: PASSED
