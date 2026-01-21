@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 18
-**Current Task:** None (task 18 completed)
+**Tasks Completed:** 19
+**Current Task:** None (task 19 completed)
 
 ---
 
@@ -382,3 +382,29 @@
 **Changes Made:**
 - Created `adapters/mappers/conversation.mapper.ts` with domain <-> DB mapping functions
 - Created `adapters/repositories/conversation.repository.ts` with DrizzleConversationRepository
+
+### 2026-01-21 - Task 19: Implement DrizzleMessageRepository
+
+**Status:** PASSED
+
+**Implementation Summary:**
+- Created `apps/nextjs/src/adapters/mappers/message.mapper.ts`
+  - `MessageWithRelations` type combining message, attachments, reactions records
+  - `messageToDomain()` - maps DB records to Message entity with attachments and reactions
+  - `messageToPersistence()` - maps Message entity to DB format using `.toNull()` for Option types
+  - `attachmentsToPersistence()` - maps AttachmentsList to DB format
+  - `reactionsToPersistence()` - maps ReactionsList to DB format
+- Created `apps/nextjs/src/adapters/repositories/message.repository.ts`
+  - `DrizzleMessageRepository` implements `IMessageRepository`
+  - `create()` - inserts message, attachments, and reactions
+  - `update()` - updates message content/timestamps and handles reaction WatchedList changes (getNewItems, getRemovedItems)
+  - `delete()` - deletes message by ID
+  - `findById()` - fetches message with attachments and reactions
+  - `findByConversation()` - paginated query with batch loading for attachments/reactions (avoids N+1)
+  - `findAll()`, `exists()`, `count()` - standard BaseRepository methods with soft-delete filter
+- Key pattern: Used `Option.toNull()` instead of `unwrapOr(null)` for nullable type conversion
+- `pnpm type-check` and `pnpm check` both pass
+
+**Changes Made:**
+- Created `adapters/mappers/message.mapper.ts` with domain <-> DB mapping functions
+- Created `adapters/repositories/message.repository.ts` with DrizzleMessageRepository

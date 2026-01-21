@@ -228,7 +228,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
       "Implement IMessageRepository",
       "Create MessageMapper with attachments and reactions"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "adapters",
