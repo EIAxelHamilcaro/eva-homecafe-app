@@ -574,7 +574,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Create src/adapters/repositories/notification.repository.ts",
       "Implement all port methods using Drizzle"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 49,

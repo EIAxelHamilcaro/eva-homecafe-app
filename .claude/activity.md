@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 47/70
-**Current Task:** Task 48 - Create Notification Repository
+**Tasks Completed:** 48/70
+**Current Task:** Task 49 - Create Friend Controller
 **Current Phase:** Phase 2 - Friends & Notifications
 
 ---
@@ -16,7 +16,7 @@
 | Domain | 7 | 7 |
 | Application | 18 | 18 |
 | Infrastructure | 6 | 6 |
-| Adapter | 10 | 7 |
+| Adapter | 10 | 8 |
 | API | 3 | 1 |
 | Expo | 19 | 5 |
 | Testing | 4 | 1 |
@@ -817,6 +817,34 @@ Key patterns used:
 - `eq()`, `lt()` operators from drizzle-orm
 - Simple InviteToken type (not a domain aggregate, just a data structure)
 - UUID generation for token IDs
+
+Type check: PASSED
+
+**Task 48 Completed: Create Notification Repository**
+
+Files created:
+- `src/adapters/repositories/notification.repository.ts`
+
+Repository methods implemented:
+- `create()` - Creates new notification in database (with transaction support)
+- `update()` - Updates notification (primarily readAt field)
+- `delete()` - Deletes notification by id
+- `findById()` - Finds notification by NotificationId (returns Option)
+- `findByUserId()` - Paginated notifications for a user, ordered by createdAt desc
+- `findUnreadByUserId()` - Paginated unread notifications (where readAt is null)
+- `markAsRead()` - Updates notification with current timestamp as readAt
+- `countUnread()` - Counts unread notifications for a user
+- `findAll()` - Paginated list of all notifications
+- `findMany()` - Filtered paginated list by userId
+- `findBy()` - Find single notification by props
+- `exists()` - Check if notification exists by id
+- `count()` - Count total notifications
+
+Key patterns used:
+- `and()`, `eq()`, `isNull()`, `desc()` operators from drizzle-orm
+- Transaction support via `getDb(trx)` pattern
+- `DEFAULT_PAGINATION`, `createPaginatedResult()` for pagination
+- Uses notification mapper for domain ↔ persistence conversion
 
 Type check: PASSED
 
