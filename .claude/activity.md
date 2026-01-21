@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 25/70
-**Current Task:** Task 26 - Create Notification Aggregate
+**Tasks Completed:** 27/70
+**Current Task:** Task 28 - Create Friend Repository Port
 **Current Phase:** Phase 2 - Friends & Notifications
 
 ---
@@ -13,7 +13,7 @@
 
 | Category | Total | Completed |
 |----------|-------|-----------|
-| Domain | 7 | 6 |
+| Domain | 7 | 7 |
 | Application | 18 | 5 |
 | Infrastructure | 6 | 3 |
 | Adapter | 10 | 3 |
@@ -418,4 +418,27 @@ FriendRequestStatus VO:
 - Convenience getters: isPending, isAccepted, isRejected
 
 Type check: PASSED
+
+**Tasks 26-27 Completed: Notification Domain Layer**
+
+Files created:
+- `src/domain/notification/notification-id.ts` - NotificationId UUID class
+- `src/domain/notification/notification.aggregate.ts` - Notification aggregate with userId, type, title, body, data, readAt, createdAt
+- `src/domain/notification/value-objects/notification-type.vo.ts` - NotificationType VO with enum (friend_request, friend_accepted, new_message)
+- `src/domain/notification/events/notification-created.event.ts` - NotificationCreatedEvent
+- `src/domain/notification/events/notification-read.event.ts` - NotificationReadEvent
+
+Notification aggregate methods:
+- `create()` - Creates new notification, emits NotificationCreatedEvent
+- `reconstitute()` - Rebuilds from DB
+- `markAsRead()` - Marks notification as read, emits NotificationReadEvent (idempotent - fails if already read)
+
+NotificationType VO:
+- Uses Zod enum validation
+- Factory methods: createFriendRequest(), createFriendAccepted(), createNewMessage()
+- Convenience getters: isFriendRequest, isFriendAccepted, isNewMessage
+
+Type check: PASSED
+
+**DOMAIN LAYER COMPLETE** - All 7 domain tasks completed!
 

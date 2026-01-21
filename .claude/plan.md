@@ -320,7 +320,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Implement static create() and reconstitute() methods",
       "Add markAsRead() method"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 27,
@@ -330,7 +330,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Create src/domain/notification/events/notification-created.event.ts",
       "Create src/domain/notification/events/notification-read.event.ts"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 28,
