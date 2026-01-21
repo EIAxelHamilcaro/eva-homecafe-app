@@ -488,7 +488,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
       "Date separators formatting",
       "Message preview: photo icon if image only"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "testing",

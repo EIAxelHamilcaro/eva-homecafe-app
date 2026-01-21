@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 42
-**Current Task:** Task 43 (Polish - Timestamp formatting and preview)
+**Tasks Completed:** 43
+**Current Task:** Task 44 (Testing - Run pnpm check:all on backend)
 
 ---
 
@@ -1105,4 +1105,26 @@
   - `[conversationId].tsx` - sendMessage, uploadMedia, toggleReaction errors
   - `new.tsx` - createConversation errors
 - `pnpm type-check` and `pnpm check` both pass
+
+### 2026-01-21 - Task 43: Timestamp formatting and preview
+
+**Status:** PASSED (already implemented)
+
+**Review Summary:**
+All timestamp formatting and preview functionality was already implemented in previous tasks:
+
+- **Relative timestamps (50 min, 2 days)**: `conversation-item.tsx:43-57`
+  - `formatTimestamp()` function returns "À l'instant", "X min", "Xh", "Hier", "X jours", or formatted date
+  - Used in conversation list to show last message time
+- **Date separators formatting**: `date-separator.tsx:7-54`
+  - `formatDateSeparator()` function returns "Aujourd'hui", "Hier", or "Lundi 15 janvier 2024"
+  - French day and month names arrays
+  - Used between messages from different days
+- **Message preview: photo icon if image only**: `conversation-item.tsx:81-86`
+  - Shows "📷 Photo" when `lastMessage.hasAttachments && !lastMessage.content`
+  - Falls back to message content or "Aucun message"
+- **Message time in bubbles**: `message-bubble.tsx:16-22`
+  - `formatMessageTime()` shows HH:MM in French locale
+
+No changes needed - all requirements were already covered.
 
