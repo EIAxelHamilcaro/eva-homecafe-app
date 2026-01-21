@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 25
-**Current Task:** Task 26 (Create /api/chat/upload route)
+**Tasks Completed:** 28
+**Current Task:** Task 29 (Expo - Create constants/chat.ts)
 
 ---
 
@@ -539,3 +539,44 @@
 
 **Changes Made:**
 - Created `app/api/v1/chat/messages/[messageId]/reactions/route.ts` with POST and DELETE handlers
+
+### 2026-01-21 - Task 26: Create /api/chat/upload route
+
+**Status:** PASSED
+
+**Implementation Summary:**
+- Added `uploadMediaController` to messages.controller.ts
+  - Handles multipart form upload
+  - Validates file presence, size (50MB max), and MIME type
+  - Converts File to Buffer and calls `UploadMediaUseCase`
+  - Returns attachment metadata (id, url, mimeType, size, filename, dimensions)
+- Created `apps/nextjs/app/api/v1/chat/upload/route.ts`
+  - `POST` - uploads image via `uploadMediaController`
+- `pnpm type-check` and `pnpm check` both pass
+
+**Changes Made:**
+- Updated `adapters/controllers/chat/messages.controller.ts` with uploadMediaController
+- Created `app/api/v1/chat/upload/route.ts` with POST handler
+
+### 2026-01-21 - Task 28: Create /api/chat/recipients route
+
+**Status:** PASSED
+
+**Implementation Summary:**
+- Created `apps/nextjs/src/adapters/queries/search-recipients.query.ts`
+  - Direct DB query (CQRS read pattern - no use case needed)
+  - Searches users by name or email using ilike
+  - Excludes current user from results
+  - Returns RecipientDto array (id, name, email, image)
+- Created `apps/nextjs/src/adapters/controllers/chat/recipients.controller.ts`
+  - `searchRecipientsController()` - GET handler with search and limit params
+  - Requires minimum 2 character search query
+  - Returns empty array for shorter queries
+- Created `apps/nextjs/app/api/v1/chat/recipients/route.ts`
+  - `GET` - searches users via `searchRecipientsController`
+- `pnpm type-check` and `pnpm check` both pass
+
+**Changes Made:**
+- Created `adapters/queries/search-recipients.query.ts` with searchRecipients function
+- Created `adapters/controllers/chat/recipients.controller.ts` with searchRecipientsController
+- Created `app/api/v1/chat/recipients/route.ts` with GET handler

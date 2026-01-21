@@ -8,6 +8,12 @@ import {
   type ISendMessageOutputDto,
   sendMessageInputDtoSchema,
 } from "@/application/dto/chat/send-message.dto";
+import {
+  ALLOWED_IMAGE_TYPES,
+  type AllowedImageType,
+  type IUploadMediaOutputDto,
+  MAX_IMAGE_SIZE,
+} from "@/application/dto/chat/upload-media.dto";
 import type { IGetSessionOutputDto } from "@/application/dto/get-session.dto";
 import { getInjection } from "@/common/di/container";
 
@@ -103,6 +109,53 @@ export async function sendMessageController(
       return NextResponse.json({ error }, { status: 403 });
     }
     return NextResponse.json({ error }, { status: 400 });
+  }
+
+  return NextResponse.json(result.getValue(), { status: 201 });
+}
+
+export async function uploadMediaController(
+  request: Request,
+): Promise<NextResponse<IUploadMediaOutputDto | { error: string }>> {
+  const session = await getAuthenticatedUser(request);
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const formData = await request.formData();
+  const file = formData.get("file");
+
+  if (!file || !(file instanceof File)) {
+    return NextResponse.json({ error: "No file provided" }, { status: 400 });
+  }
+
+  if (file.size > MAX_IMAGE_SIZE) {
+    return NextResponse.json(
+      { error: "File size exceeds 50MB limit" },
+      { status: 400 },
+    );
+  }
+
+  const mimeType = file.type;
+  if (!ALLOWED_IMAGE_TYPES.includes(mimeType as AllowedImageType)) {
+    return NextResponse.json(
+      { error: "Only image files are allowed (jpeg, png, gif, webp)" },
+      { status: 400 },
+    );
+  }
+
+  const buffer = Buffer.from(await file.arrayBuffer());
+
+  const useCase = getInjection("UploadMediaUseCase");
+  const result = await useCase.execute({
+    file: buffer,
+    filename: file.name,
+    mimeType: mimeType as AllowedImageType,
+    userId: session.user.id,
+  });
+
+  if (result.isFailure) {
+    return NextResponse.json({ error: result.getError() }, { status: 500 });
   }
 
   return NextResponse.json(result.getValue(), { status: 201 });

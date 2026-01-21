@@ -301,7 +301,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
       "POST: upload image file",
       "Return attachment metadata"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "api",
@@ -321,7 +321,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
       "GET: search users (for new conversation)",
       "Query param: search"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "expo",
