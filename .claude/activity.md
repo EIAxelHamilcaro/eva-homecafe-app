@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 2
-**Current Task:** None (task 2 completed)
+**Tasks Completed:** 3
+**Current Task:** None (task 3 completed)
 
 ---
 
@@ -42,3 +42,20 @@
 - `Option<T>` used correctly for nullable values (`content`, `editedAt`, `deletedAt`)
 - All imports already reference correct file (no `message.aggregate.ts` references found)
 - `pnpm type-check` and `pnpm check` both pass
+
+### 2026-01-21 - Task 3: Review Value Objects
+
+**Status:** PASSED
+
+**Review Summary:**
+- **MessageContent** ✅ - Uses Zod schema with `.min(1)` and `.max(4000)`, trim transform
+- **MediaAttachment** ✅ - Has id, url, mimeType, size (50MB max), filename. Added `dimensions?: IDimensions` with `Option<IDimensions>` getter for image width/height support
+- **Reaction** ✅ - Has `emoji` using `REACTION_EMOJIS` enum, `userId` as string, `createdAt` as Date
+- **Participant** ✅ - Has `userId` as string, `joinedAt` as Date, `lastReadAt` as `Option<Date>`
+- **Typed IDs note:** Cross-domain references use plain `string` intentionally for bounded context isolation (follows same pattern as Message entity from Task 2)
+- `pnpm type-check` and `pnpm check` both pass
+
+**Changes Made:**
+- Added `dimensions` field to `MediaAttachment` VO with Zod validation for image width/height
+- Added `IDimensions` interface export
+- Added `get dimensions(): Option<IDimensions>` getter

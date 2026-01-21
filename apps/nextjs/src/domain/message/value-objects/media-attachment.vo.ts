@@ -1,4 +1,4 @@
-import { Result, ValueObject } from "@packages/ddd-kit";
+import { Option, Result, ValueObject } from "@packages/ddd-kit";
 import { z } from "zod";
 
 export const MAX_ATTACHMENT_SIZE = 50 * 1024 * 1024; // 50MB in bytes
@@ -20,6 +20,16 @@ export const ALLOWED_MIME_TYPES = [
 
 export type AllowedMimeType = (typeof ALLOWED_MIME_TYPES)[number];
 
+const dimensionsSchema = z.object({
+  width: z.number().int().positive("Width must be a positive integer"),
+  height: z.number().int().positive("Height must be a positive integer"),
+});
+
+export interface IDimensions {
+  width: number;
+  height: number;
+}
+
 const mediaAttachmentSchema = z.object({
   id: z.string().uuid("Invalid attachment ID"),
   url: z.string().url("Invalid URL format"),
@@ -34,6 +44,7 @@ const mediaAttachmentSchema = z.object({
     .string()
     .min(1, "Filename is required")
     .max(255, "Filename must be less than 255 characters"),
+  dimensions: dimensionsSchema.optional(),
 });
 
 export interface IMediaAttachmentProps {
@@ -42,6 +53,7 @@ export interface IMediaAttachmentProps {
   mimeType: AllowedMimeType;
   size: number;
   filename: string;
+  dimensions?: IDimensions;
 }
 
 export class MediaAttachment extends ValueObject<IMediaAttachmentProps> {
@@ -63,6 +75,10 @@ export class MediaAttachment extends ValueObject<IMediaAttachmentProps> {
 
   get filename(): string {
     return this._value.filename;
+  }
+
+  get dimensions(): Option<IDimensions> {
+    return Option.fromNullable(this._value.dimensions);
   }
 
   get isImage(): boolean {

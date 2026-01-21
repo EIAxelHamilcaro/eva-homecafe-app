@@ -49,7 +49,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
       "Ensure all references use typed IDs (UserId, ConversationId, MessageId)",
       "Fix if necessary"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "domain",
