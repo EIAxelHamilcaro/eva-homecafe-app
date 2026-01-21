@@ -471,7 +471,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Create notifications for both users",
       "Mark token as used"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 39,

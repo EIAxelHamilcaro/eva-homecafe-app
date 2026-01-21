@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 37/70
-**Current Task:** Task 38 - Create AcceptInviteLink Use Case
+**Tasks Completed:** 38/70
+**Current Task:** Task 39 - Create GetNotifications Use Case
 **Current Phase:** Phase 2 - Friends & Notifications
 
 ---
@@ -14,7 +14,7 @@
 | Category | Total | Completed |
 |----------|-------|-----------|
 | Domain | 7 | 7 |
-| Application | 18 | 15 |
+| Application | 18 | 16 |
 | Infrastructure | 6 | 3 |
 | Adapter | 10 | 3 |
 | API | 3 | 1 |
@@ -586,6 +586,30 @@ Key patterns:
 - Uses `new UUID<string>().value.toString()` to generate unique token
 - Expiry calculated by adding 24 hours to current date
 - Returns token, inviteUrl, and expiresAt as ISO string
+
+Type check: PASSED
+
+**Task 38 Completed: AcceptInviteLink Use Case**
+
+Files created:
+- `src/application/use-cases/friend/accept-invite-link.use-case.ts`
+
+Use case responsibilities:
+- Inject IInviteTokenRepository, IFriendRequestRepository, IUserRepository, IProfileRepository, INotificationRepository
+- Validate invite token exists, not already used, and not expired
+- Check that acceptor is not the inviter (cannot accept own invite)
+- Check if already friends using existsBetweenUsers()
+- Get inviter user info and validate they still exist
+- Create FriendRequest with status=accepted directly (using FriendRequestStatus.createAccepted())
+- Mark invite token as used
+- Create notifications for both users (inviter and acceptor) with friend_accepted type
+- Return success with friendId and friendName
+
+Key patterns:
+- Uses `FriendRequestStatus.createAccepted()` to create accepted status directly
+- Uses `OptionClass.some(new Date())` for respondedAt on accepted request
+- Uses match pattern for profile handling with proper type inference
+- Returns user-friendly error messages for invalid/expired/used tokens
 
 Type check: PASSED
 
