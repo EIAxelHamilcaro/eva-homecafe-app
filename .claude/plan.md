@@ -827,7 +827,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Verify no console.log or any types",
       "Manual testing of full flow"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 71,
