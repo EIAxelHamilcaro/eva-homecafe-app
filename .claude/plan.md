@@ -374,7 +374,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Create src/application/dto/friend/get-invite-link.dto.ts (output: inviteUrl, token)",
       "Create src/application/dto/friend/accept-invite.dto.ts (input: token, output: success, friendName)"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 32,

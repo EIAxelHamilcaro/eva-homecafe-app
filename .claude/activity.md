@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 30/70
-**Current Task:** Task 31 - Create Friend DTOs
+**Tasks Completed:** 31/70
+**Current Task:** Task 32 - Create Notification DTOs
 **Current Phase:** Phase 2 - Friends & Notifications
 
 ---
@@ -14,7 +14,7 @@
 | Category | Total | Completed |
 |----------|-------|-----------|
 | Domain | 7 | 7 |
-| Application | 18 | 8 |
+| Application | 18 | 9 |
 | Infrastructure | 6 | 3 |
 | Adapter | 10 | 3 |
 | API | 3 | 1 |
@@ -470,6 +470,19 @@ INotificationRepository methods:
 - `findUnreadByUserId()` - Get unread notifications for a user (paginated)
 - `markAsRead()` - Mark notification as read
 - `countUnread()` - Count unread notifications for a user
+
+Type check: PASSED
+
+**Task 31 Completed: Friend DTOs**
+
+Files created:
+- `src/application/dto/friend/friend-request.dto.ts` - Shared schemas: friendRequestDtoSchema, friendDtoSchema
+- `src/application/dto/friend/send-friend-request.dto.ts` - Input: receiverEmail, Output: requestId, status, message
+- `src/application/dto/friend/respond-friend-request.dto.ts` - Input: requestId, accept, Output: success, message
+- `src/application/dto/friend/get-friends.dto.ts` - Input: userId, pagination, Output: friends array with pagination
+- `src/application/dto/friend/get-pending-requests.dto.ts` - Input: userId, pagination, Output: requests with sender info and pagination
+- `src/application/dto/friend/get-invite-link.dto.ts` - Input: userId, Output: inviteUrl, token, expiresAt
+- `src/application/dto/friend/accept-invite.dto.ts` - Input: token, userId, Output: success, friendId, friendName, message
 
 Type check: PASSED
 
