@@ -173,7 +173,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
       "Update participant.lastReadAt",
       "Dispatch ConversationRead event"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "application",

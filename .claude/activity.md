@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 13
-**Current Task:** None (task 13 completed)
+**Tasks Completed:** 14
+**Current Task:** None (task 14 completed)
 
 ---
 
@@ -279,3 +279,23 @@
 **Changes Made:**
 - Created `dto/chat/add-reaction.dto.ts` with input/output schemas and types
 - Created `use-cases/chat/add-reaction.use-case.ts` with AddReactionUseCase class
+
+### 2026-01-21 - Task 14: Create MarkConversationRead use case
+
+**Status:** PASSED
+
+**Implementation Summary:**
+- Created `apps/nextjs/src/application/dto/chat/mark-conversation-read.dto.ts`
+  - `IMarkConversationReadInputDto` - conversationId, userId
+  - `IMarkConversationReadOutputDto` - conversationId, userId, readAt
+- Created `apps/nextjs/src/application/use-cases/chat/mark-conversation-read.use-case.ts`
+  - Implements `UseCase<IMarkConversationReadInputDto, IMarkConversationReadOutputDto>`
+  - **Conversation lookup:** Finds conversation by ID via `IConversationRepository.findById()`
+  - **Mark as read:** Calls `conversation.markAsRead(userId)` which updates participant's `lastReadAt`
+  - **Event dispatch:** `ConversationReadEvent` is automatically dispatched by `Conversation.markAsRead()` method
+  - **Persistence:** Updates conversation via `conversationRepo.update()`
+- `pnpm type-check` and `pnpm check` both pass
+
+**Changes Made:**
+- Created `dto/chat/mark-conversation-read.dto.ts` with input/output schemas and types
+- Created `use-cases/chat/mark-conversation-read.use-case.ts` with MarkConversationReadUseCase class
