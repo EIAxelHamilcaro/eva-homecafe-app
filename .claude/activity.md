@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 17/70
-**Current Task:** Task 18 - Create Profile Tab Screen
+**Tasks Completed:** 18/70
+**Current Task:** Task 19 - Create Edit Profile Screen
 **Current Phase:** Phase 1 - Profile Feature
 
 ---
@@ -18,7 +18,7 @@
 | Infrastructure | 6 | 3 |
 | Adapter | 10 | 3 |
 | API | 3 | 1 |
-| Expo | 19 | 2 |
+| Expo | 19 | 3 |
 | Testing | 4 | 0 |
 | Validation | 3 | 0 |
 
@@ -263,3 +263,28 @@ Features:
 - Retry logic that skips retries on 404 errors
 
 Type check: PASSED
+
+**Task 18 Completed: Create Profile Tab Screen**
+
+Files created:
+- `apps/expo/app/(protected)/(tabs)/profile.tsx` - Main profile tab screen
+- `apps/expo/app/(protected)/profile/edit.tsx` - Placeholder for edit screen (Task 19)
+- `apps/expo/app/(protected)/friends/index.tsx` - Placeholder for friends list (Task 62)
+
+Profile screen features:
+- Avatar display with pink background (User icon as fallback)
+- Display name and member since date
+- Bio card (shown when bio exists)
+- Informations card with email and name
+- Edit profile button (navigates to /profile/edit)
+- Friends button (navigates to /friends)
+- Sign out button with loading state
+
+Uses:
+- `useEnsureProfile()` hook for auto-creating profile
+- `useSignOut()` hook for sign out
+- `useAuth()` for current user info
+- Pink theme colors from HomeCafe brand
+
+Type check: PASSED
+

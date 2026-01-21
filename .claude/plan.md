@@ -225,7 +225,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Add edit button to navigate to edit screen",
       "Show sign out button"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 19,
