@@ -707,7 +707,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Handle notification tap (mark as read, navigate if needed)",
       "Show friend request actions inline (accept/reject buttons)"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 61,

@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 59/70
-**Current Task:** Task 60 - Create Notifications Tab Screen
+**Tasks Completed:** 60/70
+**Current Task:** Task 61 - Add Notifications Tab to Layout
 **Current Phase:** Phase 2 - Friends & Notifications
 
 ---
@@ -18,7 +18,7 @@
 | Infrastructure | 6 | 6 |
 | Adapter | 10 | 10 |
 | API | 3 | 3 |
-| Expo | 19 | 9 |
+| Expo | 19 | 10 |
 | Testing | 4 | 1 |
 | Validation | 3 | 2 |
 
@@ -978,5 +978,31 @@ Expo SSE Hook (`apps/expo/lib/sse/use-sse.ts`):
 - Already handles 'notification' event type
 - handleNotification() invalidates notificationKeys.all on event
 - Full event switch case for all event types
+
+Type check: PASSED
+
+**Task 60 Completed: Create Notifications Tab Screen**
+
+Files verified (already existed):
+
+Screen structure (`apps/expo/app/(protected)/(tabs)/notifications/`):
+- `_layout.tsx` - Stack layout with hidden header
+- `index.tsx` - Main notifications screen
+
+Components (`_components/`):
+- `notification-item.tsx` - Individual notification with unread dot, icons, timestamp
+- `empty-state.tsx` - Empty state with bell icon
+- `skeleton.tsx` - Loading shimmer animation
+
+Features implemented:
+- FlatList for notification display with pull-to-refresh
+- Unread indicator (pink dot) on unread notifications
+- Different icons/colors per notification type (friend_request, friend_accepted, new_message)
+- Friend request actions inline (Accept/Reject buttons)
+- Timestamp formatting with relative times (À l'instant, min, h, Hier, jours)
+- Mark as read on tap
+- SSE real-time updates via useSSE() hook
+- Loading skeleton with shimmer animation
+- Empty state for no notifications
 
 Type check: PASSED
