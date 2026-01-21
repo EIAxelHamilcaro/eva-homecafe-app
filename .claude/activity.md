@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 35
-**Current Task:** Task 36 (Screens - Create conversation screen - base)
+**Tasks Completed:** 36
+**Current Task:** Task 37 (Screens - Add reactions to conversation)
 
 ---
 
@@ -778,3 +778,43 @@
 **Changes Made:**
 - Updated `apps/expo/app/(protected)/messages/new.tsx` with full screen implementation
 - Created `apps/expo/app/(protected)/messages/_components/recipient-item.tsx`
+
+### 2026-01-21 - Task 36: Create conversation screen - base
+
+**Status:** PASSED
+
+**Implementation Summary:**
+- Updated `apps/expo/app/(protected)/messages/[conversationId].tsx` from placeholder to full implementation
+  - Header with back button (ChevronLeft), "Conversation" title, and close button (X)
+  - Inverted FlatList for chat messages (newest at bottom, scrolls up for older)
+  - Uses `useMessages` infinite query hook with pagination
+  - Uses `useSendMessage` mutation with optimistic updates
+  - Pull-to-load-more via `onEndReached` with `handleLoadMore`
+  - KeyboardAvoidingView with platform-specific behavior (iOS: padding, Android: height)
+  - Loading state with ActivityIndicator
+  - Empty state with "Aucun message" and prompt to send first message
+  - Date separators between messages from different days
+  - Message grouping with `processMessagesWithSeparators()` helper
+- Created `apps/expo/app/(protected)/messages/_components/message-bubble.tsx`
+  - Sent messages: right-aligned, pink/primary background, rounded-br-sm corner
+  - Received messages: left-aligned, orange (#FF8C42) background, rounded-bl-sm corner
+  - White text for both, timestamp below bubble
+  - Photo emoji indicator for image-only messages (no content but has attachments)
+  - `formatMessageTime()` helper for HH:MM format in French locale
+- Created `apps/expo/app/(protected)/messages/_components/message-input.tsx`
+  - Text input with "Aa" placeholder, muted background, rounded pill shape
+  - Image picker button (disabled for now, visual placeholder)
+  - Send button with arrow icon, primary color, disabled when empty
+  - Multiline support with max height constraint
+  - `canSend` logic checking non-empty trimmed text and not disabled
+- Created `apps/expo/app/(protected)/messages/_components/date-separator.tsx`
+  - Centered text with muted color
+  - Smart date formatting: "Aujourd'hui", "Hier", or "Jour Date Mois Année"
+  - French day and month names
+- `pnpm type-check` and `pnpm check` both pass
+
+**Changes Made:**
+- Updated `apps/expo/app/(protected)/messages/[conversationId].tsx` with full screen implementation
+- Created `apps/expo/app/(protected)/messages/_components/message-bubble.tsx`
+- Created `apps/expo/app/(protected)/messages/_components/message-input.tsx`
+- Created `apps/expo/app/(protected)/messages/_components/date-separator.tsx`

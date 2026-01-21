@@ -410,7 +410,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
       "MessageInput (text only)",
       "DateSeparator component"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "screens",
