@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 7
-**Current Task:** None (task 7 completed)
+**Tasks Completed:** 8
+**Current Task:** None (task 8 completed)
 
 ---
 
@@ -151,3 +151,20 @@
 
 **Changes Made:**
 - Created `conversation-repository.port.ts` with IConversationRepository interface
+
+### 2026-01-21 - Task 8: Create IMessageRepository port
+
+**Status:** PASSED
+
+**Review Summary:**
+- Created `apps/nextjs/src/application/ports/message-repository.port.ts`
+- Interface `IMessageRepository` extends `BaseRepository<Message>`
+- Defined methods following existing patterns (IUserRepository, IConversationRepository reference):
+  - `findById(id: MessageId)` - override with typed MessageId
+  - `findByConversation(conversationId: string, pagination?)` - get paginated messages for a conversation
+- Note: `create` and `update` methods are inherited from `BaseRepository<Message>` - no need to redefine
+- Uses `Result<T>`, `Option<T>`, `PaginatedResult<T>`, and `PaginationParams` from ddd-kit
+- `pnpm type-check` and `pnpm check` both pass
+
+**Changes Made:**
+- Created `message-repository.port.ts` with IMessageRepository interface

@@ -105,7 +105,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
       "Use BaseRepository pattern",
       "Export interface"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "application",
