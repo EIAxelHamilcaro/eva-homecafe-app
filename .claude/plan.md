@@ -105,7 +105,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Find profile by userId",
       "Return Option<ProfileDto>"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 8,
