@@ -2,6 +2,7 @@ import type { IAuthProvider } from "@/application/ports/auth.service.port";
 import type { IConversationRepository } from "@/application/ports/conversation-repository.port";
 import type { IEmailProvider } from "@/application/ports/email.provider.port";
 import type { IMessageRepository } from "@/application/ports/message-repository.port";
+import type { IProfileRepository } from "@/application/ports/profile-repository.port";
 import type { IStorageProvider } from "@/application/ports/storage.provider.port";
 import type { IUserRepository } from "@/application/ports/user.repository.port";
 import type { ForgotPasswordUseCase } from "@/application/use-cases/auth/forgot-password.use-case";
@@ -18,6 +19,9 @@ import type { GetMessagesUseCase } from "@/application/use-cases/chat/get-messag
 import type { MarkConversationReadUseCase } from "@/application/use-cases/chat/mark-conversation-read.use-case";
 import type { SendMessageUseCase } from "@/application/use-cases/chat/send-message.use-case";
 import type { UploadMediaUseCase } from "@/application/use-cases/chat/upload-media.use-case";
+import type { CreateProfileUseCase } from "@/application/use-cases/profile/create-profile.use-case";
+import type { GetProfileUseCase } from "@/application/use-cases/profile/get-profile.use-case";
+import type { UpdateProfileUseCase } from "@/application/use-cases/profile/update-profile.use-case";
 
 export const DI_SYMBOLS = {
   IUserRepository: Symbol.for("IUserRepository"),
@@ -25,6 +29,7 @@ export const DI_SYMBOLS = {
   IEmailProvider: Symbol.for("IEmailProvider"),
   IConversationRepository: Symbol.for("IConversationRepository"),
   IMessageRepository: Symbol.for("IMessageRepository"),
+  IProfileRepository: Symbol.for("IProfileRepository"),
   IStorageProvider: Symbol.for("IStorageProvider"),
   SignInUseCase: Symbol.for("SignInUseCase"),
   SignUpUseCase: Symbol.for("SignUpUseCase"),
@@ -40,6 +45,9 @@ export const DI_SYMBOLS = {
   AddReactionUseCase: Symbol.for("AddReactionUseCase"),
   MarkConversationReadUseCase: Symbol.for("MarkConversationReadUseCase"),
   UploadMediaUseCase: Symbol.for("UploadMediaUseCase"),
+  CreateProfileUseCase: Symbol.for("CreateProfileUseCase"),
+  GetProfileUseCase: Symbol.for("GetProfileUseCase"),
+  UpdateProfileUseCase: Symbol.for("UpdateProfileUseCase"),
 };
 
 export interface DI_RETURN_TYPES {
@@ -48,6 +56,7 @@ export interface DI_RETURN_TYPES {
   IEmailProvider: IEmailProvider;
   IConversationRepository: IConversationRepository;
   IMessageRepository: IMessageRepository;
+  IProfileRepository: IProfileRepository;
   IStorageProvider: IStorageProvider;
   SignInUseCase: SignInUseCase;
   SignUpUseCase: SignUpUseCase;
@@ -63,4 +72,7 @@ export interface DI_RETURN_TYPES {
   AddReactionUseCase: AddReactionUseCase;
   MarkConversationReadUseCase: MarkConversationReadUseCase;
   UploadMediaUseCase: UploadMediaUseCase;
+  CreateProfileUseCase: CreateProfileUseCase;
+  GetProfileUseCase: GetProfileUseCase;
+  UpdateProfileUseCase: UpdateProfileUseCase;
 }

@@ -171,7 +171,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Implement getProfile, createProfile, updateProfile handlers",
       "Use requireAuth guard for all endpoints"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 14,
@@ -182,7 +182,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Bind IProfileRepository and all profile use cases",
       "Register in common/di/container.ts"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 15,

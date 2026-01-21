@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 12/70
-**Current Task:** Task 13 - Create Profile Controller
+**Tasks Completed:** 14/70
+**Current Task:** Task 15 - Create Profile API Routes
 **Current Phase:** Phase 1 - Profile Feature
 
 ---
@@ -15,8 +15,8 @@
 |----------|-------|-----------|
 | Domain | 7 | 3 |
 | Application | 18 | 5 |
-| Infrastructure | 6 | 2 |
-| Adapter | 10 | 2 |
+| Infrastructure | 6 | 3 |
+| Adapter | 10 | 3 |
 | API | 3 | 0 |
 | Expo | 19 | 0 |
 | Testing | 4 | 0 |
@@ -174,5 +174,40 @@ Repository methods implemented:
 - `count()` - Count total profiles
 
 All methods follow Result<T> pattern for error handling and Option<T> for nullable values.
+
+Type check: PASSED
+
+**Task 13 Completed: Create Profile Controller**
+
+Files created:
+- `src/adapters/controllers/profile/profile.controller.ts`
+
+Controller handlers:
+- `getProfileController()` - Get current user's profile
+- `getProfileByUserIdController()` - Get profile by userId (for viewing other profiles)
+- `createProfileController()` - Create new profile for current user
+- `updateProfileController()` - Update current user's profile
+
+Helper function:
+- `getAuthenticatedUser()` - Gets session via GetSessionUseCase, returns null if not authenticated
+
+All handlers use authentication check and return proper HTTP status codes (401, 400, 404, 409, 500).
+
+Type check: PASSED
+
+**Task 14 Completed: Register Profile DI Module**
+
+Files created:
+- `common/di/modules/profile.module.ts`
+
+Files modified:
+- `common/di/types.ts` - Added IProfileRepository, CreateProfileUseCase, GetProfileUseCase, UpdateProfileUseCase symbols and types
+- `common/di/container.ts` - Loaded ProfileModule
+
+DI bindings:
+- `IProfileRepository` → `DrizzleProfileRepository`
+- `CreateProfileUseCase` → `CreateProfileUseCase` (depends on IProfileRepository)
+- `GetProfileUseCase` → `GetProfileUseCase` (depends on IProfileRepository)
+- `UpdateProfileUseCase` → `UpdateProfileUseCase` (depends on IProfileRepository)
 
 Type check: PASSED
