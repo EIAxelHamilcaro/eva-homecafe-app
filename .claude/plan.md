@@ -185,7 +185,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
       "Store file (S3/R2 or local)",
       "Output: MediaAttachment data"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "adapters",

@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 14
-**Current Task:** None (task 14 completed)
+**Tasks Completed:** 15
+**Current Task:** None (task 15 completed)
 
 ---
 
@@ -299,3 +299,29 @@
 **Changes Made:**
 - Created `dto/chat/mark-conversation-read.dto.ts` with input/output schemas and types
 - Created `use-cases/chat/mark-conversation-read.use-case.ts` with MarkConversationReadUseCase class
+
+### 2026-01-21 - Task 15: Create UploadMedia use case
+
+**Status:** PASSED
+
+**Implementation Summary:**
+- Created `apps/nextjs/src/application/ports/storage.provider.port.ts`
+  - `IUploadFileInput` - file, filename, mimeType, folder (optional)
+  - `IUploadFileOutput` - id, url, filename, mimeType, size
+  - `IStorageProvider` interface with `upload()`, `delete()`, `getUrl()` methods
+- Created `apps/nextjs/src/application/dto/chat/upload-media.dto.ts`
+  - `ALLOWED_IMAGE_TYPES` - jpeg, png, gif, webp
+  - `MAX_IMAGE_SIZE` - 50MB in bytes
+  - `IUploadMediaInputDto` - file (Buffer), filename, mimeType, userId
+  - `IUploadMediaOutputDto` - id, url, mimeType, size, filename, dimensions (nullable)
+- Created `apps/nextjs/src/application/use-cases/chat/upload-media.use-case.ts`
+  - Implements `UseCase<IUploadMediaInputDto, IUploadMediaOutputDto>`
+  - **Input validation:** Validates image types only (no documents), validates max 50MB file size
+  - **Storage:** Delegates to `IStorageProvider.upload()` for file storage
+  - **Errors:** Uses `InvalidMediaTypeError` and `FileTooLargeError` from message.errors.ts
+- `pnpm type-check` and `pnpm check` both pass
+
+**Changes Made:**
+- Created `ports/storage.provider.port.ts` with IStorageProvider interface
+- Created `dto/chat/upload-media.dto.ts` with input/output schemas and types
+- Created `use-cases/chat/upload-media.use-case.ts` with UploadMediaUseCase class
