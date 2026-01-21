@@ -34,5 +34,16 @@
   - Infrastructure: Drizzle schemas (friend.ts, notification.ts)
 - **Details**: All files were already implemented. Marked tasks 23-48 as passing.
 
+#### Task 53: Register Notification DI Module
+- **Status**: Completed
+- **Files Created**:
+  - `apps/nextjs/common/di/modules/notification.module.ts`
+- **Files Modified**:
+  - `apps/nextjs/common/di/types.ts` - Added DI symbols and return types for GetNotificationsUseCase and MarkNotificationReadUseCase
+  - `apps/nextjs/common/di/container.ts` - Registered Notification module
+- **Details**:
+  - Bound GetNotificationsUseCase and MarkNotificationReadUseCase
+  - Both use cases depend only on INotificationRepository (already registered in friend.module.ts)
+
 ### Validation
 - `pnpm type-check`: Passed

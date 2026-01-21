@@ -614,7 +614,7 @@
       "Bind INotificationRepository and all notification use cases",
       "Register in common/di/container.ts"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 54,

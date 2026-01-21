@@ -28,6 +28,8 @@ import type { GetInviteLinkUseCase } from "@/application/use-cases/friend/get-in
 import type { GetPendingRequestsUseCase } from "@/application/use-cases/friend/get-pending-requests.use-case";
 import type { RespondFriendRequestUseCase } from "@/application/use-cases/friend/respond-friend-request.use-case";
 import type { SendFriendRequestUseCase } from "@/application/use-cases/friend/send-friend-request.use-case";
+import type { GetNotificationsUseCase } from "@/application/use-cases/notification/get-notifications.use-case";
+import type { MarkNotificationReadUseCase } from "@/application/use-cases/notification/mark-notification-read.use-case";
 import type { CreateProfileUseCase } from "@/application/use-cases/profile/create-profile.use-case";
 import type { GetProfileUseCase } from "@/application/use-cases/profile/get-profile.use-case";
 import type { UpdateProfileUseCase } from "@/application/use-cases/profile/update-profile.use-case";
@@ -66,6 +68,8 @@ export const DI_SYMBOLS = {
   GetPendingRequestsUseCase: Symbol.for("GetPendingRequestsUseCase"),
   GetInviteLinkUseCase: Symbol.for("GetInviteLinkUseCase"),
   AcceptInviteLinkUseCase: Symbol.for("AcceptInviteLinkUseCase"),
+  GetNotificationsUseCase: Symbol.for("GetNotificationsUseCase"),
+  MarkNotificationReadUseCase: Symbol.for("MarkNotificationReadUseCase"),
 };
 
 export interface DI_RETURN_TYPES {
@@ -102,4 +106,6 @@ export interface DI_RETURN_TYPES {
   GetPendingRequestsUseCase: GetPendingRequestsUseCase;
   GetInviteLinkUseCase: GetInviteLinkUseCase;
   AcceptInviteLinkUseCase: AcceptInviteLinkUseCase;
+  GetNotificationsUseCase: GetNotificationsUseCase;
+  MarkNotificationReadUseCase: MarkNotificationReadUseCase;
 }
