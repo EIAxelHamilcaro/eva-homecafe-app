@@ -202,7 +202,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Create apps/expo/types/profile.ts with Profile interface",
       "Export from apps/expo/types/index.ts"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 17,
@@ -212,7 +212,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Create apps/expo/hooks/use-profile.ts (useProfile, useCreateProfile, useUpdateProfile)",
       "Handle auto-create profile if not exists on first fetch"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 18,

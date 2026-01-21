@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 15/70
-**Current Task:** Task 16 - Create Expo Profile Types
+**Tasks Completed:** 17/70
+**Current Task:** Task 18 - Create Profile Tab Screen
 **Current Phase:** Phase 1 - Profile Feature
 
 ---
@@ -18,7 +18,7 @@
 | Infrastructure | 6 | 3 |
 | Adapter | 10 | 3 |
 | API | 3 | 1 |
-| Expo | 19 | 0 |
+| Expo | 19 | 2 |
 | Testing | 4 | 0 |
 | Validation | 3 | 0 |
 
@@ -223,5 +223,43 @@ Routes:
 - `POST /api/v1/profile` - Create profile for current user
 - `PATCH /api/v1/profile` - Update current user's profile
 - `GET /api/v1/profile/:userId` - Get profile by userId
+
+Type check: PASSED
+
+**Task 16 Completed: Create Expo Profile Types**
+
+Files created:
+- `apps/expo/types/profile.ts` - Profile, CreateProfileInput, UpdateProfileInput interfaces
+- `apps/expo/types/index.ts` - Barrel export for types
+
+Interfaces:
+- `Profile` - id, userId, displayName, bio, avatarUrl, createdAt, updatedAt
+- `CreateProfileInput` - displayName (required), bio, avatarUrl (optional)
+- `UpdateProfileInput` - displayName, bio, avatarUrl (all optional)
+
+Type check: PASSED
+
+**Task 17 Completed: Create Expo Profile Hooks**
+
+Files created:
+- `apps/expo/lib/api/hooks/use-profile.ts` - Profile hooks using Tanstack Query
+
+Hooks implemented:
+- `useProfile()` - Fetches current user's profile, returns `null` on 404
+- `useProfileByUserId(userId)` - Fetches profile by userId for viewing other profiles
+- `useCreateProfile()` - Mutation to create a new profile
+- `useUpdateProfile()` - Mutation to update existing profile
+- `useEnsureProfile()` - Helper hook that auto-creates profile if it doesn't exist
+
+Query keys for cache management:
+- `profileKeys.all` - Base key for all profiles
+- `profileKeys.myProfile()` - Key for current user's profile
+- `profileKeys.byUserId(userId)` - Key for profile by userId
+
+Features:
+- Proper 404 handling (returns `null` instead of throwing)
+- Cache invalidation on create/update mutations
+- 5 minute stale time for profile queries
+- Retry logic that skips retries on 404 errors
 
 Type check: PASSED
