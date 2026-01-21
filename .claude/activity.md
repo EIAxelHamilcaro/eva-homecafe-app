@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 31
-**Current Task:** Task 32 (Expo - Create React Query hooks - messages)
+**Tasks Completed:** 32
+**Current Task:** Task 33 (Expo - Create React Query hooks - reactions and upload)
 
 ---
 
@@ -630,3 +630,31 @@
 
 **Changes Made:**
 - Created `apps/expo/lib/api/hooks/use-conversations.ts`
+
+### 2026-01-21 - Task 32: Create React Query hooks - messages
+
+**Status:** PASSED
+
+**Implementation Summary:**
+- Created `apps/expo/lib/api/hooks/use-messages.ts`
+  - `messageKeys` - query key factory following existing patterns (all, list, detail)
+  - `useMessages(conversationId, options?)` - infinite query hook for paginated messages
+    - Uses `useInfiniteQuery` for cursor-based pagination
+    - Accepts optional `limit` param (default: 20)
+    - Calls `GET /api/v1/chat/conversations/:conversationId/messages` endpoint
+    - Provides `getNextPageParam` and `getPreviousPageParam` for bidirectional pagination
+    - `enabled` guard prevents query when conversationId is empty
+  - `useSendMessage(options)` - mutation hook with optimistic update
+    - Accepts `conversationId` and `senderId` in options for optimistic update context
+    - Calls `POST /api/v1/chat/conversations/:conversationId/messages` endpoint
+    - **Optimistic update flow:**
+      1. Cancels in-flight queries on mutate
+      2. Caches previous messages state for rollback
+      3. Inserts optimistic message with temp ID at start of first page
+      4. On error: rolls back to previous state
+      5. On settled: invalidates message list and conversation queries
+- Follows existing hook patterns from `use-conversations.ts` and `use-user.ts`
+- `pnpm type-check` and `pnpm check` both pass
+
+**Changes Made:**
+- Created `apps/expo/lib/api/hooks/use-messages.ts`

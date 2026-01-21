@@ -362,7 +362,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
       "useMessages(conversationId): infinite query",
       "useSendMessage(): mutation with optimistic update"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "expo",
