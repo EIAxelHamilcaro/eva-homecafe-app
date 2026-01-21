@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 12
-**Current Task:** None (task 12 completed)
+**Tasks Completed:** 13
+**Current Task:** None (task 13 completed)
 
 ---
 
@@ -259,3 +259,23 @@
 - Created `dto/chat/send-message.dto.ts` with input/output schemas and types
 - Created `use-cases/chat/send-message.use-case.ts` with SendMessageUseCase class
 - Modified `media-attachment.vo.ts` - changed `dimensions?: IDimensions` to `dimensions: IDimensions | undefined` for type compatibility with ValueObject.create static method
+
+### 2026-01-21 - Task 13: Create AddReaction use case
+
+**Status:** PASSED
+
+**Implementation Summary:**
+- Created `apps/nextjs/src/application/dto/chat/add-reaction.dto.ts`
+  - `IAddReactionInputDto` - messageId, userId, emoji (from REACTION_EMOJIS)
+  - `IAddReactionOutputDto` - messageId, userId, emoji, action ("added" | "removed")
+- Created `apps/nextjs/src/application/use-cases/chat/add-reaction.use-case.ts`
+  - Implements `UseCase<IAddReactionInputDto, IAddReactionOutputDto>`
+  - **Message lookup:** Finds message by ID via `IMessageRepository.findById()`
+  - **Toggle logic:** Checks if user already has reaction with `hasUserReactedWith()`, removes if exists, adds if not
+  - **Domain events:** `MessageReactionAddedEvent` or `MessageReactionRemovedEvent` automatically dispatched via `Message.addReaction()` / `Message.removeReaction()`
+  - **Persistence:** Updates message via `messageRepo.update()`
+- `pnpm type-check` and `pnpm check` both pass
+
+**Changes Made:**
+- Created `dto/chat/add-reaction.dto.ts` with input/output schemas and types
+- Created `use-cases/chat/add-reaction.use-case.ts` with AddReactionUseCase class

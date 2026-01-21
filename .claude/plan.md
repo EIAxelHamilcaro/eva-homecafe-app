@@ -162,7 +162,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
       "Toggle logic: add if not exists, remove if exists",
       "Dispatch ReactionAdded or ReactionRemoved event"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "application",
