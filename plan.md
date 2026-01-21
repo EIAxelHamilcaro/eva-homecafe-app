@@ -680,7 +680,7 @@
       "Invalidate notifications query on new notification",
       "Update unread count"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 60,

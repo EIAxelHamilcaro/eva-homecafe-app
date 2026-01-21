@@ -148,6 +148,7 @@ export type SSEEventType =
   | "reaction_removed"
   | "conversation_read"
   | "conversation_created"
+  | "notification"
   | "ping";
 
 export interface SSEConnectedEvent {
@@ -219,6 +220,18 @@ export interface SSEPingEvent {
   timestamp: string;
 }
 
+export interface SSENotificationEvent {
+  type: "notification";
+  data: {
+    notificationId: string;
+    userId: string;
+    notificationType: string;
+    title: string;
+    body: string;
+  };
+  timestamp: string;
+}
+
 export type SSEEvent =
   | SSEConnectedEvent
   | SSEMessageSentEvent
@@ -226,4 +239,5 @@ export type SSEEvent =
   | SSEReactionRemovedEvent
   | SSEConversationReadEvent
   | SSEConversationCreatedEvent
+  | SSENotificationEvent
   | SSEPingEvent;

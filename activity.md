@@ -117,5 +117,16 @@
   - Supports pagination and unreadOnly filtering
   - Query keys defined in centralized query-keys.ts
 
+#### Task 59: Extend Expo SSE Hook
+- **Status**: Completed
+- **Files Modified**:
+  - `apps/expo/constants/chat.ts` - Added 'notification' to SSEEventType and SSENotificationEvent interface
+  - `apps/expo/lib/sse/use-sse.ts` - Added handleNotification callback and notification case handler
+- **Details**:
+  - Added SSENotificationEvent interface with notificationId, userId, notificationType, title, body
+  - Added to SSEEvent union type
+  - handleNotification invalidates notificationKeys.all when notification event received for current user
+  - Imports notificationKeys from centralized query-keys.ts
+
 ### Validation
 - `pnpm type-check`: Passed

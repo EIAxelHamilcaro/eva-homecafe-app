@@ -4,9 +4,11 @@ import { useCallback, useEffect, useRef } from "react";
 import type {
   SSEEvent,
   SSEMessageSentEvent,
+  SSENotificationEvent,
   SSEReactionAddedEvent,
   SSEReactionRemovedEvent,
 } from "@/constants/chat";
+import { notificationKeys } from "@/lib/api/hooks/query-keys";
 import { conversationKeys } from "@/lib/api/hooks/use-conversations";
 import { messageKeys } from "@/lib/api/hooks/use-messages";
 import { useAuth } from "@/src/providers/auth-provider";
@@ -96,6 +98,21 @@ export function useSSE({ conversationId, enabled = true }: UseSSEOptions = {}) {
     });
   }, [queryClient]);
 
+  const handleNotification = useCallback(
+    (event: SSENotificationEvent) => {
+      const { data } = event;
+
+      if (data.userId !== user?.id) {
+        return;
+      }
+
+      queryClient.invalidateQueries({
+        queryKey: notificationKeys.all,
+      });
+    },
+    [queryClient, user?.id],
+  );
+
   const handleEvent = useCallback(
     (event: SSEEvent) => {
       switch (event.type) {
@@ -114,6 +131,9 @@ export function useSSE({ conversationId, enabled = true }: UseSSEOptions = {}) {
         case "conversation_created":
           handleConversationCreated();
           break;
+        case "notification":
+          handleNotification(event);
+          break;
       }
     },
     [
@@ -122,6 +142,7 @@ export function useSSE({ conversationId, enabled = true }: UseSSEOptions = {}) {
       handleReactionRemoved,
       handleConversationRead,
       handleConversationCreated,
+      handleNotification,
     ],
   );
 
