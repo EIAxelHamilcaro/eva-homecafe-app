@@ -274,7 +274,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Run pnpm test",
       "Verify Profile CRUD works end-to-end"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 23,
@@ -287,7 +287,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Add accept() and reject() methods that update status and respondedAt",
       "Use z.string().min(1) for user IDs (BetterAuth compatibility)"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 24,
@@ -296,7 +296,7 @@ Friend invitations (email + QR code), notifications system with real-time update
     "steps": [
       "Create src/domain/friend/value-objects/friend-request-status.vo.ts with enum: pending, accepted, rejected"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 25,
@@ -307,7 +307,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Create src/domain/friend/events/friend-request-accepted.event.ts",
       "Create src/domain/friend/events/friend-request-rejected.event.ts"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 26,

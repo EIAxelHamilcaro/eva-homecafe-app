@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 22/70
-**Current Task:** Task 23 - Create FriendRequest Aggregate
+**Tasks Completed:** 25/70
+**Current Task:** Task 26 - Create Notification Aggregate
 **Current Phase:** Phase 2 - Friends & Notifications
 
 ---
@@ -13,14 +13,14 @@
 
 | Category | Total | Completed |
 |----------|-------|-----------|
-| Domain | 7 | 3 |
+| Domain | 7 | 6 |
 | Application | 18 | 5 |
 | Infrastructure | 6 | 3 |
 | Adapter | 10 | 3 |
 | API | 3 | 1 |
 | Expo | 19 | 5 |
 | Testing | 4 | 1 |
-| Validation | 3 | 1 |
+| Validation | 3 | 2 |
 
 ---
 
@@ -391,4 +391,31 @@ Files modified:
 - `apps/nextjs/package.json` - Added vite-tsconfig-paths dependency
 
 **PHASE 1 COMPLETE** - Profile Feature fully implemented and tested!
+
+**Tasks 23-25 Completed: FriendRequest Domain Layer**
+
+Files created:
+- `src/domain/friend/friend-request-id.ts` - FriendRequestId UUID class
+- `src/domain/friend/friend-request.aggregate.ts` - FriendRequest aggregate with senderId, receiverId, status, createdAt, respondedAt
+- `src/domain/friend/value-objects/friend-request-status.vo.ts` - FriendRequestStatus VO with enum (pending, accepted, rejected)
+- `src/domain/friend/events/friend-request-sent.event.ts` - FriendRequestSentEvent
+- `src/domain/friend/events/friend-request-accepted.event.ts` - FriendRequestAcceptedEvent
+- `src/domain/friend/events/friend-request-rejected.event.ts` - FriendRequestRejectedEvent
+
+FriendRequest aggregate methods:
+- `create()` - Creates new friend request with pending status, emits FriendRequestSentEvent
+- `reconstitute()` - Rebuilds from DB
+- `accept()` - Accepts pending request, updates status and respondedAt, emits FriendRequestAcceptedEvent
+- `reject()` - Rejects pending request, updates status and respondedAt, emits FriendRequestRejectedEvent
+
+Business rules implemented:
+- Cannot send friend request to yourself (validation in create())
+- Can only accept/reject pending requests
+
+FriendRequestStatus VO:
+- Uses Zod enum validation
+- Factory methods: createPending(), createAccepted(), createRejected()
+- Convenience getters: isPending, isAccepted, isRejected
+
+Type check: PASSED
 
