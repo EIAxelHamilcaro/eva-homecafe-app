@@ -424,6 +424,15 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Query accepted friend requests where user is sender or receiver",
       "Map to friend DTOs with user details"
     ],
+    "passes": true
+  },
+  {
+    "id": "35 bis",
+    "category": "ui",
+    "description": "Profile UI",
+    "steps": [
+      "I want the exact UI implementation with .claude/screenshots/profile.png",
+    ],
     "passes": false
   },
   {

@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 34/70
-**Current Task:** Task 35 - Create GetFriends Use Case
+**Tasks Completed:** 35/70
+**Current Task:** Task 36 - Create GetPendingRequests Use Case
 **Current Phase:** Phase 2 - Friends & Notifications
 
 ---
@@ -14,7 +14,7 @@
 | Category | Total | Completed |
 |----------|-------|-----------|
 | Domain | 7 | 7 |
-| Application | 18 | 12 |
+| Application | 18 | 13 |
 | Infrastructure | 6 | 3 |
 | Adapter | 10 | 3 |
 | API | 3 | 1 |
@@ -529,6 +529,25 @@ Use case responsibilities:
 - Persist updated friend request
 - If accepted: create notification for sender (friend_accepted type) with acceptor's display name
 - Return success/message response
+
+Type check: PASSED
+
+**Task 35 Completed: GetFriends Use Case**
+
+Files created:
+- `src/application/use-cases/friend/get-friends.use-case.ts`
+
+Use case responsibilities:
+- Inject IFriendRequestRepository, IUserRepository, IProfileRepository
+- Query accepted friend requests via findFriendsForUser()
+- For each request, determine friend user ID (sender or receiver based on current user)
+- Map each friend to IFriendDto with user details (email, name) and profile details (displayName, avatarUrl)
+- Returns paginated friends array
+
+Key patterns:
+- Uses `UserId.create(new UUID(friendUserId))` to convert string ID to UserId VO
+- Uses match pattern for Option handling on profile data
+- Handles case where user is not found gracefully (returns null, skips friend)
 
 Type check: PASSED
 
