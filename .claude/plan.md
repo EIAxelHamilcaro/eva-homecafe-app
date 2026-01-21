@@ -456,7 +456,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Store token in inviteTokens table with expiry (24h)",
       "Return invite URL: evahomecafeapp://invite/{token}"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 38,

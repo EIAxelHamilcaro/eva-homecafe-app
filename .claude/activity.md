@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 36/70
-**Current Task:** Task 37 - Create GetInviteLink Use Case
+**Tasks Completed:** 37/70
+**Current Task:** Task 38 - Create AcceptInviteLink Use Case
 **Current Phase:** Phase 2 - Friends & Notifications
 
 ---
@@ -14,7 +14,7 @@
 | Category | Total | Completed |
 |----------|-------|-----------|
 | Domain | 7 | 7 |
-| Application | 18 | 14 |
+| Application | 18 | 15 |
 | Infrastructure | 6 | 3 |
 | Adapter | 10 | 3 |
 | API | 3 | 1 |
@@ -567,6 +567,25 @@ Key patterns:
 - Uses `UserId.create(new UUID(senderId))` to convert string ID to UserId VO
 - Uses match pattern for Option handling on profile data and respondedAt
 - respondedAt is Option<Date> so use match to convert to ISO string or null
+
+Type check: PASSED
+
+**Task 37 Completed: GetInviteLink Use Case**
+
+Files created:
+- `src/application/use-cases/friend/get-invite-link.use-case.ts`
+
+Use case responsibilities:
+- Inject IInviteTokenRepository and appUrl (for building invite URL)
+- Generate unique invite token using UUID
+- Set token expiry to 24 hours from now
+- Persist token via inviteTokenRepo.create()
+- Return invite URL in format: {appUrl}/invite/{token}
+
+Key patterns:
+- Uses `new UUID<string>().value.toString()` to generate unique token
+- Expiry calculated by adding 24 hours to current date
+- Returns token, inviteUrl, and expiresAt as ISO string
 
 Type check: PASSED
 
