@@ -769,7 +769,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "On scan: extract token from URL, call acceptInvite API",
       "Show success/error feedback"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 66,

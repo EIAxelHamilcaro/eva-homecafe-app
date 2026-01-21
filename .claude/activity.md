@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 64/70
-**Current Task:** Task 65 - Create QR Code Scanner Screen
+**Tasks Completed:** 65/70
+**Current Task:** Task 66 - Add Friends Entry Point from Profile
 **Current Phase:** Phase 2 - Friends & Notifications
 
 ---
@@ -18,7 +18,7 @@
 | Infrastructure | 6 | 6 |
 | Adapter | 10 | 10 |
 | API | 3 | 3 |
-| Expo | 19 | 14 |
+| Expo | 19 | 15 |
 | Testing | 4 | 1 |
 | Validation | 3 | 2 |
 
@@ -1086,5 +1086,33 @@ Features implemented:
 - Share button using expo-sharing
 - Back navigation with ArrowLeft header button
 - HomeCafe styling (pink accents, proper colors)
+
+Type check: PASSED
+
+**Task 65 Completed: Create QR Code Scanner Screen**
+
+Files created:
+- `apps/expo/app/(protected)/friends/scan.tsx` - QR code scanner screen
+
+Dependencies added:
+- `expo-camera` - Camera and barcode scanning
+
+Features implemented:
+- CameraView with barcode scanning using expo-camera
+- Permission request handling with friendly UI
+- Token extraction from scanned URL or raw token
+- Uses useAcceptInvite() hook to accept invite
+- Success/error feedback screens
+- "Scan again" option on error
+- Camera frame overlay for scanning guidance
+- Processing state while accepting invite
+- Back navigation with ArrowLeft header button
+
+Scan flow:
+1. Request camera permission
+2. Show camera with QR frame
+3. On scan: extract token from URL
+4. Call acceptInvite API
+5. Show success (friend added) or error
 
 Type check: PASSED
