@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 68/70
-**Current Task:** Task 69 - Write Unit Tests for Notification Use Cases
+**Tasks Completed:** 69/70
+**Current Task:** Task 70 - Final Validation
 **Current Phase:** Phase 2 - Friends & Notifications
 
 ---
@@ -19,7 +19,7 @@
 | Adapter | 10 | 10 |
 | API | 3 | 3 |
 | Expo | 19 | 16 |
-| Testing | 4 | 2 |
+| Testing | 4 | 3 |
 | Validation | 3 | 2 |
 
 ---
@@ -1200,5 +1200,35 @@ Key fixes applied:
 - Changed `avatarUrl: null` to `avatarUrl: Option.none()` in Profile creation
 
 Test results: 28 tests passed (4 test files)
+
+Type check: PASSED
+
+**Task 69 Completed: Write Unit Tests for Notification Use Cases**
+
+Files created:
+- `src/application/use-cases/notification/__tests__/get-notifications.use-case.test.ts`
+- `src/application/use-cases/notification/__tests__/mark-notification-read.use-case.test.ts`
+
+Test coverage:
+
+GetNotificationsUseCase (9 tests):
+- Happy path: return all notifications for user, return only unread when unreadOnly is true, apply custom pagination, map notification to DTO correctly, return null for readAt when unread, return empty list when no notifications
+- Error handling: fail when findByUserId returns error, fail when findUnreadByUserId returns error, fail when countUnread returns error
+
+MarkNotificationReadUseCase (6 tests):
+- Happy path: mark notification as read successfully, return success when already read
+- Authorization: fail when user does not own the notification
+- Not found: fail when notification not found
+- Error handling: fail when repository findById returns error, fail when repository update returns error
+
+Key patterns used:
+- NotificationType.create() for creating type VOs
+- Notification.reconstitute() for mock notification creation
+- Option.some()/Option.none() for optional readAt field
+- PaginatedResult structure matching repository interface
+
+TypeScript fix: Added non-null assertion (`!`) for array access after toHaveLength assertion to satisfy strict null checks
+
+Test results: 15 tests passed (2 test files)
 
 Type check: PASSED

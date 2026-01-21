@@ -814,7 +814,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Create src/application/use-cases/notification/__tests__/get-notifications.use-case.test.ts",
       "Create src/application/use-cases/notification/__tests__/mark-notification-read.use-case.test.ts"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 70,
