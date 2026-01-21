@@ -273,7 +273,7 @@
       "Add accept() and reject() methods that update status and respondedAt",
       "Use z.string().min(1) for user IDs (BetterAuth compatibility)"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 24,
@@ -282,7 +282,7 @@
     "steps": [
       "Create src/domain/friend/value-objects/friend-request-status.vo.ts with enum: pending, accepted, rejected"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 25,
@@ -293,7 +293,7 @@
       "Create src/domain/friend/events/friend-request-accepted.event.ts",
       "Create src/domain/friend/events/friend-request-rejected.event.ts"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 26,
@@ -306,7 +306,7 @@
       "Implement static create() and reconstitute() methods",
       "Add markAsRead() method"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 27,
@@ -316,7 +316,7 @@
       "Create src/domain/notification/events/notification-created.event.ts",
       "Create src/domain/notification/events/notification-read.event.ts"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 28,
@@ -326,7 +326,7 @@
       "Create src/application/ports/friend-request-repository.port.ts",
       "Define methods: create, update, findById, findByUsers, findPendingForUser, findFriendsForUser, exists"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 29,
@@ -336,7 +336,7 @@
       "Create src/application/ports/invite-token-repository.port.ts",
       "Define methods: create, findByToken, markAsUsed, deleteExpired"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 30,
@@ -346,7 +346,7 @@
       "Create src/application/ports/notification-repository.port.ts",
       "Define methods: create, update, findById, findByUserId, findUnreadByUserId, markAsRead, countUnread"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 31,
@@ -360,7 +360,7 @@
       "Create src/application/dto/friend/get-invite-link.dto.ts (output: inviteUrl, token)",
       "Create src/application/dto/friend/accept-invite.dto.ts (input: token, output: success, friendName)"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 32,
@@ -371,7 +371,7 @@
       "Create src/application/dto/notification/mark-notification-read.dto.ts",
       "Create src/application/dto/notification/notification.dto.ts (shared notification shape)"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 33,
@@ -386,7 +386,7 @@
       "Return Result with 'request_sent' or 'invitation_sent' status",
       "Dispatch domain events"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 34,
@@ -399,7 +399,7 @@
       "If accepted: create notification for sender",
       "Dispatch domain events"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 35,
@@ -410,7 +410,7 @@
       "Query accepted friend requests where user is sender or receiver",
       "Map to friend DTOs with user details"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 36,
@@ -421,7 +421,7 @@
       "Query pending requests where user is receiver",
       "Map to DTOs with sender details"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 37,
@@ -433,7 +433,7 @@
       "Store token in inviteTokens table with expiry (24h)",
       "Return invite URL: evahomecafeapp://invite/{token}"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 38,
@@ -448,7 +448,7 @@
       "Create notifications for both users",
       "Mark token as used"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 39,
@@ -459,7 +459,7 @@
       "Support pagination",
       "Return notifications sorted by createdAt desc"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 40,
@@ -470,7 +470,7 @@
       "Find notification, verify ownership",
       "Call markAsRead() and persist"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 41,
@@ -485,7 +485,7 @@
       "Add unique index on token for inviteTokens",
       "Export from packages/drizzle/src/schema/index.ts"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 42,
@@ -498,7 +498,7 @@
       "Add index on (userId, createdAt)",
       "Export from packages/drizzle/src/schema/index.ts"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 43,
@@ -508,7 +508,7 @@
       "Run pnpm db:push to apply schema changes",
       "Verify tables created correctly"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 44,
@@ -518,7 +518,7 @@
       "Create src/adapters/mappers/friend-request.mapper.ts",
       "Implement toDomain() and toPersistence() methods"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 45,
@@ -529,7 +529,7 @@
       "Implement toDomain() and toPersistence() methods",
       "Handle JSON data field properly"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 46,
@@ -540,7 +540,7 @@
       "Implement all port methods using Drizzle",
       "Include user joins for friend details"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 47,
@@ -550,7 +550,7 @@
       "Create src/adapters/repositories/invite-token.repository.ts",
       "Implement create, findByToken, markAsUsed methods"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 48,
