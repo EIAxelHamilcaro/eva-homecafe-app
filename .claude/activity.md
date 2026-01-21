@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 40/70
-**Current Task:** Task 41 - Create Drizzle Schema for Friends
+**Tasks Completed:** 41/70
+**Current Task:** Task 42 - Create Drizzle Schema for Notifications
 **Current Phase:** Phase 2 - Friends & Notifications
 
 ---
@@ -15,7 +15,7 @@
 |----------|-------|-----------|
 | Domain | 7 | 7 |
 | Application | 18 | 18 |
-| Infrastructure | 6 | 3 |
+| Infrastructure | 6 | 4 |
 | Adapter | 10 | 3 |
 | API | 3 | 1 |
 | Expo | 19 | 5 |
@@ -652,4 +652,36 @@ Key patterns:
 Type check: PASSED
 
 **APPLICATION LAYER COMPLETE** - All 18 application tasks completed!
+
+**Task 41 Completed: Create Drizzle Schema for Friends**
+
+Files created:
+- `packages/drizzle/src/schema/friend.ts` - Friend request and invite token tables
+
+Files modified:
+- `packages/drizzle/src/schema/index.ts` - Added friend export
+
+Tables defined:
+
+`friend_request` table:
+- id (text, primary key)
+- senderId (text, FK to user.id, cascade delete)
+- receiverId (text, FK to user.id, cascade delete)
+- status (text, not null)
+- createdAt (timestamp, default now)
+- respondedAt (timestamp, nullable)
+- Indexes: sender_id_idx, receiver_id_idx, unique (senderId, receiverId)
+
+`invite_token` table:
+- id (text, primary key)
+- userId (text, FK to user.id, cascade delete)
+- token (text, not null, unique index)
+- expiresAt (timestamp, not null)
+- usedAt (timestamp, nullable)
+- createdAt (timestamp, default now)
+- Indexes: unique token_idx, user_id_idx
+
+Migration generated: `migrations/0003_sad_unus.sql`
+
+Type check: PASSED
 

@@ -508,7 +508,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Add unique index on token for inviteTokens",
       "Export from packages/drizzle/src/schema/index.ts"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 42,
