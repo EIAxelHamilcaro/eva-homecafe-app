@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 8/70
-**Current Task:** Task 9 - Create Drizzle Schema for Profile
+**Tasks Completed:** 9/70
+**Current Task:** Task 10 - Run Database Migration for Profile
 **Current Phase:** Phase 1 - Profile Feature
 
 ---
@@ -15,7 +15,7 @@
 |----------|-------|-----------|
 | Domain | 7 | 3 |
 | Application | 18 | 5 |
-| Infrastructure | 6 | 0 |
+| Infrastructure | 6 | 1 |
 | Adapter | 10 | 0 |
 | API | 3 | 0 |
 | Expo | 19 | 0 |
@@ -115,5 +115,21 @@ Use case responsibilities:
 - Handle nullable bio (can be set to null to clear)
 - Persist updated profile
 - Return updated profile DTO
+
+Type check: PASSED
+
+**Task 9 Completed: Create Drizzle Schema for Profile**
+
+Files created:
+- `packages/drizzle/src/schema/profile.ts`
+
+Files modified:
+- `packages/drizzle/src/schema/index.ts` - Added export for profile schema
+
+Schema details:
+- Table: `profile`
+- Columns: id (text PK), userId (text unique FK to user.id with cascade delete), displayName (text), bio (text nullable), avatarUrl (text nullable), createdAt, updatedAt
+- Index: unique index on userId
+- Migration auto-generated: `0002_serious_santa_claus.sql`
 
 Type check: PASSED

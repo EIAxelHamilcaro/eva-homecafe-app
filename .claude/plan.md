@@ -129,7 +129,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Add unique index on userId",
       "Export from packages/drizzle/src/schema/index.ts"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 10,

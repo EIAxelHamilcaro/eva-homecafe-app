@@ -15,6 +15,13 @@
       "when": 1769000802717,
       "tag": "0001_old_micromax",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1769010904582,
+      "tag": "0002_serious_santa_claus",
+      "breakpoints": true
     }
   ]
 }
