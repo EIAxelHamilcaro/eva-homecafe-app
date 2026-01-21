@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 42/70
-**Current Task:** Task 43 - Run Database Migration
+**Tasks Completed:** 43/70
+**Current Task:** Task 44 - Create FriendRequest Mapper
 **Current Phase:** Phase 2 - Friends & Notifications
 
 ---
@@ -15,7 +15,7 @@
 |----------|-------|-----------|
 | Domain | 7 | 7 |
 | Application | 18 | 18 |
-| Infrastructure | 6 | 5 |
+| Infrastructure | 6 | 6 |
 | Adapter | 10 | 3 |
 | API | 3 | 1 |
 | Expo | 19 | 5 |
@@ -707,4 +707,30 @@ Files modified:
 Migration generated: `migrations/0004_flippant_drax.sql`
 
 Type check: PASSED
+
+**Task 43 Completed: Run Database Migration for Friends & Notifications**
+
+Migration applied using `npx drizzle-kit push --force`:
+
+Tables created:
+- `friend_request` - Friend request records
+- `invite_token` - Invite link tokens
+- `notification` - User notifications
+
+Foreign keys:
+- `friend_request.sender_id` → `user.id` (cascade delete)
+- `friend_request.receiver_id` → `user.id` (cascade delete)
+- `invite_token.user_id` → `user.id` (cascade delete)
+- `notification.user_id` → `user.id` (cascade delete)
+
+Indexes created:
+- `friend_request_sender_id_idx`
+- `friend_request_receiver_id_idx`
+- `friend_request_pair_idx` (unique)
+- `invite_token_token_idx` (unique)
+- `invite_token_user_id_idx`
+- `notification_user_id_created_at_idx`
+- `notification_user_id_read_at_idx`
+
+**INFRASTRUCTURE LAYER COMPLETE** - All 6 infrastructure tasks completed!
 
