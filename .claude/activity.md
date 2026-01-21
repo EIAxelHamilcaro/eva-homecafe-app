@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 33/70
-**Current Task:** Task 34 - Create RespondFriendRequest Use Case
+**Tasks Completed:** 34/70
+**Current Task:** Task 35 - Create GetFriends Use Case
 **Current Phase:** Phase 2 - Friends & Notifications
 
 ---
@@ -14,7 +14,7 @@
 | Category | Total | Completed |
 |----------|-------|-----------|
 | Domain | 7 | 7 |
-| Application | 18 | 11 |
+| Application | 18 | 12 |
 | Infrastructure | 6 | 3 |
 | Adapter | 10 | 3 |
 | API | 3 | 1 |
@@ -513,6 +513,22 @@ Use case responsibilities:
   - Send invitation email via IEmailProvider with signup link
   - Return status: "invitation_sent"
 - Uses match pattern for Option handling
+
+Type check: PASSED
+
+**Task 34 Completed: RespondFriendRequest Use Case**
+
+Files created:
+- `src/application/use-cases/friend/respond-friend-request.use-case.ts`
+
+Use case responsibilities:
+- Inject IFriendRequestRepository, INotificationRepository, IProfileRepository
+- Find friend request by ID (FriendRequestId)
+- Verify current user is the receiver (authorization)
+- Call accept() or reject() on FriendRequest aggregate based on input
+- Persist updated friend request
+- If accepted: create notification for sender (friend_accepted type) with acceptor's display name
+- Return success/message response
 
 Type check: PASSED
 

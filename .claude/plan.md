@@ -413,7 +413,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "If accepted: create notification for sender",
       "Dispatch domain events"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 35,
