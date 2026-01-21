@@ -444,7 +444,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Query pending requests where user is receiver",
       "Map to DTOs with sender details"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 37,

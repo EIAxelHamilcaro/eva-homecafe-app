@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 35/70
-**Current Task:** Task 36 - Create GetPendingRequests Use Case
+**Tasks Completed:** 36/70
+**Current Task:** Task 37 - Create GetInviteLink Use Case
 **Current Phase:** Phase 2 - Friends & Notifications
 
 ---
@@ -14,7 +14,7 @@
 | Category | Total | Completed |
 |----------|-------|-----------|
 | Domain | 7 | 7 |
-| Application | 18 | 13 |
+| Application | 18 | 14 |
 | Infrastructure | 6 | 3 |
 | Adapter | 10 | 3 |
 | API | 3 | 1 |
@@ -548,6 +548,25 @@ Key patterns:
 - Uses `UserId.create(new UUID(friendUserId))` to convert string ID to UserId VO
 - Uses match pattern for Option handling on profile data
 - Handles case where user is not found gracefully (returns null, skips friend)
+
+Type check: PASSED
+
+**Task 36 Completed: GetPendingRequests Use Case**
+
+Files created:
+- `src/application/use-cases/friend/get-pending-requests.use-case.ts`
+
+Use case responsibilities:
+- Inject IFriendRequestRepository, IUserRepository, IProfileRepository
+- Query pending friend requests via findPendingForUser()
+- For each request, get sender user and profile details
+- Map to IPendingRequestWithSenderDto with full request info plus sender details
+- Returns paginated requests array
+
+Key patterns:
+- Uses `UserId.create(new UUID(senderId))` to convert string ID to UserId VO
+- Uses match pattern for Option handling on profile data and respondedAt
+- respondedAt is Option<Date> so use match to convert to ISO string or null
 
 Type check: PASSED
 
