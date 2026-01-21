@@ -499,7 +499,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
       "pnpm test",
       "Fix any errors"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "testing",
@@ -508,6 +508,16 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
       "Test conversations list (scroll, refresh, badges)",
       "Test new message (search, select)",
       "Test conversation (send, reactions, images)"
+    ],
+    "passes": false
+  },
+  {
+    "category": "UI",
+    "description": "Implement UI from screenshots",
+    "steps": [
+      "Read .claude/screenshots/*",
+      "Implement exact UI",
+      "Fix all bug"
     ],
     "passes": false
   },
