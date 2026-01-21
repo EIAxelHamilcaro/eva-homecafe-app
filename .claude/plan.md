@@ -804,7 +804,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Create src/application/use-cases/friend/__tests__/accept-invite-link.use-case.test.ts",
       "Test happy paths and error cases"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 69,

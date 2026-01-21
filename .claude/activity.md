@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 67/70
-**Current Task:** Task 68 - Write Unit Tests for Friend Use Cases
+**Tasks Completed:** 68/70
+**Current Task:** Task 69 - Write Unit Tests for Notification Use Cases
 **Current Phase:** Phase 2 - Friends & Notifications
 
 ---
@@ -19,7 +19,7 @@
 | Adapter | 10 | 10 |
 | API | 3 | 3 |
 | Expo | 19 | 16 |
-| Testing | 4 | 1 |
+| Testing | 4 | 2 |
 | Validation | 3 | 2 |
 
 ---
@@ -1159,5 +1159,46 @@ Invite screen features:
 - Success state with "Voir mes amis" button
 - Error state with message and "Retour à l'accueil" button
 - Uses useAcceptInvite() hook for API call
+
+Type check: PASSED
+
+**Task 68 Completed: Write Unit Tests for Friend Use Cases**
+
+Files created:
+- `src/application/use-cases/friend/__tests__/send-friend-request.use-case.test.ts`
+- `src/application/use-cases/friend/__tests__/respond-friend-request.use-case.test.ts`
+- `src/application/use-cases/friend/__tests__/get-invite-link.use-case.test.ts`
+- `src/application/use-cases/friend/__tests__/accept-invite-link.use-case.test.ts`
+
+Test coverage:
+
+SendFriendRequestUseCase (8 tests):
+- Happy path: send request to existing user, send invitation email to non-user, already_friends status
+- Validation: cannot send to yourself
+- Error handling: user repository error, friend request repository error, email provider error, save failed
+
+RespondFriendRequestUseCase (6 tests):
+- Happy path: accept request, reject request
+- Authorization: fail when user is not receiver
+- Not found: fail when request not found
+- Error handling: repository findById error, repository update error
+
+GetInviteLinkUseCase (5 tests):
+- Happy path: generate invite link with correct URL format, correct token
+- Error handling: repository create error
+- Token validation: unique tokens generated, correct expiration (24h)
+
+AcceptInviteLinkUseCase (9 tests):
+- Happy path: accept invite link successfully
+- Invalid token: not found, already used, expired
+- Business rules: cannot accept own invite, already friends, inviter no longer exists
+- Error handling: token repository error, friend request repository error
+
+Key fixes applied:
+- Fixed UUID mocking: Pass `new UUID(id)` to `User.create()` instead of modifying `_id.value` after creation
+- Added missing `image: Option.none()` to User props (required field)
+- Changed `avatarUrl: null` to `avatarUrl: Option.none()` in Profile creation
+
+Test results: 28 tests passed (4 test files)
 
 Type check: PASSED
