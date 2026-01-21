@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 6
-**Current Task:** None (task 6 completed)
+**Tasks Completed:** 7
+**Current Task:** None (task 7 completed)
 
 ---
 
@@ -134,3 +134,20 @@
 **Changes Made:**
 - `attachments.list.ts`: Updated to use `TooManyAttachmentsError` instead of inline error message
 - `message.errors.ts`: Added `ContentTooLongError` and `InvalidReactionEmojiError` for completeness
+
+### 2026-01-21 - Task 7: Create IConversationRepository port
+
+**Status:** PASSED
+
+**Review Summary:**
+- Created `apps/nextjs/src/application/ports/conversation-repository.port.ts`
+- Interface `IConversationRepository` extends `BaseRepository<Conversation>`
+- Defined methods following existing patterns (IUserRepository reference):
+  - `findById(id: ConversationId)` - override with typed ConversationId
+  - `findByParticipants(participantIds: string[])` - find conversation by exact participant set
+  - `findAllForUser(userId: string, pagination?)` - get all conversations for a user with pagination support
+- Uses `Result<T>`, `Option<T>`, `PaginatedResult<T>`, and `PaginationParams` from ddd-kit
+- `pnpm type-check` and `pnpm check` both pass
+
+**Changes Made:**
+- Created `conversation-repository.port.ts` with IConversationRepository interface

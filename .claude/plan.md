@@ -94,7 +94,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
       "Use BaseRepository pattern from CLAUDE.md",
       "Export interface"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "application",
