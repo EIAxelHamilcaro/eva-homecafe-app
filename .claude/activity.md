@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 41/70
-**Current Task:** Task 42 - Create Drizzle Schema for Notifications
+**Tasks Completed:** 42/70
+**Current Task:** Task 43 - Run Database Migration
 **Current Phase:** Phase 2 - Friends & Notifications
 
 ---
@@ -15,7 +15,7 @@
 |----------|-------|-----------|
 | Domain | 7 | 7 |
 | Application | 18 | 18 |
-| Infrastructure | 6 | 4 |
+| Infrastructure | 6 | 5 |
 | Adapter | 10 | 3 |
 | API | 3 | 1 |
 | Expo | 19 | 5 |
@@ -682,6 +682,29 @@ Tables defined:
 - Indexes: unique token_idx, user_id_idx
 
 Migration generated: `migrations/0003_sad_unus.sql`
+
+Type check: PASSED
+
+**Task 42 Completed: Create Drizzle Schema for Notifications**
+
+Files created:
+- `packages/drizzle/src/schema/notification.ts` - Notification table
+
+Files modified:
+- `packages/drizzle/src/schema/index.ts` - Added notification export
+
+`notification` table:
+- id (text, primary key)
+- userId (text, FK to user.id, cascade delete)
+- type (text, not null)
+- title (text, not null)
+- body (text, not null)
+- data (jsonb, not null, typed as Record<string, unknown>)
+- readAt (timestamp, nullable)
+- createdAt (timestamp, default now)
+- Indexes: (userId, createdAt), (userId, readAt)
+
+Migration generated: `migrations/0004_flippant_drax.sql`
 
 Type check: PASSED
 

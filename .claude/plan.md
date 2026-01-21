@@ -521,7 +521,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Add index on (userId, createdAt)",
       "Export from packages/drizzle/src/schema/index.ts"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 43,
