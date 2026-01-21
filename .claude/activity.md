@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 21
-**Current Task:** None (task 21 completed)
+**Tasks Completed:** 22
+**Current Task:** None (task 22 completed)
 
 ---
 
@@ -462,3 +462,34 @@
 - Created `common/di/modules/chat.module.ts` with createChatModule()
 - Updated `common/di/types.ts` with chat DI symbols and return types
 - Updated `common/di/container.ts` to load chat module
+
+### 2026-01-21 - Task 22: Create SSE controller for realtime
+
+**Status:** PASSED
+
+**Implementation Summary:**
+- Created `apps/nextjs/src/adapters/controllers/chat/sse.controller.ts`
+  - `SSEConnectionManager` class - manages SSE connections per user
+    - `addConnection()` - registers callback for user
+    - `removeConnection()` - removes callback on disconnect
+    - `sendToUser()` - sends SSE message to specific user
+    - `sendToUsers()` - broadcasts to multiple users (for conversation participants)
+  - `sseController()` - GET handler for `/api/v1/chat/sse` endpoint
+    - Authenticates user via `GetSessionUseCase`
+    - Creates `ReadableStream` with SSE format
+    - Sends "connected" event on connection
+    - Implements 30-second ping interval for keep-alive
+    - Cleans up on request abort
+  - Broadcast helper functions exported:
+    - `broadcastMessageSent()` - notifies participants of new messages
+    - `broadcastReactionAdded()` / `broadcastReactionRemoved()` - reaction events
+    - `broadcastConversationRead()` - read receipt events
+    - `broadcastConversationCreated()` - new conversation events
+- Created `apps/nextjs/app/api/v1/chat/sse/route.ts`
+  - Exports `GET` handler using `sseController`
+  - Sets `runtime = "nodejs"` and `dynamic = "force-dynamic"` for streaming support
+- `pnpm type-check` and `pnpm check` both pass
+
+**Changes Made:**
+- Created `adapters/controllers/chat/sse.controller.ts` with SSEConnectionManager and broadcast helpers
+- Created `app/api/v1/chat/sse/route.ts` API route

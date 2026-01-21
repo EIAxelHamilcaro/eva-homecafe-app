@@ -251,7 +251,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
       "Subscribe to domain events",
       "Stream events to connected clients"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "adapters",
