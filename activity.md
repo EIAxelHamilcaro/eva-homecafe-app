@@ -86,5 +86,16 @@
   - Simple routes re-exporting notification controller functions
   - Follows existing `/api/v1/` pattern
 
+#### Task 56: Create Expo Friend Types
+- **Status**: Completed
+- **Files Created**:
+  - `apps/expo/types/friend.ts` - Friend, FriendRequest, InviteLink, Pagination interfaces
+  - `apps/expo/types/notification.ts` - Notification, NotificationType interfaces
+- **Files Modified**:
+  - `apps/expo/types/index.ts` - Exports all friend and notification types
+- **Details**:
+  - Types match backend DTOs for type-safe API calls
+  - Includes input/response types for all friend and notification operations
+
 ### Validation
 - `pnpm type-check`: Passed

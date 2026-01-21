@@ -649,7 +649,7 @@
       "Create apps/expo/types/notification.ts with Notification interface",
       "Export from apps/expo/types/index.ts"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 57,
