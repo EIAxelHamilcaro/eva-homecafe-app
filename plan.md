@@ -638,7 +638,7 @@
       "Create app/api/notifications/[id]/read/route.ts (POST mark read)",
       "Create app/api/notifications/unread-count/route.ts (GET count)"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 56,

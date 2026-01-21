@@ -76,5 +76,15 @@
   - Simple routes re-exporting controller functions
   - Follows existing `/api/v1/` pattern
 
+#### Task 55: Create Notification API Routes
+- **Status**: Completed
+- **Files Created**:
+  - `apps/nextjs/app/api/v1/notifications/route.ts` (GET list)
+  - `apps/nextjs/app/api/v1/notifications/[id]/read/route.ts` (POST mark read)
+  - `apps/nextjs/app/api/v1/notifications/unread-count/route.ts` (GET count)
+- **Details**:
+  - Simple routes re-exporting notification controller functions
+  - Follows existing `/api/v1/` pattern
+
 ### Validation
 - `pnpm type-check`: Passed
