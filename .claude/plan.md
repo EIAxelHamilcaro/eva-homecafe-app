@@ -240,7 +240,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
       "reactions.controller.ts (POST add, DELETE remove)",
       "Use requireAuth guard"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "adapters",
@@ -261,7 +261,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
       "Bind repositories and use cases",
       "Export and import in container"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "api",

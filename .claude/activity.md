@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 19
-**Current Task:** None (task 19 completed)
+**Tasks Completed:** 21
+**Current Task:** None (task 21 completed)
 
 ---
 
@@ -408,3 +408,57 @@
 **Changes Made:**
 - Created `adapters/mappers/message.mapper.ts` with domain <-> DB mapping functions
 - Created `adapters/repositories/message.repository.ts` with DrizzleMessageRepository
+
+### 2026-01-21 - Task 20: Create Chat controllers
+
+**Status:** PASSED
+
+**Implementation Summary:**
+- Created `apps/nextjs/src/adapters/controllers/chat/conversations.controller.ts`
+  - `getConversations()` - handles GET with pagination params, calls GetConversationsUseCase
+  - `createConversation()` - handles POST with recipientId, calls CreateConversationUseCase
+- Created `apps/nextjs/src/adapters/controllers/chat/messages.controller.ts`
+  - `getMessages()` - handles GET with conversationId + pagination, calls GetMessagesUseCase
+  - `sendMessage()` - handles POST with content/attachments, calls SendMessageUseCase
+  - `uploadMedia()` - handles multipart form upload, calls UploadMediaUseCase
+- Created `apps/nextjs/src/adapters/controllers/chat/reactions.controller.ts`
+  - `toggleReaction()` - handles POST with emoji, calls AddReactionUseCase (toggle behavior)
+  - `markConversationRead()` - handles POST to mark conversation as read, calls MarkConversationReadUseCase
+- All controllers follow established pattern: validate input with Zod, call use case via DI, return typed response
+- `pnpm type-check` and `pnpm check` both pass
+
+**Changes Made:**
+- Created `adapters/controllers/chat/conversations.controller.ts`
+- Created `adapters/controllers/chat/messages.controller.ts`
+- Created `adapters/controllers/chat/reactions.controller.ts`
+
+### 2026-01-21 - Task 21: Register DI bindings for chat module
+
+**Status:** PASSED
+
+**Implementation Summary:**
+- Created `apps/nextjs/src/adapters/services/storage/local-storage.service.ts`
+  - Implements `IStorageProvider` interface for local filesystem storage
+  - `upload()` - saves files to `public/uploads/` directory, returns URL path
+  - `delete()` - removes files from storage
+  - `getUrl()` - resolves file ID to public URL
+- Created `apps/nextjs/common/di/modules/chat.module.ts`
+  - Binds `IConversationRepository` → `DrizzleConversationRepository`
+  - Binds `IMessageRepository` → `DrizzleMessageRepository`
+  - Binds `IStorageProvider` → `LocalStorageService`
+  - Binds all chat use cases with their dependencies:
+    - `GetConversationsUseCase`, `CreateConversationUseCase`
+    - `GetMessagesUseCase`, `SendMessageUseCase`
+    - `AddReactionUseCase`, `MarkConversationReadUseCase`, `UploadMediaUseCase`
+- Updated `apps/nextjs/common/di/types.ts`
+  - Added DI symbols for all chat repositories, providers, and use cases
+  - Added return types mapping for type-safe `getInjection()` calls
+- Updated `apps/nextjs/common/di/container.ts`
+  - Imported and loaded `createChatModule()` into ApplicationContainer
+- `pnpm type-check` and `pnpm check` both pass
+
+**Changes Made:**
+- Created `adapters/services/storage/local-storage.service.ts` with LocalStorageService
+- Created `common/di/modules/chat.module.ts` with createChatModule()
+- Updated `common/di/types.ts` with chat DI symbols and return types
+- Updated `common/di/container.ts` to load chat module
