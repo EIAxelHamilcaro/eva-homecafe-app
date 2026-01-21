@@ -69,7 +69,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Create src/application/ports/profile-repository.port.ts",
       "Define methods: create, update, findById, findByUserId, exists"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 5,
@@ -81,7 +81,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Create src/application/dto/profile/update-profile.dto.ts (input: profileId, displayName?, bio?, avatarUrl?)",
       "Create src/application/dto/profile/get-profile.dto.ts (input: userId, output: profile)"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 6,

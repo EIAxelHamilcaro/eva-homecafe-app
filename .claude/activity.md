@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 3/70
-**Current Task:** Task 4 - Create Profile Repository Port
+**Tasks Completed:** 5/70
+**Current Task:** Task 6 - Create CreateProfile Use Case
 **Current Phase:** Phase 1 - Profile Feature
 
 ---
@@ -14,7 +14,7 @@
 | Category | Total | Completed |
 |----------|-------|-----------|
 | Domain | 7 | 3 |
-| Application | 18 | 0 |
+| Application | 18 | 2 |
 | Infrastructure | 6 | 0 |
 | Adapter | 10 | 0 |
 | API | 3 | 0 |
@@ -60,5 +60,18 @@ Profile aggregate methods:
 - `create()` - Creates new profile with event
 - `reconstitute()` - Rebuilds from DB
 - `updateDisplayName()`, `updateBio()`, `updateAvatar()` - Update methods with events
+
+Type check: PASSED
+
+**Tasks 4-5 Completed: Profile Repository Port & DTOs**
+
+Files created:
+- `src/application/ports/profile-repository.port.ts` - IProfileRepository interface extending BaseRepository
+- `src/application/dto/profile/profile.dto.ts` - Shared profile DTO schema
+- `src/application/dto/profile/create-profile.dto.ts` - Create profile input/output DTOs
+- `src/application/dto/profile/update-profile.dto.ts` - Update profile input/output DTOs
+- `src/application/dto/profile/get-profile.dto.ts` - Get profile input/output DTOs
+
+Repository methods: findById, findByUserId, existsByUserId (extends BaseRepository<Profile>)
 
 Type check: PASSED
