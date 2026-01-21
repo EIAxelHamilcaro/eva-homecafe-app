@@ -1,5 +1,11 @@
 import { useRouter } from "expo-router";
-import { Plus, UserPlus, Users } from "lucide-react-native";
+import {
+  ArrowLeft,
+  QrCode,
+  ScanLine,
+  UserPlus,
+  Users,
+} from "lucide-react-native";
 import { useCallback } from "react";
 import {
   FlatList,
@@ -98,8 +104,20 @@ export default function FriendsScreen() {
   const router = useRouter();
   const { data, isLoading, isRefetching, refetch } = useFriends();
 
+  const handleGoBack = useCallback(() => {
+    router.back();
+  }, [router]);
+
   const handleAddFriend = useCallback(() => {
     router.push("/friends/add");
+  }, [router]);
+
+  const handleShowQRCode = useCallback(() => {
+    router.push("/friends/qr-code");
+  }, [router]);
+
+  const handleScanQRCode = useCallback(() => {
+    router.push("/friends/scan");
   }, [router]);
 
   const renderItem = useCallback(
@@ -122,8 +140,14 @@ export default function FriendsScreen() {
   if (isLoading) {
     return (
       <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
-        <View className="flex-row items-center justify-between border-b border-border px-4 py-3">
-          <Text className="text-xl font-semibold text-foreground">
+        <View className="flex-row items-center border-b border-border px-4 py-3">
+          <Pressable
+            onPress={handleGoBack}
+            className="mr-3 h-10 w-10 items-center justify-center rounded-full active:bg-muted"
+          >
+            <ArrowLeft size={24} color="#3D2E2E" />
+          </Pressable>
+          <Text className="flex-1 text-xl font-semibold text-foreground">
             Mes amis
           </Text>
         </View>
@@ -134,14 +158,36 @@ export default function FriendsScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
-      <View className="flex-row items-center justify-between border-b border-border px-4 py-3">
-        <Text className="text-xl font-semibold text-foreground">Mes amis</Text>
+      <View className="flex-row items-center border-b border-border px-4 py-3">
         <Pressable
-          onPress={handleAddFriend}
-          className="h-10 w-10 items-center justify-center rounded-full active:bg-muted"
+          onPress={handleGoBack}
+          className="mr-3 h-10 w-10 items-center justify-center rounded-full active:bg-muted"
         >
-          <Plus size={24} color="#3D2E2E" />
+          <ArrowLeft size={24} color="#3D2E2E" />
         </Pressable>
+        <Text className="flex-1 text-xl font-semibold text-foreground">
+          Mes amis
+        </Text>
+        <View className="flex-row gap-1">
+          <Pressable
+            onPress={handleShowQRCode}
+            className="h-10 w-10 items-center justify-center rounded-full active:bg-muted"
+          >
+            <QrCode size={22} color="#3D2E2E" />
+          </Pressable>
+          <Pressable
+            onPress={handleScanQRCode}
+            className="h-10 w-10 items-center justify-center rounded-full active:bg-muted"
+          >
+            <ScanLine size={22} color="#3D2E2E" />
+          </Pressable>
+          <Pressable
+            onPress={handleAddFriend}
+            className="h-10 w-10 items-center justify-center rounded-full active:bg-muted"
+          >
+            <UserPlus size={22} color="#3D2E2E" />
+          </Pressable>
+        </View>
       </View>
 
       <FlatList

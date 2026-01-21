@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 65/70
-**Current Task:** Task 66 - Add Friends Entry Point from Profile
+**Tasks Completed:** 66/70
+**Current Task:** Task 67 - Handle Deep Link for Invite
 **Current Phase:** Phase 2 - Friends & Notifications
 
 ---
@@ -1114,5 +1114,24 @@ Scan flow:
 3. On scan: extract token from URL
 4. Call acceptInvite API
 5. Show success (friend added) or error
+
+Type check: PASSED
+
+**Task 66 Completed: Add Friends Entry Point from Profile**
+
+Files modified:
+- `apps/expo/app/(protected)/friends/index.tsx` - Added navigation buttons
+
+Features verified/implemented:
+- Profile screen already has "Mes amis" button navigating to /friends (existed in Task 18)
+- Friends list screen now has header with:
+  - Back button (ArrowLeft) to go back
+  - QR Code button (QrCode) to navigate to /friends/qr-code
+  - Scan button (ScanLine) to navigate to /friends/scan
+  - Add friend button (UserPlus) to navigate to /friends/add
+
+Icons used: ArrowLeft, QrCode, ScanLine, UserPlus (replaced Plus)
+
+Fixed: Regenerated Expo routes with `npx expo customize tsconfig.json` to resolve typed route errors
 
 Type check: PASSED

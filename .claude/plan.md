@@ -780,7 +780,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Navigate to friends list",
       "Add QR code and scan buttons on friends list screen"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 67,
