@@ -385,7 +385,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Create src/application/dto/notification/mark-notification-read.dto.ts",
       "Create src/application/dto/notification/notification.dto.ts (shared notification shape)"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 33,

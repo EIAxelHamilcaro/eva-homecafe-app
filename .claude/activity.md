@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 31/70
-**Current Task:** Task 32 - Create Notification DTOs
+**Tasks Completed:** 32/70
+**Current Task:** Task 33 - Create SendFriendRequest Use Case
 **Current Phase:** Phase 2 - Friends & Notifications
 
 ---
@@ -14,7 +14,7 @@
 | Category | Total | Completed |
 |----------|-------|-----------|
 | Domain | 7 | 7 |
-| Application | 18 | 9 |
+| Application | 18 | 10 |
 | Infrastructure | 6 | 3 |
 | Adapter | 10 | 3 |
 | API | 3 | 1 |
@@ -483,6 +483,15 @@ Files created:
 - `src/application/dto/friend/get-pending-requests.dto.ts` - Input: userId, pagination, Output: requests with sender info and pagination
 - `src/application/dto/friend/get-invite-link.dto.ts` - Input: userId, Output: inviteUrl, token, expiresAt
 - `src/application/dto/friend/accept-invite.dto.ts` - Input: token, userId, Output: success, friendId, friendName, message
+
+Type check: PASSED
+
+**Task 32 Completed: Notification DTOs**
+
+Files created:
+- `src/application/dto/notification/notification.dto.ts` - Shared schemas: notificationDtoSchema, notificationTypeSchema
+- `src/application/dto/notification/get-notifications.dto.ts` - Input: userId, unreadOnly, pagination, Output: notifications array, unreadCount, pagination
+- `src/application/dto/notification/mark-notification-read.dto.ts` - Input: notificationId, userId, Output: success, message
 
 Type check: PASSED
 
