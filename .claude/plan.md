@@ -663,7 +663,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Create apps/expo/types/notification.ts with Notification interface",
       "Export from apps/expo/types/index.ts"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 57,
@@ -674,7 +674,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Create apps/expo/hooks/use-friend-requests.ts (usePendingRequests, useRespondRequest)",
       "Create apps/expo/hooks/use-invite.ts (useGenerateInvite, useAcceptInvite)"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 58,
@@ -683,7 +683,7 @@ Friend invitations (email + QR code), notifications system with real-time update
     "steps": [
       "Create apps/expo/hooks/use-notifications.ts (useNotifications, useMarkRead, useUnreadCount)"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 59,
@@ -694,7 +694,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Invalidate notifications query on new notification",
       "Update unread count"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 60,

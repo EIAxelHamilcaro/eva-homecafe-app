@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 55/70
-**Current Task:** Task 56 - Create Expo Friend Types
+**Tasks Completed:** 59/70
+**Current Task:** Task 60 - Create Notifications Tab Screen
 **Current Phase:** Phase 2 - Friends & Notifications
 
 ---
@@ -18,7 +18,7 @@
 | Infrastructure | 6 | 6 |
 | Adapter | 10 | 10 |
 | API | 3 | 3 |
-| Expo | 19 | 5 |
+| Expo | 19 | 9 |
 | Testing | 4 | 1 |
 | Validation | 3 | 2 |
 
@@ -954,5 +954,29 @@ Notification API Routes (`app/api/v1/notifications/`):
 - `unread-count/route.ts` - GET (getUnreadCount)
 
 **API LAYER COMPLETE** - All 3 API tasks completed!
+
+Type check: PASSED
+
+**Tasks 56-59 Completed: Expo Types and Hooks**
+
+Files verified (already existed):
+
+Expo Types:
+- `apps/expo/types/friend.ts` - Friend, FriendRequest, InviteLink, Pagination interfaces
+- `apps/expo/types/notification.ts` - Notification, NotificationType interfaces
+- `apps/expo/types/index.ts` - Barrel exports
+
+Expo Friend Hooks (`apps/expo/lib/api/hooks/`):
+- `use-friends.ts` - useFriends(), useSendFriendRequest()
+- `use-friend-requests.ts` - usePendingRequests(), useRespondRequest()
+- `use-invite.ts` - useGenerateInvite(), useAcceptInvite()
+
+Expo Notification Hooks:
+- `use-notifications.ts` - useNotifications(), useMarkRead(), useUnreadCount()
+
+Expo SSE Hook (`apps/expo/lib/sse/use-sse.ts`):
+- Already handles 'notification' event type
+- handleNotification() invalidates notificationKeys.all on event
+- Full event switch case for all event types
 
 Type check: PASSED
