@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 49/70
-**Current Task:** Task 50 - Create Notification Controller
+**Tasks Completed:** 50/70
+**Current Task:** Task 51 - Register Friends & Notifications DI Module
 **Current Phase:** Phase 2 - Friends & Notifications
 
 ---
@@ -16,7 +16,7 @@
 | Domain | 7 | 7 |
 | Application | 18 | 18 |
 | Infrastructure | 6 | 6 |
-| Adapter | 10 | 9 |
+| Adapter | 10 | 10 |
 | API | 3 | 1 |
 | Expo | 19 | 5 |
 | Testing | 4 | 1 |
@@ -872,3 +872,27 @@ Error handling:
 - 500 Internal Server Error for unexpected failures
 
 Type check: PASSED
+
+**Task 50 Completed: Create Notification Controller**
+
+Files verified (already existed):
+- `src/adapters/controllers/notification/notification.controller.ts`
+
+Controller handlers implemented:
+- `getNotifications()` - Get notifications list with pagination and unreadOnly filter
+- `markAsRead()` - Mark notification as read by ID
+- `getUnreadCount()` - Get count of unread notifications for badge display
+
+Helper function:
+- `getAuthenticatedUser()` - Gets session via GetSessionUseCase, returns null if not authenticated
+
+Error handling:
+- 401 Unauthorized for unauthenticated requests
+- 400 Bad Request for validation errors
+- 403 Forbidden for unauthorized access
+- 404 Not Found for missing notifications
+- 500 Internal Server Error for unexpected failures
+
+Type check: PASSED
+
+**ADAPTER LAYER COMPLETE** - All 10 adapter tasks completed!
