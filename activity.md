@@ -108,5 +108,14 @@
   - Query key factories for cache management
   - Automatic cache invalidation on mutations
 
+#### Task 58: Create Expo Notification Hooks
+- **Status**: Completed
+- **Files Created**:
+  - `apps/expo/lib/api/hooks/use-notifications.ts` - useNotifications, useUnreadCount, useMarkRead hooks
+- **Details**:
+  - Uses TanStack Query for caching and state management
+  - Supports pagination and unreadOnly filtering
+  - Query keys defined in centralized query-keys.ts
+
 ### Validation
 - `pnpm type-check`: Passed

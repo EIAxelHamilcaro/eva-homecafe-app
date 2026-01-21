@@ -669,7 +669,7 @@
     "steps": [
       "Create apps/expo/hooks/use-notifications.ts (useNotifications, useMarkRead, useUnreadCount)"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 59,
