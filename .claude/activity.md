@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 48/70
-**Current Task:** Task 49 - Create Friend Controller
+**Tasks Completed:** 49/70
+**Current Task:** Task 50 - Create Notification Controller
 **Current Phase:** Phase 2 - Friends & Notifications
 
 ---
@@ -16,7 +16,7 @@
 | Domain | 7 | 7 |
 | Application | 18 | 18 |
 | Infrastructure | 6 | 6 |
-| Adapter | 10 | 8 |
+| Adapter | 10 | 9 |
 | API | 3 | 1 |
 | Expo | 19 | 5 |
 | Testing | 4 | 1 |
@@ -193,7 +193,7 @@ Helper function:
 
 All handlers use authentication check and return proper HTTP status codes (401, 400, 404, 409, 500).
 
-Type check: PASSED
+Type check: PASSED Re
 
 **Task 14 Completed: Register Profile DI Module**
 
@@ -848,3 +848,27 @@ Key patterns used:
 
 Type check: PASSED
 
+**Task 49 Completed: Create Friend Controller**
+
+Files verified (already existed):
+- `src/adapters/controllers/friend/friend.controller.ts`
+
+Controller handlers implemented:
+- `sendRequest()` - Send friend request by email
+- `respondRequest()` - Accept or reject friend request
+- `getFriends()` - Get list of friends with pagination
+- `getPendingRequests()` - Get pending friend requests with pagination
+- `getInviteLink()` - Generate invite link for sharing
+- `acceptInvite()` - Accept invite token from another user
+
+Helper function:
+- `getAuthenticatedUser()` - Gets session via GetSessionUseCase, returns null if not authenticated
+
+Error handling:
+- 401 Unauthorized for unauthenticated requests
+- 400 Bad Request for validation errors
+- 404 Not Found for missing resources
+- 409 Conflict for duplicate/existing states
+- 500 Internal Server Error for unexpected failures
+
+Type check: PASSED

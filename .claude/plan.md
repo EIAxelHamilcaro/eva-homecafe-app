@@ -584,7 +584,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Create src/adapters/controllers/friend/friend.controller.ts",
       "Implement sendRequest, respondRequest, getFriends, getPendingRequests, getInviteLink, acceptInvite handlers"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 50,
