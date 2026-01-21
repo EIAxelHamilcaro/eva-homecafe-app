@@ -564,7 +564,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Create src/adapters/repositories/invite-token.repository.ts",
       "Implement create, findByToken, markAsUsed methods"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 48,

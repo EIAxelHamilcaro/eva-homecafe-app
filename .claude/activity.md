@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 46/70
-**Current Task:** Task 47 - Create InviteToken Repository
+**Tasks Completed:** 47/70
+**Current Task:** Task 48 - Create Notification Repository
 **Current Phase:** Phase 2 - Friends & Notifications
 
 ---
@@ -16,7 +16,7 @@
 | Domain | 7 | 7 |
 | Application | 18 | 18 |
 | Infrastructure | 6 | 6 |
-| Adapter | 10 | 6 |
+| Adapter | 10 | 7 |
 | API | 3 | 1 |
 | Expo | 19 | 5 |
 | Testing | 4 | 1 |
@@ -799,6 +799,24 @@ Key patterns used:
 - `FriendRequestStatusEnum.PENDING/ACCEPTED` for status filtering
 - Transaction support via `getDb(trx)` pattern
 - `DEFAULT_PAGINATION`, `createPaginatedResult()` for pagination
+
+Type check: PASSED
+
+**Task 47 Completed: Create InviteToken Repository**
+
+Files created:
+- `src/adapters/repositories/invite-token.repository.ts`
+
+Repository methods implemented:
+- `create()` - Creates new invite token in database with generated UUID
+- `findByToken()` - Finds invite token by token string (returns Option)
+- `markAsUsed()` - Updates token with usedAt timestamp
+- `deleteExpired()` - Deletes all tokens where expiresAt < now, returns count
+
+Key patterns used:
+- `eq()`, `lt()` operators from drizzle-orm
+- Simple InviteToken type (not a domain aggregate, just a data structure)
+- UUID generation for token IDs
 
 Type check: PASSED
 
