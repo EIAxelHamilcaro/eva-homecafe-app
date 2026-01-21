@@ -149,7 +149,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Create src/adapters/mappers/profile.mapper.ts",
       "Implement toDomain() and toPersistence() methods"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 12,
@@ -219,6 +219,7 @@ Friend invitations (email + QR code), notifications system with real-time update
     "category": "expo",
     "description": "Create Profile Tab Screen",
     "steps": [
+      "READ .claude/screenshots/Mobile - Mon profile.png for UI",
       "Create apps/expo/app/(protected)/(tabs)/profile.tsx",
       "Display profile info: avatar, displayName, bio",
       "Add edit button to navigate to edit screen",
@@ -231,6 +232,7 @@ Friend invitations (email + QR code), notifications system with real-time update
     "category": "expo",
     "description": "Create Edit Profile Screen",
     "steps": [
+      "READ .claude/screenshots/Mobile - Mon profile.png for UI",
       "Create apps/expo/app/(protected)/profile/edit.tsx",
       "Form with: avatar picker, displayName input, bio textarea",
       "Save button triggers updateProfile mutation",
@@ -243,6 +245,7 @@ Friend invitations (email + QR code), notifications system with real-time update
     "category": "expo",
     "description": "Add Profile Tab to Layout",
     "steps": [
+      "READ .claude/screenshots/Mobile - Mon profile.png for UI",
       "Modify apps/expo/app/(protected)/(tabs)/_layout.tsx",
       "Add Profile tab with User icon",
       "Move sign out from home to profile screen"

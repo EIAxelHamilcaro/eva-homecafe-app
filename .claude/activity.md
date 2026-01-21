@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 10/70
-**Current Task:** Task 11 - Create Profile Mapper
+**Tasks Completed:** 11/70
+**Current Task:** Task 12 - Create Profile Repository
 **Current Phase:** Phase 1 - Profile Feature
 
 ---
@@ -16,7 +16,7 @@
 | Domain | 7 | 3 |
 | Application | 18 | 5 |
 | Infrastructure | 6 | 2 |
-| Adapter | 10 | 0 |
+| Adapter | 10 | 1 |
 | API | 3 | 0 |
 | Expo | 19 | 0 |
 | Testing | 4 | 0 |
@@ -143,3 +143,14 @@ Migration applied:
 
 Command: `pnpm drizzle-kit push --force`
 Status: Changes applied successfully
+
+**Task 11 Completed: Create Profile Mapper**
+
+Files created:
+- `src/adapters/mappers/profile.mapper.ts`
+
+Mapper functions:
+- `profileToDomain()` - Converts DB record to Profile aggregate (handles Bio VO, DisplayName VO, Option types)
+- `profileToPersistence()` - Converts Profile aggregate to DB record format
+
+Type check: PASSED
