@@ -340,7 +340,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Create src/application/ports/friend-request-repository.port.ts",
       "Define methods: create, update, findById, findByUsers, findPendingForUser, findFriendsForUser, exists"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 29,
@@ -350,7 +350,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Create src/application/ports/invite-token-repository.port.ts",
       "Define methods: create, findByToken, markAsUsed, deleteExpired"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 30,
@@ -360,7 +360,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Create src/application/ports/notification-repository.port.ts",
       "Define methods: create, update, findById, findByUserId, findUnreadByUserId, markAsRead, countUnread"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 31,

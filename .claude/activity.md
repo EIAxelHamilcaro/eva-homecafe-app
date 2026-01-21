@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 27/70
-**Current Task:** Task 28 - Create Friend Repository Port
+**Tasks Completed:** 30/70
+**Current Task:** Task 31 - Create Friend DTOs
 **Current Phase:** Phase 2 - Friends & Notifications
 
 ---
@@ -14,7 +14,7 @@
 | Category | Total | Completed |
 |----------|-------|-----------|
 | Domain | 7 | 7 |
-| Application | 18 | 5 |
+| Application | 18 | 8 |
 | Infrastructure | 6 | 3 |
 | Adapter | 10 | 3 |
 | API | 3 | 1 |
@@ -441,4 +441,35 @@ NotificationType VO:
 Type check: PASSED
 
 **DOMAIN LAYER COMPLETE** - All 7 domain tasks completed!
+
+**Tasks 28-30 Completed: Repository Ports**
+
+Files created:
+- `src/application/ports/friend-request-repository.port.ts` - IFriendRequestRepository interface
+- `src/application/ports/invite-token-repository.port.ts` - IInviteTokenRepository interface with InviteToken type
+- `src/application/ports/notification-repository.port.ts` - INotificationRepository interface
+
+IFriendRequestRepository methods:
+- Extends BaseRepository<FriendRequest>
+- `findById()` - Find by FriendRequestId
+- `findByUsers()` - Find by senderId and receiverId
+- `findPendingForUser()` - Get pending requests for a user
+- `findFriendsForUser()` - Get accepted friendships for a user
+- `existsBetweenUsers()` - Check if request exists between two users
+
+IInviteTokenRepository methods:
+- `create()` - Create new invite token
+- `findByToken()` - Find by token string
+- `markAsUsed()` - Mark token as used
+- `deleteExpired()` - Clean up expired tokens
+
+INotificationRepository methods:
+- Extends BaseRepository<Notification>
+- `findById()` - Find by NotificationId
+- `findByUserId()` - Get all notifications for a user (paginated)
+- `findUnreadByUserId()` - Get unread notifications for a user (paginated)
+- `markAsRead()` - Mark notification as read
+- `countUnread()` - Count unread notifications for a user
+
+Type check: PASSED
 
