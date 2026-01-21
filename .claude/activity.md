@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 32
-**Current Task:** Task 33 (Expo - Create React Query hooks - reactions and upload)
+**Tasks Completed:** 33
+**Current Task:** Task 34 (Screens - Create messages list screen)
 
 ---
 
@@ -658,3 +658,48 @@
 
 **Changes Made:**
 - Created `apps/expo/lib/api/hooks/use-messages.ts`
+
+### 2026-01-21 - Task 33: Create React Query hooks - reactions and upload
+
+**Status:** PASSED
+
+**Implementation Summary:**
+- Created `apps/expo/lib/api/hooks/use-reactions.ts`
+  - `reactionKeys` - query key factory (all, byMessage)
+  - `useToggleReaction(options)` - mutation hook with optimistic update
+    - Accepts `conversationId`, `messageId`, `userId` for optimistic update context
+    - Calls `POST /api/v1/chat/messages/:messageId/reactions` endpoint
+    - Toggle logic: adds reaction if not present, removes if already exists
+    - **Optimistic update flow:** Cancels queries, updates cache, rolls back on error
+  - `useRemoveReaction(options)` - mutation hook for explicit removal
+    - Calls `DELETE /api/v1/chat/messages/:messageId/reactions?emoji=...` endpoint
+    - Same optimistic update pattern as toggle
+- Created `apps/expo/lib/api/hooks/use-media-upload.ts`
+  - `useMediaUpload(options?)` - single file upload mutation with progress tracking
+    - Accepts optional `onProgress` callback
+    - Creates FormData with file metadata (uri, type, name)
+    - Uses `api.uploadFile()` with XHR for progress events
+    - Returns upload result with progress state (0-100)
+  - `useMultipleMediaUpload(options?)` - sequential multi-file upload
+    - Accepts optional `onProgress` (total) and `onFileProgress` (per-file) callbacks
+    - Uploads files sequentially, tracking individual and total progress
+    - Returns array of upload results with progress states
+  - Helper: `getMimeTypeFromExtension()` for MIME type resolution
+- Created `apps/expo/lib/api/hooks/use-recipients.ts`
+  - `recipientKeys` - query key factory (all, search)
+  - `useSearchRecipients(options)` - query hook for recipient search
+    - Accepts `query` string, optional `limit` (default 10), optional `enabled`
+    - Calls `GET /api/v1/chat/recipients?search=...&limit=...` endpoint
+    - Requires minimum 2 characters for query to execute
+    - 30-second stale time for search result caching
+- Updated `apps/expo/lib/api/client.ts` with `uploadFile()` method
+  - Uses XHR for progress tracking (fetch API doesn't support upload progress)
+  - Progress events report 0-100 percentage
+  - Proper error handling with ApiError
+- `pnpm type-check` and `pnpm check` both pass
+
+**Changes Made:**
+- Created `apps/expo/lib/api/hooks/use-reactions.ts`
+- Created `apps/expo/lib/api/hooks/use-media-upload.ts`
+- Created `apps/expo/lib/api/hooks/use-recipients.ts`
+- Updated `apps/expo/lib/api/client.ts` with uploadFile method

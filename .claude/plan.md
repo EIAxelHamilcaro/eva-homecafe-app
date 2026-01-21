@@ -372,7 +372,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
       "Create use-media-upload.ts (upload with progress)",
       "Create use-recipients.ts (search query)"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "screens",
