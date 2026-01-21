@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 51/70
-**Current Task:** Task 52 - Register Friend DI Module
+**Tasks Completed:** 53/70
+**Current Task:** Task 54 - Create Friend API Routes
 **Current Phase:** Phase 2 - Friends & Notifications
 
 ---
@@ -907,5 +907,32 @@ SSE notification support already implemented:
 - `broadcastNotification()` function to send notifications to specific users
 - Supports notification types: `friend_request`, `friend_accepted`, `new_message`
 - Sends notificationId, type, title, body, and optional data payload
+
+Type check: PASSED
+
+**Tasks 52-53 Completed: Register DI Modules**
+
+Files verified (already existed):
+- `common/di/modules/friend.module.ts` - Friend DI module
+- `common/di/modules/notification.module.ts` - Notification DI module
+- `common/di/types.ts` - DI symbols and types
+- `common/di/container.ts` - Loads both modules
+
+Friend Module bindings:
+- `IFriendRequestRepository` → `DrizzleFriendRequestRepository`
+- `IInviteTokenRepository` → `DrizzleInviteTokenRepository`
+- `INotificationRepository` → `DrizzleNotificationRepository`
+- `SendFriendRequestUseCase` with dependencies
+- `RespondFriendRequestUseCase` with dependencies
+- `GetFriendsUseCase` with dependencies
+- `GetPendingRequestsUseCase` with dependencies
+- `GetInviteLinkUseCase` with dependencies
+- `AcceptInviteLinkUseCase` with dependencies
+
+Notification Module bindings:
+- `GetNotificationsUseCase` with dependencies (INotificationRepository)
+- `MarkNotificationReadUseCase` with dependencies (INotificationRepository)
+
+Container loads both FriendModule and NotificationModule.
 
 Type check: PASSED

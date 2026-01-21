@@ -617,7 +617,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Bind IEmailProvider for SendFriendRequest",
       "Register in common/di/container.ts"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 53,
@@ -628,7 +628,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Bind INotificationRepository and all notification use cases",
       "Register in common/di/container.ts"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 54,
