@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 9/70
-**Current Task:** Task 10 - Run Database Migration for Profile
+**Tasks Completed:** 10/70
+**Current Task:** Task 11 - Create Profile Mapper
 **Current Phase:** Phase 1 - Profile Feature
 
 ---
@@ -15,7 +15,7 @@
 |----------|-------|-----------|
 | Domain | 7 | 3 |
 | Application | 18 | 5 |
-| Infrastructure | 6 | 1 |
+| Infrastructure | 6 | 2 |
 | Adapter | 10 | 0 |
 | API | 3 | 0 |
 | Expo | 19 | 0 |
@@ -133,3 +133,13 @@ Schema details:
 - Migration auto-generated: `0002_serious_santa_claus.sql`
 
 Type check: PASSED
+
+**Task 10 Completed: Run Database Migration for Profile**
+
+Migration applied:
+- Created `profile` table with columns: id, user_id, display_name, bio, avatar_url, created_at, updated_at
+- Added foreign key constraint to user table with cascade delete
+- Added unique index on user_id
+
+Command: `pnpm drizzle-kit push --force`
+Status: Changes applied successfully

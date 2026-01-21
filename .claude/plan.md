@@ -139,7 +139,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Run pnpm db:push to apply schema changes",
       "Verify profiles table created correctly"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 11,
