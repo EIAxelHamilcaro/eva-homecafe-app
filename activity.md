@@ -64,5 +64,17 @@
   - Added broadcastNotification() function for real-time notification delivery
   - Function sends to single user (vs broadcastXxx which sends to multiple participants)
 
+#### Task 54: Create Friend API Routes
+- **Status**: Completed
+- **Files Created**:
+  - `apps/nextjs/app/api/v1/friends/route.ts` (GET friends, POST send request)
+  - `apps/nextjs/app/api/v1/friends/requests/route.ts` (GET pending)
+  - `apps/nextjs/app/api/v1/friends/requests/[id]/respond/route.ts` (POST accept/reject)
+  - `apps/nextjs/app/api/v1/friends/invite/route.ts` (GET generate invite link)
+  - `apps/nextjs/app/api/v1/friends/invite/accept/route.ts` (POST accept invite token)
+- **Details**:
+  - Simple routes re-exporting controller functions
+  - Follows existing `/api/v1/` pattern
+
 ### Validation
 - `pnpm type-check`: Passed

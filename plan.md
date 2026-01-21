@@ -560,7 +560,7 @@
       "Create src/adapters/repositories/notification.repository.ts",
       "Implement all port methods using Drizzle"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 49,
@@ -627,7 +627,7 @@
       "Create app/api/friends/invite/route.ts (GET generate invite link)",
       "Create app/api/friends/invite/accept/route.ts (POST accept invite token)"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 55,
