@@ -44,7 +44,18 @@ export interface GetPendingRequestsResponse {
 }
 
 export interface SendFriendRequestInput {
-  receiverId: string;
+  receiverEmail: string;
+}
+
+export type SendFriendRequestStatus =
+  | "request_sent"
+  | "invitation_sent"
+  | "already_friends";
+
+export interface SendFriendRequestResponse {
+  requestId: string | null;
+  status: SendFriendRequestStatus;
+  message: string;
 }
 
 export interface RespondFriendRequestInput {

@@ -743,7 +743,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Show success/error feedback",
       "Handle 'invitation_sent' vs 'request_sent' status"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 64,

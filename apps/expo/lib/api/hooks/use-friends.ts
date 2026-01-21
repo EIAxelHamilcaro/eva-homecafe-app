@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type {
   GetFriendsResponse,
   SendFriendRequestInput,
+  SendFriendRequestResponse,
 } from "@/types/friend";
 import { api } from "../client";
 import { friendKeys, friendRequestKeys } from "./query-keys";
@@ -27,9 +28,10 @@ export function useSendFriendRequest() {
 
   return useMutation({
     mutationFn: (input: SendFriendRequestInput) =>
-      api.post<{ request: { id: string } }>("/api/v1/friends", input),
+      api.post<SendFriendRequestResponse>("/api/v1/friends", input),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: friendRequestKeys.all });
+      queryClient.invalidateQueries({ queryKey: friendKeys.all });
     },
   });
 }
