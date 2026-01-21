@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 8
-**Current Task:** None (task 8 completed)
+**Tasks Completed:** 9
+**Current Task:** None (task 9 completed)
 
 ---
 
@@ -168,3 +168,25 @@
 
 **Changes Made:**
 - Created `message-repository.port.ts` with IMessageRepository interface
+
+### 2026-01-21 - Task 9: Create GetConversations use case
+
+**Status:** PASSED
+
+**Implementation Summary:**
+- Created `apps/nextjs/src/application/dto/chat/get-conversations.dto.ts`
+  - `IGetConversationsInputDto` - userId (required), pagination (optional)
+  - `IGetConversationsOutputDto` - conversations array with pagination metadata
+  - `IConversationDto` - id, participants, createdBy, lastMessage, unreadCount, timestamps
+  - `IParticipantDto` - userId, joinedAt, lastReadAt (nullable)
+  - `IMessagePreviewDto` - messageId, content, senderId, sentAt, hasAttachments
+- Created `apps/nextjs/src/application/use-cases/chat/get-conversations.use-case.ts`
+  - Implements `UseCase<IGetConversationsInputDto, IGetConversationsOutputDto>`
+  - Fetches conversations for user via `IConversationRepository.findAllForUser()`
+  - Maps domain entities to DTOs with proper Option handling
+  - Calculates simplified unread count based on lastReadAt vs lastMessage.sentAt
+- `pnpm type-check` and `pnpm check` both pass
+
+**Changes Made:**
+- Created `dto/chat/get-conversations.dto.ts` with input/output schemas and types
+- Created `use-cases/chat/get-conversations.use-case.ts` with GetConversationsUseCase class

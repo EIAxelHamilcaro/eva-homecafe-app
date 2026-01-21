@@ -116,7 +116,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
       "Output: conversations with lastMessage, unreadCount",
       "Create corresponding DTOs"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "application",
