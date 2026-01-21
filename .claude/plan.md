@@ -605,7 +605,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Add 'notification' event type",
       "Broadcast to user when notification created"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 52,

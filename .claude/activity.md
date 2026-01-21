@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 50/70
-**Current Task:** Task 51 - Register Friends & Notifications DI Module
+**Tasks Completed:** 51/70
+**Current Task:** Task 52 - Register Friend DI Module
 **Current Phase:** Phase 2 - Friends & Notifications
 
 ---
@@ -896,3 +896,16 @@ Error handling:
 Type check: PASSED
 
 **ADAPTER LAYER COMPLETE** - All 10 adapter tasks completed!
+
+**Task 51 Completed: Extend SSE Controller for Notifications**
+
+Files verified (already existed):
+- `src/adapters/controllers/chat/sse.controller.ts`
+
+SSE notification support already implemented:
+- `"notification"` event type added to `SSEMessage` interface
+- `broadcastNotification()` function to send notifications to specific users
+- Supports notification types: `friend_request`, `friend_accepted`, `new_message`
+- Sends notificationId, type, title, body, and optional data payload
+
+Type check: PASSED
