@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 19/70
-**Current Task:** Task 20 - Add Profile Tab to Layout
+**Tasks Completed:** 20/70
+**Current Task:** Task 21 - Write Unit Tests for Profile Use Cases
 **Current Phase:** Phase 1 - Profile Feature
 
 ---
@@ -18,7 +18,7 @@
 | Infrastructure | 6 | 3 |
 | Adapter | 10 | 3 |
 | API | 3 | 1 |
-| Expo | 19 | 4 |
+| Expo | 19 | 5 |
 | Testing | 4 | 0 |
 | Validation | 3 | 0 |
 
@@ -316,6 +316,22 @@ Uses:
 - `useUpdateProfile()` hook for mutation
 - `KeyboardAvoidingView` for proper keyboard handling
 - Form resets to current profile data on load
+
+Type check: PASSED
+
+**Task 20 Completed: Add Profile Tab to Layout**
+
+Files modified:
+- `apps/expo/app/(protected)/(tabs)/_layout.tsx` - Added Profile tab with User icon
+- `apps/expo/app/(protected)/(tabs)/index.tsx` - Removed sign out button (moved to profile)
+
+Changes:
+- Added `User` icon import from lucide-react-native
+- Added Profile tab with title "Profil" and User icon
+- Removed sign out button from home screen (already in profile screen)
+- Removed unused Button, CardFooter, useSignOut imports from home screen
+
+Tab bar now has 3 tabs: Accueil, Messages, Profil
 
 Type check: PASSED
 

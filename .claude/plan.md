@@ -250,7 +250,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Add Profile tab with User icon",
       "Move sign out from home to profile screen"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 21,
