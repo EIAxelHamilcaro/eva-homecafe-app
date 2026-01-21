@@ -97,5 +97,16 @@
   - Types match backend DTOs for type-safe API calls
   - Includes input/response types for all friend and notification operations
 
+#### Task 57: Create Expo Friend Hooks
+- **Status**: Completed
+- **Files Created**:
+  - `apps/expo/lib/api/hooks/use-friends.ts` - useFriends, useSendFriendRequest hooks
+  - `apps/expo/lib/api/hooks/use-friend-requests.ts` - usePendingRequests, useRespondRequest hooks
+  - `apps/expo/lib/api/hooks/use-invite.ts` - useGenerateInvite, useAcceptInvite hooks
+- **Details**:
+  - Uses TanStack Query (useQuery, useMutation)
+  - Query key factories for cache management
+  - Automatic cache invalidation on mutations
+
 ### Validation
 - `pnpm type-check`: Passed

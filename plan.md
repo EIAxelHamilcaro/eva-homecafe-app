@@ -660,7 +660,7 @@
       "Create apps/expo/hooks/use-friend-requests.ts (usePendingRequests, useRespondRequest)",
       "Create apps/expo/hooks/use-invite.ts (useGenerateInvite, useAcceptInvite)"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 58,
