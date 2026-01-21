@@ -1364,6 +1364,52 @@ Session started to find next task with `passes: false`. Confirmed 3 remaining ta
 
 All code implementation is complete and quality checks pass. Awaiting human tester to complete manual QA tasks on iOS Simulator, Android Emulator, and SSE realtime testing with multiple user sessions.
 
+### 2026-01-21 - Agent Session (Final Check)
+
+**Status:** BLOCKED
+
+**Summary:**
+Reviewed plan.md for first task with `passes: false`. The three remaining tasks are:
+
+| Task # | Description | Blocker |
+|--------|-------------|---------|
+| 45 | Test on iOS Simulator | Requires macOS + Xcode + iOS Simulator |
+| 47 | Test on Android Emulator | Requires Android Studio + Android Emulator |
+| 48 | Test SSE realtime | Requires 2 authenticated user sessions |
+
+**Why these tasks cannot be automated:**
+1. **iOS Simulator (Task 45)**: Requires physical macOS hardware with Xcode installed. Need to visually verify scroll, refresh, badges on conversations list; search and select on new message screen; send messages, add reactions, attach images on conversation screen.
+
+2. **Android Emulator (Task 47)**: Requires Android Studio with emulator configured. Same tests as iOS plus specific Android keyboard handling and image picker verification.
+
+3. **SSE Realtime (Task 48)**: Requires opening 2 separate sessions with different authenticated users simultaneously. Need to verify message delivery appears in other session, reactions update in real-time, and reconnection works after disconnect.
+
+**All code implementation is complete:**
+- ✅ Domain layer (aggregates, entities, VOs, events, errors)
+- ✅ Application layer (use cases, DTOs, ports)
+- ✅ Adapters layer (controllers, repositories, mappers, SSE)
+- ✅ API routes (all chat endpoints)
+- ✅ Expo client (screens, components, hooks, SSE integration)
+- ✅ Quality checks (type-check, lint, tests all passing)
+
+**Instructions for human tester:**
+```bash
+# Terminal 1: Start backend
+cd apps/nextjs && pnpm dev
+
+# Terminal 2: Start iOS (requires macOS + Xcode)
+cd apps/expo && pnpm ios
+
+# Terminal 3: Start Android (requires Android Studio)
+cd apps/expo && pnpm android
+```
+
+After verifying all functionality works:
+1. Mark task 45 as `"passes": true` in plan.md
+2. Mark task 47 as `"passes": true` in plan.md
+3. Mark task 48 as `"passes": true` in plan.md
+4. Commit changes
+
 ### 2026-01-21 - Agent Session (Verification)
 
 **Status:** BLOCKED
