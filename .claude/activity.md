@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 53/70
-**Current Task:** Task 54 - Create Friend API Routes
+**Tasks Completed:** 55/70
+**Current Task:** Task 56 - Create Expo Friend Types
 **Current Phase:** Phase 2 - Friends & Notifications
 
 ---
@@ -17,7 +17,7 @@
 | Application | 18 | 18 |
 | Infrastructure | 6 | 6 |
 | Adapter | 10 | 10 |
-| API | 3 | 1 |
+| API | 3 | 3 |
 | Expo | 19 | 5 |
 | Testing | 4 | 1 |
 | Validation | 3 | 2 |
@@ -934,5 +934,25 @@ Notification Module bindings:
 - `MarkNotificationReadUseCase` with dependencies (INotificationRepository)
 
 Container loads both FriendModule and NotificationModule.
+
+Type check: PASSED
+
+**Tasks 54-55 Completed: API Routes**
+
+Files verified (already existed):
+
+Friend API Routes (`app/api/v1/friends/`):
+- `route.ts` - GET (getFriends), POST (sendRequest)
+- `requests/route.ts` - GET (getPendingRequests)
+- `requests/[id]/respond/route.ts` - POST (respondRequest)
+- `invite/route.ts` - GET (getInviteLink)
+- `invite/accept/route.ts` - POST (acceptInvite)
+
+Notification API Routes (`app/api/v1/notifications/`):
+- `route.ts` - GET (getNotifications)
+- `[id]/read/route.ts` - POST (markAsRead)
+- `unread-count/route.ts` - GET (getUnreadCount)
+
+**API LAYER COMPLETE** - All 3 API tasks completed!
 
 Type check: PASSED

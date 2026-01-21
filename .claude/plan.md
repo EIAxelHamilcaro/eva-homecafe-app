@@ -641,7 +641,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Create app/api/friends/invite/route.ts (GET generate invite link)",
       "Create app/api/friends/invite/accept/route.ts (POST accept invite token)"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 55,
@@ -652,7 +652,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Create app/api/notifications/[id]/read/route.ts (POST mark read)",
       "Create app/api/notifications/unread-count/route.ts (GET count)"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 56,
