@@ -1189,3 +1189,33 @@ Performed automated code review for chat feature code quality:
 
 All automated code review steps passed.
 
+### 2026-01-21 - Task 46: Implement UI from screenshots
+
+**Status:** PASSED
+
+**Implementation Summary:**
+Analyzed design screenshots and implemented UI fixes to match the mockups:
+
+1. **Message bubble colors** ✅
+   - Fixed inverted colors: sent messages now BLUE (#3B82F6), received messages ORANGE (#FF8C42)
+   - Updated `message-bubble.tsx` background classes
+
+2. **Close button with pink circle border** ✅
+   - Created `close-button.tsx` component with X icon and primary color border
+   - Added to all message screen headers (index.tsx, new.tsx, [conversationId].tsx)
+   - All loading/error states also include the close button
+
+3. **Suggestions label color** ✅
+   - Updated "Suggestions" text in new.tsx to use `text-homecafe-orange` color
+
+**Changes Made:**
+- Updated `apps/expo/app/(protected)/(tabs)/messages/_components/message-bubble.tsx` - fixed sent/received colors
+- Created `apps/expo/app/(protected)/(tabs)/messages/_components/close-button.tsx` - new reusable component
+- Updated `apps/expo/app/(protected)/(tabs)/messages/index.tsx` - added CloseButton to header
+- Updated `apps/expo/app/(protected)/(tabs)/messages/new.tsx` - added CloseButton, fixed Suggestions color
+- Updated `apps/expo/app/(protected)/(tabs)/messages/[conversationId].tsx` - added CloseButton to all headers
+
+**Validation Results:**
+- `pnpm type-check`: All packages passed
+- `pnpm check`: 0 errors
+

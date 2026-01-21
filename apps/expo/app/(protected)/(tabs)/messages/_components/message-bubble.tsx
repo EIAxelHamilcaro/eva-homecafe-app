@@ -44,7 +44,7 @@ export function MessageBubble({
         delayLongPress={300}
         className={cn(
           "overflow-hidden rounded-2xl",
-          isSent ? "rounded-br-sm bg-primary" : "rounded-bl-sm bg-[#FF8C42]",
+          isSent ? "rounded-br-sm bg-[#3B82F6]" : "rounded-bl-sm bg-[#FF8C42]",
           hasContent && !hasAttachments && "px-4 py-2",
           hasAttachments && "pb-2",
         )}

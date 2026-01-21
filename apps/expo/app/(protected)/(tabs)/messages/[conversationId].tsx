@@ -20,6 +20,7 @@ import { useSSE } from "@/lib/sse/use-sse";
 import { useToast } from "@/lib/toast/toast-context";
 import { useAuth } from "@/src/providers/auth-provider";
 
+import { CloseButton } from "./_components/close-button";
 import { DateSeparator } from "./_components/date-separator";
 import { NoMessagesEmpty } from "./_components/empty-state";
 import { ErrorBoundary, ErrorState } from "./_components/error-boundary";
@@ -287,16 +288,19 @@ export default function ConversationScreen() {
   if (isLoading) {
     return (
       <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
-        <View className="flex-row items-center border-b border-border px-2 py-3">
-          <Pressable
-            onPress={handleBack}
-            className="h-10 w-10 items-center justify-center rounded-full active:bg-muted"
-          >
-            <ChevronLeft size={24} color="#000" />
-          </Pressable>
-          <Text className="ml-1 text-xl font-semibold text-foreground">
-            Conversation
-          </Text>
+        <View className="flex-row items-center justify-between border-b border-border px-2 py-3">
+          <View className="flex-row items-center">
+            <Pressable
+              onPress={handleBack}
+              className="h-10 w-10 items-center justify-center rounded-full active:bg-muted"
+            >
+              <ChevronLeft size={24} color="#000" />
+            </Pressable>
+            <Text className="ml-1 text-xl font-semibold text-foreground">
+              Nouveau message
+            </Text>
+          </View>
+          <CloseButton onPress={handleBack} />
         </View>
         <MessageListSkeleton />
       </SafeAreaView>
@@ -306,16 +310,19 @@ export default function ConversationScreen() {
   if (isError) {
     return (
       <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
-        <View className="flex-row items-center border-b border-border px-2 py-3">
-          <Pressable
-            onPress={handleBack}
-            className="h-10 w-10 items-center justify-center rounded-full active:bg-muted"
-          >
-            <ChevronLeft size={24} color="#000" />
-          </Pressable>
-          <Text className="ml-1 text-xl font-semibold text-foreground">
-            Conversation
-          </Text>
+        <View className="flex-row items-center justify-between border-b border-border px-2 py-3">
+          <View className="flex-row items-center">
+            <Pressable
+              onPress={handleBack}
+              className="h-10 w-10 items-center justify-center rounded-full active:bg-muted"
+            >
+              <ChevronLeft size={24} color="#000" />
+            </Pressable>
+            <Text className="ml-1 text-xl font-semibold text-foreground">
+              Nouveau message
+            </Text>
+          </View>
+          <CloseButton onPress={handleBack} />
         </View>
         <ErrorState
           message={error?.message || "Impossible de charger les messages"}
@@ -333,16 +340,19 @@ export default function ConversationScreen() {
           className="flex-1"
           keyboardVerticalOffset={0}
         >
-          <View className="flex-row items-center border-b border-border px-2 py-3">
-            <Pressable
-              onPress={handleBack}
-              className="h-10 w-10 items-center justify-center rounded-full active:bg-muted"
-            >
-              <ChevronLeft size={24} color="#000" />
-            </Pressable>
-            <Text className="ml-1 text-xl font-semibold text-foreground">
-              Conversation
-            </Text>
+          <View className="flex-row items-center justify-between border-b border-border px-2 py-3">
+            <View className="flex-row items-center">
+              <Pressable
+                onPress={handleBack}
+                className="h-10 w-10 items-center justify-center rounded-full active:bg-muted"
+              >
+                <ChevronLeft size={24} color="#000" />
+              </Pressable>
+              <Text className="ml-1 text-xl font-semibold text-foreground">
+                Nouveau message
+              </Text>
+            </View>
+            <CloseButton onPress={handleBack} />
           </View>
 
           <FlatList

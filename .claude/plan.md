@@ -519,6 +519,15 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
       "Implement exact UI",
       "Fix all bug"
     ],
+    "passes": true
+  },
+  {
+    "category": "BUG",
+    "description": "Fix",
+    "steps": [
+      "Read .claude/screenshots/BUG-1.png",
+      "fix all probleme"
+    ],
     "passes": false
   },
   {

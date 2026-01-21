@@ -9,6 +9,7 @@ import { useConversations } from "@/lib/api/hooks/use-conversations";
 import { useSSE } from "@/lib/sse/use-sse";
 import { useAuth } from "@/src/providers/auth-provider";
 
+import { CloseButton } from "./_components/close-button";
 import { ConversationItem } from "./_components/conversation-item";
 import { NoConversationsEmpty } from "./_components/empty-state";
 import { ErrorBoundary, ErrorState } from "./_components/error-boundary";
@@ -54,6 +55,10 @@ export default function MessagesScreen() {
     router.push({ pathname: "/messages/new" });
   }, [router]);
 
+  const handleClose = useCallback(() => {
+    router.back();
+  }, [router]);
+
   const renderItem = useCallback(
     ({ item }: { item: Conversation }) => (
       <ConversationItem
@@ -78,10 +83,11 @@ export default function MessagesScreen() {
   if (isLoading) {
     return (
       <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
-        <View className="border-b border-border px-4 py-3">
+        <View className="flex-row items-center justify-between border-b border-border px-4 py-3">
           <Text className="text-xl font-semibold text-foreground">
             Messagerie
           </Text>
+          <CloseButton onPress={handleClose} />
         </View>
         <ConversationListSkeleton />
       </SafeAreaView>
@@ -91,10 +97,11 @@ export default function MessagesScreen() {
   if (isError) {
     return (
       <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
-        <View className="border-b border-border px-4 py-3">
+        <View className="flex-row items-center justify-between border-b border-border px-4 py-3">
           <Text className="text-xl font-semibold text-foreground">
             Messagerie
           </Text>
+          <CloseButton onPress={handleClose} />
         </View>
         <ErrorState
           message={error?.message || "Impossible de charger les conversations"}
@@ -107,10 +114,11 @@ export default function MessagesScreen() {
   return (
     <ErrorBoundary onReset={() => refetch()}>
       <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
-        <View className="border-b border-border px-4 py-3">
+        <View className="flex-row items-center justify-between border-b border-border px-4 py-3">
           <Text className="text-xl font-semibold text-foreground">
             Messagerie
           </Text>
+          <CloseButton onPress={handleClose} />
         </View>
 
         <FlatList

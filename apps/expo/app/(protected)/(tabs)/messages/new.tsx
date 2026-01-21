@@ -16,6 +16,7 @@ import { useCreateConversation } from "@/lib/api/hooks/use-conversations";
 import { useSearchRecipients } from "@/lib/api/hooks/use-recipients";
 import { useToast } from "@/lib/toast/toast-context";
 
+import { CloseButton } from "./_components/close-button";
 import {
   NoSearchResultsEmpty,
   SearchPromptEmpty,
@@ -87,16 +88,19 @@ export default function NewMessageScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
-      <View className="flex-row items-center border-b border-border px-2 py-3">
-        <Pressable
-          onPress={handleBack}
-          className="h-10 w-10 items-center justify-center rounded-full active:bg-muted"
-        >
-          <ChevronLeft size={24} color="#000" />
-        </Pressable>
-        <Text className="ml-1 text-xl font-semibold text-foreground">
-          Nouveau message
-        </Text>
+      <View className="flex-row items-center justify-between border-b border-border px-2 py-3">
+        <View className="flex-row items-center">
+          <Pressable
+            onPress={handleBack}
+            className="h-10 w-10 items-center justify-center rounded-full active:bg-muted"
+          >
+            <ChevronLeft size={24} color="#000" />
+          </Pressable>
+          <Text className="ml-1 text-xl font-semibold text-foreground">
+            Nouveau message
+          </Text>
+        </View>
+        <CloseButton onPress={handleBack} />
       </View>
 
       <View className="border-b border-border px-4 py-2">
@@ -113,7 +117,9 @@ export default function NewMessageScreen() {
       </View>
 
       <View className="px-4 py-3">
-        <Text className="text-sm font-medium text-primary">Suggestions</Text>
+        <Text className="text-sm font-medium text-homecafe-orange">
+          Suggestions
+        </Text>
       </View>
 
       <FlatList
