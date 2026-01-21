@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 39
-**Current Task:** Task 40 (Screens - Navigation bar mobile)
+**Tasks Completed:** 40
+**Current Task:** Task 41 (Polish - Add loading and empty states)
 
 ---
 
@@ -950,4 +950,39 @@
 - Created `apps/expo/lib/sse/use-sse.ts` hook
 - Updated `apps/expo/app/(protected)/messages/index.tsx` with SSE integration
 - Updated `apps/expo/app/(protected)/messages/[conversationId].tsx` with SSE integration
+
+### 2026-01-21 - Task 40: Navigation bar mobile (bottom tab bar)
+
+**Status:** PASSED
+
+**Implementation Summary:**
+- Restructured Expo app from Stack-only navigation to Tabs-based navigation
+- Created `apps/expo/app/(protected)/(tabs)/_layout.tsx`
+  - Expo Router Tabs component with Home and Messages tabs
+  - Pink active color (#F691C3), gray inactive (#9CA3AF)
+  - Platform-specific tab bar heights (iOS: 88, Android: 64)
+  - Icons from lucide-react-native (Home, MessageCircle) with fill on active state
+- Created `apps/expo/app/(protected)/(tabs)/index.tsx`
+  - Home screen with welcome card, user info, and sign out button
+  - SafeAreaView with edges=["top"] for proper tab bar spacing
+- Created `apps/expo/app/(protected)/(tabs)/messages/_layout.tsx`
+  - Nested Stack navigator for messages screens within tabs
+  - Routes: index, new, [conversationId]
+- Moved all messages screens and components to `(tabs)/messages/` directory
+  - index.tsx - Messages list (removed X close button since it's now a tab)
+  - new.tsx - New message screen
+  - [conversationId].tsx - Conversation screen
+  - All _components/ moved to local directory
+- Updated `apps/expo/app/(protected)/_layout.tsx`
+  - Changed from Stack to Slot for tabs routing pass-through
+- Fixed route paths from invalid `"/(tabs)/messages/..."` to `"/messages/..."`
+- `pnpm type-check` and `pnpm check` both pass
+
+**Changes Made:**
+- Created `apps/expo/app/(protected)/(tabs)/_layout.tsx` - Tabs navigation
+- Created `apps/expo/app/(protected)/(tabs)/index.tsx` - Home screen
+- Created `apps/expo/app/(protected)/(tabs)/messages/_layout.tsx` - Messages Stack
+- Moved `apps/expo/app/(protected)/messages/` to `apps/expo/app/(protected)/(tabs)/messages/`
+- Updated `apps/expo/app/(protected)/_layout.tsx` to use Slot
+- Removed old `apps/expo/app/(protected)/index.tsx` and `apps/expo/app/(protected)/messages/` directory
 

@@ -1,10 +1,9 @@
 import { useRouter } from "expo-router";
-import { PenSquare, X } from "lucide-react-native";
+import { PenSquare } from "lucide-react-native";
 import { useCallback, useMemo } from "react";
 import {
   ActivityIndicator,
   FlatList,
-  Pressable,
   RefreshControl,
   Text,
   View,
@@ -57,10 +56,6 @@ export default function MessagesScreen() {
     router.push({ pathname: "/messages/new" });
   }, [router]);
 
-  const handleClose = useCallback(() => {
-    router.back();
-  }, [router]);
-
   const renderItem = useCallback(
     ({ item }: { item: Conversation }) => (
       <ConversationItem
@@ -96,7 +91,7 @@ export default function MessagesScreen() {
 
   if (isLoading) {
     return (
-      <SafeAreaView className="flex-1 bg-background">
+      <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
         <View className="flex-1 items-center justify-center">
           <ActivityIndicator size="large" color="#F691C3" />
         </View>
@@ -106,16 +101,10 @@ export default function MessagesScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
-      <View className="flex-row items-center justify-between border-b border-border px-4 py-3">
+      <View className="border-b border-border px-4 py-3">
         <Text className="text-xl font-semibold text-foreground">
           Messagerie
         </Text>
-        <Pressable
-          onPress={handleClose}
-          className="h-10 w-10 items-center justify-center rounded-full active:bg-muted"
-        >
-          <X size={24} color="#666" />
-        </Pressable>
       </View>
 
       <FlatList

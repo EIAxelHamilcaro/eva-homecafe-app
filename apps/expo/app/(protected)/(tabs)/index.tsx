@@ -17,7 +17,7 @@ export default function HomeScreen() {
   const signOutMutation = useSignOut();
 
   return (
-    <SafeAreaView className="flex-1 bg-background">
+    <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
       <ScrollView className="flex-1 p-4">
         <Text className="mb-4 text-2xl font-bold text-foreground">
           Home Cafe

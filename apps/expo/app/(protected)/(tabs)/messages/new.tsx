@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { ChevronLeft, X } from "lucide-react-native";
+import { ChevronLeft } from "lucide-react-native";
 import { useCallback, useState } from "react";
 import {
   ActivityIndicator,
@@ -29,10 +29,6 @@ export default function NewMessageScreen() {
 
   const handleBack = useCallback(() => {
     router.back();
-  }, [router]);
-
-  const handleClose = useCallback(() => {
-    router.dismissTo("/messages");
   }, [router]);
 
   const handleSelectRecipient = useCallback(
@@ -96,24 +92,16 @@ export default function NewMessageScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
-      <View className="flex-row items-center justify-between border-b border-border px-2 py-3">
-        <View className="flex-row items-center">
-          <Pressable
-            onPress={handleBack}
-            className="h-10 w-10 items-center justify-center rounded-full active:bg-muted"
-          >
-            <ChevronLeft size={24} color="#000" />
-          </Pressable>
-          <Text className="ml-1 text-xl font-semibold text-foreground">
-            Nouveau message
-          </Text>
-        </View>
+      <View className="flex-row items-center border-b border-border px-2 py-3">
         <Pressable
-          onPress={handleClose}
+          onPress={handleBack}
           className="h-10 w-10 items-center justify-center rounded-full active:bg-muted"
         >
-          <X size={24} color="#666" />
+          <ChevronLeft size={24} color="#000" />
         </Pressable>
+        <Text className="ml-1 text-xl font-semibold text-foreground">
+          Nouveau message
+        </Text>
       </View>
 
       <View className="border-b border-border px-4 py-2">

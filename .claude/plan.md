@@ -457,7 +457,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
       "L'onglet actif doit être visuellement distinct (couleur ou remplissage différent)",
       "Au clic sur un onglet, naviguer vers la page correspondante"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "polish",
