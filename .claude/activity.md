@@ -3,9 +3,9 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 21/70
-**Current Task:** Task 22 - Profile Feature Validation
-**Current Phase:** Phase 1 - Profile Feature
+**Tasks Completed:** 22/70
+**Current Task:** Task 23 - Create FriendRequest Aggregate
+**Current Phase:** Phase 2 - Friends & Notifications
 
 ---
 
@@ -20,7 +20,7 @@
 | API | 3 | 1 |
 | Expo | 19 | 5 |
 | Testing | 4 | 1 |
-| Validation | 3 | 0 |
+| Validation | 3 | 1 |
 
 ---
 
@@ -367,4 +367,28 @@ Test patterns used:
 - Profile.reconstitute() for creating mock profiles
 
 Type check: PASSED
+
+**Task 22 Completed: Profile Feature Validation**
+
+Validation steps:
+1. `pnpm type-check` - PASSED
+2. `pnpm check` - PASSED (after `pnpm fix` for auto-formatting)
+3. `pnpm test` - PASSED after fixing vitest path alias resolution
+
+Issue fixed:
+- Tests failed with "Cannot find package '@/domain/profile/profile.aggregate'"
+- Root cause: vitest wasn't resolving TypeScript path aliases (`@/`) for transitive imports
+- Solution: Added `vite-tsconfig-paths` plugin to `apps/nextjs/vitest.config.ts`
+
+Test results:
+- 31 tests passed (6 existing + 25 new profile tests)
+- CreateProfileUseCase: 9 tests
+- GetProfileUseCase: 4 tests
+- UpdateProfileUseCase: 12 tests
+
+Files modified:
+- `apps/nextjs/vitest.config.ts` - Added vite-tsconfig-paths plugin
+- `apps/nextjs/package.json` - Added vite-tsconfig-paths dependency
+
+**PHASE 1 COMPLETE** - Profile Feature fully implemented and tested!
 

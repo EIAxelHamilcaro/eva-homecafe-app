@@ -1,10 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { api, ApiError } from "../client";
 import type {
-  Profile,
   CreateProfileInput,
+  Profile,
   UpdateProfileInput,
 } from "@/types/profile";
+import { ApiError, api } from "../client";
 
 export const profileKeys = {
   all: ["profiles"] as const,
@@ -67,7 +67,9 @@ export function useCreateProfile() {
       api.post<Profile>("/api/v1/profile", input),
     onSuccess: (data) => {
       queryClient.setQueryData(profileKeys.myProfile(), data);
-      queryClient.invalidateQueries({ queryKey: profileKeys.byUserId(data.userId) });
+      queryClient.invalidateQueries({
+        queryKey: profileKeys.byUserId(data.userId),
+      });
     },
   });
 }
@@ -80,7 +82,9 @@ export function useUpdateProfile() {
       api.patch<Profile>("/api/v1/profile", input),
     onSuccess: (data) => {
       queryClient.setQueryData(profileKeys.myProfile(), data);
-      queryClient.invalidateQueries({ queryKey: profileKeys.byUserId(data.userId) });
+      queryClient.invalidateQueries({
+        queryKey: profileKeys.byUserId(data.userId),
+      });
     },
   });
 }

@@ -28,7 +28,7 @@
       "Add updateDisplayName(), updateBio(), updateAvatar() methods",
       "Use z.string().min(1) for userId (BetterAuth compatibility)"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 2,
@@ -38,7 +38,7 @@
       "Create src/domain/profile/value-objects/display-name.vo.ts (min 1, max 50 chars)",
       "Create src/domain/profile/value-objects/bio.vo.ts (optional, max 500 chars)"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 3,
@@ -48,7 +48,7 @@
       "Create src/domain/profile/events/profile-created.event.ts",
       "Create src/domain/profile/events/profile-updated.event.ts"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 4,
@@ -58,7 +58,7 @@
       "Create src/application/ports/profile-repository.port.ts",
       "Define methods: create, update, findById, findByUserId, exists"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 5,
@@ -70,7 +70,7 @@
       "Create src/application/dto/profile/update-profile.dto.ts (input: profileId, displayName?, bio?, avatarUrl?)",
       "Create src/application/dto/profile/get-profile.dto.ts (input: userId, output: profile)"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 6,
@@ -83,7 +83,7 @@
       "Create Profile aggregate and persist",
       "Dispatch ProfileCreatedEvent"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 7,
@@ -94,7 +94,7 @@
       "Find profile by userId",
       "Return Option<ProfileDto>"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 8,
@@ -106,7 +106,7 @@
       "Update only provided fields (displayName, bio, avatarUrl)",
       "Dispatch ProfileUpdatedEvent"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 9,
@@ -118,7 +118,7 @@
       "Add unique index on userId",
       "Export from packages/drizzle/src/schema/index.ts"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 10,
@@ -128,7 +128,7 @@
       "Run pnpm db:push to apply schema changes",
       "Verify profiles table created correctly"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 11,
@@ -138,7 +138,7 @@
       "Create src/adapters/mappers/profile.mapper.ts",
       "Implement toDomain() and toPersistence() methods"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 12,
@@ -149,7 +149,7 @@
       "Implement all port methods using Drizzle",
       "Handle Option for findByUserId"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 13,
@@ -160,7 +160,7 @@
       "Implement getProfile, createProfile, updateProfile handlers",
       "Use requireAuth guard for all endpoints"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 14,
@@ -171,7 +171,7 @@
       "Bind IProfileRepository and all profile use cases",
       "Register in common/di/container.ts"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 15,
@@ -181,7 +181,7 @@
       "Create app/api/profile/route.ts (GET current user profile, POST create, PATCH update)",
       "Create app/api/profile/[userId]/route.ts (GET profile by userId - for viewing other profiles)"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 16,
@@ -191,7 +191,7 @@
       "Create apps/expo/types/profile.ts with Profile interface",
       "Export from apps/expo/types/index.ts"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 17,
@@ -201,7 +201,7 @@
       "Create apps/expo/hooks/use-profile.ts (useProfile, useCreateProfile, useUpdateProfile)",
       "Handle auto-create profile if not exists on first fetch"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 18,
@@ -213,7 +213,7 @@
       "Add edit button to navigate to edit screen",
       "Show sign out button"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 19,
@@ -225,7 +225,7 @@
       "Save button triggers updateProfile mutation",
       "Handle loading and error states"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 20,
@@ -236,7 +236,7 @@
       "Add Profile tab with User icon",
       "Move sign out from home to profile screen"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 21,
@@ -248,7 +248,7 @@
       "Create src/application/use-cases/profile/__tests__/update-profile.use-case.test.ts",
       "Test happy paths and error cases"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 22,
@@ -260,7 +260,7 @@
       "Run pnpm test",
       "Verify Profile CRUD works end-to-end"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 23,
