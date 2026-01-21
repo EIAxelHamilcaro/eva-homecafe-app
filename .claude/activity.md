@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 9
-**Current Task:** None (task 9 completed)
+**Tasks Completed:** 10
+**Current Task:** None (task 10 completed)
 
 ---
 
@@ -190,3 +190,25 @@
 **Changes Made:**
 - Created `dto/chat/get-conversations.dto.ts` with input/output schemas and types
 - Created `use-cases/chat/get-conversations.use-case.ts` with GetConversationsUseCase class
+
+### 2026-01-21 - Task 10: Create CreateConversation use case
+
+**Status:** PASSED
+
+**Implementation Summary:**
+- Created `apps/nextjs/src/application/dto/chat/create-conversation.dto.ts`
+  - `ICreateConversationInputDto` - userId (required), recipientId (required)
+  - `ICreateConversationOutputDto` - conversationId, isNew (boolean)
+- Created `apps/nextjs/src/application/use-cases/chat/create-conversation.use-case.ts`
+  - Implements `UseCase<ICreateConversationInputDto, ICreateConversationOutputDto>`
+  - **Input validation:** Prevents creating conversation with yourself
+  - **Find existing logic:** Checks if conversation between participants already exists via `findByParticipants()`
+  - **Returns existing:** If found, returns existing conversationId with `isNew: false`
+  - **Creates new:** If not found, creates Participant VOs, creates Conversation aggregate, persists via repository
+  - **Event dispatch:** `ConversationCreatedEvent` is automatically added by `Conversation.create()` when creating new (no explicit id passed)
+  - Uses sorted participantIds array for consistent lookup regardless of userId/recipientId order
+- `pnpm type-check` and `pnpm check` both pass
+
+**Changes Made:**
+- Created `dto/chat/create-conversation.dto.ts` with input/output schemas and types
+- Created `use-cases/chat/create-conversation.use-case.ts` with CreateConversationUseCase class

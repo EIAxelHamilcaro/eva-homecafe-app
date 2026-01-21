@@ -128,7 +128,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
       "Output: conversationId",
       "Dispatch ConversationCreated event if new"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "application",
