@@ -756,7 +756,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Display QR code encoding the invite URL",
       "Add share button to share invite link"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 65,
