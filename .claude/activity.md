@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 20/70
-**Current Task:** Task 21 - Write Unit Tests for Profile Use Cases
+**Tasks Completed:** 21/70
+**Current Task:** Task 22 - Profile Feature Validation
 **Current Phase:** Phase 1 - Profile Feature
 
 ---
@@ -19,7 +19,7 @@
 | Adapter | 10 | 3 |
 | API | 3 | 1 |
 | Expo | 19 | 5 |
-| Testing | 4 | 0 |
+| Testing | 4 | 1 |
 | Validation | 3 | 0 |
 
 ---
@@ -332,6 +332,39 @@ Changes:
 - Removed unused Button, CardFooter, useSignOut imports from home screen
 
 Tab bar now has 3 tabs: Accueil, Messages, Profil
+
+Type check: PASSED
+
+**Task 21 Completed: Write Unit Tests for Profile Use Cases**
+
+Files created:
+- `src/application/use-cases/profile/__tests__/create-profile.use-case.test.ts`
+- `src/application/use-cases/profile/__tests__/get-profile.use-case.test.ts`
+- `src/application/use-cases/profile/__tests__/update-profile.use-case.test.ts`
+
+CreateProfileUseCase tests:
+- Happy path: create profile with all fields, without bio, without avatarUrl
+- Validation: empty displayName, displayName > 50 chars, bio > 500 chars
+- Business rules: profile already exists for user
+- Error handling: repository errors
+
+GetProfileUseCase tests:
+- Happy path: return profile when found, return profile without bio
+- Not found: return null when profile not found
+- Error handling: repository errors
+
+UpdateProfileUseCase tests:
+- Happy path: update displayName, bio, avatarUrl, multiple fields at once
+- Clear values: set bio to null, set avatarUrl to null
+- Validation: empty displayName, displayName > 50 chars, bio > 500 chars
+- Business rules: profile not found
+- Error handling: repository errors
+
+Test patterns used:
+- vitest with describe/it/expect
+- vi.mock for repository mocks
+- Result and Option from ddd-kit for return types
+- Profile.reconstitute() for creating mock profiles
 
 Type check: PASSED
 
