@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 33
-**Current Task:** Task 34 (Screens - Create messages list screen)
+**Tasks Completed:** 34
+**Current Task:** Task 35 (Screens - Create new message screen)
 
 ---
 
@@ -703,3 +703,51 @@
 - Created `apps/expo/lib/api/hooks/use-media-upload.ts`
 - Created `apps/expo/lib/api/hooks/use-recipients.ts`
 - Updated `apps/expo/lib/api/client.ts` with uploadFile method
+
+### 2026-01-21 - Task 34: Create messages list screen
+
+**Status:** PASSED
+
+**Implementation Summary:**
+- Created `apps/expo/app/(protected)/messages/_layout.tsx`
+  - Stack navigator with slide_from_right animation
+  - White background, no header shown
+  - Declares routes: index, new, [conversationId]
+- Created `apps/expo/app/(protected)/messages/index.tsx`
+  - Main messages screen with FlatList of conversations
+  - Uses `useConversations` hook for data fetching
+  - Pull-to-refresh with RefreshControl
+  - Loading state with ActivityIndicator
+  - Empty state for no conversations
+  - Navigation handlers for conversation press and new message FAB
+  - Header with "Messagerie" title and close button
+- Created `apps/expo/app/(protected)/messages/_components/conversation-item.tsx`
+  - Displays conversation row with avatar, name, preview, timestamp
+  - Avatar with color generated from userId hash
+  - Initials from participant name
+  - Last message preview with photo emoji for image-only messages
+  - Relative timestamp formatting (À l'instant, X min, Xh, Hier, X jours, date)
+  - Unread state styling (bold text, highlighted background)
+- Created `apps/expo/app/(protected)/messages/_components/unread-badge.tsx`
+  - Red circular badge for unread count
+  - Displays "99+" for counts over 99
+  - Hidden when count is 0
+- Created `apps/expo/app/(protected)/messages/_components/fab.tsx`
+  - Floating action button component
+  - Pink primary color, positioned bottom-right
+  - Accepts children for icon content
+- Created placeholder files for route type generation:
+  - `apps/expo/app/(protected)/messages/new.tsx` - placeholder for new message screen
+  - `apps/expo/app/(protected)/messages/[conversationId].tsx` - placeholder for conversation screen
+- Regenerated Expo Router typed routes via `npx expo export`
+- `pnpm type-check` and `pnpm check` both pass
+
+**Changes Made:**
+- Created `apps/expo/app/(protected)/messages/_layout.tsx`
+- Created `apps/expo/app/(protected)/messages/index.tsx`
+- Created `apps/expo/app/(protected)/messages/_components/conversation-item.tsx`
+- Created `apps/expo/app/(protected)/messages/_components/unread-badge.tsx`
+- Created `apps/expo/app/(protected)/messages/_components/fab.tsx`
+- Created `apps/expo/app/(protected)/messages/new.tsx` (placeholder)
+- Created `apps/expo/app/(protected)/messages/[conversationId].tsx` (placeholder)
+- Updated `.expo/types/router.d.ts` via export command

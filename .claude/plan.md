@@ -378,18 +378,20 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
     "category": "screens",
     "description": "Create messages list screen",
     "steps": [
+      "Analyze .claude/screenshots/* and adapt for native layout",
       "Create app/(protected)/messages/_layout.tsx (Stack)",
       "Create app/(protected)/messages/index.tsx",
       "ConversationList component with FlatList",
       "ConversationItem, UnreadBadge components",
       "FAB for new message"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "screens",
     "description": "Create new message screen",
     "steps": [
+      "Analyze .claude/screenshots/* and adapt for native layout",
       "Create app/(protected)/messages/new.tsx",
       "RecipientSelector with search input",
       "RecipientItem component",
@@ -401,6 +403,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
     "category": "screens",
     "description": "Create conversation screen - base",
     "steps": [
+      "Analyze .claude/screenshots/* and adapt for native layout",
       "Create app/(protected)/messages/[conversationId].tsx",
       "MessageList (inverted FlatList)",
       "MessageBubble (sent/received)",
@@ -413,6 +416,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
     "category": "screens",
     "description": "Add reactions to conversation",
     "steps": [
+      "Analyze .claude/screenshots/* and adapt for native layout",
       "Create ReactionBar component",
       "Create ReactionPicker modal",
       "Integrate in MessageBubble",
@@ -424,6 +428,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
     "category": "screens",
     "description": "Add media to conversation",
     "steps": [
+      "Analyze .claude/screenshots/* and adapt for native layout",
       "Create MediaPicker (expo-image-picker)",
       "Create MediaPreview (before send)",
       "Create MessageMedia (grid in bubble)",
@@ -436,6 +441,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
     "category": "screens",
     "description": "Integrate SSE for realtime",
     "steps": [
+      "Analyze .claude/screenshots/* and adapt for native layout",
       "Create useSSE hook",
       "Connect on conversation mount",
       "Update QueryClient on events",
