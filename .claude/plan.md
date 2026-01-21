@@ -834,10 +834,10 @@ Friend invitations (email + QR code), notifications system with real-time update
     "category": "ui",
     "description": "Profile UI",
     "steps": [
-      "I want the exact UI implementation with .claude/screenshots/profile.png",
+      "I want the exact UI implementation with .claude/screenshots/profile.png"
     ],
-    "passes": false
-  },
+    "passes": true
+  }
 ]
 ```
 

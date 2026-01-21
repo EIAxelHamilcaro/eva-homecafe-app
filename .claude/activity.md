@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 70/70
-**Current Task:** Complete (Task 71 - Profile UI remaining)
+**Tasks Completed:** 71/71
+**Current Task:** All Complete
 **Current Phase:** Phase 2 - Friends & Notifications (COMPLETE)
 
 ---
@@ -1265,3 +1265,36 @@ Summary:
 - Phase 2 (Tasks 23-70): Friends & Notifications - Complete
 
 Remaining: Task 71 (Profile UI) is a separate UI task that requires design implementation
+
+**Task 71 Completed: Profile UI**
+
+Implemented the Profile screen UI matching the design at `.claude/screenshots/profile.png`.
+
+File modified:
+- `apps/expo/app/(protected)/(tabs)/profile.tsx` - Complete redesign of profile screen
+
+UI sections implemented:
+1. **Header** - Logo (home café) + hamburger menu icon
+2. **Profile hero** - Avatar, name, member since date
+3. **Contact info** - Birthdate, email, phone, location with icons (Calendar, Mail, Phone, MapPin)
+4. **Informations personnelles card** - Two-column layout with Nom, Prénom, Naissance, E-mail, Profession, Téléphone
+5. **Adresse card** - Two-column layout with address fields (Numéro et nom de voie, Code postal, Ville, Pays)
+6. **Préférences card** - Dropdown fields for Langue and Format heure, Switch toggle for Profil visible
+7. **Badges card** - Three badge placeholders (7 jours, 14 jours, 1 mois) with colored circles
+8. **Code amis card** - QR code using react-native-qrcode-svg with useGenerateInvite() hook
+9. **Footer actions** - Se déconnecter (pink text) and Supprimer le compte (red text) buttons
+
+Components added:
+- `InfoRow` - Reusable component for label/value pairs in two-column layouts
+- `DropdownField` - Dropdown field placeholder with chevron icon
+
+New imports:
+- `Logo` from components/ui/logo
+- `useGenerateInvite` from lib/api/hooks/use-invite
+- `QRCode` from react-native-qrcode-svg
+- `Switch` from react-native
+- Additional Lucide icons: Calendar, ChevronDown, Mail, MapPin, Menu, Phone
+
+Type check: PASSED
+
+**ALL TASKS COMPLETE** - All 71 tasks for Profile & Friends & Notifications feature are done!
