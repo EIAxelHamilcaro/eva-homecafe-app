@@ -1,26 +1,15 @@
-# HomeCafe Feature Plan - Profile & Friends & Notifications
+# HomeCafe Feature Plan
 
 ## Overview
 
-**Phase 1: Profile Feature (Tasks 1-22)**
-Complete CRUD for user profile with separate domain entity. The Profile entity is completely separate from BetterAuth's User table to avoid polluting the auth system.
-
-**Phase 2: Friends & Notifications (Tasks 23-70)**
-Friend invitations (email + QR code), notifications system with real-time updates via SSE.
+**Phase 1: Profile Feature** - Complete CRUD for user profile with separate domain entity (not polluting BetterAuth tables)
+**Phase 2: Friends & Notifications** - Friend invitations, notifications tab, QR codes
 
 **Scope**: `apps/expo/` (React Native) and `apps/nextjs/` (server-side only)
 
 **Reference:** `CLAUDE.md` for architecture patterns
 
----
-
-## CRITICAL CONSTRAINTS
-
-1. **DO NOT** modify `user`, `account`, `session`, `verification` tables - they are reserved for BetterAuth
-2. **Profile** is a SEPARATE entity linked to User by `userId` field
-3. **NO address field** in Profile (not needed)
-4. **NO badges** in Profile (will be implemented later)
-5. Follow Clean Architecture: Domain → Application → Adapters → Infrastructure
+**Important:** Do NOT modify `user`, `account`, `session`, `verification` tables - they are reserved for BetterAuth.
 
 ---
 
@@ -845,7 +834,21 @@ Friend invitations (email + QR code), notifications system with real-time update
 
 **Important:**
 - Only modify the `passes` field. Do not remove or rewrite tasks.
-- Do NOT modify `user`, `account`, `session`, `verification` tables.
+- Do NOT modify `user`, `account`, `session`, `verification` tables - they are reserved for BetterAuth.
+
+---
+
+## Key Patterns to Follow
+
+1. **User IDs**: Use `z.string().min(1)` not `z.uuid()` (BetterAuth compatibility)
+2. **Result/Option**: All fallible operations return `Result<T>`, nullable values use `Option<T>`
+3. **Domain Events**: Add events in aggregate methods, dispatch AFTER repository save
+4. **Minimal Getters**: Only `get id()` getter, use `entity.get('propName')` for properties
+5. **No Index Barrels**: Import directly from files
+6. **SSE Pattern**: Follow existing chat SSE for real-time notifications
+7. **Email**: Use existing `IEmailProvider` (ResendService) for invitation emails
+8. **QR Code**: Use expo-barcode-scanner for scanning, react-native-qrcode-svg for display
+9. **Profile Separation**: Profile is a SEPARATE entity from User (BetterAuth) - linked by userId
 
 ---
 
@@ -855,3 +858,4 @@ All 70 tasks marked with `"passes": true` and:
 - `pnpm type-check` passes
 - `pnpm check` passes
 - `pnpm test` passes
+- No `console.log` or `any` types in code
