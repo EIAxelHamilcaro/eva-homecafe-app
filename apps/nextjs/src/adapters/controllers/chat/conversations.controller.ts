@@ -8,6 +8,10 @@ import {
   getConversationsInputDtoSchema,
   type IGetConversationsOutputDto,
 } from "@/application/dto/chat/get-conversations.dto";
+import {
+  type IMarkConversationReadOutputDto,
+  markConversationReadInputDtoSchema,
+} from "@/application/dto/chat/mark-conversation-read.dto";
 import type { IGetSessionOutputDto } from "@/application/dto/get-session.dto";
 import { getInjection } from "@/common/di/container";
 
@@ -94,4 +98,42 @@ export async function createConversationController(
 
   const output = result.getValue();
   return NextResponse.json(output, { status: output.isNew ? 201 : 200 });
+}
+
+export async function markConversationReadController(
+  request: Request,
+  conversationId: string,
+): Promise<NextResponse<IMarkConversationReadOutputDto | { error: string }>> {
+  const session = await getAuthenticatedUser(request);
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const parsed = markConversationReadInputDtoSchema.safeParse({
+    conversationId,
+    userId: session.user.id,
+  });
+
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: parsed.error.issues[0]?.message ?? "Invalid input" },
+      { status: 400 },
+    );
+  }
+
+  const useCase = getInjection("MarkConversationReadUseCase");
+  const result = await useCase.execute(parsed.data);
+
+  if (result.isFailure) {
+    const error = result.getError();
+    if (error.includes("not found")) {
+      return NextResponse.json({ error }, { status: 404 });
+    }
+    if (error.includes("not a participant")) {
+      return NextResponse.json({ error }, { status: 403 });
+    }
+    return NextResponse.json({ error }, { status: 500 });
+  }
+
+  return NextResponse.json(result.getValue());
 }

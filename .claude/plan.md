@@ -271,7 +271,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
       "GET: list conversations for user",
       "POST: create/get conversation with recipient"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "api",
@@ -281,7 +281,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
       "GET: list messages (paginated)",
       "POST: send message"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "api",
@@ -291,7 +291,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
       "POST: add reaction",
       "DELETE: remove reaction"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "api",
@@ -311,7 +311,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
       "GET: SSE stream endpoint",
       "Handle connection, events, disconnection"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "api",

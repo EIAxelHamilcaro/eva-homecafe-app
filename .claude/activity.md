@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 22
-**Current Task:** None (task 22 completed)
+**Tasks Completed:** 25
+**Current Task:** Task 26 (Create /api/chat/upload route)
 
 ---
 
@@ -493,3 +493,49 @@
 **Changes Made:**
 - Created `adapters/controllers/chat/sse.controller.ts` with SSEConnectionManager and broadcast helpers
 - Created `app/api/v1/chat/sse/route.ts` API route
+
+### 2026-01-21 - Task 23: Create /api/chat/conversations routes
+
+**Status:** PASSED
+
+**Implementation Summary:**
+- Created `apps/nextjs/app/api/v1/chat/conversations/route.ts`
+  - `GET` - lists user's conversations via `getConversationsController`
+  - `POST` - creates/gets conversation via `createConversationController`
+- `pnpm type-check` and `pnpm check` both pass
+
+**Changes Made:**
+- Created `app/api/v1/chat/conversations/route.ts` with GET and POST handlers
+
+### 2026-01-21 - Task 24: Create /api/chat/conversations/[id]/messages routes
+
+**Status:** PASSED
+
+**Implementation Summary:**
+- Created `apps/nextjs/app/api/v1/chat/conversations/[conversationId]/messages/route.ts`
+  - `GET` - lists messages via `getMessagesController` with pagination
+  - `POST` - sends message via `sendMessageController`
+  - Dynamic `conversationId` param extracted from URL
+- Added `markConversationReadController` to conversations.controller.ts
+- Created `apps/nextjs/app/api/v1/chat/conversations/[conversationId]/read/route.ts`
+  - `POST` - marks conversation as read via `markConversationReadController`
+- `pnpm type-check` and `pnpm check` both pass
+
+**Changes Made:**
+- Created `app/api/v1/chat/conversations/[conversationId]/messages/route.ts`
+- Created `app/api/v1/chat/conversations/[conversationId]/read/route.ts`
+- Updated `adapters/controllers/chat/conversations.controller.ts` with markConversationReadController
+
+### 2026-01-21 - Task 25: Create /api/chat/messages/[id]/reactions routes
+
+**Status:** PASSED
+
+**Implementation Summary:**
+- Created `apps/nextjs/app/api/v1/chat/messages/[messageId]/reactions/route.ts`
+  - `POST` - adds reaction via `addReactionController`
+  - `DELETE` - removes reaction via `removeReactionController`
+  - Dynamic `messageId` param extracted from URL
+- `pnpm type-check` and `pnpm check` both pass
+
+**Changes Made:**
+- Created `app/api/v1/chat/messages/[messageId]/reactions/route.ts` with POST and DELETE handlers
