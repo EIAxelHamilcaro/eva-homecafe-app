@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 44/70
-**Current Task:** Task 45 - Create Notification Mapper
+**Tasks Completed:** 45/70
+**Current Task:** Task 46 - Create FriendRequest Repository
 **Current Phase:** Phase 2 - Friends & Notifications
 
 ---
@@ -16,7 +16,7 @@
 | Domain | 7 | 7 |
 | Application | 18 | 18 |
 | Infrastructure | 6 | 6 |
-| Adapter | 10 | 4 |
+| Adapter | 10 | 5 |
 | API | 3 | 1 |
 | Expo | 19 | 5 |
 | Testing | 4 | 1 |
@@ -750,6 +750,27 @@ Mapper functions:
   - Converts ID to string
 
 Type inference: Uses `typeof friendRequestTable.$inferSelect` for record type
+
+Type check: PASSED
+
+**Task 45 Completed: Create Notification Mapper**
+
+Files created:
+- `src/adapters/mappers/notification.mapper.ts`
+
+Mapper functions:
+- `notificationToDomain(record)` - Converts DB record to Notification aggregate
+  - Reconstitutes NotificationType VO from string
+  - Uses Option.fromNullable() for readAt (nullable timestamp)
+  - Passes through data field as Record<string, unknown> (JSONB)
+  - Creates NotificationId from UUID
+- `notificationToPersistence(notification)` - Converts Notification aggregate to DB record
+  - Extracts type value from VO
+  - Handles Option<Date> for readAt (converts to Date | null)
+  - Passes through data field directly
+  - Converts ID to string
+
+Type inference: Uses `typeof notificationTable.$inferSelect` for record type
 
 Type check: PASSED
 

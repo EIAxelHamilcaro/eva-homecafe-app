@@ -552,7 +552,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Implement toDomain() and toPersistence() methods",
       "Handle JSON data field properly"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 46,
