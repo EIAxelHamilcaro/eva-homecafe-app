@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 5/70
-**Current Task:** Task 6 - Create CreateProfile Use Case
+**Tasks Completed:** 6/70
+**Current Task:** Task 7 - Create GetProfile Use Case
 **Current Phase:** Phase 1 - Profile Feature
 
 ---
@@ -14,7 +14,7 @@
 | Category | Total | Completed |
 |----------|-------|-----------|
 | Domain | 7 | 3 |
-| Application | 18 | 2 |
+| Application | 18 | 3 |
 | Infrastructure | 6 | 0 |
 | Adapter | 10 | 0 |
 | API | 3 | 0 |
@@ -73,5 +73,20 @@ Files created:
 - `src/application/dto/profile/get-profile.dto.ts` - Get profile input/output DTOs
 
 Repository methods: findById, findByUserId, existsByUserId (extends BaseRepository<Profile>)
+
+Type check: PASSED
+
+**Task 6 Completed: CreateProfile Use Case**
+
+Files created:
+- `src/application/use-cases/profile/create-profile.use-case.ts`
+
+Use case responsibilities:
+- Check profile doesn't already exist for userId (existsByUserId)
+- Validate and create DisplayName VO
+- Optionally create Bio VO if provided
+- Handle optional avatarUrl
+- Create Profile aggregate and persist
+- Return profile DTO
 
 Type check: PASSED

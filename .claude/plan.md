@@ -94,7 +94,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Create Profile aggregate and persist",
       "Dispatch ProfileCreatedEvent"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 7,
