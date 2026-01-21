@@ -16,6 +16,8 @@ import { SendFriendRequestUseCase } from "@/application/use-cases/friend/send-fr
 import { DI_SYMBOLS } from "../types";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+const MOBILE_APP_SCHEME =
+  process.env.MOBILE_APP_SCHEME ?? "evahomecafeapp://invite";
 
 export const createFriendModule = () => {
   const friendModule = createModule();
@@ -84,7 +86,7 @@ export const createFriendModule = () => {
     .bind(DI_SYMBOLS.GetInviteLinkUseCase)
     .toHigherOrderFunction(
       (inviteTokenRepo: IInviteTokenRepository) =>
-        new GetInviteLinkUseCase(inviteTokenRepo, APP_URL),
+        new GetInviteLinkUseCase(inviteTokenRepo, MOBILE_APP_SCHEME),
       [DI_SYMBOLS.IInviteTokenRepository],
     );
 

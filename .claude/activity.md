@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 66/70
-**Current Task:** Task 67 - Handle Deep Link for Invite
+**Tasks Completed:** 67/70
+**Current Task:** Task 68 - Write Unit Tests for Friend Use Cases
 **Current Phase:** Phase 2 - Friends & Notifications
 
 ---
@@ -18,7 +18,7 @@
 | Infrastructure | 6 | 6 |
 | Adapter | 10 | 10 |
 | API | 3 | 3 |
-| Expo | 19 | 15 |
+| Expo | 19 | 16 |
 | Testing | 4 | 1 |
 | Validation | 3 | 2 |
 
@@ -1133,5 +1133,31 @@ Features verified/implemented:
 Icons used: ArrowLeft, QrCode, ScanLine, UserPlus (replaced Plus)
 
 Fixed: Regenerated Expo routes with `npx expo customize tsconfig.json` to resolve typed route errors
+
+Type check: PASSED
+
+**Task 67 Completed: Handle Deep Link for Invite**
+
+Files created:
+- `apps/expo/app/invite/[token].tsx` - Deep link handler for invite URLs
+
+Files modified:
+- `apps/expo/app/_layout.tsx` - Added invite route to Stack navigator
+- `apps/nextjs/common/di/modules/friend.module.ts` - Added MOBILE_APP_SCHEME for invite URL generation
+- `apps/nextjs/src/application/use-cases/friend/get-invite-link.use-case.ts` - Renamed param to inviteBaseUrl
+
+Deep link configuration:
+- App scheme already configured: `evahomecafeapp://` in app.json
+- Invite links now generated as: `evahomecafeapp://invite/{token}`
+- GetInviteLinkUseCase uses MOBILE_APP_SCHEME env var (default: evahomecafeapp://invite)
+
+Invite screen features:
+- Handles `evahomecafeapp://invite/[token]` deep links
+- Shows loading state while checking auth
+- Redirects unauthenticated users to registration with invite query param
+- Processing state while accepting invite
+- Success state with "Voir mes amis" button
+- Error state with message and "Retour à l'accueil" button
+- Uses useAcceptInvite() hook for API call
 
 Type check: PASSED

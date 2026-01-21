@@ -791,7 +791,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Handle invite deep link in app navigation",
       "Auto-call acceptInvite when app opens with invite link"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 68,

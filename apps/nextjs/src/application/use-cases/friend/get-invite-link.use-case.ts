@@ -12,7 +12,7 @@ export class GetInviteLinkUseCase
 {
   constructor(
     private readonly inviteTokenRepo: IInviteTokenRepository,
-    private readonly appUrl: string,
+    private readonly inviteBaseUrl: string,
   ) {}
 
   async execute(
@@ -32,7 +32,7 @@ export class GetInviteLinkUseCase
       return Result.fail(createResult.getError());
     }
 
-    const inviteUrl = `${this.appUrl}/invite/${token}`;
+    const inviteUrl = `${this.inviteBaseUrl}/${token}`;
 
     return Result.ok({
       inviteUrl,
