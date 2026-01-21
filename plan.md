@@ -591,7 +591,7 @@
       "Add 'notification' event type",
       "Broadcast to user when notification created"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 52,

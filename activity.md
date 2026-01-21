@@ -55,5 +55,14 @@
   - Proper Zod validation and error handling
   - getUnreadCount reuses GetNotificationsUseCase with minimal pagination
 
+#### Task 51: Extend SSE Controller for Notifications
+- **Status**: Completed
+- **Files Modified**:
+  - `apps/nextjs/src/adapters/controllers/chat/sse.controller.ts`
+- **Details**:
+  - Added 'notification' to SSEMessage type union
+  - Added broadcastNotification() function for real-time notification delivery
+  - Function sends to single user (vs broadcastXxx which sends to multiple participants)
+
 ### Validation
 - `pnpm type-check`: Passed

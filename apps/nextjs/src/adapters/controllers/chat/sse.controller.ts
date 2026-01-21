@@ -10,6 +10,7 @@ export interface SSEMessage {
     | "reaction_removed"
     | "conversation_read"
     | "conversation_created"
+    | "notification"
     | "ping";
   data: unknown;
   timestamp: string;
@@ -216,6 +217,23 @@ export function broadcastConversationCreated(
 ): void {
   sseConnectionManager.sendToUsers(participantIds, {
     type: "conversation_created",
+    data,
+    timestamp: new Date().toISOString(),
+  });
+}
+
+export function broadcastNotification(
+  userId: string,
+  data: {
+    notificationId: string;
+    type: "friend_request" | "friend_accepted" | "new_message";
+    title: string;
+    body: string;
+    data: Record<string, unknown> | null;
+  },
+): void {
+  sseConnectionManager.sendToUser(userId, {
+    type: "notification",
     data,
     timestamp: new Date().toISOString(),
   });
