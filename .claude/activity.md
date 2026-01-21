@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 4
-**Current Task:** None (task 4 completed)
+**Tasks Completed:** 5
+**Current Task:** None (task 5 completed)
 
 ---
 
@@ -81,3 +81,28 @@
 **Changes Made:**
 - `attachments.list.ts`: Added `MAX_ATTACHMENTS = 10` constant, changed `create()` to return `Result`, added `add()` override with max check
 - `message.entity.ts`: Updated to handle `Result<AttachmentsList>`, removed unused `TooManyAttachmentsError` import
+
+### 2026-01-21 - Task 5: Review Domain Events - all chat events
+
+**Status:** PASSED
+
+**Review Summary:**
+- **ConversationCreatedEvent** ✅ - Implements `DomainEvent` interface
+  - Has `type = "ConversationCreated"`, `dateTimeOccurred`, `aggregateId`
+  - Includes `participantIds: string[]` and `createdBy: string` in payload
+- **ConversationReadEvent** ✅ - Implements `DomainEvent` interface
+  - Has `type = "ConversationRead"`, `dateTimeOccurred`, `aggregateId`
+  - Includes `userId: string` and `readAt: Date` in payload
+- **MessageSentEvent** ✅ - Implements `DomainEvent` interface
+  - Has `type = "MessageSent"`, `dateTimeOccurred`, `aggregateId`
+  - Includes `conversationId`, `senderId`, `content`, `hasAttachments` in payload
+- **MessageReactionAddedEvent** ✅ - Implements `DomainEvent` interface
+  - Has `type = "MessageReactionAdded"`, `dateTimeOccurred`, `aggregateId`
+  - Includes `conversationId`, `userId`, `emoji` (ReactionEmoji type) in payload
+- **MessageReactionRemovedEvent** ✅ - Implements `DomainEvent` interface
+  - Has `type = "MessageReactionRemoved"`, `dateTimeOccurred`, `aggregateId`
+  - Includes `conversationId`, `userId`, `emoji` (ReactionEmoji type) in payload
+- **Event type naming:** Uses PascalCase convention (matches reference `UserCreatedEvent`)
+- **Payload structure:** All events have `aggregateId` and relevant business data as public readonly properties
+- No fixes needed - all domain events conform to CLAUDE.md patterns
+- `pnpm type-check` and `pnpm check` both pass
