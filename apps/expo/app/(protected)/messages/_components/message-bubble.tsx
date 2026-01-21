@@ -1,6 +1,7 @@
 import { Pressable, Text, View } from "react-native";
 import type { Message, ReactionEmoji } from "@/constants/chat";
 import { cn } from "@/src/libs/utils";
+import { MessageMedia } from "./message-media";
 import { ReactionBar } from "./reaction-bar";
 
 interface MessageBubbleProps {
@@ -9,6 +10,7 @@ interface MessageBubbleProps {
   userId: string;
   onLongPress: () => void;
   onReactionPress: (emoji: ReactionEmoji) => void;
+  onImagePress: (index: number) => void;
 }
 
 function formatMessageTime(dateString: string): string {
@@ -25,8 +27,10 @@ export function MessageBubble({
   userId,
   onLongPress,
   onReactionPress,
+  onImagePress,
 }: MessageBubbleProps) {
   const hasContent = message.content && message.content.trim().length > 0;
+  const hasAttachments = message.attachments.length > 0;
 
   return (
     <View
@@ -39,15 +43,29 @@ export function MessageBubble({
         onLongPress={onLongPress}
         delayLongPress={300}
         className={cn(
-          "rounded-2xl px-4 py-2",
+          "overflow-hidden rounded-2xl",
           isSent ? "rounded-br-sm bg-primary" : "rounded-bl-sm bg-[#FF8C42]",
+          hasContent && !hasAttachments && "px-4 py-2",
+          hasAttachments && "pb-2",
         )}
       >
-        {hasContent && (
-          <Text className="text-base text-white">{message.content}</Text>
+        {hasAttachments && (
+          <View className={cn(hasContent && "mb-1")}>
+            <MessageMedia
+              attachments={message.attachments}
+              onImagePress={onImagePress}
+            />
+          </View>
         )}
-        {!hasContent && message.attachments.length > 0 && (
-          <Text className="text-base text-white">📷 Photo</Text>
+        {hasContent && (
+          <Text
+            className={cn(
+              "text-base text-white",
+              hasAttachments && "px-4 pb-1",
+            )}
+          >
+            {message.content}
+          </Text>
         )}
       </Pressable>
       <ReactionBar

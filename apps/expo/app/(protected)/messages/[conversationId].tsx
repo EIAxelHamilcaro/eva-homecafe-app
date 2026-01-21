@@ -12,12 +12,16 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import type { Message, ReactionEmoji } from "@/constants/chat";
+import type { Attachment, Message, ReactionEmoji } from "@/constants/chat";
+import { useMultipleMediaUpload } from "@/lib/api/hooks/use-media-upload";
 import { useMessages, useSendMessage } from "@/lib/api/hooks/use-messages";
 import { useToggleReaction } from "@/lib/api/hooks/use-reactions";
 import { useAuth } from "@/src/providers/auth-provider";
 
 import { DateSeparator } from "./_components/date-separator";
+import { ImageViewer } from "./_components/image-viewer";
+import type { SelectedMedia } from "./_components/media-picker";
+import { MediaPreview } from "./_components/media-preview";
 import { MessageBubble } from "./_components/message-bubble";
 import { MessageInput } from "./_components/message-input";
 import { ReactionPicker } from "./_components/reaction-picker";
@@ -72,6 +76,12 @@ export default function ConversationScreen() {
     null,
   );
   const [isPickerVisible, setIsPickerVisible] = useState(false);
+  const [selectedMedia, setSelectedMedia] = useState<SelectedMedia[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
+
+  const [viewerVisible, setViewerVisible] = useState(false);
+  const [viewerImages, setViewerImages] = useState<Attachment[]>([]);
+  const [viewerInitialIndex, setViewerInitialIndex] = useState(0);
 
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useMessages(conversationId ?? "");
@@ -80,6 +90,8 @@ export default function ConversationScreen() {
     conversationId: conversationId ?? "",
     senderId: user?.id ?? "",
   });
+
+  const uploadMedia = useMultipleMediaUpload();
 
   const toggleReaction = useToggleReaction({
     conversationId: conversationId ?? "",
@@ -105,11 +117,51 @@ export default function ConversationScreen() {
     router.dismissTo("/messages");
   }, [router]);
 
+  const handleMediaSelected = useCallback((media: SelectedMedia[]) => {
+    setSelectedMedia((prev) => [...prev, ...media].slice(0, 10));
+  }, []);
+
+  const handleRemoveMedia = useCallback((index: number) => {
+    setSelectedMedia((prev) => prev.filter((_, i) => i !== index));
+  }, []);
+
   const handleSend = useCallback(
-    (content: string) => {
-      sendMessage.mutate({ content });
+    async (content: string) => {
+      if (selectedMedia.length > 0) {
+        setIsUploading(true);
+        try {
+          const uploadResults = await uploadMedia.mutateAsync(
+            selectedMedia.map((m) => ({
+              uri: m.uri,
+              type: m.type,
+              fileName: m.fileName,
+              fileSize: m.fileSize,
+            })),
+          );
+
+          const attachments: Attachment[] = uploadResults.map((result) => ({
+            id: result.id,
+            url: result.url,
+            mimeType: result.mimeType,
+            size: result.size,
+            filename: result.filename,
+            dimensions: result.dimensions,
+          }));
+
+          sendMessage.mutate({
+            content: content || undefined,
+            attachments,
+          });
+
+          setSelectedMedia([]);
+        } finally {
+          setIsUploading(false);
+        }
+      } else if (content.trim().length > 0) {
+        sendMessage.mutate({ content });
+      }
     },
-    [sendMessage],
+    [selectedMedia, uploadMedia, sendMessage],
   );
 
   const handleLoadMore = useCallback(() => {
@@ -145,6 +197,24 @@ export default function ConversationScreen() {
     [toggleReaction],
   );
 
+  const handleImagePress = useCallback(
+    (messageId: string, imageIndex: number) => {
+      const message = allMessages.find((m) => m.id === messageId);
+      if (message && message.attachments.length > 0) {
+        setViewerImages(message.attachments);
+        setViewerInitialIndex(imageIndex);
+        setViewerVisible(true);
+      }
+    },
+    [allMessages],
+  );
+
+  const handleCloseViewer = useCallback(() => {
+    setViewerVisible(false);
+    setViewerImages([]);
+    setViewerInitialIndex(0);
+  }, []);
+
   const renderItem = useCallback(
     ({ item }: { item: MessageWithSeparator }) => {
       if (item.type === "separator" && item.date) {
@@ -163,13 +233,16 @@ export default function ConversationScreen() {
             onReactionPress={(emoji) => {
               if (item.message) handleReactionPress(item.message.id, emoji);
             }}
+            onImagePress={(index) => {
+              if (item.message) handleImagePress(item.message.id, index);
+            }}
           />
         );
       }
 
       return null;
     },
-    [user?.id, handleLongPress, handleReactionPress],
+    [user?.id, handleLongPress, handleReactionPress, handleImagePress],
   );
 
   const keyExtractor = useCallback((item: MessageWithSeparator) => item.id, []);
@@ -249,13 +322,32 @@ export default function ConversationScreen() {
           keyboardShouldPersistTaps="handled"
         />
 
-        <MessageInput onSend={handleSend} disabled={sendMessage.isPending} />
+        <MediaPreview
+          media={selectedMedia}
+          onRemove={handleRemoveMedia}
+          uploadProgresses={uploadMedia.fileProgresses}
+          isUploading={isUploading}
+        />
+
+        <MessageInput
+          onSend={handleSend}
+          onMediaSelected={handleMediaSelected}
+          disabled={sendMessage.isPending || isUploading}
+          hasMedia={selectedMedia.length > 0}
+        />
       </KeyboardAvoidingView>
 
       <ReactionPicker
         visible={isPickerVisible}
         onClose={handleClosePicker}
         onSelectReaction={handleSelectReaction}
+      />
+
+      <ImageViewer
+        visible={viewerVisible}
+        images={viewerImages}
+        initialIndex={viewerInitialIndex}
+        onClose={handleCloseViewer}
       />
     </SafeAreaView>
   );

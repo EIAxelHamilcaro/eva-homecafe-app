@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 37
-**Current Task:** Task 38 (Screens - Add media to conversation)
+**Tasks Completed:** 38
+**Current Task:** Task 39 (Screens - Integrate SSE for realtime)
 
 ---
 
@@ -844,6 +844,7 @@
   - Integrated ReactionBar component below bubble
   - Displays reactions for each message with toggle capability
 - Updated `apps/expo/app/(protected)/messages/[conversationId].tsx`
+
   - Added state: `selectedMessageId`, `isPickerVisible`
   - Added `useToggleReaction` hook integration with conversationId, messageId, userId
   - Added handlers: `handleLongPress`, `handleClosePicker`, `handleSelectReaction`, `handleReactionPress`
@@ -856,3 +857,59 @@
 - Created `apps/expo/app/(protected)/messages/_components/reaction-picker.tsx`
 - Updated `apps/expo/app/(protected)/messages/_components/message-bubble.tsx`
 - Updated `apps/expo/app/(protected)/messages/[conversationId].tsx`
+
+### 2026-01-21 - Task 38: Add media to conversation
+
+**Status:** PASSED
+
+**Implementation Summary:**
+- Installed `expo-image-picker` for image selection and camera access
+- Created `apps/expo/app/(protected)/messages/_components/media-picker.tsx`
+  - `pickMediaFromLibrary()` function with permission handling, multi-selection support (up to 10 images)
+  - `takePhoto()` function for camera capture
+  - Validation for allowed image types and max file size (50MB)
+  - Returns `SelectedMedia` interface with uri, type, fileName, fileSize, width, height
+- Created `apps/expo/app/(protected)/messages/_components/media-preview.tsx`
+  - Horizontal ScrollView showing selected images before sending
+  - Remove button (X) on each image
+  - Upload progress indicator with percentage
+  - Shows count of selected images
+- Created `apps/expo/app/(protected)/messages/_components/message-media.tsx`
+  - Dynamic grid layouts based on attachment count:
+    - 1 image: full width with aspect ratio
+    - 2 images: side by side 50%/50%
+    - 3 images: large left (2/3) + two stacked right (1/3)
+    - 4+ images: 2x2 grid with "+N" overlay for remaining
+  - onImagePress callback for fullscreen viewer
+- Created `apps/expo/app/(protected)/messages/_components/image-viewer.tsx`
+  - Modal with horizontal paging ScrollView
+  - Dot pagination indicators at bottom
+  - Close button (X) in top right
+  - Full-screen image display with contain mode
+- Updated `apps/expo/app/(protected)/messages/_components/message-input.tsx`
+  - Added camera button (left) for quick photo capture
+  - Image icon (right) shows ActionSheet on iOS with camera/gallery options
+  - `onMediaSelected` callback prop for parent state management
+  - `hasMedia` prop to enable send button when images selected
+- Updated `apps/expo/app/(protected)/messages/_components/message-bubble.tsx`
+  - Integrated MessageMedia component for attachments
+  - Adjusted padding for bubbles with images
+  - `onImagePress` callback for fullscreen viewer
+- Updated `apps/expo/app/(protected)/messages/[conversationId].tsx`
+
+  - State management for selectedMedia, isUploading, viewer visibility
+  - useMultipleMediaUpload hook integration with progress tracking
+  - MediaPreview component above MessageInput
+  - ImageViewer modal for fullscreen image viewing
+  - handleSend uploads images first, then sends message with attachments
+
+**Changes Made:**
+- Added `expo-image-picker` to apps/expo/package.json
+- Created `apps/expo/app/(protected)/messages/_components/media-picker.tsx`
+- Created `apps/expo/app/(protected)/messages/_components/media-preview.tsx`
+- Created `apps/expo/app/(protected)/messages/_components/message-media.tsx`
+- Created `apps/expo/app/(protected)/messages/_components/image-viewer.tsx`
+- Updated `apps/expo/app/(protected)/messages/_components/message-input.tsx`
+- Updated `apps/expo/app/(protected)/messages/_components/message-bubble.tsx`
+- Updated `apps/expo/app/(protected)/messages/[conversationId].tsx`
+

@@ -435,7 +435,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
       "Integrate in MessageInput",
       "Fullscreen image viewer"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "screens",
@@ -451,13 +451,11 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
   },
   {
     "category": "screens",
-    "description": "Navigation bar",
+    "description": "Navigation bar mobile (bottom tab bar)",
     "steps": [
-      "Analyze .claude/screenshots/* and adapt for native layout",
-      "Create useSSE hook",
-      "Connect on conversation mount",
-      "Update QueryClient on events",
-      "Handle reconnection"
+      "Crée une bottom navigation bar fixée en bas de l'écran, visible sur toutes les pages",
+      "L'onglet actif doit être visuellement distinct (couleur ou remplissage différent)",
+      "Au clic sur un onglet, naviguer vers la page correspondante"
     ],
     "passes": false
   },
