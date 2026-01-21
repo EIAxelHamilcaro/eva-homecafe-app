@@ -160,7 +160,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Implement all port methods using Drizzle",
       "Handle Option for findByUserId"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 13,
