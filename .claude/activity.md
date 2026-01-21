@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 11
-**Current Task:** None (task 11 completed)
+**Tasks Completed:** 12
+**Current Task:** None (task 12 completed)
 
 ---
 
@@ -235,3 +235,27 @@
 **Changes Made:**
 - Created `dto/chat/get-messages.dto.ts` with input/output schemas and types
 - Created `use-cases/chat/get-messages.use-case.ts` with GetMessagesUseCase class
+
+### 2026-01-21 - Task 12: Create SendMessage use case
+
+**Status:** PASSED
+
+**Implementation Summary:**
+- Created `apps/nextjs/src/application/dto/chat/send-message.dto.ts`
+  - `IAttachmentInput` - attachment data schema (id, url, mimeType, size, filename, dimensions?)
+  - `ISendMessageInputDto` - conversationId, senderId, content (optional), attachments (optional)
+  - `ISendMessageOutputDto` - messageId, conversationId, senderId, content, attachments, createdAt
+- Created `apps/nextjs/src/application/use-cases/chat/send-message.use-case.ts`
+  - Implements `UseCase<ISendMessageInputDto, ISendMessageOutputDto>`
+  - **Input validation:** Requires either content or attachments (or both)
+  - **User access validation:** Verifies user is a participant in the conversation
+  - **Message creation:** Creates Message entity with content (Option<MessageContent>) and attachments
+  - **MessageSent event:** Automatically dispatched via `Message.create()` when new message created
+  - **Conversation update:** Updates conversation's lastMessage via `MessagePreview.fromMessage()`
+- Fixed type compatibility issue in `IMediaAttachmentProps.dimensions` - changed from optional property (`?:`) to explicit union (`| undefined`)
+- `pnpm type-check` and `pnpm check` both pass
+
+**Changes Made:**
+- Created `dto/chat/send-message.dto.ts` with input/output schemas and types
+- Created `use-cases/chat/send-message.use-case.ts` with SendMessageUseCase class
+- Modified `media-attachment.vo.ts` - changed `dimensions?: IDimensions` to `dimensions: IDimensions | undefined` for type compatibility with ValueObject.create static method

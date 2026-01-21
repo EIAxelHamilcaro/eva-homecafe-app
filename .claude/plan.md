@@ -151,7 +151,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
       "Dispatch MessageSent event",
       "Update conversation lastMessage"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "application",

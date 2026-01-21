@@ -53,7 +53,7 @@ export interface IMediaAttachmentProps {
   mimeType: AllowedMimeType;
   size: number;
   filename: string;
-  dimensions?: IDimensions;
+  dimensions: IDimensions | undefined;
 }
 
 export class MediaAttachment extends ValueObject<IMediaAttachmentProps> {
@@ -99,7 +99,7 @@ export class MediaAttachment extends ValueObject<IMediaAttachmentProps> {
       return Result.fail(firstIssue?.message ?? "Invalid media attachment");
     }
 
-    return Result.ok(result.data);
+    return Result.ok(value);
   }
 
   equals(other: ValueObject<IMediaAttachmentProps>): boolean {
