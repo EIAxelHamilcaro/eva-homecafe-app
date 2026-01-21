@@ -528,7 +528,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
       "Read .claude/screenshots/BUG-1.png",
       "fix all probleme"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "testing",

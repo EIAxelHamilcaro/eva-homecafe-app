@@ -15,7 +15,7 @@ export const uploadMediaInputDtoSchema = z.object({
   mimeType: z.enum(ALLOWED_IMAGE_TYPES, {
     message: "Only image files are allowed (jpeg, png, gif, webp)",
   }),
-  userId: z.string().uuid(),
+  userId: z.string().min(1),
 });
 
 export const dimensionsOutputSchema = z.object({
@@ -24,7 +24,7 @@ export const dimensionsOutputSchema = z.object({
 });
 
 export const uploadMediaOutputDtoSchema = z.object({
-  id: z.string().uuid(),
+  id: z.string().min(1),
   url: z.string().url(),
   mimeType: z.string(),
   size: z.number().positive(),

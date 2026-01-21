@@ -1219,3 +1219,36 @@ Analyzed design screenshots and implemented UI fixes to match the mockups:
 - `pnpm type-check`: All packages passed
 - `pnpm check`: 0 errors
 
+### 2026-01-21 - Task 47: BUG fix - Invalid UUID error on Messagerie screen
+
+**Status:** PASSED
+
+**Investigation Summary:**
+- Identified "Invalid UUID" error appearing on Messagerie (conversations list) screen
+- Root cause: BetterAuth generates user IDs that are not strict UUID format
+- Database schema uses `text` type for IDs (allowing any string)
+- Domain value objects and DTOs used `z.uuid()` validation requiring strict UUID format
+- This mismatch caused Zod validation errors when fetching conversations
+
+**Fix Applied:**
+Changed all `z.uuid()` validations to `z.string().min(1)` throughout:
+
+1. **Domain Value Objects:**
+   - `participant.vo.ts` - userIdSchema
+   - `message-preview.vo.ts` - messageId, senderId
+   - `reaction.vo.ts` - userId
+   - `media-attachment.vo.ts` - id
+
+2. **Application DTOs:**
+   - `get-conversations.dto.ts` - userId, participantIds, messageIds
+   - `create-conversation.dto.ts` - userId, recipientId, conversationId
+   - `get-messages.dto.ts` - all ID fields
+   - `send-message.dto.ts` - all ID fields
+   - `add-reaction.dto.ts` - messageId, userId
+   - `mark-conversation-read.dto.ts` - conversationId, userId
+   - `upload-media.dto.ts` - userId, id
+
+**Validation Results:**
+- `pnpm type-check`: All packages passed
+- `pnpm check`: 0 errors
+

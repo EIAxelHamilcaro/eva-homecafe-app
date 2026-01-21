@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const getConversationsInputDtoSchema = z.object({
-  userId: z.string().uuid(),
+  userId: z.string().min(1),
   pagination: z
     .object({
       page: z.number().int().positive().default(1),
@@ -11,23 +11,23 @@ export const getConversationsInputDtoSchema = z.object({
 });
 
 export const participantDtoSchema = z.object({
-  userId: z.string().uuid(),
+  userId: z.string().min(1),
   joinedAt: z.date(),
   lastReadAt: z.date().nullable(),
 });
 
 export const messagePreviewDtoSchema = z.object({
-  messageId: z.string().uuid(),
+  messageId: z.string().min(1),
   content: z.string(),
-  senderId: z.string().uuid(),
+  senderId: z.string().min(1),
   sentAt: z.date(),
   hasAttachments: z.boolean(),
 });
 
 export const conversationDtoSchema = z.object({
-  id: z.string().uuid(),
+  id: z.string().min(1),
   participants: z.array(participantDtoSchema),
-  createdBy: z.string().uuid(),
+  createdBy: z.string().min(1),
   lastMessage: messagePreviewDtoSchema.nullable(),
   unreadCount: z.number().int().nonnegative(),
   createdAt: z.date(),

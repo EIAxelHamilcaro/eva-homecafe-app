@@ -1,7 +1,7 @@
 import { Option, Result, ValueObject } from "@packages/ddd-kit";
 import { z } from "zod";
 
-const userIdSchema = z.uuid("Invalid user ID format");
+const userIdSchema = z.string().min(1, "User ID is required");
 const dateSchema = z.date();
 
 export interface IParticipantProps {

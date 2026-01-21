@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 export const getMessagesInputDtoSchema = z.object({
-  conversationId: z.string().uuid(),
-  userId: z.string().uuid(),
+  conversationId: z.string().min(1),
+  userId: z.string().min(1),
   pagination: z
     .object({
       page: z.number().int().positive().default(1),
@@ -12,7 +12,7 @@ export const getMessagesInputDtoSchema = z.object({
 });
 
 export const attachmentDtoSchema = z.object({
-  id: z.string().uuid(),
+  id: z.string().min(1),
   url: z.string().url(),
   mimeType: z.string(),
   size: z.number(),
@@ -26,15 +26,15 @@ export const attachmentDtoSchema = z.object({
 });
 
 export const reactionDtoSchema = z.object({
-  userId: z.string().uuid(),
+  userId: z.string().min(1),
   emoji: z.string(),
   createdAt: z.date(),
 });
 
 export const messageDtoSchema = z.object({
-  id: z.string().uuid(),
-  conversationId: z.string().uuid(),
-  senderId: z.string().uuid(),
+  id: z.string().min(1),
+  conversationId: z.string().min(1),
+  senderId: z.string().min(1),
   content: z.string().nullable(),
   attachments: z.array(attachmentDtoSchema),
   reactions: z.array(reactionDtoSchema),

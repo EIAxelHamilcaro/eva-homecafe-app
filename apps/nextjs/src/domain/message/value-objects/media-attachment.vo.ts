@@ -31,7 +31,7 @@ export interface IDimensions {
 }
 
 const mediaAttachmentSchema = z.object({
-  id: z.string().uuid("Invalid attachment ID"),
+  id: z.string().min(1, "Attachment ID is required"),
   url: z.string().url("Invalid URL format"),
   mimeType: z.enum(ALLOWED_MIME_TYPES, {
     message: "Invalid or unsupported media type",

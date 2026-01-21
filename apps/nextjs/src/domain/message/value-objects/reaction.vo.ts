@@ -3,7 +3,7 @@ import { z } from "zod";
 import { REACTION_EMOJIS, type ReactionEmoji } from "./reaction-type.vo";
 
 const reactionSchema = z.object({
-  userId: z.uuid("Invalid user ID format"),
+  userId: z.string().min(1, "User ID is required"),
   emoji: z.enum(REACTION_EMOJIS, {
     message: "Invalid reaction emoji",
   }),
