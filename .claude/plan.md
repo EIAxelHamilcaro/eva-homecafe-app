@@ -39,7 +39,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Add updateDisplayName(), updateBio(), updateAvatar() methods",
       "Use z.string().min(1) for userId (BetterAuth compatibility)"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 2,
@@ -49,7 +49,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Create src/domain/profile/value-objects/display-name.vo.ts (min 1, max 50 chars)",
       "Create src/domain/profile/value-objects/bio.vo.ts (optional, max 500 chars)"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 3,
@@ -59,7 +59,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Create src/domain/profile/events/profile-created.event.ts",
       "Create src/domain/profile/events/profile-updated.event.ts"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 4,
