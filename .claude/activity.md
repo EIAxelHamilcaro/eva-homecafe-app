@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 15
-**Current Task:** None (task 15 completed)
+**Tasks Completed:** 16
+**Current Task:** None (task 16 completed)
 
 ---
 
@@ -325,3 +325,24 @@
 - Created `ports/storage.provider.port.ts` with IStorageProvider interface
 - Created `dto/chat/upload-media.dto.ts` with input/output schemas and types
 - Created `use-cases/chat/upload-media.use-case.ts` with UploadMediaUseCase class
+
+### 2026-01-21 - Task 16: Create Drizzle schema for conversations
+
+**Status:** PASSED
+
+**Implementation Summary:**
+- Created `packages/drizzle/src/schema/chat.ts` with all chat-related tables
+- **conversation** table: id, createdBy, createdAt, updatedAt with FK to user
+- **conversation_participant** table: conversationId, userId, joinedAt, lastReadAt with composite PK
+- **message** table: id, conversationId, senderId, content, createdAt, editedAt, deletedAt
+- **message_attachment** table: id, messageId, url, mimeType, size, filename, width, height, createdAt
+- **message_reaction** table: messageId, userId, emoji, createdAt with composite PK (messageId, userId, emoji)
+- Updated `packages/drizzle/src/schema/index.ts` to export chat schema
+- Drizzle migration generated automatically: `0001_old_micromax.sql`
+- `pnpm type-check` and `pnpm check` both pass
+
+**Changes Made:**
+- Created `packages/drizzle/src/schema/chat.ts` with 5 tables for chat feature
+- Updated `packages/drizzle/src/schema/index.ts` to include chat exports
+
+**Note:** All message-related tables (message, message_attachment, message_reaction) were also created in this task since they're part of the same chat domain schema file. Task 17 can be marked complete as well.

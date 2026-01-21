@@ -196,7 +196,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
       "Add table conversation_participants (userId, conversationId, lastReadAt)",
       "Run pnpm db:generate"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "adapters",
