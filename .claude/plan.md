@@ -238,7 +238,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Save button triggers updateProfile mutation",
       "Handle loading and error states"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 20,

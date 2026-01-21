@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 18/70
-**Current Task:** Task 19 - Create Edit Profile Screen
+**Tasks Completed:** 19/70
+**Current Task:** Task 20 - Add Profile Tab to Layout
 **Current Phase:** Phase 1 - Profile Feature
 
 ---
@@ -18,7 +18,7 @@
 | Infrastructure | 6 | 3 |
 | Adapter | 10 | 3 |
 | API | 3 | 1 |
-| Expo | 19 | 3 |
+| Expo | 19 | 4 |
 | Testing | 4 | 0 |
 | Validation | 3 | 0 |
 
@@ -285,6 +285,37 @@ Uses:
 - `useSignOut()` hook for sign out
 - `useAuth()` for current user info
 - Pink theme colors from HomeCafe brand
+
+Type check: PASSED
+
+**Task 19 Completed: Create Edit Profile Screen**
+
+Files created:
+- `apps/expo/lib/validations/profile.ts` - Profile validation schema with Zod
+- `apps/expo/app/(protected)/profile/edit.tsx` - Full edit profile screen implementation
+
+Validation schema:
+- `displayNameSchema` - Required, 1-50 chars
+- `bioSchema` - Optional, max 500 chars
+- `updateProfileSchema` - Combines displayName and bio with optional avatarUrl
+
+Edit screen features:
+- Header with back navigation (ArrowLeft icon)
+- Avatar display with camera icon overlay (placeholder for future upload)
+- Form with displayName input and bio textarea
+- Bio character counter (0/500)
+- Save button triggers `useUpdateProfile()` mutation
+- Disabled save when form unchanged (`isDirty` check)
+- Loading state during save
+- Error handling with form field errors
+- Cancel button to go back
+
+Uses:
+- `react-hook-form` with `zodResolver` for validation
+- `useProfile()` hook to fetch current data
+- `useUpdateProfile()` hook for mutation
+- `KeyboardAvoidingView` for proper keyboard handling
+- Form resets to current profile data on load
 
 Type check: PASSED
 
