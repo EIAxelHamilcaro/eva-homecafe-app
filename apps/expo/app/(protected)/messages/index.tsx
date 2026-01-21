@@ -13,6 +13,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import type { Conversation } from "@/constants/chat";
 import { useConversations } from "@/lib/api/hooks/use-conversations";
+import { useSSE } from "@/lib/sse/use-sse";
 import { useAuth } from "@/src/providers/auth-provider";
 
 import { ConversationItem } from "./_components/conversation-item";
@@ -22,6 +23,8 @@ export default function MessagesScreen() {
   const router = useRouter();
   const { user } = useAuth();
   const { data, isLoading, isRefetching, refetch } = useConversations();
+
+  useSSE({ enabled: !!user });
 
   const participantNames = useMemo(() => {
     const names = new Map<string, string>();

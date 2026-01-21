@@ -142,90 +142,88 @@ export interface SearchRecipientsResponse {
 }
 
 export type SSEEventType =
-  | "message:new"
-  | "message:updated"
-  | "message:deleted"
-  | "reaction:added"
-  | "reaction:removed"
-  | "conversation:read"
-  | "conversation:created";
+  | "connected"
+  | "message_sent"
+  | "reaction_added"
+  | "reaction_removed"
+  | "conversation_read"
+  | "conversation_created"
+  | "ping";
 
-export interface SSEMessageNewEvent {
-  type: "message:new";
+export interface SSEConnectedEvent {
+  type: "connected";
   data: {
-    conversationId: string;
+    userId: string;
+    connectionCount: number;
+  };
+  timestamp: string;
+}
+
+export interface SSEMessageSentEvent {
+  type: "message_sent";
+  data: {
     messageId: string;
+    conversationId: string;
     senderId: string;
     content: string | null;
-    attachments: Attachment[];
-    createdAt: string;
+    hasAttachments: boolean;
   };
-}
-
-export interface SSEMessageUpdatedEvent {
-  type: "message:updated";
-  data: {
-    messageId: string;
-    conversationId: string;
-    content: string;
-    editedAt: string;
-  };
-}
-
-export interface SSEMessageDeletedEvent {
-  type: "message:deleted";
-  data: {
-    messageId: string;
-    conversationId: string;
-    deletedAt: string;
-  };
+  timestamp: string;
 }
 
 export interface SSEReactionAddedEvent {
-  type: "reaction:added";
+  type: "reaction_added";
   data: {
     messageId: string;
     conversationId: string;
     userId: string;
-    emoji: ReactionEmoji;
-    createdAt: string;
+    emoji: string;
   };
+  timestamp: string;
 }
 
 export interface SSEReactionRemovedEvent {
-  type: "reaction:removed";
+  type: "reaction_removed";
   data: {
     messageId: string;
     conversationId: string;
     userId: string;
-    emoji: ReactionEmoji;
+    emoji: string;
   };
+  timestamp: string;
 }
 
 export interface SSEConversationReadEvent {
-  type: "conversation:read";
+  type: "conversation_read";
   data: {
     conversationId: string;
     userId: string;
-    lastReadAt: string;
+    readAt: string;
   };
+  timestamp: string;
 }
 
 export interface SSEConversationCreatedEvent {
-  type: "conversation:created";
+  type: "conversation_created";
   data: {
     conversationId: string;
-    participants: string[];
     createdBy: string;
-    createdAt: string;
+    participantIds: string[];
   };
+  timestamp: string;
+}
+
+export interface SSEPingEvent {
+  type: "ping";
+  data: null;
+  timestamp: string;
 }
 
 export type SSEEvent =
-  | SSEMessageNewEvent
-  | SSEMessageUpdatedEvent
-  | SSEMessageDeletedEvent
+  | SSEConnectedEvent
+  | SSEMessageSentEvent
   | SSEReactionAddedEvent
   | SSEReactionRemovedEvent
   | SSEConversationReadEvent
-  | SSEConversationCreatedEvent;
+  | SSEConversationCreatedEvent
+  | SSEPingEvent;

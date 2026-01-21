@@ -1,26 +1,15 @@
-import EventSource, {
-  type CustomEvent,
-  type ErrorEvent,
-  type ExceptionEvent,
-  type TimeoutEvent,
-} from "react-native-sse";
-import type { SSEEvent, SSEEventType } from "@/constants/chat";
+import Constants from "expo-constants";
+import * as SecureStore from "expo-secure-store";
+import EventSource from "react-native-sse";
+
+import type { SSEEvent } from "@/constants/chat";
+
+const API_URL = Constants.expoConfig?.extra?.apiUrl ?? "http://localhost:3000";
+const TOKEN_KEY = "auth_token";
 
 type SSEEventHandler = (event: SSEEvent) => void;
 
-type CustomSSEEventType =
-  | "connected"
-  | "message:new"
-  | "message:updated"
-  | "message:deleted"
-  | "reaction:added"
-  | "reaction:removed"
-  | "conversation:read"
-  | "conversation:created";
-
 interface SSEClientConfig {
-  baseUrl: string;
-  getToken: () => Promise<string | null>;
   onEvent?: SSEEventHandler;
   onConnected?: () => void;
   onDisconnected?: () => void;
@@ -28,16 +17,17 @@ interface SSEClientConfig {
 }
 
 const RECONNECT_DELAY_MS = 3000;
-const MAX_RECONNECT_ATTEMPTS = 5;
+const MAX_RECONNECT_ATTEMPTS = 10;
 
 export class SSEClient {
-  private eventSource: EventSource<CustomSSEEventType> | null = null;
+  private eventSource: EventSource | null = null;
   private config: SSEClientConfig;
   private isConnecting = false;
   private reconnectAttempts = 0;
   private reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
+  private shouldReconnect = true;
 
-  constructor(config: SSEClientConfig) {
+  constructor(config: SSEClientConfig = {}) {
     this.config = config;
   }
 
@@ -47,16 +37,19 @@ export class SSEClient {
     }
 
     this.isConnecting = true;
+    this.shouldReconnect = true;
 
     try {
-      const token = await this.config.getToken();
+      const token = await SecureStore.getItemAsync(TOKEN_KEY);
       if (!token) {
-        throw new Error("No authentication token available");
+        this.isConnecting = false;
+        this.config.onError?.(new Error("No authentication token available"));
+        return;
       }
 
-      const url = `${this.config.baseUrl}/api/v1/chat/sse`;
+      const url = `${API_URL}/api/v1/chat/sse`;
 
-      this.eventSource = new EventSource<CustomSSEEventType>(url, {
+      this.eventSource = new EventSource(url, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -78,63 +71,59 @@ export class SSEClient {
     this.eventSource.addEventListener("open", () => {
       this.isConnecting = false;
       this.reconnectAttempts = 0;
-      this.config.onConnected?.();
     });
 
-    this.eventSource.addEventListener(
-      "error",
-      (event: ErrorEvent | TimeoutEvent | ExceptionEvent) => {
-        this.isConnecting = false;
-        const message =
-          "message" in event ? event.message : "SSE connection error";
-        this.config.onError?.(new Error(message));
-        this.disconnect();
-        this.scheduleReconnect();
-      },
-    );
+    this.eventSource.addEventListener("message", (event) => {
+      if (event.data) {
+        try {
+          const message = JSON.parse(event.data) as SSEEvent;
+          this.handleMessage(message);
+        } catch {
+          // Ignore malformed JSON
+        }
+      }
+    });
 
-    this.eventSource.addEventListener(
-      "connected",
-      (_event: CustomEvent<"connected">) => {
-        this.reconnectAttempts = 0;
-      },
-    );
+    this.eventSource.addEventListener("error", (event) => {
+      this.isConnecting = false;
+      const message =
+        "message" in event ? String(event.message) : "SSE connection error";
+      this.config.onError?.(new Error(message));
+      this.handleDisconnect();
+    });
+  }
 
-    const eventTypes: SSEEventType[] = [
-      "message:new",
-      "message:updated",
-      "message:deleted",
-      "reaction:added",
-      "reaction:removed",
-      "conversation:read",
-      "conversation:created",
-    ];
+  private handleMessage(message: SSEEvent): void {
+    if (message.type === "connected") {
+      this.reconnectAttempts = 0;
+      this.config.onConnected?.();
+    }
 
-    for (const eventType of eventTypes) {
-      this.eventSource.addEventListener(
-        eventType,
-        (event: CustomEvent<typeof eventType>) => {
-          if (event.data) {
-            try {
-              const data = JSON.parse(event.data) as SSEEvent["data"];
-              const sseEvent = { type: eventType, data } as SSEEvent;
-              this.config.onEvent?.(sseEvent);
-            } catch {
-              // Ignore malformed JSON
-            }
-          }
-        },
-      );
+    if (message.type !== "ping") {
+      this.config.onEvent?.(message);
+    }
+  }
+
+  private handleDisconnect(): void {
+    if (this.eventSource) {
+      this.eventSource.close();
+      this.eventSource = null;
+    }
+    this.isConnecting = false;
+    this.config.onDisconnected?.();
+
+    if (this.shouldReconnect) {
+      this.scheduleReconnect();
     }
   }
 
   private scheduleReconnect(): void {
     if (this.reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) {
       this.config.onError?.(new Error("Max reconnection attempts reached"));
-      this.config.onDisconnected?.();
       return;
     }
 
+    this.clearReconnectTimeout();
     this.reconnectAttempts++;
     const delay = RECONNECT_DELAY_MS * this.reconnectAttempts;
 
@@ -143,11 +132,16 @@ export class SSEClient {
     }, delay);
   }
 
-  disconnect(): void {
+  private clearReconnectTimeout(): void {
     if (this.reconnectTimeout) {
       clearTimeout(this.reconnectTimeout);
       this.reconnectTimeout = null;
     }
+  }
+
+  disconnect(): void {
+    this.shouldReconnect = false;
+    this.clearReconnectTimeout();
 
     if (this.eventSource) {
       this.eventSource.close();
@@ -155,24 +149,29 @@ export class SSEClient {
     }
 
     this.isConnecting = false;
-    this.config.onDisconnected?.();
   }
 
   isConnected(): boolean {
     return this.eventSource !== null && !this.isConnecting;
   }
+
+  updateConfig(config: Partial<SSEClientConfig>): void {
+    this.config = { ...this.config, ...config };
+  }
 }
 
 let sseClientInstance: SSEClient | null = null;
 
-export function createSSEClient(config: SSEClientConfig): SSEClient {
-  if (sseClientInstance) {
-    sseClientInstance.disconnect();
+export function getSSEClient(): SSEClient {
+  if (!sseClientInstance) {
+    sseClientInstance = new SSEClient();
   }
-  sseClientInstance = new SSEClient(config);
   return sseClientInstance;
 }
 
-export function getSSEClient(): SSEClient | null {
-  return sseClientInstance;
+export function resetSSEClient(): void {
+  if (sseClientInstance) {
+    sseClientInstance.disconnect();
+    sseClientInstance = null;
+  }
 }

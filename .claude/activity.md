@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 38
-**Current Task:** Task 39 (Screens - Integrate SSE for realtime)
+**Tasks Completed:** 39
+**Current Task:** Task 40 (Screens - Navigation bar mobile)
 
 ---
 
@@ -912,4 +912,42 @@
 - Updated `apps/expo/app/(protected)/messages/_components/message-input.tsx`
 - Updated `apps/expo/app/(protected)/messages/_components/message-bubble.tsx`
 - Updated `apps/expo/app/(protected)/messages/[conversationId].tsx`
+
+### 2026-01-21 - Task 39: Integrate SSE for realtime
+
+**Status:** PASSED
+
+**Implementation Summary:**
+- Updated `apps/expo/constants/chat.ts`
+  - Fixed SSE event types to match backend format (`message_sent` instead of `message:new`)
+  - Updated all SSE event interfaces to include `timestamp` field
+  - Event types: connected, message_sent, reaction_added, reaction_removed, conversation_read, conversation_created, ping
+- Rewrote `apps/expo/lib/sse/sse-client.ts`
+  - SSEClient class with connection management and reconnection logic
+  - Listens for generic "message" event and parses JSON with type field
+  - Exponential backoff reconnection (3s * attempt, max 10 attempts)
+  - Singleton pattern via `getSSEClient()` and `resetSSEClient()`
+  - Handles: connected, error, disconnect, and message events
+- Created `apps/expo/lib/sse/use-sse.ts`
+  - `useSSE({ conversationId?, enabled })` hook for SSE integration
+  - Connects to SSE on mount when enabled and user is authenticated
+  - Event handlers for all SSE event types:
+    - `message_sent`: invalidates message list and conversation queries
+    - `reaction_added/removed`: invalidates message list for conversation
+    - `conversation_read`: invalidates all conversation queries
+    - `conversation_created`: invalidates all conversation queries
+  - Skips events from current user to avoid duplicate updates
+  - Uses `conversationId` filter to only react to relevant events
+- Updated `apps/expo/app/(protected)/messages/index.tsx`
+  - Added `useSSE({ enabled: !!user })` for realtime conversation list updates
+- Updated `apps/expo/app/(protected)/messages/[conversationId].tsx`
+  - Added `useSSE({ conversationId, enabled: !!conversationId && !!user })` for realtime message updates
+- `pnpm type-check` and `pnpm check` both pass
+
+**Changes Made:**
+- Updated `apps/expo/constants/chat.ts` with corrected SSE event types
+- Rewrote `apps/expo/lib/sse/sse-client.ts` with proper event handling
+- Created `apps/expo/lib/sse/use-sse.ts` hook
+- Updated `apps/expo/app/(protected)/messages/index.tsx` with SSE integration
+- Updated `apps/expo/app/(protected)/messages/[conversationId].tsx` with SSE integration
 

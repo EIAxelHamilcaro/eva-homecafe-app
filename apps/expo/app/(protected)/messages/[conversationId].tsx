@@ -16,6 +16,7 @@ import type { Attachment, Message, ReactionEmoji } from "@/constants/chat";
 import { useMultipleMediaUpload } from "@/lib/api/hooks/use-media-upload";
 import { useMessages, useSendMessage } from "@/lib/api/hooks/use-messages";
 import { useToggleReaction } from "@/lib/api/hooks/use-reactions";
+import { useSSE } from "@/lib/sse/use-sse";
 import { useAuth } from "@/src/providers/auth-provider";
 
 import { DateSeparator } from "./_components/date-separator";
@@ -97,6 +98,11 @@ export default function ConversationScreen() {
     conversationId: conversationId ?? "",
     messageId: selectedMessageId ?? "",
     userId: user?.id ?? "",
+  });
+
+  useSSE({
+    conversationId: conversationId ?? "",
+    enabled: !!conversationId && !!user,
   });
 
   const allMessages = useMemo(() => {

@@ -447,7 +447,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
       "Update QueryClient on events",
       "Handle reconnection"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "screens",
