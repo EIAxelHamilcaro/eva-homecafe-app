@@ -208,7 +208,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
       "Add table message_reactions",
       "Run pnpm db:generate"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "adapters",
@@ -218,7 +218,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
       "Implement IConversationRepository",
       "Create ConversationMapper (domain <-> db)"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "adapters",

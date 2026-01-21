@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 16
-**Current Task:** None (task 16 completed)
+**Tasks Completed:** 18
+**Current Task:** None (task 18 completed)
 
 ---
 
@@ -346,3 +346,39 @@
 - Updated `packages/drizzle/src/schema/index.ts` to include chat exports
 
 **Note:** All message-related tables (message, message_attachment, message_reaction) were also created in this task since they're part of the same chat domain schema file. Task 17 can be marked complete as well.
+
+### 2026-01-21 - Task 17: Create Drizzle schema for messages
+
+**Status:** PASSED (already completed in Task 16)
+
+**Review Summary:**
+- All message-related tables were already created in Task 16's chat.ts schema file:
+  - `message` table with id, conversationId, senderId, content, createdAt, editedAt, deletedAt
+  - `message_attachment` table with id, messageId, url, mimeType, size, filename, width, height, createdAt
+  - `message_reaction` table with composite PK (messageId, userId, emoji)
+- No additional work needed - marking as complete per note from Task 16
+
+### 2026-01-21 - Task 18: Implement DrizzleConversationRepository
+
+**Status:** PASSED
+
+**Implementation Summary:**
+- Created `apps/nextjs/src/adapters/mappers/conversation.mapper.ts`
+  - `ConversationWithRelations` type combining conversation, participants, lastMessage records
+  - `conversationToDomain()` - maps DB records to Conversation aggregate with participants and lastMessage
+  - `conversationToPersistence()` - maps Conversation aggregate to DB format
+  - `participantsToPersistence()` - maps participants array to DB format
+- Created `apps/nextjs/src/adapters/repositories/conversation.repository.ts`
+  - `DrizzleConversationRepository` implements `IConversationRepository`
+  - `create()` - inserts conversation and all participants in single transaction
+  - `update()` - updates conversation updatedAt and participant lastReadAt values
+  - `delete()` - cascade handled by DB foreign keys
+  - `findById()` - fetches conversation with participants and lastMessage
+  - `findByParticipants()` - finds conversation with exact participant set (sorted comparison)
+  - `findAllForUser()` - paginated query for all user's conversations ordered by updatedAt desc
+  - `findAll()`, `exists()`, `count()` - standard BaseRepository methods
+- `pnpm type-check` and `pnpm check` both pass
+
+**Changes Made:**
+- Created `adapters/mappers/conversation.mapper.ts` with domain <-> DB mapping functions
+- Created `adapters/repositories/conversation.repository.ts` with DrizzleConversationRepository
