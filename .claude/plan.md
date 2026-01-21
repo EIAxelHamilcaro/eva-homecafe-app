@@ -422,7 +422,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
       "Integrate in MessageBubble",
       "Long press -> picker"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "screens",
@@ -440,6 +440,18 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
   {
     "category": "screens",
     "description": "Integrate SSE for realtime",
+    "steps": [
+      "Analyze .claude/screenshots/* and adapt for native layout",
+      "Create useSSE hook",
+      "Connect on conversation mount",
+      "Update QueryClient on events",
+      "Handle reconnection"
+    ],
+    "passes": false
+  },
+  {
+    "category": "screens",
+    "description": "Navigation bar",
     "steps": [
       "Analyze .claude/screenshots/* and adapt for native layout",
       "Create useSSE hook",

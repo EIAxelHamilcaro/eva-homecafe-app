@@ -1,10 +1,14 @@
-import { Text, View } from "react-native";
-import type { Message } from "@/constants/chat";
+import { Pressable, Text, View } from "react-native";
+import type { Message, ReactionEmoji } from "@/constants/chat";
 import { cn } from "@/src/libs/utils";
+import { ReactionBar } from "./reaction-bar";
 
 interface MessageBubbleProps {
   message: Message;
   isSent: boolean;
+  userId: string;
+  onLongPress: () => void;
+  onReactionPress: (emoji: ReactionEmoji) => void;
 }
 
 function formatMessageTime(dateString: string): string {
@@ -15,7 +19,13 @@ function formatMessageTime(dateString: string): string {
   });
 }
 
-export function MessageBubble({ message, isSent }: MessageBubbleProps) {
+export function MessageBubble({
+  message,
+  isSent,
+  userId,
+  onLongPress,
+  onReactionPress,
+}: MessageBubbleProps) {
   const hasContent = message.content && message.content.trim().length > 0;
 
   return (
@@ -25,7 +35,9 @@ export function MessageBubble({ message, isSent }: MessageBubbleProps) {
         isSent ? "ml-auto items-end" : "mr-auto items-start",
       )}
     >
-      <View
+      <Pressable
+        onLongPress={onLongPress}
+        delayLongPress={300}
         className={cn(
           "rounded-2xl px-4 py-2",
           isSent ? "rounded-br-sm bg-primary" : "rounded-bl-sm bg-[#FF8C42]",
@@ -37,7 +49,12 @@ export function MessageBubble({ message, isSent }: MessageBubbleProps) {
         {!hasContent && message.attachments.length > 0 && (
           <Text className="text-base text-white">📷 Photo</Text>
         )}
-      </View>
+      </Pressable>
+      <ReactionBar
+        reactions={message.reactions}
+        userId={userId}
+        onReactionPress={onReactionPress}
+      />
       <Text className="mt-1 text-xs text-muted-foreground">
         {formatMessageTime(message.createdAt)}
       </Text>

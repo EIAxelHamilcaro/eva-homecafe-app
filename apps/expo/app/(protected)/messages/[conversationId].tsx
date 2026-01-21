@@ -1,6 +1,6 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { ChevronLeft, X } from "lucide-react-native";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -12,13 +12,15 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import type { Message } from "@/constants/chat";
+import type { Message, ReactionEmoji } from "@/constants/chat";
 import { useMessages, useSendMessage } from "@/lib/api/hooks/use-messages";
+import { useToggleReaction } from "@/lib/api/hooks/use-reactions";
 import { useAuth } from "@/src/providers/auth-provider";
 
 import { DateSeparator } from "./_components/date-separator";
 import { MessageBubble } from "./_components/message-bubble";
 import { MessageInput } from "./_components/message-input";
+import { ReactionPicker } from "./_components/reaction-picker";
 
 interface MessageWithSeparator {
   type: "message" | "separator";
@@ -66,12 +68,23 @@ export default function ConversationScreen() {
   const router = useRouter();
   const { user } = useAuth();
 
+  const [selectedMessageId, setSelectedMessageId] = useState<string | null>(
+    null,
+  );
+  const [isPickerVisible, setIsPickerVisible] = useState(false);
+
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useMessages(conversationId ?? "");
 
   const sendMessage = useSendMessage({
     conversationId: conversationId ?? "",
     senderId: user?.id ?? "",
+  });
+
+  const toggleReaction = useToggleReaction({
+    conversationId: conversationId ?? "",
+    messageId: selectedMessageId ?? "",
+    userId: user?.id ?? "",
   });
 
   const allMessages = useMemo(() => {
@@ -105,6 +118,33 @@ export default function ConversationScreen() {
     }
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
+  const handleLongPress = useCallback((messageId: string) => {
+    setSelectedMessageId(messageId);
+    setIsPickerVisible(true);
+  }, []);
+
+  const handleClosePicker = useCallback(() => {
+    setIsPickerVisible(false);
+    setSelectedMessageId(null);
+  }, []);
+
+  const handleSelectReaction = useCallback(
+    (emoji: ReactionEmoji) => {
+      if (selectedMessageId) {
+        toggleReaction.mutate({ emoji });
+      }
+    },
+    [selectedMessageId, toggleReaction],
+  );
+
+  const handleReactionPress = useCallback(
+    (messageId: string, emoji: ReactionEmoji) => {
+      setSelectedMessageId(messageId);
+      toggleReaction.mutate({ emoji });
+    },
+    [toggleReaction],
+  );
+
   const renderItem = useCallback(
     ({ item }: { item: MessageWithSeparator }) => {
       if (item.type === "separator" && item.date) {
@@ -116,13 +156,20 @@ export default function ConversationScreen() {
           <MessageBubble
             message={item.message}
             isSent={item.message.senderId === user?.id}
+            userId={user?.id ?? ""}
+            onLongPress={() => {
+              if (item.message) handleLongPress(item.message.id);
+            }}
+            onReactionPress={(emoji) => {
+              if (item.message) handleReactionPress(item.message.id, emoji);
+            }}
           />
         );
       }
 
       return null;
     },
-    [user?.id],
+    [user?.id, handleLongPress, handleReactionPress],
   );
 
   const keyExtractor = useCallback((item: MessageWithSeparator) => item.id, []);
@@ -204,6 +251,12 @@ export default function ConversationScreen() {
 
         <MessageInput onSend={handleSend} disabled={sendMessage.isPending} />
       </KeyboardAvoidingView>
+
+      <ReactionPicker
+        visible={isPickerVisible}
+        onClose={handleClosePicker}
+        onSelectReaction={handleSelectReaction}
+      />
     </SafeAreaView>
   );
 }

@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 36
-**Current Task:** Task 37 (Screens - Add reactions to conversation)
+**Tasks Completed:** 37
+**Current Task:** Task 38 (Screens - Add media to conversation)
 
 ---
 
@@ -818,3 +818,41 @@
 - Created `apps/expo/app/(protected)/messages/_components/message-bubble.tsx`
 - Created `apps/expo/app/(protected)/messages/_components/message-input.tsx`
 - Created `apps/expo/app/(protected)/messages/_components/date-separator.tsx`
+
+### 2026-01-21 - Task 37: Add reactions to conversation
+
+**Status:** PASSED
+
+**Implementation Summary:**
+- Created `apps/expo/app/(protected)/messages/_components/reaction-bar.tsx`
+  - Displays grouped reactions below message bubbles
+  - `GroupedReaction` interface with emoji, count, hasUserReacted
+  - `groupReactions()` helper groups reactions by emoji and counts them
+  - Pills show emoji and count (count hidden when 1)
+  - User's own reactions highlighted with primary color border and background
+  - Pressable to toggle reactions
+- Created `apps/expo/app/(protected)/messages/_components/reaction-picker.tsx`
+  - Modal component triggered by long-press on message
+  - Displays 6 emoji options: ["👍", "❤️", "😂", "😮", "😢", "🎉"]
+  - Semi-transparent black overlay backdrop
+  - White rounded card with "Réagir au message" title
+  - Each emoji in pressable circular button
+  - `handleSelect()` calls onSelectReaction then onClose
+- Updated `apps/expo/app/(protected)/messages/_components/message-bubble.tsx`
+  - Added props: `userId`, `onLongPress`, `onReactionPress`
+  - Wrapped bubble content in Pressable with `delayLongPress={300}`
+  - Integrated ReactionBar component below bubble
+  - Displays reactions for each message with toggle capability
+- Updated `apps/expo/app/(protected)/messages/[conversationId].tsx`
+  - Added state: `selectedMessageId`, `isPickerVisible`
+  - Added `useToggleReaction` hook integration with conversationId, messageId, userId
+  - Added handlers: `handleLongPress`, `handleClosePicker`, `handleSelectReaction`, `handleReactionPress`
+  - Updated `renderItem` to pass new props to MessageBubble
+  - Added ReactionPicker modal at bottom of screen
+- Fixed lint warnings: replaced non-null assertions (`item.message!`) with null checks
+
+**Changes Made:**
+- Created `apps/expo/app/(protected)/messages/_components/reaction-bar.tsx`
+- Created `apps/expo/app/(protected)/messages/_components/reaction-picker.tsx`
+- Updated `apps/expo/app/(protected)/messages/_components/message-bubble.tsx`
+- Updated `apps/expo/app/(protected)/messages/[conversationId].tsx`
