@@ -83,7 +83,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
       "Verify: extends DomainError, code property",
       "Add missing errors if necessary"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "application",

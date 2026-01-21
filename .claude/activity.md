@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 5
-**Current Task:** None (task 5 completed)
+**Tasks Completed:** 6
+**Current Task:** None (task 6 completed)
 
 ---
 
@@ -106,3 +106,31 @@
 - **Payload structure:** All events have `aggregateId` and relevant business data as public readonly properties
 - No fixes needed - all domain events conform to CLAUDE.md patterns
 - `pnpm type-check` and `pnpm check` both pass
+
+### 2026-01-21 - Task 6: Review Domain Errors
+
+**Status:** PASSED
+
+**Review Summary:**
+- **DomainError base class** ✅ - Abstract class with abstract `code: string` property, extends `Error`
+- **conversation.errors.ts** ✅ - All errors extend `DomainError`, have `code` property:
+  - `ConversationNotFoundError` - `code = "CONVERSATION_NOT_FOUND"`
+  - `UserNotInConversationError` - `code = "USER_NOT_IN_CONVERSATION"`
+  - `ConversationAlreadyExistsError` - `code = "CONVERSATION_ALREADY_EXISTS"`
+  - `InvalidParticipantCountError` - `code = "INVALID_PARTICIPANT_COUNT"`
+  - `ParticipantNotFoundError` - `code = "PARTICIPANT_NOT_FOUND"`
+- **message.errors.ts** ✅ - All errors extend `DomainError`, have `code` property:
+  - `MessageNotFoundError` - `code = "MESSAGE_NOT_FOUND"`
+  - `InvalidMediaTypeError` - `code = "INVALID_MEDIA_TYPE"` (accepts mimeType param)
+  - `FileTooLargeError` - `code = "FILE_TOO_LARGE"` (accepts size, maxSize params)
+  - `DuplicateReactionError` - `code = "DUPLICATE_REACTION"`
+  - `ReactionNotFoundError` - `code = "REACTION_NOT_FOUND"`
+  - `EmptyMessageError` - `code = "EMPTY_MESSAGE"`
+  - `TooManyAttachmentsError` - `code = "TOO_MANY_ATTACHMENTS"` (accepts max param)
+  - `ContentTooLongError` - `code = "CONTENT_TOO_LONG"` (added, accepts maxLength param)
+  - `InvalidReactionEmojiError` - `code = "INVALID_REACTION_EMOJI"` (added, accepts emoji param)
+- `pnpm type-check` and `pnpm check` both pass
+
+**Changes Made:**
+- `attachments.list.ts`: Updated to use `TooManyAttachmentsError` instead of inline error message
+- `message.errors.ts`: Added `ContentTooLongError` and `InvalidReactionEmojiError` for completeness
