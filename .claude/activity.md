@@ -3,8 +3,8 @@
 ## Current Status
 
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 38/70
-**Current Task:** Task 39 - Create GetNotifications Use Case
+**Tasks Completed:** 39/70
+**Current Task:** Task 40 - Create MarkNotificationRead Use Case
 **Current Phase:** Phase 2 - Friends & Notifications
 
 ---
@@ -14,7 +14,7 @@
 | Category | Total | Completed |
 |----------|-------|-----------|
 | Domain | 7 | 7 |
-| Application | 18 | 16 |
+| Application | 18 | 17 |
 | Infrastructure | 6 | 3 |
 | Adapter | 10 | 3 |
 | API | 3 | 1 |
@@ -610,6 +610,25 @@ Key patterns:
 - Uses `OptionClass.some(new Date())` for respondedAt on accepted request
 - Uses match pattern for profile handling with proper type inference
 - Returns user-friendly error messages for invalid/expired/used tokens
+
+Type check: PASSED
+
+**Task 39 Completed: GetNotifications Use Case**
+
+Files created:
+- `src/application/use-cases/notification/get-notifications.use-case.ts`
+
+Use case responsibilities:
+- Inject INotificationRepository
+- Support pagination (page, limit with defaults)
+- Support filtering by unreadOnly (uses findUnreadByUserId vs findByUserId)
+- Get unread count separately for badge display
+- Map notification aggregates to DTOs
+
+Key patterns:
+- Uses match pattern to handle Option<Date> for readAt
+- Returns notifications array, unreadCount, and pagination metadata
+- Notification type cast to enum string union for DTO
 
 Type check: PASSED
 

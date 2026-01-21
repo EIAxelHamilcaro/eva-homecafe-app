@@ -482,7 +482,7 @@ Friend invitations (email + QR code), notifications system with real-time update
       "Support pagination",
       "Return notifications sorted by createdAt desc"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 40,
