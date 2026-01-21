@@ -15,7 +15,12 @@ import type { Recipient } from "@/constants/chat";
 import { useCreateConversation } from "@/lib/api/hooks/use-conversations";
 import { useSearchRecipients } from "@/lib/api/hooks/use-recipients";
 
+import {
+  NoSearchResultsEmpty,
+  SearchPromptEmpty,
+} from "./_components/empty-state";
 import { RecipientItem } from "./_components/recipient-item";
+import { RecipientListSkeleton } from "./_components/skeleton";
 
 export default function NewMessageScreen() {
   const router = useRouter();
@@ -64,30 +69,14 @@ export default function NewMessageScreen() {
 
   const ListEmptyComponent = useCallback(() => {
     if (isLoading) {
-      return (
-        <View className="py-10">
-          <ActivityIndicator size="small" color="#F691C3" />
-        </View>
-      );
+      return <RecipientListSkeleton />;
     }
 
     if (searchQuery.length < 2) {
-      return (
-        <View className="py-10">
-          <Text className="text-center text-muted-foreground">
-            Tapez au moins 2 caractères pour rechercher
-          </Text>
-        </View>
-      );
+      return <SearchPromptEmpty />;
     }
 
-    return (
-      <View className="py-10">
-        <Text className="text-center text-muted-foreground">
-          Aucun résultat trouvé
-        </Text>
-      </View>
-    );
+    return <NoSearchResultsEmpty />;
   }, [isLoading, searchQuery.length]);
 
   return (

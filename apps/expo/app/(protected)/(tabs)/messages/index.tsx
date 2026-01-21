@@ -1,13 +1,7 @@
 import { useRouter } from "expo-router";
 import { PenSquare } from "lucide-react-native";
 import { useCallback, useMemo } from "react";
-import {
-  ActivityIndicator,
-  FlatList,
-  RefreshControl,
-  Text,
-  View,
-} from "react-native";
+import { FlatList, RefreshControl, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import type { Conversation } from "@/constants/chat";
@@ -16,12 +10,16 @@ import { useSSE } from "@/lib/sse/use-sse";
 import { useAuth } from "@/src/providers/auth-provider";
 
 import { ConversationItem } from "./_components/conversation-item";
+import { NoConversationsEmpty } from "./_components/empty-state";
+import { ErrorBoundary, ErrorState } from "./_components/error-boundary";
 import { FAB } from "./_components/fab";
+import { ConversationListSkeleton } from "./_components/skeleton";
 
 export default function MessagesScreen() {
   const router = useRouter();
   const { user } = useAuth();
-  const { data, isLoading, isRefetching, refetch } = useConversations();
+  const { data, isLoading, isRefetching, refetch, isError, error } =
+    useConversations();
 
   useSSE({ enabled: !!user });
 
@@ -75,57 +73,66 @@ export default function MessagesScreen() {
     [],
   );
 
-  const ListEmptyComponent = useCallback(
-    () => (
-      <View className="flex-1 items-center justify-center py-20">
-        <Text className="text-center text-muted-foreground">
-          Aucune conversation
-        </Text>
-        <Text className="mt-2 text-center text-sm text-muted-foreground">
-          Appuyez sur le bouton + pour démarrer une nouvelle conversation
-        </Text>
-      </View>
-    ),
-    [],
-  );
+  const ListEmptyComponent = useCallback(() => <NoConversationsEmpty />, []);
 
   if (isLoading) {
     return (
       <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#F691C3" />
+        <View className="border-b border-border px-4 py-3">
+          <Text className="text-xl font-semibold text-foreground">
+            Messagerie
+          </Text>
         </View>
+        <ConversationListSkeleton />
+      </SafeAreaView>
+    );
+  }
+
+  if (isError) {
+    return (
+      <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
+        <View className="border-b border-border px-4 py-3">
+          <Text className="text-xl font-semibold text-foreground">
+            Messagerie
+          </Text>
+        </View>
+        <ErrorState
+          message={error?.message || "Impossible de charger les conversations"}
+          onRetry={() => refetch()}
+        />
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
-      <View className="border-b border-border px-4 py-3">
-        <Text className="text-xl font-semibold text-foreground">
-          Messagerie
-        </Text>
-      </View>
+    <ErrorBoundary onReset={() => refetch()}>
+      <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
+        <View className="border-b border-border px-4 py-3">
+          <Text className="text-xl font-semibold text-foreground">
+            Messagerie
+          </Text>
+        </View>
 
-      <FlatList
-        data={data?.conversations ?? []}
-        renderItem={renderItem}
-        keyExtractor={keyExtractor}
-        ItemSeparatorComponent={ItemSeparator}
-        ListEmptyComponent={ListEmptyComponent}
-        contentContainerStyle={{ flexGrow: 1 }}
-        refreshControl={
-          <RefreshControl
-            refreshing={isRefetching}
-            onRefresh={refetch}
-            tintColor="#F691C3"
-          />
-        }
-      />
+        <FlatList
+          data={data?.conversations ?? []}
+          renderItem={renderItem}
+          keyExtractor={keyExtractor}
+          ItemSeparatorComponent={ItemSeparator}
+          ListEmptyComponent={ListEmptyComponent}
+          contentContainerStyle={{ flexGrow: 1 }}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefetching}
+              onRefresh={refetch}
+              tintColor="#F691C3"
+            />
+          }
+        />
 
-      <FAB onPress={handleNewMessage}>
-        <PenSquare size={24} color="#FFFFFF" />
-      </FAB>
-    </SafeAreaView>
+        <FAB onPress={handleNewMessage}>
+          <PenSquare size={24} color="#FFFFFF" />
+        </FAB>
+      </SafeAreaView>
+    </ErrorBoundary>
   );
 }

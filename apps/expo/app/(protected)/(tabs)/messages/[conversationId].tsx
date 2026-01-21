@@ -20,12 +20,15 @@ import { useSSE } from "@/lib/sse/use-sse";
 import { useAuth } from "@/src/providers/auth-provider";
 
 import { DateSeparator } from "./_components/date-separator";
+import { NoMessagesEmpty } from "./_components/empty-state";
+import { ErrorBoundary, ErrorState } from "./_components/error-boundary";
 import { ImageViewer } from "./_components/image-viewer";
 import type { SelectedMedia } from "./_components/media-picker";
 import { MediaPreview } from "./_components/media-preview";
 import { MessageBubble } from "./_components/message-bubble";
 import { MessageInput } from "./_components/message-input";
 import { ReactionPicker } from "./_components/reaction-picker";
+import { MessageListSkeleton } from "./_components/skeleton";
 
 interface MessageWithSeparator {
   type: "message" | "separator";
@@ -84,8 +87,16 @@ export default function ConversationScreen() {
   const [viewerImages, setViewerImages] = useState<Attachment[]>([]);
   const [viewerInitialIndex, setViewerInitialIndex] = useState(0);
 
-  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useMessages(conversationId ?? "");
+  const {
+    data,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isError,
+    error,
+    refetch,
+  } = useMessages(conversationId ?? "");
 
   const sendMessage = useSendMessage({
     conversationId: conversationId ?? "",
@@ -249,17 +260,7 @@ export default function ConversationScreen() {
 
   const keyExtractor = useCallback((item: MessageWithSeparator) => item.id, []);
 
-  const ListEmptyComponent = useCallback(
-    () => (
-      <View className="flex-1 items-center justify-center py-20">
-        <Text className="text-center text-muted-foreground">Aucun message</Text>
-        <Text className="mt-2 text-center text-sm text-muted-foreground">
-          Envoyez un message pour démarrer la conversation
-        </Text>
-      </View>
-    ),
-    [],
-  );
+  const ListEmptyComponent = useCallback(() => <NoMessagesEmpty />, []);
 
   const ListFooterComponent = useCallback(
     () =>
@@ -273,21 +274,7 @@ export default function ConversationScreen() {
 
   if (isLoading) {
     return (
-      <SafeAreaView className="flex-1 bg-background">
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#F691C3" />
-        </View>
-      </SafeAreaView>
-    );
-  }
-
-  return (
-    <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        className="flex-1"
-        keyboardVerticalOffset={0}
-      >
+      <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
         <View className="flex-row items-center border-b border-border px-2 py-3">
           <Pressable
             onPress={handleBack}
@@ -299,50 +286,97 @@ export default function ConversationScreen() {
             Conversation
           </Text>
         </View>
+        <MessageListSkeleton />
+      </SafeAreaView>
+    );
+  }
 
-        <FlatList
-          data={processedMessages}
-          renderItem={renderItem}
-          keyExtractor={keyExtractor}
-          ListEmptyComponent={ListEmptyComponent}
-          ListFooterComponent={ListFooterComponent}
-          inverted
-          onEndReached={handleLoadMore}
-          onEndReachedThreshold={0.5}
-          contentContainerStyle={{
-            flexGrow: 1,
-            paddingVertical: 8,
-          }}
-          keyboardShouldPersistTaps="handled"
+  if (isError) {
+    return (
+      <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
+        <View className="flex-row items-center border-b border-border px-2 py-3">
+          <Pressable
+            onPress={handleBack}
+            className="h-10 w-10 items-center justify-center rounded-full active:bg-muted"
+          >
+            <ChevronLeft size={24} color="#000" />
+          </Pressable>
+          <Text className="ml-1 text-xl font-semibold text-foreground">
+            Conversation
+          </Text>
+        </View>
+        <ErrorState
+          message={error?.message || "Impossible de charger les messages"}
+          onRetry={() => refetch()}
+        />
+      </SafeAreaView>
+    );
+  }
+
+  return (
+    <ErrorBoundary onReset={() => refetch()}>
+      <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          className="flex-1"
+          keyboardVerticalOffset={0}
+        >
+          <View className="flex-row items-center border-b border-border px-2 py-3">
+            <Pressable
+              onPress={handleBack}
+              className="h-10 w-10 items-center justify-center rounded-full active:bg-muted"
+            >
+              <ChevronLeft size={24} color="#000" />
+            </Pressable>
+            <Text className="ml-1 text-xl font-semibold text-foreground">
+              Conversation
+            </Text>
+          </View>
+
+          <FlatList
+            data={processedMessages}
+            renderItem={renderItem}
+            keyExtractor={keyExtractor}
+            ListEmptyComponent={ListEmptyComponent}
+            ListFooterComponent={ListFooterComponent}
+            inverted
+            onEndReached={handleLoadMore}
+            onEndReachedThreshold={0.5}
+            contentContainerStyle={{
+              flexGrow: 1,
+              paddingVertical: 8,
+            }}
+            keyboardShouldPersistTaps="handled"
+          />
+
+          <MediaPreview
+            media={selectedMedia}
+            onRemove={handleRemoveMedia}
+            uploadProgresses={uploadMedia.fileProgresses}
+            isUploading={isUploading}
+          />
+
+          <MessageInput
+            onSend={handleSend}
+            onMediaSelected={handleMediaSelected}
+            disabled={sendMessage.isPending || isUploading}
+            hasMedia={selectedMedia.length > 0}
+          />
+        </KeyboardAvoidingView>
+
+        <ReactionPicker
+          visible={isPickerVisible}
+          onClose={handleClosePicker}
+          onSelectReaction={handleSelectReaction}
         />
 
-        <MediaPreview
-          media={selectedMedia}
-          onRemove={handleRemoveMedia}
-          uploadProgresses={uploadMedia.fileProgresses}
-          isUploading={isUploading}
+        <ImageViewer
+          visible={viewerVisible}
+          images={viewerImages}
+          initialIndex={viewerInitialIndex}
+          onClose={handleCloseViewer}
         />
-
-        <MessageInput
-          onSend={handleSend}
-          onMediaSelected={handleMediaSelected}
-          disabled={sendMessage.isPending || isUploading}
-          hasMedia={selectedMedia.length > 0}
-        />
-      </KeyboardAvoidingView>
-
-      <ReactionPicker
-        visible={isPickerVisible}
-        onClose={handleClosePicker}
-        onSelectReaction={handleSelectReaction}
-      />
-
-      <ImageViewer
-        visible={viewerVisible}
-        images={viewerImages}
-        initialIndex={viewerInitialIndex}
-        onClose={handleCloseViewer}
-      />
-    </SafeAreaView>
+      </SafeAreaView>
+    </ErrorBoundary>
   );
 }

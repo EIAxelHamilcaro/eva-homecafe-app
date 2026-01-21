@@ -468,7 +468,7 @@ Chat feature implementation for HomeCafe: refactoring existing domain (Next.js) 
       "Empty state: no messages",
       "Error boundaries"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "polish",

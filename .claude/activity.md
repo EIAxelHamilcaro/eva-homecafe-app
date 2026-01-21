@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-21
-**Tasks Completed:** 40
-**Current Task:** Task 41 (Polish - Add loading and empty states)
+**Tasks Completed:** 41
+**Current Task:** Task 42 (Polish - Add error handling and retry)
 
 ---
 
@@ -950,6 +950,55 @@
 - Created `apps/expo/lib/sse/use-sse.ts` hook
 - Updated `apps/expo/app/(protected)/messages/index.tsx` with SSE integration
 - Updated `apps/expo/app/(protected)/messages/[conversationId].tsx` with SSE integration
+
+### 2026-01-21 - Task 41: Add loading and empty states
+
+**Status:** PASSED
+
+**Implementation Summary:**
+- Created `apps/expo/app/(protected)/(tabs)/messages/_components/skeleton.tsx`
+  - `ShimmerEffect` component with animated opacity (0.3 to 0.7) for shimmer effect
+  - `ConversationSkeleton` - single row skeleton with avatar, name, preview placeholders
+  - `ConversationListSkeleton` - 6 skeleton rows with dividers
+  - `MessageSkeleton` - chat bubble skeleton with sent/received alignment
+  - `MessageListSkeleton` - pattern of 8 message skeletons alternating sent/received
+  - `RecipientSkeleton` - recipient row skeleton for new message screen
+  - `RecipientListSkeleton` - 5 skeleton rows with dividers
+- Created `apps/expo/app/(protected)/(tabs)/messages/_components/empty-state.tsx`
+  - `NoConversationsEmpty` - "Aucune conversation" with MessageSquare icon
+  - `NoMessagesEmpty` - "Aucun message" with Send icon
+  - `SearchPromptEmpty` - "Tapez au moins 2 caractères pour rechercher" with Search icon
+  - `NoSearchResultsEmpty` - "Aucun résultat trouvé" with UserX icon
+  - Consistent styling: icon in colored circle, title, description
+- Created `apps/expo/app/(protected)/(tabs)/messages/_components/error-boundary.tsx`
+  - `ErrorBoundary` React class component with getDerivedStateFromError
+  - Catches errors in child components, displays fallback UI
+  - Reset button to clear error and optionally call onReset
+  - `ErrorState` functional component for explicit error display
+  - AlertTriangle icon with red styling, message, and retry button
+- Updated `apps/expo/app/(protected)/(tabs)/messages/index.tsx`
+  - Replaced ActivityIndicator with ConversationListSkeleton for loading
+  - Added ErrorState with refetch for error handling
+  - Wrapped content in ErrorBoundary
+  - Added NoConversationsEmpty for empty state
+- Updated `apps/expo/app/(protected)/(tabs)/messages/[conversationId].tsx`
+  - Added header + MessageListSkeleton for loading state
+  - Added header + ErrorState for error state with refetch
+  - Wrapped main content in ErrorBoundary with onReset
+  - Updated ListEmptyComponent to use NoMessagesEmpty
+- Updated `apps/expo/app/(protected)/(tabs)/messages/new.tsx`
+  - Added RecipientListSkeleton for loading state
+  - Added SearchPromptEmpty for initial search prompt
+  - Added NoSearchResultsEmpty for no results
+- `pnpm type-check` and `pnpm check` both pass
+
+**Changes Made:**
+- Created `apps/expo/app/(protected)/(tabs)/messages/_components/skeleton.tsx`
+- Created `apps/expo/app/(protected)/(tabs)/messages/_components/empty-state.tsx`
+- Created `apps/expo/app/(protected)/(tabs)/messages/_components/error-boundary.tsx`
+- Updated `apps/expo/app/(protected)/(tabs)/messages/index.tsx`
+- Updated `apps/expo/app/(protected)/(tabs)/messages/[conversationId].tsx`
+- Updated `apps/expo/app/(protected)/(tabs)/messages/new.tsx`
 
 ### 2026-01-21 - Task 40: Navigation bar mobile (bottom tab bar)
 
