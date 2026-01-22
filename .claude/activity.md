@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-22
-**Tasks Completed:** 40/63
-**Current Task:** Task 040 - Complete Moodboard screen - DONE
+**Tasks Completed:** 41/63
+**Current Task:** Task 041 - Implement Moodboard tracker - DONE
 
 ---
 
@@ -1110,3 +1110,32 @@
 **Verification:**
 - `pnpm type-check` ✅ Passes
 - `npx biome check` ✅ Passes (121 files checked)
+
+### 2026-01-22 - Task 041: Implement Moodboard tracker
+
+**Status:** ✅ Complete
+
+**What was implemented:**
+- Created `apps/expo/app/(protected)/moodboard/_layout.tsx` to configure moodboard routes:
+  - Stack navigator with headerShown: false
+  - Tracker screen with modal presentation and fade animation
+- Created `apps/expo/app/(protected)/moodboard/tracker.tsx` modal screen:
+  - Full-screen modal with cream background (bg-background)
+  - Close button (×) in top right corner with pink border styling
+  - YearTrackerFull component displaying full year mood grid
+  - Title "Mood Tracker" and subtitle with current year
+  - Horizontal scrollable grid showing all 365/366 days
+  - Each day cell colored based on mood type
+  - Mood legend at bottom showing all 9 mood colors
+  - Back navigation handling (router.back() or replace to moodboard)
+  - Mock year data with random moods (~85% of days have moods)
+- Navigation flow: Moodboard → "Voir le graphique entier" → Tracker modal
+- Matches the Figma design in `Mobile - Mood tracker - full.png`
+
+**Files created:**
+- `apps/expo/app/(protected)/moodboard/_layout.tsx` - Moodboard folder layout with modal configuration
+- `apps/expo/app/(protected)/moodboard/tracker.tsx` - Year tracker modal screen
+
+**Verification:**
+- `pnpm type-check` ✅ Passes
+- `npx biome check` ✅ Passes (123 files checked)

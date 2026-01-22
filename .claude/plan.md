@@ -474,7 +474,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Add year-tracker component",
       "Add back navigation"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "042",
