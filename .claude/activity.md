@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-22
-**Tasks Completed:** 50/63
-**Current Task:** Task 050 - Implement Organisation main screen - DONE
+**Tasks Completed:** 51/63
+**Current Task:** Task 052 - Implement Organisation modals - IN PROGRESS
 
 ---
 
