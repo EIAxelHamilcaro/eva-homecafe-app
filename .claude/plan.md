@@ -187,7 +187,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Add Taille du texte checkboxes (Petit, Moyen)",
       "Add Animations toggle"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "017",
@@ -199,7 +199,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Add Supprimer le compte button (red)",
       "Add Inviter des ami•es button"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "018",
