@@ -54,7 +54,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Add checked/unchecked states",
       "Add label support"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "005",

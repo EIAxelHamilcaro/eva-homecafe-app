@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-22
-**Tasks Completed:** 3/63
-**Current Task:** Task 003 - Create input.tsx component
+**Tasks Completed:** 4/63
+**Current Task:** Task 004 - Create checkbox.tsx component
 
 ---
 
@@ -80,3 +80,24 @@
 **Verification:**
 - `pnpm type-check` ✅ Passes
 - `npx biome check` ✅ Passes
+
+### 2026-01-22 - Task 004: Create checkbox.tsx component
+
+**Status:** ✅ Complete
+
+**What was implemented:**
+- Verified checkbox.tsx component already exists at `apps/expo/components/ui/checkbox.tsx`
+- Component includes all required features:
+  - Checked/unchecked states (visual toggle with `checked` prop)
+  - Label support (with `label` prop)
+  - Uses lucide-react-native Check icon for checkmark
+  - Disabled state support with opacity styling
+- Uses NativeWind (Tailwind classes) for styling
+- Exports Checkbox, CheckboxProps
+
+**Files verified:**
+- `apps/expo/components/ui/checkbox.tsx` - Already complete with checked/unchecked states and label support
+
+**Verification:**
+- `pnpm type-check` ✅ Passes
+- `npx biome check` ✅ Passes (99 files checked)
