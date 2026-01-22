@@ -348,7 +348,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Add Ajouter un post button",
       "Add post-feed"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "031",
