@@ -584,7 +584,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Add Chronologie tab with timeline",
       "Add Calendrier tab with calendar"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "052",
