@@ -550,7 +550,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Display vertical timeline",
       "Add time markers and task cards"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "049",
