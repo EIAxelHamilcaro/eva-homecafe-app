@@ -561,7 +561,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Use react-native-calendars",
       "Apply HomeCafe theme"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "050",
