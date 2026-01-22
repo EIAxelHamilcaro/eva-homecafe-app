@@ -427,7 +427,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Add bar chart for monthly",
       "Use victory-native"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "038",
