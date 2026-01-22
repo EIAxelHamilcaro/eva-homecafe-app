@@ -26,6 +26,17 @@ module.exports = {
           "grey-light": "#DADADA",
           "grey-muted": "#6E7191",
         },
+        mood: {
+          calme: "#7CB9E8",
+          enervement: "#E85454",
+          excitation: "#FFD93D",
+          anxiete: "#9CA3AF",
+          tristesse: "#374151",
+          bonheur: "#4ADE80",
+          ennui: "#FB923C",
+          nervosite: "#F472B6",
+          productivite: "#A78BFA",
+        },
         // Semantic Colors
         background: "#FFFAF5",
         foreground: "#3D2E2E",

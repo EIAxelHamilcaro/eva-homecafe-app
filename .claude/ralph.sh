@@ -25,7 +25,7 @@ for ((i=1; i<=$1; i++)); do
   echo "🔄 Iteration $i/$1"
   echo "--------------------------------"
 
-  result=$(claude -p "$(cat $PROMPT_FILE)" --output-format text 2>&1) || true
+  result=$(claude --dangerously-skip-permissions -p "$(cat $PROMPT_FILE)" --output-format text 2>&1) || true
 
   echo "$result"
 

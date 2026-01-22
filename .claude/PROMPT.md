@@ -25,7 +25,7 @@ Append a dated progress entry to activity.md describing:
 - Which files were created/modified
 - Any issues encountered
 
-Update that task's passes in plan.md from false to true.
+When task is complete and verified, update ONLY the `"passes"` field in plan.md from `false` to `true`. Do not modify any other part of the task JSON.
 
 Make one git commit for that task only with format: "feat(expo): [task description]"
 
