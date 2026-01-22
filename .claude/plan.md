@@ -517,7 +517,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Render todo-items",
       "Add new item input"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "046",
