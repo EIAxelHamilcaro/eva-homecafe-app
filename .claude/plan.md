@@ -140,7 +140,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Add mood.anxiete (#9CA3AF), mood.tristesse (#374151), mood.bonheur (#4ADE80)",
       "Add mood.ennui (#FB923C), mood.nervosite (#F472B6), mood.productivite (#A78BFA)"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "013",
