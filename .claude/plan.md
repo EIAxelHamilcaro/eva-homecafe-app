@@ -606,7 +606,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Similar to post-card",
       "Add sticker icon"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "054",
