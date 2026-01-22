@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-22
-**Tasks Completed:** 27/63
-**Current Task:** Task 028 - Create post-feed component
+**Tasks Completed:** 28/63
+**Current Task:** Task 029 - Create post-editor component
 
 ---
 
@@ -694,3 +694,31 @@
 **Verification:**
 - `pnpm type-check` ✅ Passes
 - `npx biome check` ✅ Passes (109 files checked)
+
+### 2026-01-22 - Task 028: Create post-feed component
+
+**Status:** ✅ Complete
+
+**What was implemented:**
+- Created `apps/expo/components/journal/post-feed.tsx` component
+- Component features:
+  - Groups posts by date using `groupPostsByDate` helper function
+  - Uses SectionList (more appropriate than FlatList for grouped data) for efficient rendering
+  - Date headers displayed as bold text above post groups
+  - `posts` prop - array of PostData items
+  - `onPostPress`, `onLikePress`, `onCommentPress`, `onRepostPress`, `onSharePress` - callbacks with postId parameter
+  - `ListHeaderComponent` and `ListFooterComponent` props for adding content above/below the feed
+  - Customizable via className prop
+- Uses PostCard component for individual post rendering
+- PostData type extends PostCardProps with required id field
+- PostSection type for grouped data structure
+- Matches the design from `Mobile - Posts.png` and `Mobile - Journal.png`
+- Uses NativeWind (Tailwind classes) for styling
+- Exports: PostFeed, PostFeedProps, PostData, PostSection
+
+**Files created:**
+- `apps/expo/components/journal/post-feed.tsx` - New post feed component
+
+**Verification:**
+- `pnpm type-check` ✅ Passes
+- `npx biome check` ✅ Passes (110 files checked)
