@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-22
-**Tasks Completed:** 30/63
-**Current Task:** Task 031 - Implement Journal create modal
+**Tasks Completed:** 31/63
+**Current Task:** Task 032 - Implement Journal post detail
 
 ---
 
@@ -784,3 +784,32 @@
 **Verification:**
 - `pnpm type-check` ✅ Passes
 - `npx biome check` ✅ Passes (112 files checked)
+
+### 2026-01-22 - Task 031: Implement Journal create modal
+
+**Status:** ✅ Complete
+
+**What was implemented:**
+- Created `apps/expo/app/(protected)/journal/create.tsx` modal screen
+- Created `apps/expo/app/(protected)/journal/_layout.tsx` to configure modal presentation
+- Modal features:
+  - Close button (×) in top right corner with pink border styling
+  - User avatar with circular profile image and primary color border
+  - User name "Eva Cadario" and current date display
+  - Lock toggle button (blue square when private, gray when public)
+  - PostEditor component integration with B/I/U toolbar, image and mention buttons
+  - "Publier" button to publish the post (disabled when content is empty)
+  - Navigation handling: goes back or replaces to journal if no history
+- State management:
+  - `postContent` state for text input
+  - `isPrivate` state for privacy toggle (default: true)
+  - `activeFormatting` state for text formatting options
+- Matches the Figma design in `Mobile - ajouter un post.png`
+
+**Files created:**
+- `apps/expo/app/(protected)/journal/create.tsx` - New Journal create modal screen
+- `apps/expo/app/(protected)/journal/_layout.tsx` - Journal folder layout with modal configuration
+
+**Verification:**
+- `pnpm type-check` ✅ Passes
+- `npx biome check` ✅ Passes (114 files checked)
