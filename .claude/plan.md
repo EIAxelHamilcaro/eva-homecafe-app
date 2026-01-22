@@ -618,7 +618,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Add Derniers posts publics title",
       "Add public post feed"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "055",
