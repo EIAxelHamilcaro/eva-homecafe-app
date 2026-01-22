@@ -234,7 +234,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Add close button (×)",
       "Add badge-grid"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "021",
