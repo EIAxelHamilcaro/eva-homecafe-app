@@ -118,7 +118,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Create expo/components/ui/dropdown.tsx",
       "Create expo/components/ui/radio-group.tsx"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "011",
