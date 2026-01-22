@@ -1,26 +1,9 @@
-# HomeCafe Feature Plan - Profile & Friends & Notifications
+# HomeCafe Expo UI - Plan
 
 ## Overview
+Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs.
 
-**Phase 1: Profile Feature (Tasks 1-22)**
-Complete CRUD for user profile with separate domain entity. The Profile entity is completely separate from BetterAuth's User table to avoid polluting the auth system.
-
-**Phase 2: Friends & Notifications (Tasks 23-70)**
-Friend invitations (email + QR code), notifications system with real-time updates via SSE.
-
-**Scope**: `apps/expo/` (React Native) and `apps/nextjs/` (server-side only)
-
-**Reference:** `CLAUDE.md` for architecture patterns
-
----
-
-## CRITICAL CONSTRAINTS
-
-1. **DO NOT** modify `user`, `account`, `session`, `verification` tables - they are reserved for BetterAuth
-2. **Profile** is a SEPARATE entity linked to User by `userId` field
-3. **NO address field** in Profile (not needed)
-4. **NO badges** in Profile (will be implemented later)
-5. Follow Clean Architecture: Domain → Application → Adapters → Infrastructure
+**Reference:** `PRD.md`
 
 ---
 
@@ -29,814 +12,707 @@ Friend invitations (email + QR code), notifications system with real-time update
 ```json
 [
   {
-    "id": 1,
-    "category": "domain",
-    "description": "Create Profile Aggregate",
+    "id": "001",
+    "category": "setup",
+    "description": "Create button.tsx component",
     "steps": [
-      "Create src/domain/profile/profile-id.ts (UUID-based ID)",
-      "Create src/domain/profile/profile.aggregate.ts with props: userId (string, ref to auth user), displayName, bio, avatarUrl, createdAt, updatedAt",
-      "Implement static create() and reconstitute() methods",
-      "Add updateDisplayName(), updateBio(), updateAvatar() methods",
-      "Use z.string().min(1) for userId (BetterAuth compatibility)"
+      "Create expo/components/ui/button.tsx",
+      "Add variants: default, outline, ghost, link",
+      "Add sizes: sm, md, lg",
+      "Use NativeWind for styling"
     ],
-    "passes": true
+    "passes": false
   },
   {
-    "id": 2,
-    "category": "domain",
-    "description": "Create Profile Value Objects",
+    "id": "002",
+    "category": "setup",
+    "description": "Create card.tsx component",
     "steps": [
-      "Create src/domain/profile/value-objects/display-name.vo.ts (min 1, max 50 chars)",
-      "Create src/domain/profile/value-objects/bio.vo.ts (optional, max 500 chars)"
+      "Create expo/components/ui/card.tsx",
+      "Add Card, CardHeader, CardContent, CardFooter subcomponents",
+      "Use NativeWind for styling"
     ],
-    "passes": true
+    "passes": false
   },
   {
-    "id": 3,
-    "category": "domain",
-    "description": "Create Profile Domain Events",
+    "id": "003",
+    "category": "setup",
+    "description": "Create input.tsx component",
     "steps": [
-      "Create src/domain/profile/events/profile-created.event.ts",
-      "Create src/domain/profile/events/profile-updated.event.ts"
+      "Create expo/components/ui/input.tsx",
+      "Add label prop support",
+      "Add error state styling"
     ],
-    "passes": true
+    "passes": false
   },
   {
-    "id": 4,
-    "category": "application",
-    "description": "Create Profile Repository Port",
+    "id": "004",
+    "category": "setup",
+    "description": "Create checkbox.tsx component",
     "steps": [
-      "Create src/application/ports/profile-repository.port.ts",
-      "Define methods: create, update, findById, findByUserId, exists"
+      "Create expo/components/ui/checkbox.tsx",
+      "Add checked/unchecked states",
+      "Add label support"
     ],
-    "passes": true
+    "passes": false
   },
   {
-    "id": 5,
-    "category": "application",
-    "description": "Create Profile DTOs",
+    "id": "005",
+    "category": "setup",
+    "description": "Create toggle.tsx component",
     "steps": [
-      "Create src/application/dto/profile/profile.dto.ts (shared profile shape: id, userId, displayName, bio, avatarUrl)",
-      "Create src/application/dto/profile/create-profile.dto.ts (input: userId, displayName, bio?, avatarUrl?)",
-      "Create src/application/dto/profile/update-profile.dto.ts (input: profileId, displayName?, bio?, avatarUrl?)",
-      "Create src/application/dto/profile/get-profile.dto.ts (input: userId, output: profile)"
+      "Create expo/components/ui/toggle.tsx",
+      "Implement switch/toggle behavior",
+      "Add on/off visual states"
     ],
-    "passes": true
+    "passes": false
   },
   {
-    "id": 6,
-    "category": "application",
-    "description": "Create CreateProfile Use Case",
+    "id": "006",
+    "category": "setup",
+    "description": "Create modal.tsx component",
     "steps": [
-      "Create src/application/use-cases/profile/create-profile.use-case.ts",
-      "Validate userId exists (optional: check auth user exists)",
-      "Check profile doesn't already exist for userId",
-      "Create Profile aggregate and persist",
-      "Dispatch ProfileCreatedEvent"
+      "Create expo/components/ui/modal.tsx",
+      "Add overlay backdrop",
+      "Add close button support",
+      "Handle open/close animations"
     ],
-    "passes": true
+    "passes": false
   },
   {
-    "id": 7,
-    "category": "application",
-    "description": "Create GetProfile Use Case",
+    "id": "007",
+    "category": "setup",
+    "description": "Create tabs.tsx component",
     "steps": [
-      "Create src/application/use-cases/profile/get-profile.use-case.ts",
-      "Find profile by userId",
-      "Return Option<ProfileDto>"
+      "Create expo/components/ui/tabs.tsx",
+      "Add Tabs, TabsList, TabsTrigger, TabsContent",
+      "Handle active tab state"
     ],
-    "passes": true
+    "passes": false
   },
   {
-    "id": 8,
-    "category": "application",
-    "description": "Create UpdateProfile Use Case",
+    "id": "008",
+    "category": "setup",
+    "description": "Create badge.tsx and avatar.tsx",
     "steps": [
-      "Create src/application/use-cases/profile/update-profile.use-case.ts",
-      "Find profile by userId, verify ownership",
-      "Update only provided fields (displayName, bio, avatarUrl)",
-      "Dispatch ProfileUpdatedEvent"
+      "Create expo/components/ui/badge.tsx",
+      "Create expo/components/ui/avatar.tsx with image and fallback"
     ],
-    "passes": true
+    "passes": false
   },
   {
-    "id": 9,
-    "category": "infrastructure",
-    "description": "Create Drizzle Schema for Profile",
+    "id": "009",
+    "category": "setup",
+    "description": "Create separator.tsx and slider.tsx",
     "steps": [
-      "Create packages/drizzle/src/schema/profile.ts",
-      "Define profiles table: id (text pk), userId (text unique, FK to user.id), displayName (text), bio (text nullable), avatarUrl (text nullable), createdAt, updatedAt",
-      "Add unique index on userId",
-      "Export from packages/drizzle/src/schema/index.ts"
+      "Create expo/components/ui/separator.tsx",
+      "Create expo/components/ui/slider.tsx with min/max/value props"
     ],
-    "passes": true
+    "passes": false
   },
   {
-    "id": 10,
-    "category": "infrastructure",
-    "description": "Run Database Migration for Profile",
+    "id": "010",
+    "category": "setup",
+    "description": "Create dropdown.tsx and radio-group.tsx",
     "steps": [
-      "Run pnpm db:push to apply schema changes",
-      "Verify profiles table created correctly"
+      "Create expo/components/ui/dropdown.tsx",
+      "Create expo/components/ui/radio-group.tsx"
     ],
-    "passes": true
+    "passes": false
   },
   {
-    "id": 11,
-    "category": "adapter",
-    "description": "Create Profile Mapper",
+    "id": "011",
+    "category": "setup",
+    "description": "Create UI barrel export",
     "steps": [
-      "Create src/adapters/mappers/profile.mapper.ts",
-      "Implement toDomain() and toPersistence() methods"
+      "Create expo/components/ui/index.ts",
+      "Export all UI components"
     ],
-    "passes": true
+    "passes": false
   },
   {
-    "id": 12,
-    "category": "adapter",
-    "description": "Create Profile Repository",
+    "id": "012",
+    "category": "setup",
+    "description": "Add mood colors to tailwind config",
     "steps": [
-      "Create src/adapters/repositories/profile.repository.ts",
-      "Implement all port methods using Drizzle",
-      "Handle Option for findByUserId"
+      "Open expo/tailwind.config.js",
+      "Add mood.calme (#7CB9E8), mood.enervement (#E85454), mood.excitation (#FFD93D)",
+      "Add mood.anxiete (#9CA3AF), mood.tristesse (#374151), mood.bonheur (#4ADE80)",
+      "Add mood.ennui (#FB923C), mood.nervosite (#F472B6), mood.productivite (#A78BFA)"
     ],
-    "passes": true
+    "passes": false
   },
   {
-    "id": 13,
-    "category": "adapter",
-    "description": "Create Profile Controller",
+    "id": "013",
+    "category": "feature",
+    "description": "Create Settings - Notifications card",
     "steps": [
-      "Create src/adapters/controllers/profile/profile.controller.ts",
-      "Implement getProfile, createProfile, updateProfile handlers",
-      "Use requireAuth guard for all endpoints"
+      "Create app/(protected)/settings/index.tsx",
+      "Add Notifications card with email toggle, push toggle",
+      "Add nouveaux messages checkbox, invitations checkbox",
+      "Add Enregistrer les préférences button"
     ],
-    "passes": true
+    "passes": false
   },
   {
-    "id": 14,
-    "category": "infrastructure",
-    "description": "Register Profile DI Module",
+    "id": "014",
+    "category": "feature",
+    "description": "Create Settings - Sécurité card",
     "steps": [
-      "Create common/di/modules/profile.module.ts",
-      "Bind IProfileRepository and all profile use cases",
-      "Register in common/di/container.ts"
+      "Add Sécurité card to settings screen",
+      "Add Double authentification toggle",
+      "Add Appareils connectés list"
     ],
-    "passes": true
+    "passes": false
   },
   {
-    "id": 15,
-    "category": "api",
-    "description": "Create Profile API Routes",
+    "id": "015",
+    "category": "feature",
+    "description": "Create Settings - Confidentialité card",
     "steps": [
-      "Create app/api/profile/route.ts (GET current user profile, POST create, PATCH update)",
-      "Create app/api/profile/[userId]/route.ts (GET profile by userId - for viewing other profiles)"
+      "Add Confidentialité card",
+      "Add Profil visible toggle",
+      "Add Qui peut voir mes récompenses dropdown",
+      "Add Télécharger mes données button"
     ],
-    "passes": true
+    "passes": false
   },
   {
-    "id": 16,
-    "category": "expo",
-    "description": "Create Expo Profile Types",
+    "id": "016",
+    "category": "feature",
+    "description": "Create Settings - Custom mode card",
     "steps": [
-      "Create apps/expo/types/profile.ts with Profile interface",
-      "Export from apps/expo/types/index.ts"
+      "Add Custom mode card",
+      "Add Clair/Sombre radio buttons",
+      "Add Taille du texte checkboxes (Petit, Moyen)",
+      "Add Animations toggle"
     ],
-    "passes": true
+    "passes": false
   },
   {
-    "id": 17,
-    "category": "expo",
-    "description": "Create Expo Profile Hooks",
+    "id": "017",
+    "category": "feature",
+    "description": "Create Settings - À propos and actions",
     "steps": [
-      "Create apps/expo/hooks/use-profile.ts (useProfile, useCreateProfile, useUpdateProfile)",
-      "Handle auto-create profile if not exists on first fetch"
+      "Add À propos card with version 1.0.3, legal links",
+      "Add Se déconnecter button",
+      "Add Supprimer le compte button (red)",
+      "Add Inviter des ami•es button"
     ],
-    "passes": true
+    "passes": false
   },
   {
-    "id": 18,
-    "category": "expo",
-    "description": "Create Profile Tab Screen",
+    "id": "018",
+    "category": "feature",
+    "description": "Create badge-item component",
     "steps": [
-      "READ .claude/screenshots/Mobile - Mon profile.png for UI",
-      "Create apps/expo/app/(protected)/(tabs)/profile.tsx",
-      "Display profile info: avatar, displayName, bio",
-      "Add edit button to navigate to edit screen",
-      "Show sign out button"
+      "Create expo/components/badges/badge-item.tsx",
+      "Support color variants (orange, pink, blue, purple, yellow)",
+      "Support types (7 JOURS, 14 JOURS, 1 MOIS)",
+      "Add status dots"
     ],
-    "passes": true
+    "passes": false
   },
   {
-    "id": 19,
-    "category": "expo",
-    "description": "Create Edit Profile Screen",
+    "id": "019",
+    "category": "feature",
+    "description": "Create badge-grid component",
     "steps": [
-      "READ .claude/screenshots/Mobile - Mon profile.png for UI",
-      "Create apps/expo/app/(protected)/profile/edit.tsx",
-      "Form with: avatar picker, displayName input, bio textarea",
-      "Save button triggers updateProfile mutation",
-      "Handle loading and error states"
+      "Create expo/components/badges/badge-grid.tsx",
+      "Render badges in 2 columns",
+      "Use badge-item component"
     ],
-    "passes": true
+    "passes": false
   },
   {
-    "id": 20,
-    "category": "expo",
-    "description": "Add Profile Tab to Layout",
+    "id": "020",
+    "category": "feature",
+    "description": "Implement Récompenses modal",
     "steps": [
-      "READ .claude/screenshots/Mobile - Mon profile.png for UI",
-      "Modify apps/expo/app/(protected)/(tabs)/_layout.tsx",
-      "Add Profile tab with User icon",
-      "Move sign out from home to profile screen"
+      "Create app/(protected)/recompenses.tsx",
+      "Configure as modal in _layout",
+      "Add close button (×)",
+      "Add badge-grid"
     ],
-    "passes": true
+    "passes": false
   },
   {
-    "id": 21,
+    "id": "021",
+    "category": "feature",
+    "description": "Create sticker-item component",
+    "steps": [
+      "Create expo/components/stickers/sticker-item.tsx",
+      "Support sticker types (bubble tea, envelope, coffee, etc.)",
+      "Add sticker image display"
+    ],
+    "passes": false
+  },
+  {
+    "id": "022",
+    "category": "feature",
+    "description": "Implement Stickers modal",
+    "steps": [
+      "Create app/(protected)/stickers.tsx",
+      "Configure as modal",
+      "Add close button (×)",
+      "Add vertical sticker list"
+    ],
+    "passes": false
+  },
+  {
+    "id": "023",
+    "category": "feature",
+    "description": "Implement Galerie modal",
+    "steps": [
+      "Create app/(protected)/galerie.tsx",
+      "Configure as modal",
+      "Add close button (×)",
+      "Add scrolling image grid with placeholders"
+    ],
+    "passes": false
+  },
+  {
+    "id": "024",
+    "category": "feature",
+    "description": "Create section-card component",
+    "steps": [
+      "Create expo/components/shared/section-card.tsx",
+      "Add title and optional icon props",
+      "Style with HomeCafe theme"
+    ],
+    "passes": false
+  },
+  {
+    "id": "025",
+    "category": "feature",
+    "description": "Create widget-card component",
+    "steps": [
+      "Create expo/components/shared/widget-card.tsx",
+      "Add title and Voir plus link",
+      "Add onPress handler"
+    ],
+    "passes": false
+  },
+  {
+    "id": "026",
+    "category": "feature",
+    "description": "Create action-bar component",
+    "steps": [
+      "Create expo/components/shared/action-bar.tsx",
+      "Add heart, comment, repost, share icons",
+      "Add press handlers"
+    ],
+    "passes": false
+  },
+  {
+    "id": "027",
+    "category": "feature",
+    "description": "Create post-card component",
+    "steps": [
+      "Create expo/components/journal/post-card.tsx",
+      "Add date, time, lock icon, content, likes",
+      "Integrate action-bar"
+    ],
+    "passes": false
+  },
+  {
+    "id": "028",
+    "category": "feature",
+    "description": "Create post-feed component",
+    "steps": [
+      "Create expo/components/journal/post-feed.tsx",
+      "Group posts by date",
+      "Use FlatList with post-card"
+    ],
+    "passes": false
+  },
+  {
+    "id": "029",
+    "category": "feature",
+    "description": "Create post-editor component",
+    "steps": [
+      "Create expo/components/journal/post-editor.tsx",
+      "Add B/I/U toolbar",
+      "Add image and mention buttons",
+      "Add text input"
+    ],
+    "passes": false
+  },
+  {
+    "id": "030",
+    "category": "feature",
+    "description": "Implement Journal feed screen",
+    "steps": [
+      "Create app/(protected)/journal/index.tsx",
+      "Add header with Logo",
+      "Add Ajouter un post button",
+      "Add post-feed"
+    ],
+    "passes": false
+  },
+  {
+    "id": "031",
+    "category": "feature",
+    "description": "Implement Journal create modal",
+    "steps": [
+      "Create app/(protected)/journal/create.tsx",
+      "Add avatar, date, lock toggle",
+      "Add post-editor",
+      "Add Publier button"
+    ],
+    "passes": false
+  },
+  {
+    "id": "032",
+    "category": "feature",
+    "description": "Implement Journal post detail",
+    "steps": [
+      "Create app/(protected)/journal/post/[id].tsx",
+      "Display full post",
+      "Add comments section",
+      "Add comment input with Envoyer"
+    ],
+    "passes": false
+  },
+  {
+    "id": "033",
+    "category": "feature",
+    "description": "Create mood-legend component",
+    "steps": [
+      "Create expo/components/moodboard/mood-legend.tsx",
+      "Display 9 emotions with colors",
+      "Use mood colors from config"
+    ],
+    "passes": false
+  },
+  {
+    "id": "034",
+    "category": "feature",
+    "description": "Create mood-grid component",
+    "steps": [
+      "Create expo/components/moodboard/mood-grid.tsx",
+      "Display weekly grid (L M M J V S D)",
+      "Allow mood selection per day"
+    ],
+    "passes": false
+  },
+  {
+    "id": "035",
+    "category": "feature",
+    "description": "Create mood-slider component",
+    "steps": [
+      "Create expo/components/moodboard/mood-slider.tsx",
+      "Add 0-100 slider",
+      "Add Valider button"
+    ],
+    "passes": false
+  },
+  {
+    "id": "036",
+    "category": "feature",
+    "description": "Install victory-native",
+    "steps": [
+      "Run: cd expo && pnpm add victory-native react-native-svg",
+      "Verify installation"
+    ],
+    "passes": false
+  },
+  {
+    "id": "037",
+    "category": "feature",
+    "description": "Create mood-chart component",
+    "steps": [
+      "Create expo/components/moodboard/mood-chart.tsx",
+      "Add line chart for weekly",
+      "Add bar chart for monthly",
+      "Use victory-native"
+    ],
+    "passes": false
+  },
+  {
+    "id": "038",
+    "category": "feature",
+    "description": "Create year-tracker component",
+    "steps": [
+      "Create expo/components/moodboard/year-tracker.tsx",
+      "Display full year grid",
+      "Color squares based on mood"
+    ],
+    "passes": false
+  },
+  {
+    "id": "039",
+    "category": "feature",
+    "description": "Implement Moodboard main screen",
+    "steps": [
+      "Create app/(protected)/moodboard/index.tsx",
+      "Add date with stickers button",
+      "Add mood-legend card",
+      "Add mood-grid card",
+      "Add mood-slider card"
+    ],
+    "passes": false
+  },
+  {
+    "id": "040",
+    "category": "feature",
+    "description": "Complete Moodboard screen",
+    "steps": [
+      "Add Suivi weekly with mood-chart",
+      "Add Suivi monthly with mood-chart",
+      "Add Badges card",
+      "Add Inviter button"
+    ],
+    "passes": false
+  },
+  {
+    "id": "041",
+    "category": "feature",
+    "description": "Implement Moodboard tracker",
+    "steps": [
+      "Create app/(protected)/moodboard/tracker.tsx",
+      "Add year-tracker component",
+      "Add back navigation"
+    ],
+    "passes": false
+  },
+  {
+    "id": "042",
+    "category": "feature",
+    "description": "Install react-native-calendars",
+    "steps": [
+      "Run: cd expo && pnpm add react-native-calendars",
+      "Verify installation"
+    ],
+    "passes": false
+  },
+  {
+    "id": "043",
+    "category": "feature",
+    "description": "Install react-native-draggable-flatlist",
+    "steps": [
+      "Run: cd expo && pnpm add react-native-draggable-flatlist",
+      "Verify reanimated and gesture-handler present"
+    ],
+    "passes": false
+  },
+  {
+    "id": "044",
+    "category": "feature",
+    "description": "Create todo-item component",
+    "steps": [
+      "Create expo/components/organisation/todo-item.tsx",
+      "Add checkbox with label",
+      "Add completed styling"
+    ],
+    "passes": false
+  },
+  {
+    "id": "045",
+    "category": "feature",
+    "description": "Create todo-list component",
+    "steps": [
+      "Create expo/components/organisation/todo-list.tsx",
+      "Add list title",
+      "Render todo-items",
+      "Add new item input"
+    ],
+    "passes": false
+  },
+  {
+    "id": "046",
+    "category": "feature",
+    "description": "Create kanban-card component",
+    "steps": [
+      "Create expo/components/organisation/kanban-card.tsx",
+      "Add title, colored labels",
+      "Add progress bar"
+    ],
+    "passes": false
+  },
+  {
+    "id": "047",
+    "category": "feature",
+    "description": "Create kanban-board component",
+    "steps": [
+      "Create expo/components/organisation/kanban-board.tsx",
+      "Add columns (To Do, In Progress, Done)",
+      "Use draggable-flatlist"
+    ],
+    "passes": false
+  },
+  {
+    "id": "048",
+    "category": "feature",
+    "description": "Create timeline component",
+    "steps": [
+      "Create expo/components/organisation/timeline.tsx",
+      "Display vertical timeline",
+      "Add time markers and task cards"
+    ],
+    "passes": false
+  },
+  {
+    "id": "049",
+    "category": "feature",
+    "description": "Create calendar component",
+    "steps": [
+      "Create expo/components/organisation/calendar.tsx",
+      "Use react-native-calendars",
+      "Apply HomeCafe theme"
+    ],
+    "passes": false
+  },
+  {
+    "id": "050",
+    "category": "feature",
+    "description": "Implement Organisation main screen",
+    "steps": [
+      "Create app/(protected)/organisation/index.tsx",
+      "Add tab bar with 5 tabs",
+      "Use tabs component"
+    ],
+    "passes": false
+  },
+  {
+    "id": "051",
+    "category": "feature",
+    "description": "Implement Organisation tabs content",
+    "steps": [
+      "Add To do list tab with todo-list",
+      "Add Kanban tab with kanban-board",
+      "Add Chronologie tab with timeline",
+      "Add Calendrier tab with calendar"
+    ],
+    "passes": false
+  },
+  {
+    "id": "052",
+    "category": "feature",
+    "description": "Implement Organisation modals",
+    "steps": [
+      "Create app/(protected)/organisation/todo/new.tsx",
+      "Create app/(protected)/organisation/kanban/new.tsx",
+      "Create app/(protected)/organisation/task/[id].tsx"
+    ],
+    "passes": false
+  },
+  {
+    "id": "053",
+    "category": "feature",
+    "description": "Create public-post-card component",
+    "steps": [
+      "Create expo/components/social/public-post-card.tsx",
+      "Similar to post-card",
+      "Add sticker icon"
+    ],
+    "passes": false
+  },
+  {
+    "id": "054",
+    "category": "feature",
+    "description": "Implement Social screen",
+    "steps": [
+      "Create app/(protected)/social/index.tsx",
+      "Add header",
+      "Add Derniers posts publics title",
+      "Add public post feed"
+    ],
+    "passes": false
+  },
+  {
+    "id": "055",
+    "category": "feature",
+    "description": "Dashboard - Galerie widget",
+    "steps": [
+      "Update app/(protected)/(tabs)/index.tsx",
+      "Add Galerie preview (4 thumbnails)",
+      "Add Voir plus to galerie"
+    ],
+    "passes": false
+  },
+  {
+    "id": "056",
+    "category": "feature",
+    "description": "Dashboard - Messagerie widget",
+    "steps": [
+      "Add Messagerie preview card",
+      "Show unread count",
+      "Add Voir plus to messages"
+    ],
+    "passes": false
+  },
+  {
+    "id": "057",
+    "category": "feature",
+    "description": "Dashboard - Suivi widgets",
+    "steps": [
+      "Add Suivi monthly bar chart",
+      "Add Suivi weekly line graph"
+    ],
+    "passes": false
+  },
+  {
+    "id": "058",
+    "category": "feature",
+    "description": "Dashboard - Calendar widget",
+    "steps": [
+      "Add Calendar widget",
+      "Link to organisation"
+    ],
+    "passes": false
+  },
+  {
+    "id": "059",
+    "category": "feature",
+    "description": "Dashboard - Todo widget",
+    "steps": [
+      "Add To do list preview (3 items)",
+      "Add Voir plus to organisation"
+    ],
+    "passes": false
+  },
+  {
+    "id": "060",
+    "category": "feature",
+    "description": "Dashboard - Journal and Mood widgets",
+    "steps": [
+      "Add Journal quick entry card",
+      "Add Moodboard slider card"
+    ],
+    "passes": false
+  },
+  {
+    "id": "061",
+    "category": "feature",
+    "description": "Dashboard - CTA button",
+    "steps": [
+      "Add Inviter des ami•es button",
+      "Link to friends invite"
+    ],
+    "passes": false
+  },
+  {
+    "id": "062",
     "category": "testing",
-    "description": "Write Unit Tests for Profile Use Cases",
+    "description": "Run type-check and lint",
     "steps": [
-      "Create src/application/use-cases/profile/__tests__/create-profile.use-case.test.ts",
-      "Create src/application/use-cases/profile/__tests__/get-profile.use-case.test.ts",
-      "Create src/application/use-cases/profile/__tests__/update-profile.use-case.test.ts",
-      "Test happy paths and error cases"
+      "Run: cd expo && pnpm type-check",
+      "Run: cd expo && pnpm check",
+      "Fix all errors"
     ],
-    "passes": true
+    "passes": false
   },
   {
-    "id": 22,
-    "category": "validation",
-    "description": "Profile Feature Validation",
-    "steps": [
-      "Run pnpm type-check",
-      "Run pnpm check",
-      "Run pnpm test",
-      "Verify Profile CRUD works end-to-end"
-    ],
-    "passes": true
-  },
-  {
-    "id": 23,
-    "category": "domain",
-    "description": "Create FriendRequest Aggregate",
-    "steps": [
-      "Create src/domain/friend/friend-request-id.ts (UUID-based ID)",
-      "Create src/domain/friend/friend-request.aggregate.ts with props: senderId, receiverId, status, createdAt, respondedAt",
-      "Implement static create() and reconstitute() methods",
-      "Add accept() and reject() methods that update status and respondedAt",
-      "Use z.string().min(1) for user IDs (BetterAuth compatibility)"
-    ],
-    "passes": true
-  },
-  {
-    "id": 24,
-    "category": "domain",
-    "description": "Create FriendRequest Value Objects",
-    "steps": [
-      "Create src/domain/friend/value-objects/friend-request-status.vo.ts with enum: pending, accepted, rejected"
-    ],
-    "passes": true
-  },
-  {
-    "id": 25,
-    "category": "domain",
-    "description": "Create FriendRequest Domain Events",
-    "steps": [
-      "Create src/domain/friend/events/friend-request-sent.event.ts",
-      "Create src/domain/friend/events/friend-request-accepted.event.ts",
-      "Create src/domain/friend/events/friend-request-rejected.event.ts"
-    ],
-    "passes": true
-  },
-  {
-    "id": 26,
-    "category": "domain",
-    "description": "Create Notification Aggregate",
-    "steps": [
-      "Create src/domain/notification/notification-id.ts",
-      "Create src/domain/notification/notification.aggregate.ts with props: userId, type, title, body, data, readAt, createdAt",
-      "Create src/domain/notification/value-objects/notification-type.vo.ts with enum: friend_request, friend_accepted, new_message",
-      "Implement static create() and reconstitute() methods",
-      "Add markAsRead() method"
-    ],
-    "passes": true
-  },
-  {
-    "id": 27,
-    "category": "domain",
-    "description": "Create Notification Domain Events",
-    "steps": [
-      "Create src/domain/notification/events/notification-created.event.ts",
-      "Create src/domain/notification/events/notification-read.event.ts"
-    ],
-    "passes": true
-  },
-  {
-    "id": 28,
-    "category": "application",
-    "description": "Create Friend Repository Port",
-    "steps": [
-      "Create src/application/ports/friend-request-repository.port.ts",
-      "Define methods: create, update, findById, findByUsers, findPendingForUser, findFriendsForUser, exists"
-    ],
-    "passes": true
-  },
-  {
-    "id": 29,
-    "category": "application",
-    "description": "Create Invite Token Repository Port",
-    "steps": [
-      "Create src/application/ports/invite-token-repository.port.ts",
-      "Define methods: create, findByToken, markAsUsed, deleteExpired"
-    ],
-    "passes": true
-  },
-  {
-    "id": 30,
-    "category": "application",
-    "description": "Create Notification Repository Port",
-    "steps": [
-      "Create src/application/ports/notification-repository.port.ts",
-      "Define methods: create, update, findById, findByUserId, findUnreadByUserId, markAsRead, countUnread"
-    ],
-    "passes": true
-  },
-  {
-    "id": 31,
-    "category": "application",
-    "description": "Create Friend DTOs",
-    "steps": [
-      "Create src/application/dto/friend/send-friend-request.dto.ts (input: receiverEmail, output: requestId, status)",
-      "Create src/application/dto/friend/respond-friend-request.dto.ts (input: requestId, accept, output: success)",
-      "Create src/application/dto/friend/get-friends.dto.ts (output: friends array with id, email, name)",
-      "Create src/application/dto/friend/get-pending-requests.dto.ts (output: requests array)",
-      "Create src/application/dto/friend/get-invite-link.dto.ts (output: inviteUrl, token)",
-      "Create src/application/dto/friend/accept-invite.dto.ts (input: token, output: success, friendName)"
-    ],
-    "passes": true
-  },
-  {
-    "id": 32,
-    "category": "application",
-    "description": "Create Notification DTOs",
-    "steps": [
-      "Create src/application/dto/notification/get-notifications.dto.ts",
-      "Create src/application/dto/notification/mark-notification-read.dto.ts",
-      "Create src/application/dto/notification/notification.dto.ts (shared notification shape)"
-    ],
-    "passes": true
-  },
-  {
-    "id": 33,
-    "category": "application",
-    "description": "Create SendFriendRequest Use Case",
-    "steps": [
-      "Create src/application/use-cases/friend/send-friend-request.use-case.ts",
-      "Inject IEmailProvider (ResendService) in constructor",
-      "Validate receiver email exists in user repository",
-      "If user exists: create FriendRequest + Notification",
-      "If user not exists: send invitation email via IEmailProvider.send() with signup link",
-      "Return Result with 'request_sent' or 'invitation_sent' status",
-      "Dispatch domain events"
-    ],
-    "passes": true
-  },
-  {
-    "id": 34,
-    "category": "application",
-    "description": "Create RespondFriendRequest Use Case",
-    "steps": [
-      "Create src/application/use-cases/friend/respond-friend-request.use-case.ts",
-      "Find request by ID, verify receiver is current user",
-      "Call accept() or reject() on aggregate",
-      "If accepted: create notification for sender",
-      "Dispatch domain events"
-    ],
-    "passes": true
-  },
-  {
-    "id": 35,
-    "category": "application",
-    "description": "Create GetFriends Use Case",
-    "steps": [
-      "Create src/application/use-cases/friend/get-friends.use-case.ts",
-      "Query accepted friend requests where user is sender or receiver",
-      "Map to friend DTOs with user details"
-    ],
-    "passes": true
-  },
-  {
-    "id": 36,
-    "category": "application",
-    "description": "Create GetPendingRequests Use Case",
-    "steps": [
-      "Create src/application/use-cases/friend/get-pending-requests.use-case.ts",
-      "Query pending requests where user is receiver",
-      "Map to DTOs with sender details"
-    ],
-    "passes": true
-  },
-  {
-    "id": 37,
-    "category": "application",
-    "description": "Create GetInviteLink Use Case",
-    "steps": [
-      "Create src/application/use-cases/friend/get-invite-link.use-case.ts",
-      "Generate unique invite token (nanoid or UUID)",
-      "Store token in inviteTokens table with expiry (24h)",
-      "Return invite URL: evahomecafeapp://invite/{token}"
-    ],
-    "passes": true
-  },
-  {
-    "id": 38,
-    "category": "application",
-    "description": "Create AcceptInviteLink Use Case",
-    "steps": [
-      "Create src/application/use-cases/friend/accept-invite-link.use-case.ts",
-      "Validate invite token exists and not expired",
-      "Get inviter user from token",
-      "Check if already friends",
-      "Create FriendRequest with status=accepted",
-      "Create notifications for both users",
-      "Mark token as used"
-    ],
-    "passes": true
-  },
-  {
-    "id": 39,
-    "category": "application",
-    "description": "Create GetNotifications Use Case",
-    "steps": [
-      "Create src/application/use-cases/notification/get-notifications.use-case.ts",
-      "Support pagination",
-      "Return notifications sorted by createdAt desc"
-    ],
-    "passes": true
-  },
-  {
-    "id": 40,
-    "category": "application",
-    "description": "Create MarkNotificationRead Use Case",
-    "steps": [
-      "Create src/application/use-cases/notification/mark-notification-read.use-case.ts",
-      "Find notification, verify ownership",
-      "Call markAsRead() and persist"
-    ],
-    "passes": true
-  },
-  {
-    "id": 41,
-    "category": "infrastructure",
-    "description": "Create Drizzle Schema for Friends",
-    "steps": [
-      "Create packages/drizzle/src/schema/friend.ts",
-      "Define friendRequests table: id, senderId, receiverId, status, createdAt, respondedAt",
-      "Define inviteTokens table: id, userId, token, expiresAt, usedAt, createdAt",
-      "Add foreign keys to user table",
-      "Add unique constraint on (senderId, receiverId) for friendRequests",
-      "Add unique index on token for inviteTokens",
-      "Export from packages/drizzle/src/schema/index.ts"
-    ],
-    "passes": true
-  },
-  {
-    "id": 42,
-    "category": "infrastructure",
-    "description": "Create Drizzle Schema for Notifications",
-    "steps": [
-      "Create packages/drizzle/src/schema/notification.ts",
-      "Define notifications table: id, userId, type, title, body, data (jsonb), readAt, createdAt",
-      "Add foreign key to user table",
-      "Add index on (userId, createdAt)",
-      "Export from packages/drizzle/src/schema/index.ts"
-    ],
-    "passes": true
-  },
-  {
-    "id": 43,
-    "category": "infrastructure",
-    "description": "Run Database Migration for Friends & Notifications",
-    "steps": [
-      "Run pnpm db:push to apply schema changes",
-      "Verify tables created correctly"
-    ],
-    "passes": true
-  },
-  {
-    "id": 44,
-    "category": "adapter",
-    "description": "Create FriendRequest Mapper",
-    "steps": [
-      "Create src/adapters/mappers/friend-request.mapper.ts",
-      "Implement toDomain() and toPersistence() methods"
-    ],
-    "passes": true
-  },
-  {
-    "id": 45,
-    "category": "adapter",
-    "description": "Create Notification Mapper",
-    "steps": [
-      "Create src/adapters/mappers/notification.mapper.ts",
-      "Implement toDomain() and toPersistence() methods",
-      "Handle JSON data field properly"
-    ],
-    "passes": true
-  },
-  {
-    "id": 46,
-    "category": "adapter",
-    "description": "Create FriendRequest Repository",
-    "steps": [
-      "Create src/adapters/repositories/friend-request.repository.ts",
-      "Implement all port methods using Drizzle",
-      "Include user joins for friend details"
-    ],
-    "passes": true
-  },
-  {
-    "id": 47,
-    "category": "adapter",
-    "description": "Create InviteToken Repository",
-    "steps": [
-      "Create src/adapters/repositories/invite-token.repository.ts",
-      "Implement create, findByToken, markAsUsed methods"
-    ],
-    "passes": true
-  },
-  {
-    "id": 48,
-    "category": "adapter",
-    "description": "Create Notification Repository",
-    "steps": [
-      "Create src/adapters/repositories/notification.repository.ts",
-      "Implement all port methods using Drizzle"
-    ],
-    "passes": true
-  },
-  {
-    "id": 49,
-    "category": "adapter",
-    "description": "Create Friend Controller",
-    "steps": [
-      "Create src/adapters/controllers/friend/friend.controller.ts",
-      "Implement sendRequest, respondRequest, getFriends, getPendingRequests, getInviteLink, acceptInvite handlers"
-    ],
-    "passes": true
-  },
-  {
-    "id": 50,
-    "category": "adapter",
-    "description": "Create Notification Controller",
-    "steps": [
-      "Create src/adapters/controllers/notification/notification.controller.ts",
-      "Implement getNotifications, markAsRead, getUnreadCount handlers"
-    ],
-    "passes": true
-  },
-  {
-    "id": 51,
-    "category": "adapter",
-    "description": "Extend SSE Controller for Notifications",
-    "steps": [
-      "Modify src/adapters/controllers/chat/sse.controller.ts",
-      "Add 'notification' event type",
-      "Broadcast to user when notification created"
-    ],
-    "passes": true
-  },
-  {
-    "id": 52,
-    "category": "infrastructure",
-    "description": "Register Friend DI Module",
-    "steps": [
-      "Create common/di/modules/friend.module.ts",
-      "Bind IFriendRequestRepository, IInviteTokenRepository and all friend use cases",
-      "Bind IEmailProvider for SendFriendRequest",
-      "Register in common/di/container.ts"
-    ],
-    "passes": true
-  },
-  {
-    "id": 53,
-    "category": "infrastructure",
-    "description": "Register Notification DI Module",
-    "steps": [
-      "Create common/di/modules/notification.module.ts",
-      "Bind INotificationRepository and all notification use cases",
-      "Register in common/di/container.ts"
-    ],
-    "passes": true
-  },
-  {
-    "id": 54,
-    "category": "api",
-    "description": "Create Friend API Routes",
-    "steps": [
-      "Create app/api/friends/route.ts (GET friends, POST send request)",
-      "Create app/api/friends/requests/route.ts (GET pending)",
-      "Create app/api/friends/requests/[id]/respond/route.ts (POST accept/reject)",
-      "Create app/api/friends/invite/route.ts (GET generate invite link)",
-      "Create app/api/friends/invite/accept/route.ts (POST accept invite token)"
-    ],
-    "passes": true
-  },
-  {
-    "id": 55,
-    "category": "api",
-    "description": "Create Notification API Routes",
-    "steps": [
-      "Create app/api/notifications/route.ts (GET list)",
-      "Create app/api/notifications/[id]/read/route.ts (POST mark read)",
-      "Create app/api/notifications/unread-count/route.ts (GET count)"
-    ],
-    "passes": true
-  },
-  {
-    "id": 56,
-    "category": "expo",
-    "description": "Create Expo Friend Types",
-    "steps": [
-      "Create apps/expo/types/friend.ts with Friend, FriendRequest, InviteLink interfaces",
-      "Create apps/expo/types/notification.ts with Notification interface",
-      "Export from apps/expo/types/index.ts"
-    ],
-    "passes": true
-  },
-  {
-    "id": 57,
-    "category": "expo",
-    "description": "Create Expo Friend Hooks",
-    "steps": [
-      "Create apps/expo/hooks/use-friends.ts (useFriends, useSendFriendRequest)",
-      "Create apps/expo/hooks/use-friend-requests.ts (usePendingRequests, useRespondRequest)",
-      "Create apps/expo/hooks/use-invite.ts (useGenerateInvite, useAcceptInvite)"
-    ],
-    "passes": true
-  },
-  {
-    "id": 58,
-    "category": "expo",
-    "description": "Create Expo Notification Hooks",
-    "steps": [
-      "Create apps/expo/hooks/use-notifications.ts (useNotifications, useMarkRead, useUnreadCount)"
-    ],
-    "passes": true
-  },
-  {
-    "id": 59,
-    "category": "expo",
-    "description": "Extend Expo SSE Hook",
-    "steps": [
-      "Modify apps/expo/hooks/use-sse.ts to handle 'notification' events",
-      "Invalidate notifications query on new notification",
-      "Update unread count"
-    ],
-    "passes": true
-  },
-  {
-    "id": 60,
-    "category": "expo",
-    "description": "Create Notifications Tab Screen",
-    "steps": [
-      "Create apps/expo/app/(protected)/(tabs)/notifications.tsx",
-      "List notifications with FlatList",
-      "Show unread indicator (dot/badge)",
-      "Handle notification tap (mark as read, navigate if needed)",
-      "Show friend request actions inline (accept/reject buttons)"
-    ],
-    "passes": true
-  },
-  {
-    "id": 61,
-    "category": "expo",
-    "description": "Add Notifications Tab to Layout",
-    "steps": [
-      "Modify apps/expo/app/(protected)/(tabs)/_layout.tsx",
-      "Add Notifications tab with bell icon",
-      "Show badge with unread count"
-    ],
-    "passes": true
-  },
-  {
-    "id": 62,
-    "category": "expo",
-    "description": "Create Friends List Screen",
-    "steps": [
-      "Create apps/expo/app/(protected)/friends/index.tsx",
-      "List friends with FlatList",
-      "Show friend avatar, name, email",
-      "Add button to navigate to add friend"
-    ],
-    "passes": true
-  },
-  {
-    "id": 63,
-    "category": "expo",
-    "description": "Create Add Friend Screen",
-    "steps": [
-      "Create apps/expo/app/(protected)/friends/add.tsx",
-      "Email input field",
-      "Send request button",
-      "Show success/error feedback",
-      "Handle 'invitation_sent' vs 'request_sent' status"
-    ],
-    "passes": true
-  },
-  {
-    "id": 64,
-    "category": "expo",
-    "description": "Create QR Code Display Screen",
-    "steps": [
-      "Create apps/expo/app/(protected)/friends/qr-code.tsx",
-      "Install expo-barcode or react-native-qrcode-svg",
-      "Call getInviteLink API on mount",
-      "Display QR code encoding the invite URL",
-      "Add share button to share invite link"
-    ],
-    "passes": true
-  },
-  {
-    "id": 65,
-    "category": "expo",
-    "description": "Create QR Code Scanner Screen",
-    "steps": [
-      "Create apps/expo/app/(protected)/friends/scan.tsx",
-      "Use expo-camera or expo-barcode-scanner",
-      "Request camera permissions",
-      "On scan: extract token from URL, call acceptInvite API",
-      "Show success/error feedback"
-    ],
-    "passes": true
-  },
-  {
-    "id": 66,
-    "category": "expo",
-    "description": "Add Friends Entry Point from Profile",
-    "steps": [
-      "Add 'Friends' button on profile screen",
-      "Navigate to friends list",
-      "Add QR code and scan buttons on friends list screen"
-    ],
-    "passes": true
-  },
-  {
-    "id": 67,
-    "category": "expo",
-    "description": "Handle Deep Link for Invite",
-    "steps": [
-      "Update apps/expo/app.config.ts if needed for deep link scheme",
-      "Handle invite deep link in app navigation",
-      "Auto-call acceptInvite when app opens with invite link"
-    ],
-    "passes": true
-  },
-  {
-    "id": 68,
+    "id": "063",
     "category": "testing",
-    "description": "Write Unit Tests for Friend Use Cases",
+    "description": "Final visual review",
     "steps": [
-      "Create src/application/use-cases/friend/__tests__/send-friend-request.use-case.test.ts",
-      "Create src/application/use-cases/friend/__tests__/respond-friend-request.use-case.test.ts",
-      "Create src/application/use-cases/friend/__tests__/get-invite-link.use-case.test.ts",
-      "Create src/application/use-cases/friend/__tests__/accept-invite-link.use-case.test.ts",
-      "Test happy paths and error cases"
+      "Verify screens match Figma",
+      "Test all navigation",
+      "Test all modals"
     ],
-    "passes": true
-  },
-  {
-    "id": 69,
-    "category": "testing",
-    "description": "Write Unit Tests for Notification Use Cases",
-    "steps": [
-      "Create src/application/use-cases/notification/__tests__/get-notifications.use-case.test.ts",
-      "Create src/application/use-cases/notification/__tests__/mark-notification-read.use-case.test.ts"
-    ],
-    "passes": true
-  },
-  {
-    "id": 70,
-    "category": "validation",
-    "description": "Final Validation",
-    "steps": [
-      "Run pnpm type-check",
-      "Run pnpm check",
-      "Run pnpm test",
-      "Verify no console.log or any types",
-      "Manual testing of full flow"
-    ],
-    "passes": true
-  },
-  {
-    "id": 71,
-    "category": "ui",
-    "description": "Profile UI",
-    "steps": [
-      "I want the exact UI implementation with .claude/screenshots/profile.png"
-    ],
-    "passes": true
+    "passes": false
   }
 ]
 ```
@@ -846,24 +722,17 @@ Friend invitations (email + QR code), notifications system with real-time update
 ## Agent Instructions
 
 1. Read `activity.md` first to understand current state
-2. Read `CLAUDE.md` for architecture patterns and conventions
-3. Find next task with `"passes": false` (in order by id)
-4. Complete all steps for that task
-5. Run `pnpm type-check` after code changes
-6. Update task to `"passes": true`
-7. Log completion in `activity.md`
-8. Make one git commit for that task only
-9. Repeat until all tasks pass
+2. Find next task with `"passes": false` (lowest ID)
+3. Complete all steps for that task
+4. Verify no errors
+5. Update task to `"passes": true`
+6. Log in `activity.md`: `[ID] description - done`
+7. Commit: `feat(expo): [ID] description`
+8. Repeat until all tasks pass
 
-**Important:**
-- Only modify the `passes` field. Do not remove or rewrite tasks.
-- Do NOT modify `user`, `account`, `session`, `verification` tables.
+**Important:** Only modify the `passes` field. Do not remove or rewrite tasks.
 
 ---
 
 ## Completion Criteria
-
-All 70 tasks marked with `"passes": true` and:
-- `pnpm type-check` passes
-- `pnpm check` passes
-- `pnpm test` passes
+All 63 tasks marked with `"passes": true`
