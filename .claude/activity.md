@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-22
-**Tasks Completed:** 23/63
-**Current Task:** Task 024 - Create section-card component
+**Tasks Completed:** 24/63
+**Current Task:** Task 025 - Create widget-card component
 
 ---
 
@@ -581,3 +581,28 @@
 **Verification:**
 - `pnpm type-check` ✅ Passes
 - `npx biome check` ✅ Passes (105 files checked)
+
+### 2026-01-22 - Task 024: Create section-card component
+
+**Status:** ✅ Complete
+
+**What was implemented:**
+- Created `apps/expo/components/shared/section-card.tsx` component
+- Component features:
+  - `title` prop (required) - bold section title
+  - `subtitle` prop (optional) - muted description text below title
+  - `icon` prop (optional) - ReactNode to display next to title
+  - `showLeftBorder` prop (optional) - adds pink left border accent
+  - Customizable via className props: `titleClassName`, `subtitleClassName`, `headerClassName`, `contentClassName`
+  - Children rendered in content area
+- Uses NativeWind (Tailwind classes) for styling
+- Styled with HomeCafe theme (bg-card, border-border, shadow-sm, rounded-xl)
+- Matches section card patterns from `Mobile - Landing page connecté.png` and `Mobile - Moodboard.png`
+- Exports: SectionCard, SectionCardProps
+
+**Files created:**
+- `apps/expo/components/shared/section-card.tsx` - New section card component
+
+**Verification:**
+- `pnpm type-check` ✅ Passes
+- `npx biome check` ✅ Passes

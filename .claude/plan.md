@@ -280,7 +280,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Add title and optional icon props",
       "Style with HomeCafe theme"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "025",
