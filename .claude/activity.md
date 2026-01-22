@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-22
-**Tasks Completed:** 42/63
-**Current Task:** Task 042 - Install react-native-calendars - DONE
+**Tasks Completed:** 43/63
+**Current Task:** Task 043 - Install react-native-draggable-flatlist - DONE
 
 ---
 
@@ -1154,6 +1154,26 @@
 
 **Files modified:**
 - `apps/expo/package.json` - Added react-native-calendars dependency
+
+**Verification:**
+- `pnpm type-check` ✅ Passes
+- `npx biome check` ✅ Passes (123 files checked)
+
+### 2026-01-22 - Task 043: Install react-native-draggable-flatlist
+
+**Status:** ✅ Complete
+
+**What was implemented:**
+- Installed `react-native-draggable-flatlist` package (v4.0.3) for draggable list components
+- This package will be used for the Kanban board feature in the Organisation screen
+- Enables drag-and-drop reordering of items within lists
+- Verified that peer dependencies `react-native-reanimated` (v4.2.1) and `react-native-gesture-handler` (v2.30.0) are already installed
+
+**Commands run:**
+- `cd apps/expo && pnpm add react-native-draggable-flatlist`
+
+**Files modified:**
+- `apps/expo/package.json` - Added react-native-draggable-flatlist dependency
 
 **Verification:**
 - `pnpm type-check` ✅ Passes
