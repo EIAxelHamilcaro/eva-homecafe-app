@@ -222,7 +222,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Render badges in 2 columns",
       "Use badge-item component"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "020",

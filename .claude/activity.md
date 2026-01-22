@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-22
-**Tasks Completed:** 18/63
-**Current Task:** Task 019 - Create badge-grid component
+**Tasks Completed:** 19/63
+**Current Task:** Task 020 - Implement Récompenses modal
 
 ---
 
@@ -437,6 +437,29 @@
 
 **Files created:**
 - `apps/expo/components/badges/badge-item.tsx` - New badge item component
+
+**Verification:**
+- `pnpm type-check` ✅ Passes
+- `npx biome check` ✅ Passes
+
+### 2026-01-22 - Task 019: Create badge-grid component
+
+**Status:** ✅ Complete
+
+**What was implemented:**
+- Created `apps/expo/components/badges/badge-grid.tsx` component
+- Features:
+  - Renders badges in 2 columns using FlatList with numColumns={2}
+  - Uses badge-item component for each badge
+  - Configurable badge size via badgeSize prop (default: 100)
+  - Proper spacing between rows (marginBottom: 16)
+  - Scrollable list with vertical padding
+  - BadgeData interface for typed badge data (id, color, type, statusDots)
+- Matches the layout from Figma design in `Mobile - Récompenses _ tout.png`
+- Exports: BadgeGrid, BadgeGridProps, BadgeData types
+
+**Files created:**
+- `apps/expo/components/badges/badge-grid.tsx` - New badge grid component
 
 **Verification:**
 - `pnpm type-check` ✅ Passes
