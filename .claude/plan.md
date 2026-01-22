@@ -383,7 +383,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Display 9 emotions with colors",
       "Use mood colors from config"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "034",
