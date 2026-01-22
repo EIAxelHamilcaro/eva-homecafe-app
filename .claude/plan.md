@@ -245,7 +245,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Support sticker types (bubble tea, envelope, coffee, etc.)",
       "Add sticker image display"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "022",

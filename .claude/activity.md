@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-22
-**Tasks Completed:** 20/63
-**Current Task:** Task 021 - Create sticker-item component
+**Tasks Completed:** 21/63
+**Current Task:** Task 022 - Implement Stickers modal
 
 ---
 
@@ -488,6 +488,38 @@
 
 **Files modified:**
 - `apps/expo/app/(protected)/_layout.tsx` - Changed from Slot to Stack, configured modal presentation
+
+**Verification:**
+- `pnpm type-check` ✅ Passes
+- `npx biome check` ✅ Passes
+
+### 2026-01-22 - Task 021: Create sticker-item component
+
+**Status:** ✅ Complete
+
+**What was implemented:**
+- Created `apps/expo/components/stickers/sticker-item.tsx` component
+- SVG-based stickers with 11 different sticker types:
+  - `bubble_tea` - Green bubble tea with orange straw and boba pearls
+  - `envelope_heart` - Gray envelope with red heart
+  - `coffee_cup` - Blue coffee cup with latte art on saucer
+  - `notebook` - White notebook with purple ribbon bookmark
+  - `heart_face` - Pink heart with cute closed eyes and smile
+  - `cloud_happy` - White cloud with closed happy eyes
+  - `cloud_sad` - Gray cloud with sad face and rain drops
+  - `sparkles` - Three-star sparkle (orange, pink, cyan)
+  - `tape_green` - Green washi tape strip
+  - `tape_yellow` - Yellow washi tape strip
+  - `tape_blue` - Blue/purple washi tape strip
+- Each sticker is a separate SVG component for maintainability
+- Uses react-native-svg for cross-platform SVG rendering
+- Configurable size prop (default: 80)
+- Supports custom className for styling
+- Matches the Figma design in `Mobile - Stickers _ tout.png`
+- Exports: StickerItem, StickerItemProps, StickerType types
+
+**Files created:**
+- `apps/expo/components/stickers/sticker-item.tsx` - New sticker item component
 
 **Verification:**
 - `pnpm type-check` ✅ Passes
