@@ -313,7 +313,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Add date, time, lock icon, content, likes",
       "Integrate action-bar"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "028",
