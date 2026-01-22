@@ -336,7 +336,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Add image and mention buttons",
       "Add text input"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "030",

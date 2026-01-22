@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-22
-**Tasks Completed:** 28/63
-**Current Task:** Task 029 - Create post-editor component
+**Tasks Completed:** 29/63
+**Current Task:** Task 030 - Implement Journal feed screen
 
 ---
 
@@ -722,3 +722,37 @@
 **Verification:**
 - `pnpm type-check` ✅ Passes
 - `npx biome check` ✅ Passes (110 files checked)
+
+### 2026-01-22 - Task 029: Create post-editor component
+
+**Status:** ✅ Complete
+
+**What was implemented:**
+- Created `apps/expo/components/journal/post-editor.tsx` component
+- Component features:
+  - **B/I/U toolbar** - Bold, Italic, Underline formatting buttons on the left
+    - Bold button has blue background (#3B82F6) when active, white icon
+    - Italic and Underline buttons are blue icons, white when active
+  - **Image and mention buttons** - Image icon and AtSign icon on the right
+    - Both buttons use blue (#3B82F6) icon color
+    - Include active:opacity-60 press feedback
+  - **Text input** - Multiline TextInput with placeholder "Commence à écrire ici"
+    - Configurable via `value`, `onChangeText` props
+    - `minHeight` prop (default: 200) for input area sizing
+    - `maxLength` prop support
+    - `textInputProps` for additional TextInput customization
+  - `activeFormatting` prop - array of active formatting options
+  - `onFormatPress` callback - called with formatting type when pressed
+  - `onImagePress` and `onMentionPress` callbacks for action buttons
+  - `editable` prop to control input state
+- Uses lucide-react-native icons (Bold, Italic, Underline, Image, AtSign)
+- Matches the design from `Mobile - ajouter un post.png`
+- Uses NativeWind (Tailwind classes) for styling
+- Exports: PostEditor, PostEditorProps, FormattingOption types
+
+**Files created:**
+- `apps/expo/components/journal/post-editor.tsx` - New post editor component
+
+**Verification:**
+- `pnpm type-check` ✅ Passes
+- `npx biome check` ✅ Passes (111 files checked)
