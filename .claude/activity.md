@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-22
-**Tasks Completed:** 9/63
-**Current Task:** Task 009 - Create separator.tsx and slider.tsx
+**Tasks Completed:** 10/63
+**Current Task:** Task 010 - Create dropdown.tsx and radio-group.tsx
 
 ---
 
@@ -224,6 +224,36 @@
 **Files verified:**
 - `apps/expo/components/ui/separator.tsx` - Already complete
 - `apps/expo/components/ui/slider.tsx` - Already complete with min/max/value props
+
+**Verification:**
+- `pnpm type-check` ✅ Passes
+- `npx biome check` ✅ Passes (99 files checked)
+
+### 2026-01-22 - Task 010: Create dropdown.tsx and radio-group.tsx
+
+**Status:** ✅ Complete
+
+**What was implemented:**
+- Verified dropdown.tsx component already exists at `apps/expo/components/ui/dropdown.tsx`
+  - Has DropdownOption type with label/value structure
+  - Has value, options, onValueChange, placeholder, disabled props
+  - Modal-based dropdown list with proper styling
+  - ChevronDown icon from lucide-react-native
+  - Overlay with bg-black/30 backdrop
+  - Selected option highlighting with primary color
+  - Exports Dropdown, DropdownProps, DropdownOption
+- Verified radio-group.tsx component already exists at `apps/expo/components/ui/radio-group.tsx`
+  - Has RadioGroup container with Context-based state management
+  - Has RadioGroupItem with value, label, disabled props
+  - Supports horizontal/vertical orientation
+  - Visual radio button with filled center when selected
+  - Uses border-primary for selected state, border-homecafe-grey-light for unselected
+  - Disabled state with opacity styling
+  - Exports RadioGroup, RadioGroupItem, RadioGroupProps, RadioGroupItemProps
+
+**Files verified:**
+- `apps/expo/components/ui/dropdown.tsx` - Already complete
+- `apps/expo/components/ui/radio-group.tsx` - Already complete
 
 **Verification:**
 - `pnpm type-check` ✅ Passes
