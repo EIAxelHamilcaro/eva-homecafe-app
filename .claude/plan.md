@@ -65,7 +65,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Implement switch/toggle behavior",
       "Add on/off visual states"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "006",
