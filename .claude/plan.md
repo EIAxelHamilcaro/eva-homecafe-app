@@ -211,7 +211,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Support types (7 JOURS, 14 JOURS, 1 MOIS)",
       "Add status dots"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "019",

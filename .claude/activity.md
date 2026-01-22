@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-22
-**Tasks Completed:** 17/63
-**Current Task:** Task 018 - Create badge-item component
+**Tasks Completed:** 18/63
+**Current Task:** Task 019 - Create badge-grid component
 
 ---
 
@@ -413,6 +413,30 @@
 
 **Files verified:**
 - `apps/expo/app/(protected)/settings/index.tsx` - Already complete with À propos card and action buttons (lines 272-334)
+
+**Verification:**
+- `pnpm type-check` ✅ Passes
+- `npx biome check` ✅ Passes
+
+### 2026-01-22 - Task 018: Create badge-item component
+
+**Status:** ✅ Complete
+
+**What was implemented:**
+- Created `apps/expo/components/badges/badge-item.tsx` component
+- SVG-based shield badge with the following features:
+  - 5 color variants: orange, pink, blue, purple, yellow
+  - 3 badge types: 7_JOURS, 14_JOURS, 1_MOIS
+  - Diagonal stripe pattern on shield background
+  - Gradient fill with border styling
+  - Ribbon banner at bottom with type label
+  - Status dots below badge (3 dots with configurable colors)
+- Colors match the Figma design in `Mobile - Récompenses _ tout.png`
+- Uses react-native-svg for complex SVG rendering
+- Exports: BadgeItem, BadgeItemProps, BadgeColor, BadgeType, StatusDot types
+
+**Files created:**
+- `apps/expo/components/badges/badge-item.tsx` - New badge item component
 
 **Verification:**
 - `pnpm type-check` ✅ Passes
