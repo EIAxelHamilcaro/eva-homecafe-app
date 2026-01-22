@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-22
-**Tasks Completed:** 31/63
-**Current Task:** Task 032 - Implement Journal post detail
+**Tasks Completed:** 32/63
+**Current Task:** Task 033 - Create mood-legend component
 
 ---
 
@@ -813,3 +813,34 @@
 **Verification:**
 - `pnpm type-check` ✅ Passes
 - `npx biome check` ✅ Passes (114 files checked)
+
+### 2026-01-22 - Task 032: Implement Journal post detail
+
+**Status:** ✅ Complete
+
+**What was implemented:**
+- Created `apps/expo/app/(protected)/journal/post/[id].tsx` modal screen
+- Updated `apps/expo/app/(protected)/journal/_layout.tsx` to register post/[id] route with modal presentation
+- Post detail modal features:
+  - Close button (×) in top right corner with pink border styling
+  - Full post display with date, time, lock icon (for private posts), content
+  - Likes count display with singular/plural handling
+  - ActionBar integration with heart (like), comment, repost, share icons
+  - Like toggle functionality with state management
+  - Comments section (renders when comments exist)
+  - Comment input with "Ajouter un commentaire" placeholder (multiline TextInput)
+  - "Envoyer" button (pink, rounded-full, disabled when input is empty)
+  - KeyboardAvoidingView for proper keyboard handling on iOS/Android
+  - Navigation handling: goes back or replaces to journal if no history
+- Mock data includes sample post with Lorem ipsum content
+- Matches the Figma design in `Mobile - Post seul.png`
+
+**Files created:**
+- `apps/expo/app/(protected)/journal/post/[id].tsx` - New Journal post detail modal screen
+
+**Files modified:**
+- `apps/expo/app/(protected)/journal/_layout.tsx` - Added post/[id] route with modal presentation
+
+**Verification:**
+- `pnpm type-check` ✅ Passes
+- `npx biome check` ✅ Passes (115 files checked)
