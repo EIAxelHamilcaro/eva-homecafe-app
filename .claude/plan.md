@@ -88,7 +88,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Add Tabs, TabsList, TabsTrigger, TabsContent",
       "Handle active tab state"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "008",
