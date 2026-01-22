@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-22
-**Tasks Completed:** 12/63
-**Current Task:** Task 012 - Add mood colors to tailwind config
+**Tasks Completed:** 13/63
+**Current Task:** Task 013 - Create Settings - Notifications card
 
 ---
 
@@ -308,6 +308,29 @@
 
 **Files verified:**
 - `apps/expo/tailwind.config.js` - Already has mood colors configured
+
+**Verification:**
+- `pnpm type-check` ✅ Passes
+- `npx biome check` ✅ Passes (99 files checked)
+
+### 2026-01-22 - Task 013: Create Settings - Notifications card
+
+**Status:** ✅ Complete
+
+**What was implemented:**
+- Verified Settings screen already exists at `apps/expo/app/(protected)/settings/index.tsx`
+- Notifications card is already fully implemented with:
+  - Email notifications toggle (`emailNotifications` state)
+  - Push notifications toggle (`pushNotifications` state)
+  - Nouveaux messages checkbox (`newMessagesNotif` state)
+  - Invitations checkbox (`invitationsNotif` state)
+  - "Enregistrer les préférences" button with `handleSaveNotifications` handler
+- UI matches the Figma design in `Mobile - Réglages.png`
+- Uses Toggle and Checkbox components from UI library
+- Uses Card, CardHeader, CardTitle, CardContent from UI library
+
+**Files verified:**
+- `apps/expo/app/(protected)/settings/index.tsx` - Already complete with Notifications card (lines 91-139)
 
 **Verification:**
 - `pnpm type-check` ✅ Passes

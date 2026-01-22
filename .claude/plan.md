@@ -152,7 +152,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Add nouveaux messages checkbox, invitations checkbox",
       "Add Enregistrer les préférences button"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "014",
