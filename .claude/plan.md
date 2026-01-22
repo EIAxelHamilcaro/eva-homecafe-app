@@ -438,7 +438,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Display full year grid",
       "Color squares based on mood"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "039",
