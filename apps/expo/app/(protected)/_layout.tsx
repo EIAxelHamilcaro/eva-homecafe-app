@@ -31,6 +31,13 @@ export default function ProtectedLayout() {
           animation: "fade",
         }}
       />
+      <Stack.Screen
+        name="stickers"
+        options={{
+          presentation: "modal",
+          animation: "fade",
+        }}
+      />
     </Stack>
   );
 }

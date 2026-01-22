@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-22
-**Tasks Completed:** 21/63
-**Current Task:** Task 022 - Implement Stickers modal
+**Tasks Completed:** 22/63
+**Current Task:** Task 023 - Implement Galerie modal
 
 ---
 
@@ -524,3 +524,32 @@
 **Verification:**
 - `pnpm type-check` ✅ Passes
 - `npx biome check` ✅ Passes
+
+### 2026-01-22 - Task 022: Implement Stickers modal
+
+**Status:** ✅ Complete
+
+**What was implemented:**
+- Created `apps/expo/app/(protected)/stickers.tsx` modal screen
+- Updated `apps/expo/app/(protected)/_layout.tsx` to configure modal:
+  - Added stickers screen with `presentation: "modal"` and `animation: "fade"`
+- Modal features:
+  - Close button (×) in top right corner with pink border styling
+  - Vertical ScrollView displaying all 11 sticker types
+  - Uses StickerItem component with size={100}
+  - Navigation handling: goes back or replaces to tabs if no history
+- All 11 stickers displayed in order:
+  - bubble_tea, envelope_heart, coffee_cup, notebook
+  - heart_face, cloud_happy, cloud_sad, sparkles
+  - tape_green, tape_yellow, tape_blue
+- Matches the Figma design in `Mobile - Stickers _ tout.png`
+
+**Files created:**
+- `apps/expo/app/(protected)/stickers.tsx` - New Stickers modal screen
+
+**Files modified:**
+- `apps/expo/app/(protected)/_layout.tsx` - Added stickers screen with modal presentation
+
+**Verification:**
+- `pnpm type-check` ✅ Passes
+- `npx biome check` ✅ Passes (104 files checked)
