@@ -21,7 +21,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Add sizes: sm, md, lg",
       "Use NativeWind for styling"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "002",
@@ -722,15 +722,18 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
 ## Agent Instructions
 
 1. Read `activity.md` first to understand current state
-2. Find next task with `"passes": false` (lowest ID)
+2. Find next task with `"passes": false` (lowest ID first)
 3. Complete all steps for that task
-4. Verify no errors
-5. Update task to `"passes": true`
+4. Verify no errors (type-check, lint if applicable)
+5. **Update ONLY the `"passes"` field from `false` to `true`** - do not modify anything else in the task
 6. Log in `activity.md`: `[ID] description - done`
 7. Commit: `feat(expo): [ID] description`
 8. Repeat until all tasks pass
 
-**Important:** Only modify the `passes` field. Do not remove or rewrite tasks.
+**Critical:** 
+- Only change `"passes": false` → `"passes": true`
+- Do not remove, reorder, or rewrite tasks
+- Do not modify task descriptions or steps
 
 ---
 

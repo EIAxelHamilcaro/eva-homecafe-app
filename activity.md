@@ -130,3 +130,170 @@
 
 ### Validation
 - `pnpm type-check`: Passed
+
+---
+
+## Session: 2026-01-22 (Expo UI Implementation)
+
+### Tasks Completed
+
+#### [001] Create button.tsx component - done (pre-existing)
+- **Status**: Pre-existing (marked as complete)
+- **File**: `apps/expo/components/ui/button.tsx`
+- **Details**: Variants (default, destructive, outline, secondary, ghost, link), sizes (default, sm, lg, icon variants), loading state
+
+#### [002] Create card.tsx component - done (pre-existing)
+- **Status**: Pre-existing (marked as complete)
+- **File**: `apps/expo/components/ui/card.tsx`
+- **Details**: Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter subcomponents
+
+#### [003] Create input.tsx component - done (pre-existing)
+- **Status**: Pre-existing (marked as complete)
+- **File**: `apps/expo/components/ui/input.tsx`
+- **Details**: Label prop, error state, PasswordInput with toggle visibility
+
+#### [004] Create checkbox.tsx component - done (pre-existing)
+- **Status**: Pre-existing (marked as complete)
+- **File**: `apps/expo/components/ui/checkbox.tsx`
+- **Details**: Checked/unchecked states, label support, disabled state styling
+
+#### [005] Create toggle.tsx component - done
+- **Status**: Completed
+- **File Created**: `apps/expo/components/ui/toggle.tsx`
+- **Details**:
+  - Animated toggle/switch using React Native's built-in Animated API
+  - Smooth color transition from gray (#E5E7EB) to primary pink (#F691C3)
+  - Supports checked, onCheckedChange, disabled, label props
+  - Shadow on thumb for depth
+  - Compatible with existing component patterns (cn utility, NativeWind)
+
+#### [006] Create modal.tsx component - done
+- **Status**: Completed
+- **File Created**: `apps/expo/components/ui/modal.tsx`
+- **Details**:
+  - Modal component with React Native Modal and Animated backdrop
+  - Semi-transparent overlay (bg-black/50)
+  - ModalCloseButton with pink border circle and X icon (lucide-react-native)
+  - Open/close animations using Animated API (fade in 200ms, fade out 150ms)
+  - ModalHeader, ModalContent, ModalFooter subcomponents
+  - Props: open, onClose, animationType, showCloseButton, className, contentClassName
+  - Follows shadcn-style composition pattern with cn utility
+
+#### [007] Create tabs.tsx component - done
+- **Status**: Completed
+- **File Created**: `apps/expo/components/ui/tabs.tsx`
+- **Details**:
+  - Tabs, TabsList, TabsTrigger, TabsTriggerText, TabsContent components
+  - Context-based state management (TabsContext) for active tab
+  - TabsList supports scrollable prop for horizontal scrolling tabs
+  - TabsTrigger with activeClassName prop for custom active styling
+  - String children auto-wrapped in Text component
+  - Follows shadcn-style composition pattern with cn utility
+  - Designed to match Organisation screen tabs UI from screenshots
+
+#### [008] Create badge.tsx and avatar.tsx - done
+- **Status**: Completed
+- **Files Created**:
+  - `apps/expo/components/ui/badge.tsx`
+  - `apps/expo/components/ui/avatar.tsx`
+- **Details**:
+  - **Badge**: Label/tag component with variants (default, secondary, destructive, outline, success, warning, info), sizes (sm, default, lg), auto text wrapping
+  - **Avatar**: Circular image component with fallback support
+    - Sizes: sm, default, lg, xl, 2xl
+    - Auto-generates initials from alt text if no image
+    - AvatarImage and AvatarFallback subcomponents for composition
+    - Error handling for failed image loads
+  - Both components use class-variance-authority for variant styling
+  - Follows existing shadcn-style patterns with cn utility
+
+#### [009] Create separator.tsx and slider.tsx - done (pre-existing)
+- **Status**: Pre-existing (marked as complete)
+- **Files**:
+  - `apps/expo/components/ui/separator.tsx`
+  - `apps/expo/components/ui/slider.tsx`
+- **Details**:
+  - **Separator**: Horizontal/vertical divider with orientation prop
+  - **Slider**: PanResponder-based slider with min/max/step, animated track and thumb
+
+#### [010] Create dropdown.tsx and radio-group.tsx - done
+- **Status**: Completed
+- **Files Created**:
+  - `apps/expo/components/ui/dropdown.tsx`
+  - `apps/expo/components/ui/radio-group.tsx`
+- **Details**:
+  - **Dropdown**: Modal-based dropdown select component
+    - Props: value, options, onValueChange, placeholder, disabled
+    - ChevronDown icon from lucide-react-native
+    - ScrollView for long option lists
+    - Selected option highlighting with primary color
+  - **RadioGroup**: Context-based radio button group
+    - RadioGroup (provider) and RadioGroupItem components
+    - Props: value, onValueChange, disabled, orientation (horizontal/vertical)
+    - RadioGroupItem: value, label, disabled, className props
+    - Visual: 20px circle with inner dot when selected
+  - Both follow shadcn-style composition patterns with cn utility
+
+#### [011] Create barrel export index.ts - done (pre-existing)
+- **Status**: Pre-existing (marked as complete)
+- **File**: `apps/expo/components/ui/index.ts`
+- **Details**: Exports all UI components from single entry point
+
+#### [012] Add mood colors to tailwind.config.js - done (pre-existing)
+- **Status**: Pre-existing (marked as complete)
+- **File**: `apps/expo/tailwind.config.js`
+- **Details**: Mood colors (calme, enervement, excitation, anxiete, tristesse, bonheur, ennui, nervosite, productivite) already configured
+
+#### [013] Create Settings - Notifications card
+- **Status**: Completed
+- **File Created**: `apps/expo/app/(protected)/settings/index.tsx`
+- **Details**:
+  - Created Settings screen with header and back navigation
+  - Notifications card with:
+    - Email notifications toggle
+    - Push notifications toggle
+    - Nouveaux messages checkbox
+    - Invitations checkbox
+    - "Enregistrer les préférences" button
+  - Uses Toggle, Checkbox, Button, Card components from UI library
+  - SafeAreaView with top edge handling
+  - French labels matching design specifications
+
+#### [014] Create Settings - Sécurité card - done
+- **Status**: Completed
+- **File Modified**: `apps/expo/app/(protected)/settings/index.tsx`
+- **Details**:
+  - Added Sécurité card to settings screen
+  - Double authentification toggle with state management
+  - Appareils connectés list showing connected devices:
+    - MacBook Pro d'Eva (Monitor icon)
+    - iPhone d'Axel (Smartphone icon)
+  - Added Monitor and Smartphone icons from lucide-react-native
+  - Created ConnectedDevice interface for type safety
+  - Styling matches design screenshot
+
+#### [015] Create Settings - Confidentialité card - done
+- **Status**: Completed
+- **File Modified**: `apps/expo/app/(protected)/settings/index.tsx`
+- **Details**:
+  - Added Confidentialité card to settings screen
+  - Profil visible toggle with state management
+  - "Qui peut voir mes récompenses" dropdown with options:
+    - Tout le monde
+    - Amis (default)
+    - Personne
+  - "Télécharger mes données" button with outline variant and primary border/text
+  - Imported Dropdown component from UI library
+  - Styling matches design screenshot (Mobile - Réglages.png)
+
+#### [016] Create Settings - Custom mode card - done
+- **Status**: Completed
+- **File Modified**: `apps/expo/app/(protected)/settings/index.tsx`
+- **Details**:
+  - Added RadioGroup import from components/ui/radio-group
+  - Added state variables: themeMode, textSizeSmall, textSizeMedium, animationsEnabled
+  - Custom mode card with:
+    - Clair/Sombre radio buttons using RadioGroup with horizontal orientation
+    - "Taille du texte" section with Petit and Moyen checkboxes
+    - Animations toggle
+    - "Enregistrer les préférences" button
+  - Styling matches design screenshot (Mobile - Réglages.png)
