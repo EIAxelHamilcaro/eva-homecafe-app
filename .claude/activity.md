@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-22
-**Tasks Completed:** 54/63
-**Current Task:** Task 054 - Implement Social screen - DONE
+**Tasks Completed:** 61/63
+**Current Task:** Task 055-061 - Dashboard widgets - DONE
 
 ---
 
@@ -1178,3 +1178,27 @@
 **Verification:**
 - `pnpm type-check` ✅ Passes
 - `npx biome check` ✅ Passes (123 files checked)
+
+### 2026-01-22 - Tasks 055-061: Dashboard widgets
+
+**Status:** ✅ Complete
+
+**What was implemented:**
+- Updated `apps/expo/app/(protected)/(tabs)/index.tsx` with complete dashboard:
+  - **GalleryWidget** - 4 thumbnail placeholders linking to galerie modal
+  - **MessagerieWidget** - Mail icon with unread count (3 messages), links to messages tab
+  - **SuiviWidgets** - Monthly bar chart and weekly line graph (mock data visualization)
+  - **CalendarWidget** - Shows current date with French formatting, links to organisation
+  - **TodoWidget** - 3 sample todo items with checkboxes, links to organisation
+  - **JournalWidget** - Quick entry card with PenLine icon, links to journal create
+  - **MoodWidget** - 5 emoji mood buttons (😢 😕 😐 🙂 😊), links to moodboard
+  - **InviteFriendsButton** - Pink CTA button with UserPlus icon
+- All widgets use NativeWind (Tailwind classes) for styling
+- Navigation uses expo-router with typed routes (type casting for unregistered routes)
+
+**Files modified:**
+- `apps/expo/app/(protected)/(tabs)/index.tsx` - Complete dashboard implementation
+
+**Verification:**
+- `pnpm type-check` ✅ Passes
+- `npx biome check` ✅ Passes

@@ -629,7 +629,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Add Galerie preview (4 thumbnails)",
       "Add Voir plus to galerie"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "056",
@@ -640,7 +640,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Show unread count",
       "Add Voir plus to messages"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "057",
@@ -650,7 +650,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Add Suivi monthly bar chart",
       "Add Suivi weekly line graph"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "058",
@@ -660,7 +660,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Add Calendar widget",
       "Link to organisation"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "059",
@@ -670,7 +670,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Add To do list preview (3 items)",
       "Add Voir plus to organisation"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "060",
@@ -680,7 +680,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Add Journal quick entry card",
       "Add Moodboard slider card"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "061",
@@ -690,7 +690,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Add Inviter des ami•es button",
       "Link to friends invite"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "062",
