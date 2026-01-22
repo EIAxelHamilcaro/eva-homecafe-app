@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-22
-**Tasks Completed:** 34/63
-**Current Task:** Task 035 - Create mood-slider component
+**Tasks Completed:** 35/63
+**Current Task:** Task 035 - Create mood-slider component - DONE
 
 ---
 
@@ -911,3 +911,33 @@
 **Verification:**
 - `pnpm type-check` ✅ Passes
 - `npx biome check` ✅ Passes (117 files checked)
+
+### 2026-01-22 - Task 035: Create mood-slider component
+
+**Status:** ✅ Complete
+
+**What was implemented:**
+- Created `apps/expo/components/moodboard/mood-slider.tsx` component
+- Component features:
+  - 0-100 slider using the existing Slider UI component
+  - Title: "Moodboard" (customizable via `title` prop)
+  - Subtitle: "Quelle est ton humeur du jour ?" (customizable via `subtitle` prop)
+  - `value` prop for current mood value (default: 50)
+  - `onValueChange` callback when slider moves
+  - `onValidate` callback when "Valider" button is pressed
+  - `showCard` prop to optionally render as a card with border and shadow
+  - `showValidateButton` prop to show/hide the validate button
+  - `validateLabel` prop for custom button text (default: "Valider")
+  - `min`, `max`, `step` props for slider configuration
+  - `disabled` prop to disable interaction
+  - Custom slider styling matching the Figma design (pink active track, white thumb with pink border)
+- Uses the existing Slider component from `components/ui/slider.tsx`
+- Matches the "Moodboard" card from Figma design in `Mobile - Moodboard.png`
+- Exports: MoodSlider, MoodSliderProps
+
+**Files created:**
+- `apps/expo/components/moodboard/mood-slider.tsx` - New mood slider component
+
+**Verification:**
+- `pnpm type-check` ✅ Passes
+- `npx biome check` ✅ Passes (118 files checked)

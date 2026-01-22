@@ -405,7 +405,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Add 0-100 slider",
       "Add Valider button"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "036",
