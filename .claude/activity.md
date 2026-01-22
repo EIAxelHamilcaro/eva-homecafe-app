@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-22
-**Tasks Completed:** 35/63
-**Current Task:** Task 035 - Create mood-slider component - DONE
+**Tasks Completed:** 36/63
+**Current Task:** Task 036 - Install victory-native - DONE
 
 ---
 
@@ -937,6 +937,26 @@
 
 **Files created:**
 - `apps/expo/components/moodboard/mood-slider.tsx` - New mood slider component
+
+**Verification:**
+- `pnpm type-check` ✅ Passes
+- `npx biome check` ✅ Passes (118 files checked)
+
+### 2026-01-22 - Task 036: Install victory-native
+
+**Status:** ✅ Complete
+
+**What was implemented:**
+- Installed `victory-native` package (v41.20.2) for chart components
+- `react-native-svg` was already installed (v15.15.1) as a dependency
+- Victory-native enables line charts and bar charts for the mood tracking features
+- The package includes `@shopify/react-native-skia` as a dependency for performant rendering
+
+**Commands run:**
+- `cd apps/expo && pnpm add victory-native`
+
+**Files modified:**
+- `apps/expo/package.json` - Added victory-native dependency
 
 **Verification:**
 - `pnpm type-check` ✅ Passes

@@ -415,7 +415,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Run: cd expo && pnpm add victory-native react-native-svg",
       "Verify installation"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "037",
