@@ -324,7 +324,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Group posts by date",
       "Use FlatList with post-card"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "029",
