@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-22
-**Tasks Completed:** 24/63
-**Current Task:** Task 025 - Create widget-card component
+**Tasks Completed:** 25/63
+**Current Task:** Task 026 - Create action-bar component
 
 ---
 
@@ -602,6 +602,33 @@
 
 **Files created:**
 - `apps/expo/components/shared/section-card.tsx` - New section card component
+
+**Verification:**
+- `pnpm type-check` ✅ Passes
+- `npx biome check` ✅ Passes
+
+### 2026-01-22 - Task 025: Create widget-card component
+
+**Status:** ✅ Complete
+
+**What was implemented:**
+- Created `apps/expo/components/shared/widget-card.tsx` component
+- Component features:
+  - `title` prop (required) - bold section title
+  - `subtitle` prop (optional) - muted description text below title
+  - `children` prop - content area for widget content
+  - `showVoirPlus` prop (optional, default: true) - show/hide the "Voir plus" button
+  - `voirPlusLabel` prop (optional, default: "Voir plus") - customizable button label
+  - `onVoirPlusPress` prop - handler for "Voir plus" button press
+  - Customizable via className props: `titleClassName`, `subtitleClassName`, `contentClassName`
+- "Voir plus" button styled as pink rounded pill button (bg-primary, rounded-full)
+- Uses NativeWind (Tailwind classes) for styling
+- Styled with HomeCafe theme (bg-card, border-border, shadow-sm, rounded-xl)
+- Matches widget card patterns from `Mobile - Landing page connecté.png` (Galerie, Messagerie, To do list cards)
+- Exports: WidgetCard, WidgetCardProps
+
+**Files created:**
+- `apps/expo/components/shared/widget-card.tsx` - New widget card component
 
 **Verification:**
 - `pnpm type-check` ✅ Passes
