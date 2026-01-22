@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-22
-**Tasks Completed:** 41/63
-**Current Task:** Task 041 - Implement Moodboard tracker - DONE
+**Tasks Completed:** 42/63
+**Current Task:** Task 042 - Install react-native-calendars - DONE
 
 ---
 
@@ -1135,6 +1135,25 @@
 **Files created:**
 - `apps/expo/app/(protected)/moodboard/_layout.tsx` - Moodboard folder layout with modal configuration
 - `apps/expo/app/(protected)/moodboard/tracker.tsx` - Year tracker modal screen
+
+**Verification:**
+- `pnpm type-check` ✅ Passes
+- `npx biome check` ✅ Passes (123 files checked)
+
+### 2026-01-22 - Task 042: Install react-native-calendars
+
+**Status:** ✅ Complete
+
+**What was implemented:**
+- Installed `react-native-calendars` package (v1.1313.0) for calendar components
+- This package will be used for the Organisation screen calendar feature
+- Provides Calendar, CalendarList, Agenda, and expandable calendar components
+
+**Commands run:**
+- `cd apps/expo && pnpm add react-native-calendars`
+
+**Files modified:**
+- `apps/expo/package.json` - Added react-native-calendars dependency
 
 **Verification:**
 - `pnpm type-check` ✅ Passes
