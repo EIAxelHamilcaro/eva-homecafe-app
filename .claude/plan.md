@@ -77,7 +77,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Add close button support",
       "Handle open/close animations"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "007",
