@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-22
-**Tasks Completed:** 43/63
-**Current Task:** Task 043 - Install react-native-draggable-flatlist - DONE
+**Tasks Completed:** 44/63
+**Current Task:** Task 044 - Create todo-item component - DONE
 
 ---
 
