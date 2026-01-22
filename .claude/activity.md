@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-22
-**Tasks Completed:** 37/63
-**Current Task:** Task 037 - Create mood-chart component - DONE
+**Tasks Completed:** 38/63
+**Current Task:** Task 038 - Create year-tracker component - DONE
 
 ---
 
@@ -1007,3 +1007,38 @@
 **Verification:**
 - `pnpm type-check` ✅ Passes
 - `npx biome check` ✅ Passes (119 files checked)
+
+### 2026-01-22 - Task 038: Create year-tracker component
+
+**Status:** ✅ Complete
+
+**What was implemented:**
+- Created `apps/expo/components/moodboard/year-tracker.tsx` component
+- Component features:
+  - **YearTracker** - Full year grid displaying daily mood squares
+    - Generates all days for a given year
+    - Groups days by week (columns) with Monday as first day
+    - Horizontal ScrollView for navigation through weeks
+    - Mood squares colored based on mood type from MOOD_HEX_COLORS
+    - Empty/unset days show cream/beige background (#FFF8F0)
+    - Configurable cellSize and cellGap props
+    - Optional card styling with showCard prop
+  - **YearTrackerCell** - Individual day cell component
+    - Displays colored square based on mood
+    - Accessibility label with date and mood
+  - **YearTrackerFull** - Wrapper with title, subtitle, and legend
+    - Optional mood legend display
+    - Shows all 9 mood types with color indicators
+  - Helper functions:
+    - `generateYearDays(year)` - Creates array of all dates in a year
+    - `groupDaysByWeek(days, year)` - Groups dates into week columns with unique IDs
+  - Uses WeekColumn and DayCell types with stable unique IDs to avoid array index keys
+- Matches the Figma design in `Mobile - Mood tracker - full.png`
+- Exports: YearTracker, YearTrackerCell, YearTrackerFull, YEAR_TRACKER_MOOD_COLORS, types
+
+**Files created:**
+- `apps/expo/components/moodboard/year-tracker.tsx` - New year tracker component
+
+**Verification:**
+- `pnpm type-check` ✅ Passes
+- `npx biome check` ✅ Passes (120 files checked)
