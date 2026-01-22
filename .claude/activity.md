@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-22
-**Tasks Completed:** 33/63
-**Current Task:** Task 034 - Create mood-grid component
+**Tasks Completed:** 34/63
+**Current Task:** Task 035 - Create mood-slider component
 
 ---
 
@@ -878,3 +878,36 @@
 **Verification:**
 - `pnpm type-check` ✅ Passes
 - `npx biome check` ✅ Passes (116 files checked)
+
+### 2026-01-22 - Task 034: Create mood-grid component
+
+**Status:** ✅ Complete
+
+**What was implemented:**
+- Created `apps/expo/components/moodboard/mood-grid.tsx` component
+- Component features:
+  - Weekly grid display with French day labels (L M Me J V S D)
+  - Full day names mapping (Lundi, Mardi, Mercredi, Jeudi, Vendredi, Samedi, Dimanche)
+  - MoodGridCell subcomponent for individual day cells
+  - Mood selection per day via `onDayPress` callback
+  - Selected day highlighting with ring indicator
+  - DayMood type linking days to optional mood values
+  - `moods` prop - array of day/mood pairings for current week
+  - `selectedDay` prop - currently selected day for editing
+  - `onDayPress` callback - triggered when a day is tapped
+  - `onValidate` callback - "Valider" button handler
+  - `onViewFullGraph` callback - "Voir le graphique entier" button handler
+  - `showCard` prop to optionally render as a card with border and shadow
+  - `showActions` prop to show/hide action buttons
+  - Accessibility support with accessibilityLabel and accessibilityRole
+- Uses MOOD_COLORS imported from mood-legend.tsx for consistent coloring
+- Empty/unset days show gray background (bg-homecafe-grey-light)
+- Exports: MoodGrid, MoodGridCell, DAYS_OF_WEEK, DAY_LABELS, types
+- Matches the "Que ressens-tu aujourd'hui?" card from Figma design in `Mobile - Moodboard.png`
+
+**Files created:**
+- `apps/expo/components/moodboard/mood-grid.tsx` - New mood grid component
+
+**Verification:**
+- `pnpm type-check` ✅ Passes
+- `npx biome check` ✅ Passes (117 files checked)

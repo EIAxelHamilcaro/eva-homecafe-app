@@ -394,7 +394,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Display weekly grid (L M M J V S D)",
       "Allow mood selection per day"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "035",
