@@ -32,7 +32,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Add Card, CardHeader, CardContent, CardFooter subcomponents",
       "Use NativeWind for styling"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "003",
