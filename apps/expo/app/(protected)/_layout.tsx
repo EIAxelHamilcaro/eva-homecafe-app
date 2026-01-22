@@ -24,6 +24,7 @@ export default function ProtectedLayout() {
       <Stack.Screen name="friends" />
       <Stack.Screen name="profile" />
       <Stack.Screen name="settings" />
+      <Stack.Screen name="journal" />
       <Stack.Screen
         name="recompenses"
         options={{

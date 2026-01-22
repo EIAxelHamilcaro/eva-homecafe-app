@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-22
-**Tasks Completed:** 29/63
-**Current Task:** Task 030 - Implement Journal feed screen
+**Tasks Completed:** 30/63
+**Current Task:** Task 031 - Implement Journal create modal
 
 ---
 
@@ -756,3 +756,31 @@
 **Verification:**
 - `pnpm type-check` ✅ Passes
 - `npx biome check` ✅ Passes (111 files checked)
+
+### 2026-01-22 - Task 030: Implement Journal feed screen
+
+**Status:** ✅ Complete
+
+**What was implemented:**
+- Created `apps/expo/app/(protected)/journal/index.tsx` screen
+- Screen features:
+  - Header with centered Logo component (width 80)
+  - "Ajouter un post" pink button with Plus icon
+  - "Derniers posts" section title with @monpseudo subtitle
+  - PostFeed component displaying mock posts grouped by date
+  - Post interaction handlers (like, comment, repost, share)
+  - Navigation handlers for post detail and create post (using Href type casting for future routes)
+- Updated `apps/expo/app/(protected)/_layout.tsx` to register journal screens in Stack navigator
+- Mock data includes 4 sample posts with varying dates, content, and states
+- Matches the Figma design in `Mobile - Journal.png`
+- Uses SafeAreaView for proper spacing on devices with notches
+
+**Files created:**
+- `apps/expo/app/(protected)/journal/index.tsx` - New Journal feed screen
+
+**Files modified:**
+- `apps/expo/app/(protected)/_layout.tsx` - Added journal screen to Stack navigator
+
+**Verification:**
+- `pnpm type-check` ✅ Passes
+- `npx biome check` ✅ Passes (112 files checked)
