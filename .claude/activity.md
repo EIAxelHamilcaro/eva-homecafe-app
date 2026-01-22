@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-22
-**Tasks Completed:** 5/63
-**Current Task:** Task 005 - Create toggle.tsx component
+**Tasks Completed:** 6/63
+**Current Task:** Task 006 - Create modal.tsx component
 
 ---
 
@@ -120,6 +120,33 @@
 
 **Files verified:**
 - `apps/expo/components/ui/toggle.tsx` - Already complete with switch behavior and on/off states
+
+**Verification:**
+- `pnpm type-check` ✅ Passes
+- `npx biome check` ✅ Passes (99 files checked)
+
+### 2026-01-22 - Task 006: Create modal.tsx component
+
+**Status:** ✅ Complete
+
+**What was implemented:**
+- Verified modal.tsx component already exists at `apps/expo/components/ui/modal.tsx`
+- Component includes all required features:
+  - Overlay backdrop (bg-black/50 on wrapper View)
+  - Close button support (ModalCloseButton component with X icon, pink border styling)
+  - Open/close animations (React Native Animated API with 200ms fade-in, 150ms fade-out)
+- Subcomponents included:
+  - Modal (main wrapper with RNModal, transparent overlay)
+  - ModalCloseButton (styled X button positioned top-right)
+  - ModalHeader (header section with padding)
+  - ModalContent (flex-1 content wrapper)
+  - ModalFooter (footer section for actions)
+- Uses NativeWind (Tailwind classes) for styling
+- Matches modal designs in screenshots (Récompenses, Galerie, etc.)
+- Exports Modal, ModalCloseButton, ModalHeader, ModalContent, ModalFooter with their types
+
+**Files verified:**
+- `apps/expo/components/ui/modal.tsx` - Already complete with all required features
 
 **Verification:**
 - `pnpm type-check` ✅ Passes
