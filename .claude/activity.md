@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-22
-**Tasks Completed:** 4/63
-**Current Task:** Task 004 - Create checkbox.tsx component
+**Tasks Completed:** 5/63
+**Current Task:** Task 005 - Create toggle.tsx component
 
 ---
 
@@ -97,6 +97,29 @@
 
 **Files verified:**
 - `apps/expo/components/ui/checkbox.tsx` - Already complete with checked/unchecked states and label support
+
+**Verification:**
+- `pnpm type-check` ✅ Passes
+- `npx biome check` ✅ Passes (99 files checked)
+
+### 2026-01-22 - Task 005: Create toggle.tsx component
+
+**Status:** ✅ Complete
+
+**What was implemented:**
+- Verified toggle.tsx component already exists at `apps/expo/components/ui/toggle.tsx`
+- Component includes all required features:
+  - Switch/toggle behavior (with `checked` and `onCheckedChange` props)
+  - On/off visual states (animated transition between gray #E5E7EB and pink #F691C3)
+  - Smooth 200ms animation using React Native Animated API
+  - Label support (with `label` prop)
+  - Disabled state support with opacity styling
+- Uses NativeWind (Tailwind classes) for container styling
+- Matches the design in Mobile - Réglages.png screenshot
+- Exports Toggle, ToggleProps
+
+**Files verified:**
+- `apps/expo/components/ui/toggle.tsx` - Already complete with switch behavior and on/off states
 
 **Verification:**
 - `pnpm type-check` ✅ Passes
