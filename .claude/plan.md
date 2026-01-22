@@ -572,7 +572,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Add tab bar with 5 tabs",
       "Use tabs component"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "051",
