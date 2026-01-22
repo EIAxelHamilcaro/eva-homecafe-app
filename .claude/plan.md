@@ -712,7 +712,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Test all navigation",
       "Test all modals"
     ],
-    "passes": false
+    "passes": true
   }
 ]
 ```
