@@ -98,7 +98,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Create expo/components/ui/badge.tsx",
       "Create expo/components/ui/avatar.tsx with image and fallback"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "009",
