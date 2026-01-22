@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-22
-**Tasks Completed:** 39/63
-**Current Task:** Task 039 - Implement Moodboard main screen - DONE
+**Tasks Completed:** 40/63
+**Current Task:** Task 040 - Complete Moodboard screen - DONE
 
 ---
 
@@ -1073,6 +1073,39 @@
 
 **Files modified:**
 - `apps/expo/app/(protected)/_layout.tsx` - Added moodboard screen to Stack navigator
+
+**Verification:**
+- `pnpm type-check` ✅ Passes
+- `npx biome check` ✅ Passes (121 files checked)
+
+### 2026-01-22 - Task 040: Complete Moodboard screen
+
+**Status:** ✅ Complete
+
+**What was implemented:**
+- Updated `apps/expo/app/(protected)/moodboard/index.tsx` to add missing components:
+  - **Suivi weekly** card with MoodLineChart component (line chart)
+    - Shows weekly mood data points with colored circles
+    - Title: "Suivi", Subtitle: "Humeurs de la semaine (du 11 au 17 août)"
+    - Trend text: "En hausse de 5.2% cette semaine"
+  - **Suivi monthly** card with MoodBarChart component (bar chart)
+    - Shows monthly mood data with colored bars
+    - Title: "Suivi", Subtitle: "Moodboard janvier → juin 2025"
+    - Month labels (Jan., Fév., Mars, Avri, Mai, Juin) with mood colors
+    - Trend text: "En hausse de 5.2% ce mois-ci"
+  - **Badges** card displaying 3 sample badges
+    - Orange (7_JOURS), Blue (14_JOURS), Yellow (1_MOIS)
+    - Pressable card navigates to /recompenses modal
+    - Description: "Tous les badges que tu as obtenu en tenant un journal régulier"
+  - **"Inviter des ami•es"** button at bottom
+    - Uses Button component with outline variant
+    - Pink border styling to match design
+- Added mock data for weekly and monthly chart visualization
+- Added navigation handlers for rewards and invite friends
+- Matches the complete Figma design in `Mobile - Moodboard.png`
+
+**Files modified:**
+- `apps/expo/app/(protected)/moodboard/index.tsx` - Added charts, badges card, and invite button
 
 **Verification:**
 - `pnpm type-check` ✅ Passes
