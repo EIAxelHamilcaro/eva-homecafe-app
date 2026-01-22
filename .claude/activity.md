@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-22
-**Tasks Completed:** 36/63
-**Current Task:** Task 036 - Install victory-native - DONE
+**Tasks Completed:** 37/63
+**Current Task:** Task 037 - Create mood-chart component - DONE
 
 ---
 
@@ -961,3 +961,49 @@
 **Verification:**
 - `pnpm type-check` ✅ Passes
 - `npx biome check` ✅ Passes (118 files checked)
+
+### 2026-01-22 - Task 037: Create mood-chart component
+
+**Status:** ✅ Complete
+
+**What was implemented:**
+- Created `apps/expo/components/moodboard/mood-chart.tsx` component
+- Component features:
+  - **MoodLineChart** - Weekly line chart with colored data points
+    - Uses victory-native CartesianChart and Line components
+    - Colored Circle dots from @shopify/react-native-skia for each data point
+    - Data points colored based on mood type
+    - Natural curve interpolation for smooth lines
+    - Configurable height, title, subtitle, trendText
+    - Optional card styling with showCard prop
+  - **MoodBarChart** - Monthly bar chart with colored bars
+    - Uses victory-native CartesianChart and Bar components
+    - Individual bar colors based on mood type
+    - Rounded top corners on bars
+    - French month labels (Jan., Fév., Mars, Avri, Mai, Juin)
+    - Configurable height, title, subtitle, trendText
+    - Optional card styling with showCard prop
+  - **MOOD_HEX_COLORS** - Hex color mapping for all 9 mood types
+- Both chart components support:
+  - `data` prop with day/month, value, and optional mood
+  - `title` and `subtitle` props for header
+  - `showCard` prop to toggle card wrapper styling
+  - `height` prop for chart height customization
+  - `trendText` prop for trend indicator display
+  - ViewProps spread for additional styling
+- Installed peer dependencies:
+  - @shopify/react-native-skia (v2.4.14)
+  - react-native-gesture-handler (v2.30.0)
+  - react-native-reanimated (v4.2.1)
+- Exports: MoodLineChart, MoodBarChart, MOOD_HEX_COLORS, types
+- Matches the Figma design in `Mobile - Moodboard.png`
+
+**Files created:**
+- `apps/expo/components/moodboard/mood-chart.tsx` - New mood chart component
+
+**Files modified:**
+- `apps/expo/package.json` - Added @shopify/react-native-skia, react-native-gesture-handler, react-native-reanimated
+
+**Verification:**
+- `pnpm type-check` ✅ Passes
+- `npx biome check` ✅ Passes (119 files checked)
