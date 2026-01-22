@@ -5,15 +5,7 @@ import { useRouter } from "expo-router";
 import { useSignOut } from "lib/api/hooks/use-auth";
 import { useGenerateInvite } from "lib/api/hooks/use-invite";
 import { useEnsureProfile } from "lib/api/hooks/use-profile";
-import {
-  Calendar,
-  ChevronDown,
-  Mail,
-  MapPin,
-  Menu,
-  Phone,
-  User,
-} from "lucide-react-native";
+import { ChevronDown, Mail, Menu, User } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -27,23 +19,6 @@ import {
 import QRCode from "react-native-qrcode-svg";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "src/providers/auth-provider";
-
-function InfoRow({
-  label,
-  value,
-}: {
-  label: string;
-  value: string | null | undefined;
-}) {
-  return (
-    <View className="flex-1">
-      <Text className="text-xs text-muted-foreground">{label}</Text>
-      <Text className="text-sm font-medium text-foreground">
-        {value ?? "-"}
-      </Text>
-    </View>
-  );
-}
 
 function DropdownField({ label }: { label: string }) {
   return (
@@ -119,89 +94,25 @@ export default function ProfileScreen() {
             </Text>
           )}
 
-          <View className="w-full gap-2">
-            <View className="flex-row items-center gap-2">
-              <Calendar size={16} color="#8D7E7E" />
-              <Text className="text-sm text-muted-foreground">26/08/1997</Text>
-            </View>
+          {user?.email && (
             <View className="flex-row items-center gap-2">
               <Mail size={16} color="#8D7E7E" />
               <Text className="text-sm text-muted-foreground">
-                {user?.email ?? "adresse@mail.com"}
+                {user.email}
               </Text>
             </View>
-            <View className="flex-row items-center gap-2">
-              <Phone size={16} color="#8D7E7E" />
-              <Text className="text-sm text-muted-foreground">
-                (+33)6 12 34 56 78
-              </Text>
-            </View>
-            <View className="flex-row items-center gap-2">
-              <MapPin size={16} color="#8D7E7E" />
-              <Text className="text-sm text-muted-foreground">
-                Mulhouse, France
-              </Text>
-            </View>
-          </View>
+          )}
         </View>
 
         <View className="px-4">
-          <Card className="mb-4">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg">
-                Informations personnelles
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="gap-4">
-              <View className="flex-row gap-4">
-                <InfoRow label="Nom" value="Cadario" />
-                <InfoRow label="Prénom" value="Eva" />
-              </View>
-              <View className="flex-row gap-4">
-                <InfoRow label="Naissance" value="26/08/1997" />
-                <InfoRow label="E-mail" value="adresse@mail.com" />
-              </View>
-              <View className="flex-row gap-4">
-                <InfoRow label="Profession" value="Graphiste" />
-                <InfoRow label="Téléphone" value="+33 6 12 34 56 78" />
-              </View>
-              <Pressable
-                onPress={() => router.push("/profile/edit")}
-                className="mt-2 rounded-full bg-homecafe-pink px-4 py-2"
-              >
-                <Text className="text-center font-medium text-white">
-                  Modifier les informations
-                </Text>
-              </Pressable>
-            </CardContent>
-          </Card>
-
-          <Card className="mb-4">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg">Adresse</CardTitle>
-            </CardHeader>
-            <CardContent className="gap-4">
-              <View className="flex-row gap-4">
-                <InfoRow
-                  label="Numéro et nom de voie"
-                  value="2 Villa du Bourg l'Évesque"
-                />
-                <InfoRow label="Code postal" value="35000" />
-              </View>
-              <View className="flex-row gap-4">
-                <InfoRow label="Ville" value="Rennes" />
-                <InfoRow label="Pays" value="France" />
-              </View>
-              <Pressable
-                onPress={() => router.push("/profile/edit")}
-                className="mt-2 rounded-full bg-homecafe-pink px-4 py-2"
-              >
-                <Text className="text-center font-medium text-white">
-                  Modifier les informations
-                </Text>
-              </Pressable>
-            </CardContent>
-          </Card>
+          <Pressable
+            onPress={() => router.push("/profile/edit")}
+            className="mb-4 rounded-full bg-homecafe-pink px-4 py-3"
+          >
+            <Text className="text-center font-medium text-white">
+              Modifier le profil
+            </Text>
+          </Pressable>
 
           <Card className="mb-4">
             <CardHeader className="pb-2">

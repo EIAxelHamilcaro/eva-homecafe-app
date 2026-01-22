@@ -1,0 +1,44 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "workspaces": {
+    "apps/nextjs": {
+      "entry": ["app/**/*.tsx", "app/**/*.ts", "src/**/*.ts", "src/**/*.tsx"],
+      "project": ["app/**/*.tsx", "app/**/*.ts", "src/**/*.ts", "src/**/*.tsx"],
+      "ignore": ["**/*.config.*"]
+    },
+    "apps/expo": {
+      "entry": ["app/**/*.tsx", "app/**/*.ts", "src/**/*.ts"],
+      "project": [
+        "app/**/*.tsx",
+        "app/**/*.ts",
+        "src/**/*.ts",
+        "components/**/*.tsx",
+        "lib/**/*.ts"
+      ],
+      "ignore": ["**/*.config.*", "metro.config.js"],
+      "metro": false
+    },
+    "packages/ddd-kit": {
+      "entry": ["src/**/*.ts"],
+      "project": ["src/**/*.ts"]
+    },
+    "packages/drizzle": {
+      "entry": ["src/**/*.ts"],
+      "project": ["src/**/*.ts"],
+      "ignore": ["drizzle.config.ts"],
+      "drizzle": false
+    },
+    "packages/ui": {
+      "entry": ["src/**/*.tsx", "src/**/*.ts"],
+      "project": ["src/**/*.tsx", "src/**/*.ts"]
+    }
+  },
+  "ignore": [
+    "**/node_modules/**",
+    "**/*.config.js",
+    "**/*.config.ts",
+    "**/metro.config.js",
+    "**/tailwind.config.*"
+  ],
+  "ignoreDependencies": ["husky", "nativewind", "tailwindcss"]
+}

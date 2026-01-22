@@ -27,11 +27,16 @@
     "setup": "pnpm install && pnpm db && pnpm db:push",
     "validate": "pnpm type-check && pnpm check && pnpm test",
     "quick-check": "pnpm type-check && pnpm check",
+    "check:duplication": "jscpd apps/nextjs/src apps/expo/app apps/expo/src apps/expo/components apps/expo/lib --threshold 5 --ignore '**/node_modules/**'",
+    "check:unused": "knip",
+    "check:all": "pnpm type-check && pnpm check && pnpm test && pnpm check:duplication && pnpm check:unused",
     "prepare": "husky"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.3.10",
     "husky": "^9.1.7",
+    "jscpd": "^4.0.7",
+    "knip": "^5.82.1",
     "turbo": "latest"
   },
   "packageManager": "pnpm@10.26.2",
