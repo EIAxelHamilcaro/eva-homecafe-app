@@ -360,7 +360,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Add post-editor",
       "Add Publier button"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "032",
