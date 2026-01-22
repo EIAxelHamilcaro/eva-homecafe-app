@@ -451,7 +451,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Add mood-grid card",
       "Add mood-slider card"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "040",

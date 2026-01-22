@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-22
-**Tasks Completed:** 38/63
-**Current Task:** Task 038 - Create year-tracker component - DONE
+**Tasks Completed:** 39/63
+**Current Task:** Task 039 - Implement Moodboard main screen - DONE
 
 ---
 
@@ -1042,3 +1042,38 @@
 **Verification:**
 - `pnpm type-check` ✅ Passes
 - `npx biome check` ✅ Passes (120 files checked)
+
+### 2026-01-22 - Task 039: Implement Moodboard main screen
+
+**Status:** ✅ Complete
+
+**What was implemented:**
+- Created `apps/expo/app/(protected)/moodboard/index.tsx` screen
+- Updated `apps/expo/app/(protected)/_layout.tsx` to register moodboard in Stack navigator
+- Screen features:
+  - Header with Logo and Menu icon (navigates to settings)
+  - Date display with current month and day in pink box (bg-primary)
+  - Stickers preview area with bubble_tea and coffee_cup stickers
+  - "Stickers" button (pink border, navigates to stickers modal)
+  - MoodLegend card showing all 9 mood colors
+  - MoodGrid card for weekly mood tracking ("Que ressens-tu aujourd'hui?")
+    - Day selection, mood assignment, "Valider" and "Voir le graphique entier" buttons
+  - MoodSlider card for daily mood level (0-100 slider)
+- State management:
+  - `selectedDay` for grid selection
+  - `weekMoods` for weekly mood data
+  - `moodValue` for slider value
+  - `selectedMood` for mood type selection
+- Mock data with sample week moods (Mon-Thu filled, Fri-Sun empty)
+- Navigation handlers for stickers, settings, and tracker screens
+- Matches the Figma design in `Mobile - Moodboard.png`
+
+**Files created:**
+- `apps/expo/app/(protected)/moodboard/index.tsx` - New Moodboard main screen
+
+**Files modified:**
+- `apps/expo/app/(protected)/_layout.tsx` - Added moodboard screen to Stack navigator
+
+**Verification:**
+- `pnpm type-check` ✅ Passes
+- `npx biome check` ✅ Passes (121 files checked)
