@@ -128,7 +128,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Create expo/components/ui/index.ts",
       "Export all UI components"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "012",
