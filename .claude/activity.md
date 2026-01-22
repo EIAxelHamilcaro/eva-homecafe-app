@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-22
-**Tasks Completed:** 26/63
-**Current Task:** Task 027 - Create post-card component
+**Tasks Completed:** 27/63
+**Current Task:** Task 028 - Create post-feed component
 
 ---
 
@@ -664,3 +664,33 @@
 **Verification:**
 - `pnpm type-check` ✅ Passes
 - `npx biome check` ✅ Passes (108 files checked)
+
+### 2026-01-22 - Task 027: Create post-card component
+
+**Status:** ✅ Complete
+
+**What was implemented:**
+- Created `apps/expo/components/journal/post-card.tsx` component
+- Component features:
+  - `id` prop - post identifier (for external use)
+  - `date` prop - formatted date string (e.g., "Lundi 11 août 2025")
+  - `time` prop - time string (e.g., "20h59")
+  - `content` prop - post text content
+  - `likesCount` prop - number of likes to display
+  - `isPrivate` prop (optional, default: true) - controls visibility of lock icon
+  - `isLiked` prop (optional, default: false) - controls heart fill state in action bar
+  - `onPress` prop - handler for card press (navigate to detail)
+  - `onLikePress`, `onCommentPress`, `onRepostPress`, `onSharePress` - action bar handlers
+  - Customizable via className prop
+- Lock icon displayed as blue rounded square with white lock icon
+- Integrates ActionBar component for social interactions
+- Matches the design from `Mobile - Posts.png` and `Mobile - Post seul.png`
+- Uses NativeWind (Tailwind classes) for styling
+- Exports: PostCard, PostCardProps
+
+**Files created:**
+- `apps/expo/components/journal/post-card.tsx` - New post card component
+
+**Verification:**
+- `pnpm type-check` ✅ Passes
+- `npx biome check` ✅ Passes (109 files checked)
