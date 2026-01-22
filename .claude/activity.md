@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-22
-**Tasks Completed:** 32/63
-**Current Task:** Task 033 - Create mood-legend component
+**Tasks Completed:** 33/63
+**Current Task:** Task 034 - Create mood-grid component
 
 ---
 
@@ -844,3 +844,37 @@
 **Verification:**
 - `pnpm type-check` ✅ Passes
 - `npx biome check` ✅ Passes (115 files checked)
+
+### 2026-01-22 - Task 033: Create mood-legend component
+
+**Status:** ✅ Complete
+
+**What was implemented:**
+- Created `apps/expo/components/moodboard/mood-legend.tsx` component
+- Component features:
+  - Displays all 9 mood emotions with their corresponding colors from tailwind config
+  - MoodLegend component with title "Légende" and subtitle "Palette d'humeurs"
+  - MoodLegendItem subcomponent for individual mood items
+  - Flexible layout with flex-wrap for responsive display
+  - Each mood has a colored circle indicator (h-3 w-3 rounded-full)
+  - `showCard` prop to optionally render as a card with border and shadow
+  - Accessibility support via accessibilityLabel on color dots
+- Mood colors used from tailwind config:
+  - Calme (#7CB9E8 - blue)
+  - Énervement (#E85454 - red)
+  - Excitation (#FFD93D - yellow)
+  - Anxieté (#9CA3AF - gray)
+  - Tristesse (#374151 - dark gray)
+  - Bonheur (#4ADE80 - green)
+  - Ennui (#FB923C - orange)
+  - Nervosité (#F472B6 - pink)
+  - Productivité (#A78BFA - purple)
+- Exports: MoodLegend, MoodLegendItem, MOODS, MOOD_COLORS, types
+- Matches the Figma design in `Mobile - Moodboard.png`
+
+**Files created:**
+- `apps/expo/components/moodboard/mood-legend.tsx` - New mood legend component
+
+**Verification:**
+- `pnpm type-check` ✅ Passes
+- `npx biome check` ✅ Passes (116 files checked)
