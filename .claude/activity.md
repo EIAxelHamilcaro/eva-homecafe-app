@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-22
-**Tasks Completed:** 22/63
-**Current Task:** Task 023 - Implement Galerie modal
+**Tasks Completed:** 23/63
+**Current Task:** Task 024 - Create section-card component
 
 ---
 
@@ -553,3 +553,31 @@
 **Verification:**
 - `pnpm type-check` ✅ Passes
 - `npx biome check` ✅ Passes (104 files checked)
+
+### 2026-01-22 - Task 023: Implement Galerie modal
+
+**Status:** ✅ Complete
+
+**What was implemented:**
+- Created `apps/expo/app/(protected)/galerie.tsx` modal screen
+- Updated `apps/expo/app/(protected)/_layout.tsx` to configure modal:
+  - Added galerie screen with `presentation: "modal"` and `animation: "fade"`
+- Modal features:
+  - Close button (×) in top right corner with pink border styling
+  - Scrolling image grid with placeholders
+  - Uses lucide-react-native `Image` icon as placeholder
+  - Image placeholders with cream/beige background (#F5E6D3) and rounded corners
+  - Different sized image cards (small: 80px, medium: 140px, large: 180px)
+  - Navigation handling: goes back or replaces to tabs if no history
+- 8 mock image placeholders with varying heights
+- Matches the Figma design in `Mobile - Galerie.png`
+
+**Files created:**
+- `apps/expo/app/(protected)/galerie.tsx` - New Galerie modal screen
+
+**Files modified:**
+- `apps/expo/app/(protected)/_layout.tsx` - Added galerie screen with modal presentation
+
+**Verification:**
+- `pnpm type-check` ✅ Passes
+- `npx biome check` ✅ Passes (105 files checked)

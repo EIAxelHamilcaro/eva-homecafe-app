@@ -38,6 +38,13 @@ export default function ProtectedLayout() {
           animation: "fade",
         }}
       />
+      <Stack.Screen
+        name="galerie"
+        options={{
+          presentation: "modal",
+          animation: "fade",
+        }}
+      />
     </Stack>
   );
 }
