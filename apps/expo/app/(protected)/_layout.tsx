@@ -1,4 +1,4 @@
-import { Redirect, Slot } from "expo-router";
+import { Redirect, Stack } from "expo-router";
 import { ActivityIndicator, View } from "react-native";
 
 import { useAuth } from "src/providers/auth-provider";
@@ -18,5 +18,19 @@ export default function ProtectedLayout() {
     return <Redirect href="/(auth)/register" />;
   }
 
-  return <Slot />;
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="(tabs)" />
+      <Stack.Screen name="friends" />
+      <Stack.Screen name="profile" />
+      <Stack.Screen name="settings" />
+      <Stack.Screen
+        name="recompenses"
+        options={{
+          presentation: "modal",
+          animation: "fade",
+        }}
+      />
+    </Stack>
+  );
 }

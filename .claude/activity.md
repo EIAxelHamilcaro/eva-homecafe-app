@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-22
-**Tasks Completed:** 19/63
-**Current Task:** Task 020 - Implement Récompenses modal
+**Tasks Completed:** 20/63
+**Current Task:** Task 021 - Create sticker-item component
 
 ---
 
@@ -460,6 +460,34 @@
 
 **Files created:**
 - `apps/expo/components/badges/badge-grid.tsx` - New badge grid component
+
+**Verification:**
+- `pnpm type-check` ✅ Passes
+- `npx biome check` ✅ Passes
+
+### 2026-01-22 - Task 020: Implement Récompenses modal
+
+**Status:** ✅ Complete
+
+**What was implemented:**
+- Created `apps/expo/app/(protected)/recompenses.tsx` modal screen
+- Updated `apps/expo/app/(protected)/_layout.tsx` to configure modal:
+  - Changed from `Slot` to `Stack` navigation
+  - Added recompenses screen with `presentation: "modal"` and `animation: "fade"`
+  - Registered all existing protected screens in the Stack
+- Modal features:
+  - Close button (×) in top right corner with pink border styling
+  - Badge grid displaying 18 mock badges in 2 columns
+  - Uses BadgeGrid component with badgeSize={120}
+  - Navigation handling: goes back or replaces to tabs if no history
+- Mock data includes various badge colors (orange, pink, blue, yellow, purple) and types (7_JOURS, 14_JOURS, 1_MOIS)
+- Matches the Figma design in `Mobile - Récompenses _ tout.png`
+
+**Files created:**
+- `apps/expo/app/(protected)/recompenses.tsx` - New Récompenses modal screen
+
+**Files modified:**
+- `apps/expo/app/(protected)/_layout.tsx` - Changed from Slot to Stack, configured modal presentation
 
 **Verification:**
 - `pnpm type-check` ✅ Passes
