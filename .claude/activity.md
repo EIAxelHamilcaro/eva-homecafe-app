@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-22
-**Tasks Completed:** 15/63
-**Current Task:** Task 015 - Create Settings - Confidentialité card
+**Tasks Completed:** 17/63
+**Current Task:** Task 018 - Create badge-item component
 
 ---
 
@@ -376,3 +376,44 @@
 **Verification:**
 - `pnpm type-check` ✅ Passes
 - `npx biome check` ✅ Passes (99 files checked)
+
+### 2026-01-22 - Task 016: Create Settings - Custom mode card
+
+**Status:** ✅ Complete
+
+**What was implemented:**
+- Verified Custom mode card already exists in the Settings screen at `apps/expo/app/(protected)/settings/index.tsx`
+- Card is fully implemented with:
+  - Clair/Sombre radio buttons using RadioGroup component (`themeMode` state, lines 228-235)
+  - Taille du texte checkboxes - Petit (`textSizeSmall` state) and Moyen (`textSizeMedium` state), lines 237-253
+  - Animations toggle (`animationsEnabled` state, lines 255-261)
+  - "Enregistrer les préférences" button with `handleSaveCustomMode` handler (lines 263-268)
+- UI matches the Figma design in `Mobile - Réglages.png`
+
+**Files verified:**
+- `apps/expo/app/(protected)/settings/index.tsx` - Already complete with Custom mode card (lines 222-270)
+
+**Verification:**
+- `pnpm type-check` ✅ Passes
+- `npx biome check` ✅ Passes
+
+### 2026-01-22 - Task 017: Create Settings - À propos and actions
+
+**Status:** ✅ Complete
+
+**What was implemented:**
+- Verified À propos card and action buttons already exist in the Settings screen at `apps/expo/app/(protected)/settings/index.tsx`
+- Fully implemented:
+  - À propos card with version 1.0.3 (lines 272-302)
+  - Mentions légales, Politique de confidentialité, Centre d'aide links with ChevronRight icons
+  - Se déconnecter button with LogOut icon (`handleLogout` handler, lines 305-311)
+  - Supprimer le compte button in red with Trash2 icon (`handleDeleteAccount` handler, lines 313-321)
+  - Inviter des ami•es button at bottom with outline variant (`handleInviteFriends` handler, lines 324-334)
+- UI matches the Figma design in `Mobile - Réglages.png`
+
+**Files verified:**
+- `apps/expo/app/(protected)/settings/index.tsx` - Already complete with À propos card and action buttons (lines 272-334)
+
+**Verification:**
+- `pnpm type-check` ✅ Passes
+- `npx biome check` ✅ Passes
