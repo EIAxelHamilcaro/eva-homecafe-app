@@ -463,7 +463,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Add Badges card",
       "Add Inviter button"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "041",

@@ -4,6 +4,13 @@ import { useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { BadgeItem } from "../../../components/badges/badge-item";
+import {
+  type MonthlyDataPoint,
+  MoodBarChart,
+  MoodLineChart,
+  type WeeklyDataPoint,
+} from "../../../components/moodboard/mood-chart";
 import {
   type DayMood,
   MoodGrid,
@@ -14,7 +21,7 @@ import {
 } from "../../../components/moodboard/mood-legend";
 import { MoodSlider } from "../../../components/moodboard/mood-slider";
 import { StickerItem } from "../../../components/stickers/sticker-item";
-import { Logo } from "../../../components/ui";
+import { Button, Logo } from "../../../components/ui";
 
 const MOCK_WEEK_MOODS: DayMood[] = [
   { day: "L", mood: "bonheur" },
@@ -24,6 +31,25 @@ const MOCK_WEEK_MOODS: DayMood[] = [
   { day: "V", mood: null },
   { day: "S", mood: null },
   { day: "D", mood: null },
+];
+
+const MOCK_WEEKLY_CHART_DATA: WeeklyDataPoint[] = [
+  { day: 1, value: 30, mood: "enervement" },
+  { day: 2, value: 45, mood: "anxiete" },
+  { day: 3, value: 60, mood: "calme" },
+  { day: 4, value: 55, mood: "productivite" },
+  { day: 5, value: 70, mood: "bonheur" },
+  { day: 6, value: 80, mood: "excitation" },
+  { day: 7, value: 85, mood: "bonheur" },
+];
+
+const MOCK_MONTHLY_CHART_DATA: MonthlyDataPoint[] = [
+  { month: 1, value: 40, mood: "enervement" },
+  { month: 2, value: 55, mood: "calme" },
+  { month: 3, value: 35, mood: "tristesse" },
+  { month: 4, value: 65, mood: "productivite" },
+  { month: 5, value: 45, mood: "ennui" },
+  { month: 6, value: 90, mood: "bonheur" },
 ];
 
 export default function MoodboardScreen() {
@@ -79,6 +105,14 @@ export default function MoodboardScreen() {
 
   const handleMenuPress = () => {
     router.push("/(protected)/settings" as Href);
+  };
+
+  const handleRewardsPress = () => {
+    router.push("/(protected)/recompenses" as Href);
+  };
+
+  const handleInviteFriends = () => {
+    console.log("Invite friends pressed");
   };
 
   return (
@@ -147,6 +181,71 @@ export default function MoodboardScreen() {
           onValidate={handleMoodSliderValidate}
           className="mb-4"
         />
+
+        {/* Suivi Weekly Line Chart */}
+        <MoodLineChart
+          data={MOCK_WEEKLY_CHART_DATA}
+          title="Suivi"
+          subtitle="Humeurs de la semaine (du 11 au 17 août)"
+          trendText="En hausse de 5.2% cette semaine"
+          className="mb-4"
+        />
+
+        {/* Suivi Monthly Bar Chart */}
+        <MoodBarChart
+          data={MOCK_MONTHLY_CHART_DATA}
+          title="Suivi"
+          subtitle="Moodboard janvier → juin 2025"
+          trendText="En hausse de 5.2% ce mois-ci"
+          className="mb-4"
+        />
+
+        {/* Badges Card */}
+        <Pressable
+          onPress={handleRewardsPress}
+          className="bg-card mb-4 rounded-xl border border-border p-4 shadow-sm active:opacity-70"
+          accessibilityRole="button"
+          accessibilityLabel="Voir les badges"
+        >
+          <View className="mb-3">
+            <Text className="text-foreground text-lg font-semibold">
+              Badges
+            </Text>
+            <Text className="text-muted-foreground text-sm">
+              Tous les badges que tu as obtenu en tenant un journal régulier
+            </Text>
+          </View>
+
+          <View className="flex-row justify-around">
+            <BadgeItem
+              color="orange"
+              type="7_JOURS"
+              statusDots={["green", "orange", "pink"]}
+              size={80}
+            />
+            <BadgeItem
+              color="blue"
+              type="14_JOURS"
+              statusDots={["green", "green", "gray"]}
+              size={80}
+            />
+            <BadgeItem
+              color="yellow"
+              type="1_MOIS"
+              statusDots={["pink", "gray", "gray"]}
+              size={80}
+            />
+          </View>
+        </Pressable>
+
+        {/* Invite Friends Button */}
+        <Button
+          onPress={handleInviteFriends}
+          variant="outline"
+          className="border-primary mb-4"
+        >
+          <Text className="text-primary font-medium">Inviter des ami•es</Text>
+        </Button>
       </ScrollView>
     </SafeAreaView>
   );
