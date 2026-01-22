@@ -528,7 +528,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Add title, colored labels",
       "Add progress bar"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "047",
