@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-22
-**Tasks Completed:** 13/63
-**Current Task:** Task 013 - Create Settings - Notifications card
+**Tasks Completed:** 14/63
+**Current Task:** Task 014 - Create Settings - Sécurité card
 
 ---
 
@@ -331,6 +331,27 @@
 
 **Files verified:**
 - `apps/expo/app/(protected)/settings/index.tsx` - Already complete with Notifications card (lines 91-139)
+
+**Verification:**
+- `pnpm type-check` ✅ Passes
+- `npx biome check` ✅ Passes (99 files checked)
+
+### 2026-01-22 - Task 014: Create Settings - Sécurité card
+
+**Status:** ✅ Complete
+
+**What was implemented:**
+- Verified Sécurité card already exists in the Settings screen at `apps/expo/app/(protected)/settings/index.tsx`
+- Card is fully implemented with:
+  - Double authentification toggle (`twoFactorAuth` state, lines 34, 147-155)
+  - Appareils connectés list with device icons (lines 157-178)
+  - ConnectedDevice interface with id, name, type (desktop/mobile)
+  - Mock data: "MacBook Pro d'Eva" (desktop) and "iPhone d'Axel" (mobile)
+  - Monitor and Smartphone icons from lucide-react-native
+- UI matches the Figma design in `Mobile - Réglages.png`
+
+**Files verified:**
+- `apps/expo/app/(protected)/settings/index.tsx` - Already complete with Sécurité card (lines 141-181)
 
 **Verification:**
 - `pnpm type-check` ✅ Passes
