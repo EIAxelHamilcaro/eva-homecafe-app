@@ -108,7 +108,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Create expo/components/ui/separator.tsx",
       "Create expo/components/ui/slider.tsx with min/max/value props"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "010",
