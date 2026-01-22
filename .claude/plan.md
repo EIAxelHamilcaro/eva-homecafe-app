@@ -539,7 +539,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Add columns (To Do, In Progress, Done)",
       "Use draggable-flatlist"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "048",
