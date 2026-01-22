@@ -595,7 +595,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Create app/(protected)/organisation/kanban/new.tsx",
       "Create app/(protected)/organisation/task/[id].tsx"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "053",
