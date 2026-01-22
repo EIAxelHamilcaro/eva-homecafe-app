@@ -175,7 +175,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Add Qui peut voir mes récompenses dropdown",
       "Add Télécharger mes données button"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "016",

@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-22
-**Tasks Completed:** 14/63
-**Current Task:** Task 014 - Create Settings - Sécurité card
+**Tasks Completed:** 15/63
+**Current Task:** Task 015 - Create Settings - Confidentialité card
 
 ---
 
@@ -352,6 +352,26 @@
 
 **Files verified:**
 - `apps/expo/app/(protected)/settings/index.tsx` - Already complete with Sécurité card (lines 141-181)
+
+**Verification:**
+- `pnpm type-check` ✅ Passes
+- `npx biome check` ✅ Passes (99 files checked)
+
+### 2026-01-22 - Task 015: Create Settings - Confidentialité card
+
+**Status:** ✅ Complete
+
+**What was implemented:**
+- Verified Confidentialité card already exists in the Settings screen at `apps/expo/app/(protected)/settings/index.tsx`
+- Card is fully implemented with:
+  - Profil visible toggle (`profileVisible` state, lines 40, 189-195)
+  - Qui peut voir mes récompenses dropdown (`rewardsVisibility` state, lines 41, 48-52, 197-207)
+  - Dropdown options: "Tout le monde", "Amis", "Personne"
+  - Télécharger mes données button with outline variant and primary color (lines 209-217)
+- UI matches the Figma design in `Mobile - Réglages.png`
+
+**Files verified:**
+- `apps/expo/app/(protected)/settings/index.tsx` - Already complete with Confidentialité card (lines 183-220)
 
 **Verification:**
 - `pnpm type-check` ✅ Passes
