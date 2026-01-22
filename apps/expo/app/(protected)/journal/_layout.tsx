@@ -11,6 +11,13 @@ export default function JournalLayout() {
           animation: "slide_from_bottom",
         }}
       />
+      <Stack.Screen
+        name="post/[id]"
+        options={{
+          presentation: "modal",
+          animation: "slide_from_bottom",
+        }}
+      />
     </Stack>
   );
 }

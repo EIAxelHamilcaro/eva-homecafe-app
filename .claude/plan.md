@@ -372,7 +372,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Add comments section",
       "Add comment input with Envoyer"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "033",
