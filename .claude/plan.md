@@ -494,7 +494,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Run: cd expo && pnpm add react-native-draggable-flatlist",
       "Verify reanimated and gesture-handler present"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "044",
