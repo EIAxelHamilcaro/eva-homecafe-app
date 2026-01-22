@@ -2,8 +2,8 @@
 
 ## Current Status
 **Last Updated:** 2026-01-22
-**Tasks Completed:** 25/63
-**Current Task:** Task 026 - Create action-bar component
+**Tasks Completed:** 26/63
+**Current Task:** Task 027 - Create post-card component
 
 ---
 
@@ -633,3 +633,34 @@
 **Verification:**
 - `pnpm type-check` ✅ Passes
 - `npx biome check` ✅ Passes
+
+### 2026-01-22 - Task 026: Create action-bar component
+
+**Status:** ✅ Complete
+
+**What was implemented:**
+- Created `apps/expo/components/shared/action-bar.tsx` component
+- Component features:
+  - 4 action icons: Heart (like), MessageCircle (comment), Repeat2 (repost), Send (share)
+  - `liked` prop (optional, default: false) - controls heart fill state
+  - `onLikePress` prop - handler for like button press
+  - `onCommentPress` prop - handler for comment button press
+  - `onRepostPress` prop - handler for repost button press
+  - `onSharePress` prop - handler for share button press
+  - `iconSize` prop (optional, default: 22) - customize icon size
+  - `iconColor` prop (optional, default: "#374151") - icon color when not active
+  - `likedColor` prop (optional, default: "#000000") - heart color when liked
+  - Customizable via className prop
+- Light blue background strip (bg-blue-100/50) with rounded corners
+- Icons evenly spaced using justify-around
+- Active state feedback with opacity-60 on press
+- Uses lucide-react-native icons (Heart, MessageCircle, Repeat2, Send)
+- Matches the action bar design from `Mobile - Posts.png` and `Mobile - Post seul.png`
+- Exports: ActionBar, ActionBarProps
+
+**Files created:**
+- `apps/expo/components/shared/action-bar.tsx` - New action bar component
+
+**Verification:**
+- `pnpm type-check` ✅ Passes
+- `npx biome check` ✅ Passes (108 files checked)

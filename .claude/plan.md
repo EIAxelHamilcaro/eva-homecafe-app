@@ -302,7 +302,7 @@ Implement all UI screens for the HomeCafe Expo mobile app based on Figma designs
       "Add heart, comment, repost, share icons",
       "Add press handlers"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": "027",
