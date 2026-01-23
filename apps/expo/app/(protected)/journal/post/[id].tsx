@@ -12,8 +12,8 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { ActionBar } from "../../../../components/shared/action-bar";
-import { Button } from "../../../../components/ui/button";
+import { ActionBar } from "@/components/shared/action-bar";
+import { Button } from "@/components/ui/button";
 
 type Comment = {
   id: string;

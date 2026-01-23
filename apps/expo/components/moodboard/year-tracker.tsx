@@ -1,6 +1,6 @@
 import { ScrollView, Text, View, type ViewProps } from "react-native";
 
-import { cn } from "../../src/libs/utils";
+import { cn } from "@/src/libs/utils";
 import type { MoodType } from "./mood-legend";
 
 const MOOD_HEX_COLORS: Record<MoodType, string> = {

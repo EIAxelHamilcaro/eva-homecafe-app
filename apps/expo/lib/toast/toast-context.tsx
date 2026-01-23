@@ -14,6 +14,8 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { colors } from "@/src/config/colors";
+
 type ToastType = "success" | "error" | "info" | "warning";
 
 interface Toast {
@@ -31,10 +33,10 @@ interface ToastContextValue {
 const ToastContext = createContext<ToastContextValue | undefined>(undefined);
 
 const TOAST_COLORS: Record<ToastType, { bg: string; text: string }> = {
-  success: { bg: "#10B981", text: "#FFFFFF" },
-  error: { bg: "#EF4444", text: "#FFFFFF" },
-  info: { bg: "#3B82F6", text: "#FFFFFF" },
-  warning: { bg: "#F59E0B", text: "#FFFFFF" },
+  success: { bg: colors.status.success, text: colors.white },
+  error: { bg: colors.status.error, text: colors.white },
+  info: { bg: colors.status.info, text: colors.white },
+  warning: { bg: colors.status.warning, text: colors.white },
 };
 
 function ToastItem({
@@ -79,7 +81,7 @@ function ToastItem({
     return () => clearTimeout(timer);
   });
 
-  const colors = TOAST_COLORS[toast.type];
+  const toastColors = TOAST_COLORS[toast.type];
 
   return (
     <Animated.View
@@ -91,19 +93,21 @@ function ToastItem({
       <Pressable
         onPress={onDismiss}
         style={{
-          backgroundColor: colors.bg,
+          backgroundColor: toastColors.bg,
           paddingHorizontal: 16,
           paddingVertical: 12,
           borderRadius: 8,
           marginBottom: 8,
-          shadowColor: "#000",
+          shadowColor: colors.black,
           shadowOffset: { width: 0, height: 2 },
           shadowOpacity: 0.25,
           shadowRadius: 4,
           elevation: 5,
         }}
       >
-        <Text style={{ color: colors.text, fontSize: 14, fontWeight: "500" }}>
+        <Text
+          style={{ color: toastColors.text, fontSize: 14, fontWeight: "500" }}
+        >
           {toast.message}
         </Text>
       </Pressable>

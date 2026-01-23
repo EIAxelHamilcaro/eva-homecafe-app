@@ -5,13 +5,9 @@ import type {
   GetConversationsResponse,
 } from "@/constants/chat";
 import { api } from "../client";
+import { conversationKeys } from "./query-keys";
 
-export const conversationKeys = {
-  all: ["conversations"] as const,
-  list: (pagination?: { page: number; limit: number }) =>
-    [...conversationKeys.all, "list", pagination] as const,
-  detail: (id: string) => [...conversationKeys.all, id] as const,
-};
+export { conversationKeys };
 
 export interface UseConversationsOptions {
   page?: number;

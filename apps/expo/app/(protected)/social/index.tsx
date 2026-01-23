@@ -5,7 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import {
   PublicPostCard,
   type PublicPostCardProps,
-} from "../../../components/social/public-post-card";
+} from "@/components/social/public-post-card";
 
 type PublicPost = Omit<
   PublicPostCardProps,

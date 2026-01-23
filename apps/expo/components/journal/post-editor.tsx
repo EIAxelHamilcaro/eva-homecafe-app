@@ -7,7 +7,8 @@ import {
   type ViewProps,
 } from "react-native";
 
-import { cn } from "../../src/libs/utils";
+import { colors } from "@/src/config/colors";
+import { cn } from "@/src/libs/utils";
 
 type FormattingOption = "bold" | "italic" | "underline";
 
@@ -74,7 +75,9 @@ function PostEditor({
           >
             <Bold
               size={18}
-              color={isFormatActive("bold") ? "#FFFFFF" : "#374151"}
+              color={
+                isFormatActive("bold") ? colors.white : colors.icon.default
+              }
               strokeWidth={2.5}
             />
           </Pressable>
@@ -90,7 +93,9 @@ function PostEditor({
           >
             <Italic
               size={18}
-              color={isFormatActive("italic") ? "#FFFFFF" : "#3B82F6"}
+              color={
+                isFormatActive("italic") ? colors.white : colors.status.info
+              }
               strokeWidth={2}
             />
           </Pressable>
@@ -106,7 +111,9 @@ function PostEditor({
           >
             <Underline
               size={18}
-              color={isFormatActive("underline") ? "#FFFFFF" : "#3B82F6"}
+              color={
+                isFormatActive("underline") ? colors.white : colors.status.info
+              }
               strokeWidth={2}
             />
           </Pressable>
@@ -120,7 +127,7 @@ function PostEditor({
             className="items-center justify-center w-8 h-8 rounded-md active:opacity-60"
             hitSlop={4}
           >
-            <Image size={20} color="#3B82F6" strokeWidth={2} />
+            <Image size={20} color={colors.status.info} strokeWidth={2} />
           </Pressable>
 
           {/* Mention button */}
@@ -129,7 +136,7 @@ function PostEditor({
             className="items-center justify-center w-8 h-8 rounded-md active:opacity-60"
             hitSlop={4}
           >
-            <AtSign size={20} color="#3B82F6" strokeWidth={2} />
+            <AtSign size={20} color={colors.status.info} strokeWidth={2} />
           </Pressable>
         </View>
       </View>
@@ -139,7 +146,7 @@ function PostEditor({
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
-        placeholderTextColor="#9CA3AF"
+        placeholderTextColor={colors.icon.muted}
         multiline
         textAlignVertical="top"
         editable={editable}

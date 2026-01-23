@@ -1,7 +1,8 @@
 import { Heart, MessageCircle, Repeat2, Send } from "lucide-react-native";
 import { Pressable, View, type ViewProps } from "react-native";
 
-import { cn } from "../../src/libs/utils";
+import { colors } from "@/src/config/colors";
+import { cn } from "@/src/libs/utils";
 
 type ActionBarProps = ViewProps & {
   liked?: boolean;
@@ -23,8 +24,8 @@ function ActionBar({
   onSharePress,
   className,
   iconSize = 22,
-  iconColor = "#374151",
-  likedColor = "#000000",
+  iconColor = colors.icon.default,
+  likedColor = colors.icon.active,
   ...props
 }: ActionBarProps) {
   return (

@@ -1,7 +1,6 @@
-import Constants from "expo-constants";
 import * as SecureStore from "expo-secure-store";
 
-const API_URL = Constants.expoConfig?.extra?.apiUrl ?? "http://localhost:3000";
+import { env } from "@/src/config/env";
 
 const TOKEN_KEY = "auth_token";
 
@@ -49,7 +48,7 @@ class ApiClient {
       headers.Authorization = `Bearer ${token}`;
     }
 
-    const response = await fetch(`${API_URL}${endpoint}`, {
+    const response = await fetch(`${env.apiUrl}${endpoint}`, {
       ...options,
       headers: {
         ...headers,
@@ -159,7 +158,7 @@ class ApiClient {
         reject(new ApiError("Network error", "NETWORK_ERROR", 0));
       });
 
-      xhr.open("POST", `${API_URL}${endpoint}`);
+      xhr.open("POST", `${env.apiUrl}${endpoint}`);
 
       for (const [key, value] of Object.entries(headers)) {
         xhr.setRequestHeader(key, value);

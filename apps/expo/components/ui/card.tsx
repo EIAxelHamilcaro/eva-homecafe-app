@@ -1,21 +1,28 @@
+import { cva, type VariantProps } from "class-variance-authority";
 import { Text, type TextProps, View, type ViewProps } from "react-native";
 
-import { cn } from "../../src/libs/utils";
+import { cn } from "@/src/libs/utils";
 
-type CardProps = ViewProps & {
-  className?: string;
-};
+const cardVariants = cva("bg-card rounded-xl border border-border shadow-sm", {
+  variants: {
+    size: {
+      default: "p-6",
+      sm: "p-4",
+      lg: "p-8",
+    },
+  },
+  defaultVariants: {
+    size: "default",
+  },
+});
 
-function Card({ className, ...props }: CardProps) {
-  return (
-    <View
-      className={cn(
-        "bg-card rounded-xl border border-border p-6 shadow-sm",
-        className,
-      )}
-      {...props}
-    />
-  );
+type CardProps = ViewProps &
+  VariantProps<typeof cardVariants> & {
+    className?: string;
+  };
+
+function Card({ className, size, ...props }: CardProps) {
+  return <View className={cn(cardVariants({ size }), className)} {...props} />;
 }
 
 type CardHeaderProps = ViewProps & {
@@ -75,6 +82,7 @@ function CardFooter({ className, ...props }: CardFooterProps) {
 
 export {
   Card,
+  cardVariants,
   CardContent,
   CardDescription,
   CardFooter,

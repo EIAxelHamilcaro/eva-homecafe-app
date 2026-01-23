@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Animated, Pressable, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { colors } from "@/src/config/colors";
 import { useNetwork } from "./network-context";
 
 export function OfflineBanner() {
@@ -45,7 +46,7 @@ export function OfflineBanner() {
     >
       <View
         style={{
-          backgroundColor: "#6B7280",
+          backgroundColor: colors.status.offline,
           paddingTop: insets.top,
         }}
       >
@@ -53,7 +54,7 @@ export function OfflineBanner() {
           onPress={() => checkConnection()}
           className="flex-row items-center justify-center gap-2 px-4 py-2"
         >
-          <WifiOff size={16} color="#FFFFFF" />
+          <WifiOff size={16} color={colors.white} />
           <Text className="text-sm font-medium text-white">
             Pas de connexion internet
           </Text>

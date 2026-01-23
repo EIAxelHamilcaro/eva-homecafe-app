@@ -6,8 +6,8 @@ import { Pressable, SafeAreaView, Text, View } from "react-native";
 import {
   type FormattingOption,
   PostEditor,
-} from "../../../components/journal/post-editor";
-import { Avatar, Button } from "../../../components/ui";
+} from "@/components/journal/post-editor";
+import { Avatar, Button } from "@/components/ui";
 
 export default function JournalCreateModal() {
   const [postContent, setPostContent] = useState("");

@@ -7,6 +7,7 @@ import {
   Text,
 } from "react-native";
 
+import { colors } from "@/src/config/colors";
 import { cn } from "@/src/libs/utils";
 
 const buttonVariants = cva(
@@ -96,7 +97,9 @@ function Button({
         <ActivityIndicator
           size="small"
           color={
-            variant === "default" || variant === "destructive" ? "#fff" : "#000"
+            variant === "default" || variant === "destructive"
+              ? colors.white
+              : colors.black
           }
         />
       ) : typeof children === "string" ? (

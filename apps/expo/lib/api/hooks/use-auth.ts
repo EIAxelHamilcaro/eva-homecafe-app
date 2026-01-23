@@ -1,18 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
+import type { AuthSession, User } from "@/types/auth";
+
 import { api } from "../client";
+import { authKeys } from "./query-keys";
 
-export interface User {
-  id: string;
-  email: string;
-  name: string;
-  emailVerified: boolean;
-  image: string | null;
-}
-
-export interface AuthSession {
-  user: User;
-  token: string;
-}
+export type { AuthSession, User };
 
 export interface SignUpInput {
   email: string;
@@ -35,11 +28,7 @@ interface SessionResponse {
   };
 }
 
-export const authKeys = {
-  all: ["auth"] as const,
-  session: () => [...authKeys.all, "session"] as const,
-  user: () => [...authKeys.all, "user"] as const,
-};
+export { authKeys };
 
 export function useSession() {
   return useQuery({

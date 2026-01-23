@@ -2,8 +2,8 @@ import { type Href, useRouter } from "expo-router";
 import { Plus } from "lucide-react-native";
 import { SafeAreaView, Text, View } from "react-native";
 
-import { type PostData, PostFeed } from "../../../components/journal/post-feed";
-import { Button, Logo } from "../../../components/ui";
+import { type PostData, PostFeed } from "@/components/journal/post-feed";
+import { Button, Logo } from "@/components/ui";
 
 const MOCK_POSTS: PostData[] = [
   {

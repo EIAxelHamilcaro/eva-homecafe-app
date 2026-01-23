@@ -105,6 +105,7 @@
     ]
   },
   "javascript": {
+    "globals": ["__DEV__"],
     "formatter": {
       "quoteStyle": "double",
       "semicolons": "always",

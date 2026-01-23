@@ -1,6 +1,4 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { api } from "lib/api/client";
-import { type AuthSession, authKeys, type User } from "lib/api/hooks/use-auth";
 import {
   createContext,
   type ReactNode,
@@ -9,6 +7,9 @@ import {
   useEffect,
   useState,
 } from "react";
+import { api } from "@/lib/api/client";
+import { authKeys } from "@/lib/api/hooks/query-keys";
+import type { AuthSession, User } from "@/types/auth";
 
 interface AuthContextType {
   user: User | null;
@@ -58,10 +59,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [refreshSession]);
 
   useEffect(() => {
+    const sessionKey = authKeys.session();
     const unsubscribe = queryClient.getQueryCache().subscribe((event) => {
+      const queryKey = event.query.queryKey;
       if (
-        event.query.queryKey[0] === "auth" &&
-        event.query.queryKey[1] === "session"
+        queryKey.length === sessionKey.length &&
+        queryKey.every((val: unknown, idx: number) => val === sessionKey[idx])
       ) {
         const data = event.query.state.data as AuthSession | null | undefined;
         setUser(data?.user ?? null);
