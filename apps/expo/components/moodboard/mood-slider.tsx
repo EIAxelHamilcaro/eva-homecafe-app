@@ -1,7 +1,6 @@
 import { Pressable, Text, View, type ViewProps } from "react-native";
-
-import { cn } from "../../src/libs/utils";
-import { Slider } from "../ui/slider";
+import { Slider } from "@/components/ui/slider";
+import { cn } from "@/src/libs/utils";
 
 type MoodSliderProps = ViewProps & {
   value?: number;

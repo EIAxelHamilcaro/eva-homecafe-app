@@ -1,8 +1,7 @@
 import { Sticker, Users } from "lucide-react-native";
 import { Image, Pressable, Text, View, type ViewProps } from "react-native";
-
-import { cn } from "../../src/libs/utils";
-import { ActionBar } from "../shared/action-bar";
+import { ActionBar } from "@/components/shared/action-bar";
+import { cn } from "@/src/libs/utils";
 
 type PublicPostCardProps = ViewProps & {
   id: string;

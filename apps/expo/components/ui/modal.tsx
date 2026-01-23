@@ -10,7 +10,7 @@ import {
   type ViewStyle,
 } from "react-native";
 
-import { cn } from "../../src/libs/utils";
+import { cn } from "@/src/libs/utils";
 
 type ModalProps = {
   open: boolean;

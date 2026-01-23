@@ -12,8 +12,8 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { Button } from "../../../../components/ui/button";
-import { Slider } from "../../../../components/ui/slider";
+import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
 
 type LabelColor = "pink" | "orange" | "yellow" | "green" | "blue" | "purple";
 

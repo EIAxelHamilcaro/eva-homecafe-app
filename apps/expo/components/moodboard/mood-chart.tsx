@@ -2,7 +2,7 @@ import { Circle } from "@shopify/react-native-skia";
 import { Text, View, type ViewProps } from "react-native";
 import { Bar, CartesianChart, Line } from "victory-native";
 
-import { cn } from "../../src/libs/utils";
+import { cn } from "@/src/libs/utils";
 import type { MoodType } from "./mood-legend";
 
 const MOOD_HEX_COLORS: Record<MoodType, string> = {

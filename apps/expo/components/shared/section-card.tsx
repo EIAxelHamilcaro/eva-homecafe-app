@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { Text, View, type ViewProps } from "react-native";
 
-import { cn } from "../../src/libs/utils";
+import { cn } from "@/src/libs/utils";
 
 type SectionCardProps = ViewProps & {
   title: string;

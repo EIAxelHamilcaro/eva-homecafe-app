@@ -1,3 +1,7 @@
+import type { Pagination } from "@/types/pagination";
+
+export type { Pagination };
+
 export const REACTION_EMOJIS = ["👍", "❤️", "😂", "😮", "😢", "🎉"] as const;
 export type ReactionEmoji = (typeof REACTION_EMOJIS)[number];
 
@@ -66,15 +70,6 @@ export interface Message {
   updatedAt: string;
   editedAt: string | null;
   deletedAt: string | null;
-}
-
-export interface Pagination {
-  page: number;
-  limit: number;
-  total: number;
-  totalPages: number;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
 }
 
 export interface GetConversationsResponse {

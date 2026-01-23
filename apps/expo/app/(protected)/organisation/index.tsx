@@ -2,25 +2,20 @@ import { useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { Calendar, createDot } from "../../../components/organisation/calendar";
+import { Calendar, createDot } from "@/components/organisation/calendar";
 import {
   KanbanBoard,
   type KanbanColumnData,
-} from "../../../components/organisation/kanban-board";
+} from "@/components/organisation/kanban-board";
 import {
   Timeline,
   type TimelineEvent,
-} from "../../../components/organisation/timeline";
+} from "@/components/organisation/timeline";
 import {
   type TodoItemData,
   TodoList,
-} from "../../../components/organisation/todo-list";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "../../../components/ui/tabs";
+} from "@/components/organisation/todo-list";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const MOCK_TODO_LISTS: { id: string; title: string; items: TodoItemData[] }[] =
   [

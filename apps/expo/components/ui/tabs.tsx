@@ -9,7 +9,7 @@ import {
   type ViewProps,
 } from "react-native";
 
-import { cn } from "../../src/libs/utils";
+import { cn } from "@/src/libs/utils";
 
 interface TabsContextValue {
   value: string;

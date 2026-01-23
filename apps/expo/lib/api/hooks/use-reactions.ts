@@ -6,12 +6,9 @@ import type {
   ReactionEmoji,
 } from "@/constants/chat";
 import { api } from "../client";
-import { messageKeys } from "./use-messages";
+import { messageKeys, reactionKeys } from "./query-keys";
 
-export const reactionKeys = {
-  all: ["reactions"] as const,
-  byMessage: (messageId: string) => [...reactionKeys.all, messageId] as const,
-};
+export { reactionKeys };
 
 export interface UseToggleReactionOptions {
   conversationId: string;

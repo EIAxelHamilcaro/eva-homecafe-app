@@ -8,9 +8,11 @@ import type {
   SSEReactionAddedEvent,
   SSEReactionRemovedEvent,
 } from "@/constants/chat";
-import { notificationKeys } from "@/lib/api/hooks/query-keys";
-import { conversationKeys } from "@/lib/api/hooks/use-conversations";
-import { messageKeys } from "@/lib/api/hooks/use-messages";
+import {
+  conversationKeys,
+  messageKeys,
+  notificationKeys,
+} from "@/lib/api/hooks/query-keys";
 import { useAuth } from "@/src/providers/auth-provider";
 
 import { getSSEClient } from "./sse-client";

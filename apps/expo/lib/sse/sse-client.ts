@@ -1,10 +1,9 @@
-import Constants from "expo-constants";
 import * as SecureStore from "expo-secure-store";
 import EventSource from "react-native-sse";
 
 import type { SSEEvent } from "@/constants/chat";
+import { env } from "@/src/config/env";
 
-const API_URL = Constants.expoConfig?.extra?.apiUrl ?? "http://localhost:3000";
 const TOKEN_KEY = "auth_token";
 
 type SSEEventHandler = (event: SSEEvent) => void;
@@ -47,7 +46,7 @@ export class SSEClient {
         return;
       }
 
-      const url = `${API_URL}/api/v1/chat/sse`;
+      const url = `${env.apiUrl}/api/v1/chat/sse`;
 
       this.eventSource = new EventSource(url, {
         headers: {

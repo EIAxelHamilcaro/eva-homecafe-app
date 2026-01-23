@@ -1,3 +1,5 @@
+import type { Pagination } from "./pagination";
+
 export type FriendRequestStatus = "pending" | "accepted" | "rejected";
 
 export interface Friend {
@@ -24,15 +26,6 @@ export interface InviteLink {
   expiresAt: string;
 }
 
-export interface Pagination {
-  page: number;
-  limit: number;
-  total: number;
-  totalPages: number;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-}
-
 export interface GetFriendsResponse {
   friends: Friend[];
   pagination: Pagination;
@@ -42,6 +35,8 @@ export interface GetPendingRequestsResponse {
   requests: FriendRequest[];
   pagination: Pagination;
 }
+
+export type { Pagination };
 
 export interface SendFriendRequestInput {
   receiverEmail: string;

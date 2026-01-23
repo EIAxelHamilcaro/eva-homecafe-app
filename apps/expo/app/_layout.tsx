@@ -1,7 +1,7 @@
-import "../src/global.css";
+import "@/src/global.css";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import Providers from "../src/providers";
+import Providers from "@/src/providers";
 
 export default function RootLayout() {
   return (

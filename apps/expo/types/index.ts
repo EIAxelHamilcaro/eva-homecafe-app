@@ -1,3 +1,5 @@
+export type { AuthSession, User } from "./auth";
+
 export type {
   AcceptInviteInput,
   Friend,
@@ -6,17 +8,16 @@ export type {
   GetFriendsResponse,
   GetPendingRequestsResponse,
   InviteLink,
-  Pagination,
   RespondFriendRequestInput,
   SendFriendRequestInput,
 } from "./friend";
-
 export type {
   GetNotificationsResponse,
   MarkNotificationReadInput,
   Notification,
   NotificationType,
 } from "./notification";
+export type { Pagination } from "./pagination";
 
 export type {
   CreateProfileInput,

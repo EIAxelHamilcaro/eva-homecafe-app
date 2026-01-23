@@ -1,6 +1,6 @@
 import { Pressable, Text, View, type ViewProps } from "react-native";
 
-import { cn } from "../../src/libs/utils";
+import { cn } from "@/src/libs/utils";
 import { MOOD_COLORS, type MoodType } from "./mood-legend";
 
 type DayOfWeek = "L" | "M" | "Me" | "J" | "V" | "S" | "D";

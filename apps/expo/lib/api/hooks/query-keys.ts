@@ -1,3 +1,28 @@
+export const authKeys = {
+  all: ["auth"] as const,
+  session: () => [...authKeys.all, "session"] as const,
+  user: () => [...authKeys.all, "user"] as const,
+};
+
+export const conversationKeys = {
+  all: ["conversations"] as const,
+  list: (pagination?: { page: number; limit: number }) =>
+    [...conversationKeys.all, "list", pagination] as const,
+  detail: (id: string) => [...conversationKeys.all, id] as const,
+};
+
+export const messageKeys = {
+  all: ["messages"] as const,
+  list: (conversationId: string) =>
+    [...messageKeys.all, "list", conversationId] as const,
+  detail: (id: string) => [...messageKeys.all, id] as const,
+};
+
+export const reactionKeys = {
+  all: ["reactions"] as const,
+  byMessage: (messageId: string) => [...reactionKeys.all, messageId] as const,
+};
+
 export const friendKeys = {
   all: ["friends"] as const,
   list: (page?: number, limit?: number) =>

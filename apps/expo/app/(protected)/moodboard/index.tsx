@@ -4,24 +4,18 @@ import { useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { BadgeItem } from "../../../components/badges/badge-item";
+import { BadgeItem } from "@/components/badges/badge-item";
 import {
   type MonthlyDataPoint,
   MoodBarChart,
   MoodLineChart,
   type WeeklyDataPoint,
-} from "../../../components/moodboard/mood-chart";
-import {
-  type DayMood,
-  MoodGrid,
-} from "../../../components/moodboard/mood-grid";
-import {
-  MoodLegend,
-  type MoodType,
-} from "../../../components/moodboard/mood-legend";
-import { MoodSlider } from "../../../components/moodboard/mood-slider";
-import { StickerItem } from "../../../components/stickers/sticker-item";
-import { Button, Logo } from "../../../components/ui";
+} from "@/components/moodboard/mood-chart";
+import { type DayMood, MoodGrid } from "@/components/moodboard/mood-grid";
+import { MoodLegend, type MoodType } from "@/components/moodboard/mood-legend";
+import { MoodSlider } from "@/components/moodboard/mood-slider";
+import { StickerItem } from "@/components/stickers/sticker-item";
+import { Button, Logo } from "@/components/ui";
 
 const MOCK_WEEK_MOODS: DayMood[] = [
   { day: "L", mood: "bonheur" },

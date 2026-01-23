@@ -1,6 +1,6 @@
 import { Text, View, type ViewProps } from "react-native";
 
-import { cn } from "../../src/libs/utils";
+import { cn } from "@/src/libs/utils";
 
 type MoodType =
   | "calme"

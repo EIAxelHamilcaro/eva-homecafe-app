@@ -1,6 +1,6 @@
 import { SectionList, Text, View, type ViewProps } from "react-native";
 
-import { cn } from "../../src/libs/utils";
+import { cn } from "@/src/libs/utils";
 import { PostCard, type PostCardProps } from "./post-card";
 
 type PostData = Omit<PostCardProps, "onPress" | "className"> & {

@@ -3,8 +3,8 @@ import { X } from "lucide-react-native";
 import { Pressable, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import type { MoodType } from "../../../components/moodboard/mood-legend";
-import { YearTrackerFull } from "../../../components/moodboard/year-tracker";
+import type { MoodType } from "@/components/moodboard/mood-legend";
+import { YearTrackerFull } from "@/components/moodboard/year-tracker";
 
 type DayMood = {
   date: Date;

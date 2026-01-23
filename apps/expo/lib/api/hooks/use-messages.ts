@@ -10,14 +10,9 @@ import type {
   SendMessageResponse,
 } from "@/constants/chat";
 import { api } from "../client";
-import { conversationKeys } from "./use-conversations";
+import { conversationKeys, messageKeys } from "./query-keys";
 
-export const messageKeys = {
-  all: ["messages"] as const,
-  list: (conversationId: string) =>
-    [...messageKeys.all, "list", conversationId] as const,
-  detail: (id: string) => [...messageKeys.all, id] as const,
-};
+export { messageKeys };
 
 export interface UseMessagesOptions {
   limit?: number;

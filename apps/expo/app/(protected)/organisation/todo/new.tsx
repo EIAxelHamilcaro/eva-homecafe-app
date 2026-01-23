@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { Button } from "../../../../components/ui/button";
+import { Button } from "@/components/ui/button";
 
 type TodoItemInput = {
   id: string;

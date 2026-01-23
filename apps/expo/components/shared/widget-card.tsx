@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { Text, TouchableOpacity, View, type ViewProps } from "react-native";
 
-import { cn } from "../../src/libs/utils";
+import { cn } from "@/src/libs/utils";
 
 type WidgetCardProps = ViewProps & {
   title: string;
