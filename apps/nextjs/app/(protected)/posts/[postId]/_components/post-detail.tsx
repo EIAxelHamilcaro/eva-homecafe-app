@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import type { IGetPostDetailOutputDto } from "@/application/dto/post/get-post-detail.dto";
 
@@ -43,12 +44,12 @@ export function PostDetail({ postId }: { postId: string }) {
   if (error) {
     return (
       <div className="space-y-4">
-        <a
+        <Link
           href="/posts"
           className="text-sm text-muted-foreground hover:text-foreground"
         >
           &larr; Back to posts
-        </a>
+        </Link>
         <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-center text-destructive">
           {error}
         </div>

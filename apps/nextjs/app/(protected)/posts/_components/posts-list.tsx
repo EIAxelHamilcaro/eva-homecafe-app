@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import type { IGetUserPostsOutputDto } from "@/application/dto/post/get-user-posts.dto";
 
@@ -68,12 +69,12 @@ export function PostsList() {
         <p className="mb-4 text-sm text-muted-foreground">
           Create your first post to start your journal or share with friends.
         </p>
-        <a
+        <Link
           href="/posts/new"
           className="inline-flex rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
         >
           Create your first post
-        </a>
+        </Link>
       </div>
     );
   }
@@ -81,7 +82,7 @@ export function PostsList() {
   return (
     <div className="space-y-4">
       {data.posts.map((post) => (
-        <a
+        <Link
           key={post.id}
           href={`/posts/${post.id}`}
           className="block rounded-lg border p-4 transition-colors hover:bg-accent"
@@ -122,7 +123,7 @@ export function PostsList() {
               )}
             </div>
           )}
-        </a>
+        </Link>
       ))}
 
       {data.pagination.totalPages > 1 && (

@@ -102,14 +102,16 @@ export async function getUserPostsController(
   }
 
   const url = new URL(request.url);
-  const page = url.searchParams.get("page");
-  const limit = url.searchParams.get("limit");
+  const pageRaw = url.searchParams.get("page");
+  const limitRaw = url.searchParams.get("limit");
+  const page = pageRaw ? Number.parseInt(pageRaw, 10) : Number.NaN;
+  const limit = limitRaw ? Number.parseInt(limitRaw, 10) : Number.NaN;
 
   const useCase = getInjection("GetUserPostsUseCase");
   const result = await useCase.execute({
     userId: session.user.id,
-    page: page ? Number.parseInt(page, 10) : undefined,
-    limit: limit ? Number.parseInt(limit, 10) : undefined,
+    page: page > 0 ? page : undefined,
+    limit: limit > 0 && limit <= 100 ? limit : undefined,
   });
 
   if (result.isFailure) {
@@ -135,7 +137,9 @@ export async function getPostDetailController(
   });
 
   if (result.isFailure) {
-    return NextResponse.json({ error: result.getError() }, { status: 404 });
+    const error = result.getError();
+    const status = error === "Post not found" ? 404 : 500;
+    return NextResponse.json({ error }, { status });
   }
 
   return NextResponse.json(result.getValue());

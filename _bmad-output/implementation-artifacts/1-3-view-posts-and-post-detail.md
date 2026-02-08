@@ -1,6 +1,6 @@
 # Story 1.3: View Posts & Post Detail
 
-Status: review
+Status: done
 
 ## Story
 
@@ -155,6 +155,25 @@ Claude Opus 4.6
 - Access control: private posts from other users return "Post not found" (404 not 403)
 - Rich text rendered with `dangerouslySetInnerHTML` + Tailwind prose classes (content sanitized on write in Story 1.2)
 - Content preview in list: HTML stripped client-side, truncated to 150 chars
+
+### Code Review (AI) — 2026-02-08
+
+**Reviewer:** Claude Opus 4.6 (adversarial code review)
+
+**Issues Found:** 3 High, 3 Medium, 2 Low — **5 fixed, 1 accepted, 2 low deferred**
+
+**Fixed:**
+- H1/H3: Added NaN/bounds validation for `page`/`limit` query params in `getUserPostsController` (NaN, negative, >100 now fall back to defaults)
+- H2: Eliminated duplicate `getPostDetailOutputDtoSchema` — now reuses `postDtoSchema` from `get-user-posts.dto.ts`
+- M1: Replaced `<a href>` with `<Link>` from `next/link` in `posts-list.tsx` and `post-detail.tsx` for client-side navigation
+- M3: `getPostDetailController` now returns 500 for infrastructure errors and 404 only for "Post not found"
+
+**Accepted:**
+- M2: Duplicate `createMockPost` test helpers — accepted for test isolation (different override signatures per test file)
+
+**Deferred (LOW):**
+- L1: No sort-order assertion in tests (repo handles ordering)
+- L2: No page metadata exports (cosmetic)
 
 ### File List
 
