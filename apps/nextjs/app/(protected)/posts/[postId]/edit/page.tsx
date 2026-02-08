@@ -1,7 +1,7 @@
 import { requireAuth } from "@/adapters/guards/auth.guard";
-import { PostDetail } from "./_components/post-detail";
+import { EditPostForm } from "./_components/edit-post-form";
 
-export default async function PostDetailPage({
+export default async function EditPostPage({
   params,
 }: {
   params: Promise<{ postId: string }>;
@@ -11,7 +11,8 @@ export default async function PostDetailPage({
 
   return (
     <div className="mx-auto max-w-2xl p-4">
-      <PostDetail postId={postId} currentUserId={session.user.id} />
+      <h1 className="mb-6 text-2xl font-bold">Edit Post</h1>
+      <EditPostForm postId={postId} currentUserId={session.user.id} />
     </div>
   );
 }

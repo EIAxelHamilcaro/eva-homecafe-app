@@ -8,8 +8,12 @@ import type { IGetJournalEntriesOutputDto } from "@/application/dto/journal/get-
 import type { IGetStreakOutputDto } from "@/application/dto/journal/get-streak.dto";
 import type { ICreatePostOutputDto } from "@/application/dto/post/create-post.dto";
 import { createPostInputDtoSchema } from "@/application/dto/post/create-post.dto";
+import type { IDeletePostOutputDto } from "@/application/dto/post/delete-post.dto";
+import { deletePostInputDtoSchema } from "@/application/dto/post/delete-post.dto";
 import type { IGetPostDetailOutputDto } from "@/application/dto/post/get-post-detail.dto";
 import type { IGetUserPostsOutputDto } from "@/application/dto/post/get-user-posts.dto";
+import type { IUpdatePostOutputDto } from "@/application/dto/post/update-post.dto";
+import { updatePostInputDtoSchema } from "@/application/dto/post/update-post.dto";
 import { getInjection } from "@/common/di/container";
 
 const ALLOWED_TAGS = [
@@ -144,6 +148,98 @@ export async function getPostDetailController(
     const error = result.getError();
     const status = error === "Post not found" ? 404 : 500;
     return NextResponse.json({ error }, { status });
+  }
+
+  return NextResponse.json(result.getValue());
+}
+
+export async function updatePostController(
+  request: Request,
+  postId: string,
+): Promise<NextResponse<IUpdatePostOutputDto | { error: string }>> {
+  const session = await getAuthenticatedUser(request);
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  let json: unknown;
+  try {
+    json = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
+
+  const body = json as Record<string, unknown>;
+  if (typeof body.content === "string") {
+    body.content = sanitizeHtml(body.content, {
+      allowedTags: ALLOWED_TAGS,
+      allowedAttributes: {},
+    });
+  }
+
+  const parsed = updatePostInputDtoSchema.safeParse({
+    ...body,
+    postId,
+    userId: session.user.id,
+  });
+
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: parsed.error.issues[0]?.message ?? "Invalid input" },
+      { status: 400 },
+    );
+  }
+
+  const useCase = getInjection("UpdatePostUseCase");
+  const result = await useCase.execute(parsed.data);
+
+  if (result.isFailure) {
+    const error = result.getError();
+    if (error === "Forbidden") {
+      return NextResponse.json({ error }, { status: 403 });
+    }
+    if (error === "Post not found") {
+      return NextResponse.json({ error }, { status: 404 });
+    }
+    return NextResponse.json({ error }, { status: 500 });
+  }
+
+  return NextResponse.json(result.getValue());
+}
+
+export async function deletePostController(
+  request: Request,
+  postId: string,
+): Promise<NextResponse<IDeletePostOutputDto | { error: string }>> {
+  const session = await getAuthenticatedUser(request);
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const parsed = deletePostInputDtoSchema.safeParse({
+    postId,
+    userId: session.user.id,
+  });
+
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: parsed.error.issues[0]?.message ?? "Invalid input" },
+      { status: 400 },
+    );
+  }
+
+  const useCase = getInjection("DeletePostUseCase");
+  const result = await useCase.execute(parsed.data);
+
+  if (result.isFailure) {
+    const error = result.getError();
+    if (error === "Forbidden") {
+      return NextResponse.json({ error }, { status: 403 });
+    }
+    if (error === "Post not found") {
+      return NextResponse.json({ error }, { status: 404 });
+    }
+    return NextResponse.json({ error }, { status: 500 });
   }
 
   return NextResponse.json(result.getValue());

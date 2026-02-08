@@ -45,7 +45,7 @@ development_status:
   1-2-create-a-post: done
   1-3-view-posts-and-post-detail: done
   1-4-journal-view-and-streak-counter: done
-  1-5-edit-and-delete-posts: backlog
+  1-5-edit-and-delete-posts: done
   epic-1-retrospective: optional
 
   epic-2: backlog
