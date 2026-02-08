@@ -1,11 +1,16 @@
 import { match } from "@packages/ddd-kit";
 import { NextResponse } from "next/server";
+import { getChronology } from "@/adapters/queries/chronology.query";
 import type { ICreateBoardOutputDto } from "@/application/dto/board/create-board.dto";
 import { createBoardInputDtoSchema } from "@/application/dto/board/create-board.dto";
 import type { IDeleteBoardOutputDto } from "@/application/dto/board/delete-board.dto";
 import { deleteBoardInputDtoSchema } from "@/application/dto/board/delete-board.dto";
 import type { IGetBoardsOutputDto } from "@/application/dto/board/get-boards.dto";
 import { getBoardsInputDtoSchema } from "@/application/dto/board/get-boards.dto";
+import {
+  getChronologyInputDtoSchema,
+  type IGetChronologyOutputDto,
+} from "@/application/dto/board/get-chronology.dto";
 import type { IUpdateBoardOutputDto } from "@/application/dto/board/update-board.dto";
 import { updateBoardInputDtoSchema } from "@/application/dto/board/update-board.dto";
 import type { IGetSessionOutputDto } from "@/application/dto/get-session.dto";
@@ -186,4 +191,38 @@ export async function deleteBoardController(
   }
 
   return NextResponse.json(result.getValue());
+}
+
+export async function getChronologyController(
+  request: Request,
+): Promise<NextResponse<IGetChronologyOutputDto | { error: string }>> {
+  const session = await getAuthenticatedUser(request);
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const url = new URL(request.url);
+  const month = url.searchParams.get("month");
+
+  const parsed = getChronologyInputDtoSchema.safeParse({
+    userId: session.user.id,
+    month: month || undefined,
+  });
+
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: parsed.error.issues[0]?.message ?? "Invalid input" },
+      { status: 400 },
+    );
+  }
+
+  try {
+    const result = await getChronology(parsed.data.userId, parsed.data.month);
+    return NextResponse.json(result);
+  } catch {
+    return NextResponse.json(
+      { error: "Failed to load chronology" },
+      { status: 500 },
+    );
+  }
 }

@@ -6,6 +6,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@packages/ui/components/ui/tabs";
+import { ChronologyView } from "./_components/chronology-view";
 import { KanbanListView } from "./_components/kanban-list-view";
 import { TodoListView } from "./_components/todo-list-view";
 
@@ -17,9 +18,7 @@ export default function OrganizationPage() {
         <TabsList className="mb-4">
           <TabsTrigger value="todo">To-do</TabsTrigger>
           <TabsTrigger value="kanban">Kanban</TabsTrigger>
-          <TabsTrigger value="chronology" disabled>
-            Chronology
-          </TabsTrigger>
+          <TabsTrigger value="chronology">Chronology</TabsTrigger>
         </TabsList>
         <TabsContent value="todo">
           <div className="mx-auto max-w-2xl">
@@ -30,7 +29,7 @@ export default function OrganizationPage() {
           <KanbanListView />
         </TabsContent>
         <TabsContent value="chronology">
-          <p className="text-muted-foreground text-sm">Coming soon...</p>
+          <ChronologyView />
         </TabsContent>
       </Tabs>
     </div>
