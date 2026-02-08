@@ -1,3 +1,7 @@
-import { createPostController } from "@/adapters/controllers/post/post.controller";
+import {
+  createPostController,
+  getUserPostsController,
+} from "@/adapters/controllers/post/post.controller";
 
+export const GET = getUserPostsController;
 export const POST = createPostController;

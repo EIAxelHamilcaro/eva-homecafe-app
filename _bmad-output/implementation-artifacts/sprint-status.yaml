@@ -43,7 +43,7 @@ development_status:
   epic-1: in-progress
   1-1-shared-file-upload-infrastructure: done
   1-2-create-a-post: done
-  1-3-view-posts-and-post-detail: backlog
+  1-3-view-posts-and-post-detail: review
   1-4-journal-view-and-streak-counter: backlog
   1-5-edit-and-delete-posts: backlog
   epic-1-retrospective: optional

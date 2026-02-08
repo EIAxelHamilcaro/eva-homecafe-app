@@ -4,6 +4,8 @@ import sanitizeHtml from "sanitize-html";
 import type { IGetSessionOutputDto } from "@/application/dto/get-session.dto";
 import type { ICreatePostOutputDto } from "@/application/dto/post/create-post.dto";
 import { createPostInputDtoSchema } from "@/application/dto/post/create-post.dto";
+import type { IGetPostDetailOutputDto } from "@/application/dto/post/get-post-detail.dto";
+import type { IGetUserPostsOutputDto } from "@/application/dto/post/get-user-posts.dto";
 import { getInjection } from "@/common/di/container";
 
 const ALLOWED_TAGS = [
@@ -89,4 +91,52 @@ export async function createPostController(
   }
 
   return NextResponse.json(result.getValue(), { status: 201 });
+}
+
+export async function getUserPostsController(
+  request: Request,
+): Promise<NextResponse<IGetUserPostsOutputDto | { error: string }>> {
+  const session = await getAuthenticatedUser(request);
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const url = new URL(request.url);
+  const page = url.searchParams.get("page");
+  const limit = url.searchParams.get("limit");
+
+  const useCase = getInjection("GetUserPostsUseCase");
+  const result = await useCase.execute({
+    userId: session.user.id,
+    page: page ? Number.parseInt(page, 10) : undefined,
+    limit: limit ? Number.parseInt(limit, 10) : undefined,
+  });
+
+  if (result.isFailure) {
+    return NextResponse.json({ error: result.getError() }, { status: 500 });
+  }
+
+  return NextResponse.json(result.getValue());
+}
+
+export async function getPostDetailController(
+  request: Request,
+  postId: string,
+): Promise<NextResponse<IGetPostDetailOutputDto | { error: string }>> {
+  const session = await getAuthenticatedUser(request);
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const useCase = getInjection("GetPostDetailUseCase");
+  const result = await useCase.execute({
+    postId,
+    requestingUserId: session.user.id,
+  });
+
+  if (result.isFailure) {
+    return NextResponse.json({ error: result.getError() }, { status: 404 });
+  }
+
+  return NextResponse.json(result.getValue());
 }

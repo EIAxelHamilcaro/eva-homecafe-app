@@ -32,6 +32,8 @@ import type { SendFriendRequestUseCase } from "@/application/use-cases/friend/se
 import type { GetNotificationsUseCase } from "@/application/use-cases/notification/get-notifications.use-case";
 import type { MarkNotificationReadUseCase } from "@/application/use-cases/notification/mark-notification-read.use-case";
 import type { CreatePostUseCase } from "@/application/use-cases/post/create-post.use-case";
+import type { GetPostDetailUseCase } from "@/application/use-cases/post/get-post-detail.use-case";
+import type { GetUserPostsUseCase } from "@/application/use-cases/post/get-user-posts.use-case";
 import type { CreateProfileUseCase } from "@/application/use-cases/profile/create-profile.use-case";
 import type { GetProfileUseCase } from "@/application/use-cases/profile/get-profile.use-case";
 import type { UpdateProfileUseCase } from "@/application/use-cases/profile/update-profile.use-case";
@@ -76,6 +78,8 @@ export const DI_SYMBOLS = {
   GenerateUploadUrlUseCase: Symbol.for("GenerateUploadUrlUseCase"),
   IPostRepository: Symbol.for("IPostRepository"),
   CreatePostUseCase: Symbol.for("CreatePostUseCase"),
+  GetUserPostsUseCase: Symbol.for("GetUserPostsUseCase"),
+  GetPostDetailUseCase: Symbol.for("GetPostDetailUseCase"),
 };
 
 export interface DI_RETURN_TYPES {
@@ -117,4 +121,6 @@ export interface DI_RETURN_TYPES {
   GenerateUploadUrlUseCase: GenerateUploadUrlUseCase;
   IPostRepository: IPostRepository;
   CreatePostUseCase: CreatePostUseCase;
+  GetUserPostsUseCase: GetUserPostsUseCase;
+  GetPostDetailUseCase: GetPostDetailUseCase;
 }
