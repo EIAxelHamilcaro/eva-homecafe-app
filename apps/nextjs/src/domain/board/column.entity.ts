@@ -1,0 +1,63 @@
+import { Entity, Option, Result, UUID } from "@packages/ddd-kit";
+import type { Card } from "./card.entity";
+import { ColumnId } from "./column-id";
+
+export interface IColumnProps {
+  title: string;
+  position: number;
+  cards: Card[];
+  createdAt: Date;
+}
+
+export class Column extends Entity<IColumnProps> {
+  private constructor(props: IColumnProps, id?: UUID<string | number>) {
+    super(props, id);
+  }
+
+  get id(): ColumnId {
+    return ColumnId.create(this._id);
+  }
+
+  addCard(card: Card): void {
+    this._props.cards.push(card);
+  }
+
+  removeCard(cardId: string): Result<void> {
+    const index = this._props.cards.findIndex(
+      (c) => c.id.value.toString() === cardId,
+    );
+    if (index === -1) return Result.fail("Card not found");
+    this._props.cards.splice(index, 1);
+    return Result.ok();
+  }
+
+  findCard(cardId: string): Option<Card> {
+    const card = this._props.cards.find(
+      (c) => c.id.value.toString() === cardId,
+    );
+    return Option.fromNullable(card ?? null);
+  }
+
+  static create(
+    props: {
+      title: string;
+      position: number;
+      cards?: Card[];
+    },
+    id?: UUID<string | number>,
+  ): Column {
+    return new Column(
+      {
+        title: props.title,
+        position: props.position,
+        cards: props.cards ?? [],
+        createdAt: new Date(),
+      },
+      id ?? new UUID(),
+    );
+  }
+
+  static reconstitute(props: IColumnProps, id: ColumnId): Column {
+    return new Column(props, id);
+  }
+}

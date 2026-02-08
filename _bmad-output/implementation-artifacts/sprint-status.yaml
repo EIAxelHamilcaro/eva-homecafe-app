@@ -53,13 +53,13 @@ development_status:
   2-2-react-to-posts-and-view-reactions: done
   epic-2-retrospective: done
 
-  epic-3: in-progress
+  epic-3: done
   3-1-record-daily-mood: done
   3-2-view-mood-history-and-charts: done
-  epic-3-retrospective: optional
+  epic-3-retrospective: done
 
-  epic-4: backlog
-  4-1-create-and-manage-todo-lists: backlog
+  epic-4: in-progress
+  4-1-create-and-manage-todo-lists: done
   4-2-kanban-boards-with-drag-and-drop: backlog
   4-3-chronology-timeline-view: backlog
   epic-4-retrospective: optional

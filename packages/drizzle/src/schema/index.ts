@@ -1,4 +1,5 @@
 export * from "./auth";
+export * from "./board";
 export * from "./chat";
 export * from "./friend";
 export * from "./mood";

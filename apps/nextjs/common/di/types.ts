@@ -1,4 +1,5 @@
 import type { IAuthProvider } from "@/application/ports/auth.service.port";
+import type { IBoardRepository } from "@/application/ports/board-repository.port";
 import type { IConversationRepository } from "@/application/ports/conversation-repository.port";
 import type { IEmailProvider } from "@/application/ports/email.provider.port";
 import type { IFriendRequestRepository } from "@/application/ports/friend-request-repository.port";
@@ -17,6 +18,10 @@ import type { SignInUseCase } from "@/application/use-cases/auth/sign-in.use-cas
 import type { SignOutUseCase } from "@/application/use-cases/auth/sign-out.use-case";
 import type { SignUpUseCase } from "@/application/use-cases/auth/sign-up.use-case";
 import type { VerifyEmailUseCase } from "@/application/use-cases/auth/verify-email.use-case";
+import type { CreateBoardUseCase } from "@/application/use-cases/board/create-board.use-case";
+import type { DeleteBoardUseCase } from "@/application/use-cases/board/delete-board.use-case";
+import type { GetUserBoardsUseCase } from "@/application/use-cases/board/get-user-boards.use-case";
+import type { UpdateBoardUseCase } from "@/application/use-cases/board/update-board.use-case";
 import type { AddReactionUseCase } from "@/application/use-cases/chat/add-reaction.use-case";
 import type { CreateConversationUseCase } from "@/application/use-cases/chat/create-conversation.use-case";
 import type { GetConversationsUseCase } from "@/application/use-cases/chat/get-conversations.use-case";
@@ -47,6 +52,7 @@ import type { GenerateUploadUrlUseCase } from "@/application/use-cases/upload/ge
 export const DI_SYMBOLS = {
   IUserRepository: Symbol.for("IUserRepository"),
   IAuthProvider: Symbol.for("IAuthProvider"),
+  IBoardRepository: Symbol.for("IBoardRepository"),
   IEmailProvider: Symbol.for("IEmailProvider"),
   IConversationRepository: Symbol.for("IConversationRepository"),
   IMessageRepository: Symbol.for("IMessageRepository"),
@@ -80,6 +86,10 @@ export const DI_SYMBOLS = {
   AcceptInviteLinkUseCase: Symbol.for("AcceptInviteLinkUseCase"),
   GetNotificationsUseCase: Symbol.for("GetNotificationsUseCase"),
   MarkNotificationReadUseCase: Symbol.for("MarkNotificationReadUseCase"),
+  CreateBoardUseCase: Symbol.for("CreateBoardUseCase"),
+  DeleteBoardUseCase: Symbol.for("DeleteBoardUseCase"),
+  GetUserBoardsUseCase: Symbol.for("GetUserBoardsUseCase"),
+  UpdateBoardUseCase: Symbol.for("UpdateBoardUseCase"),
   GenerateUploadUrlUseCase: Symbol.for("GenerateUploadUrlUseCase"),
   IMoodRepository: Symbol.for("IMoodRepository"),
   RecordMoodUseCase: Symbol.for("RecordMoodUseCase"),
@@ -95,6 +105,7 @@ export const DI_SYMBOLS = {
 export interface DI_RETURN_TYPES {
   IUserRepository: IUserRepository;
   IAuthProvider: IAuthProvider;
+  IBoardRepository: IBoardRepository;
   IEmailProvider: IEmailProvider;
   IConversationRepository: IConversationRepository;
   IMessageRepository: IMessageRepository;
@@ -128,6 +139,10 @@ export interface DI_RETURN_TYPES {
   AcceptInviteLinkUseCase: AcceptInviteLinkUseCase;
   GetNotificationsUseCase: GetNotificationsUseCase;
   MarkNotificationReadUseCase: MarkNotificationReadUseCase;
+  CreateBoardUseCase: CreateBoardUseCase;
+  DeleteBoardUseCase: DeleteBoardUseCase;
+  GetUserBoardsUseCase: GetUserBoardsUseCase;
+  UpdateBoardUseCase: UpdateBoardUseCase;
   GenerateUploadUrlUseCase: GenerateUploadUrlUseCase;
   IMoodRepository: IMoodRepository;
   RecordMoodUseCase: RecordMoodUseCase;
