@@ -4,11 +4,13 @@ import { createChatModule } from "./modules/chat.module";
 import { createFriendModule } from "./modules/friend.module";
 import { createNotificationModule } from "./modules/notification.module";
 import { createProfileModule } from "./modules/profile.module";
+import { createUploadModule } from "./modules/upload.module";
 import { type DI_RETURN_TYPES, DI_SYMBOLS } from "./types";
 
 const ApplicationContainer = createContainer();
 
 ApplicationContainer.load(Symbol("AuthModule"), createAuthModule());
+ApplicationContainer.load(Symbol("UploadModule"), createUploadModule());
 ApplicationContainer.load(Symbol("ChatModule"), createChatModule());
 ApplicationContainer.load(Symbol("FriendModule"), createFriendModule());
 ApplicationContainer.load(

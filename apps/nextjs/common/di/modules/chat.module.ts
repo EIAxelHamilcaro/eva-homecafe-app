@@ -1,7 +1,6 @@
 import { createModule } from "@evyweb/ioctopus";
 import { DrizzleConversationRepository } from "@/adapters/repositories/conversation.repository";
 import { DrizzleMessageRepository } from "@/adapters/repositories/message.repository";
-import { LocalStorageService } from "@/adapters/services/storage/local-storage.service";
 import { AddReactionUseCase } from "@/application/use-cases/chat/add-reaction.use-case";
 import { CreateConversationUseCase } from "@/application/use-cases/chat/create-conversation.use-case";
 import { GetConversationsUseCase } from "@/application/use-cases/chat/get-conversations.use-case";
@@ -20,7 +19,6 @@ export const createChatModule = () => {
   chatModule
     .bind(DI_SYMBOLS.IMessageRepository)
     .toClass(DrizzleMessageRepository);
-  chatModule.bind(DI_SYMBOLS.IStorageProvider).toClass(LocalStorageService);
 
   chatModule
     .bind(DI_SYMBOLS.GetConversationsUseCase)

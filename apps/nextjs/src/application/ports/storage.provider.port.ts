@@ -15,8 +15,25 @@ export interface IUploadFileOutput {
   size: number;
 }
 
+export interface IPresignedUrlInput {
+  key: string;
+  mimeType: string;
+  size: number;
+  expiresIn?: number;
+}
+
+export interface IPresignedUrlOutput {
+  uploadUrl: string;
+  fileUrl: string;
+  key: string;
+  expiresAt: Date;
+}
+
 export interface IStorageProvider {
   upload(input: IUploadFileInput): Promise<Result<IUploadFileOutput>>;
   delete(fileId: string): Promise<Result<void>>;
   getUrl(fileId: string): Promise<Result<string>>;
+  generatePresignedUploadUrl(
+    input: IPresignedUrlInput,
+  ): Promise<Result<IPresignedUrlOutput>>;
 }

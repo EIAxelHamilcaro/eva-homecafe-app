@@ -3,6 +3,8 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { Result } from "@packages/ddd-kit";
 import type {
+  IPresignedUrlInput,
+  IPresignedUrlOutput,
   IStorageProvider,
   IUploadFileInput,
   IUploadFileOutput,
@@ -67,6 +69,21 @@ export class LocalStorageService implements IStorageProvider {
     } catch (error) {
       return Result.fail(`Failed to get file URL: ${error}`);
     }
+  }
+
+  async generatePresignedUploadUrl(
+    input: IPresignedUrlInput,
+  ): Promise<Result<IPresignedUrlOutput>> {
+    const expiresIn = input.expiresIn ?? 900;
+    const expiresAt = new Date(Date.now() + expiresIn * 1000);
+    const fileUrl = `/uploads/${input.key}`;
+
+    return Result.ok({
+      uploadUrl: `http://localhost:3000${fileUrl}`,
+      fileUrl,
+      key: input.key,
+      expiresAt,
+    });
   }
 
   private async findFileById(fileId: string): Promise<string[]> {

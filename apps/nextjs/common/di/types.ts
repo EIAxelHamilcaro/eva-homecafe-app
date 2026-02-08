@@ -33,6 +33,7 @@ import type { MarkNotificationReadUseCase } from "@/application/use-cases/notifi
 import type { CreateProfileUseCase } from "@/application/use-cases/profile/create-profile.use-case";
 import type { GetProfileUseCase } from "@/application/use-cases/profile/get-profile.use-case";
 import type { UpdateProfileUseCase } from "@/application/use-cases/profile/update-profile.use-case";
+import type { GenerateUploadUrlUseCase } from "@/application/use-cases/upload/generate-upload-url.use-case";
 
 export const DI_SYMBOLS = {
   IUserRepository: Symbol.for("IUserRepository"),
@@ -70,6 +71,7 @@ export const DI_SYMBOLS = {
   AcceptInviteLinkUseCase: Symbol.for("AcceptInviteLinkUseCase"),
   GetNotificationsUseCase: Symbol.for("GetNotificationsUseCase"),
   MarkNotificationReadUseCase: Symbol.for("MarkNotificationReadUseCase"),
+  GenerateUploadUrlUseCase: Symbol.for("GenerateUploadUrlUseCase"),
 };
 
 export interface DI_RETURN_TYPES {
@@ -108,4 +110,5 @@ export interface DI_RETURN_TYPES {
   AcceptInviteLinkUseCase: AcceptInviteLinkUseCase;
   GetNotificationsUseCase: GetNotificationsUseCase;
   MarkNotificationReadUseCase: MarkNotificationReadUseCase;
+  GenerateUploadUrlUseCase: GenerateUploadUrlUseCase;
 }
