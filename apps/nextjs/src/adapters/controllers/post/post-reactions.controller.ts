@@ -1,5 +1,6 @@
 import { match } from "@packages/ddd-kit";
 import { NextResponse } from "next/server";
+import { canUserAccessPost } from "@/adapters/queries/post-access.query";
 import type { IGetPostReactionsOutputDto } from "@/adapters/queries/post-reactions.query";
 import { getPostReactions } from "@/adapters/queries/post-reactions.query";
 import type { IGetSessionOutputDto } from "@/application/dto/get-session.dto";
@@ -37,6 +38,11 @@ export async function togglePostReactionController(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const access = await canUserAccessPost(session.user.id, postId);
+  if (!access.canAccess) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   const json = await request.json();
   const parsed = togglePostReactionInputDtoSchema.safeParse({
     postId,
@@ -72,6 +78,11 @@ export async function getPostReactionsController(
   const session = await getAuthenticatedUser(request);
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const access = await canUserAccessPost(session.user.id, postId);
+  if (!access.canAccess) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   const reactions = await getPostReactions(postId);

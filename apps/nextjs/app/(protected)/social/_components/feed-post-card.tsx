@@ -43,7 +43,7 @@ interface FeedPostCardProps {
 export function FeedPostCard({ post }: FeedPostCardProps) {
   const displayName = post.author.displayName ?? post.author.name;
   const [reactionCount, setReactionCount] = useState(post.reactionCount);
-  const [hasReacted, setHasReacted] = useState(false);
+  const [hasReacted, setHasReacted] = useState(post.hasReacted);
   const [isToggling, setIsToggling] = useState(false);
 
   async function handleReaction(e: React.MouseEvent) {

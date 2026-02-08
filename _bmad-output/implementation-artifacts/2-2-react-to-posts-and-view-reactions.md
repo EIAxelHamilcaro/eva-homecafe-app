@@ -1,6 +1,6 @@
 # Story 2.2: React to Posts & View Reactions
 
-Status: review
+Status: done
 
 ## Story
 
@@ -293,9 +293,19 @@ Claude Opus 4.6
 - All 11 tasks completed successfully
 - 166 tests passing (11 new tests for TogglePostReactionUseCase)
 - 0 TypeScript errors
-- 0 new Biome errors (39 pre-existing warnings unchanged)
+- 0 new Biome errors (40 pre-existing warnings unchanged)
 - Fixed existing tests (get-post-detail, get-user-posts) missing `reactions` in `Post.reconstitute()` after adding `reactions` to `IPostProps`
 - Updated friend-feed.query test to support SQL subquery for reaction count (`.as()` mock)
+
+### Code Review Fixes Applied
+
+5 issues fixed (1 HIGH, 4 MEDIUM):
+
+1. **[HIGH] Access control on reactions**: Added `canUserAccessPost()` query helper that checks post existence, ownership, privacy, and friendship status. Both `togglePostReactionController` and `getPostReactionsController` now return 403 Forbidden if user cannot access the post.
+2. **[MEDIUM] hasReacted in feed**: Added `hasReacted` boolean to `IFeedPostDto` schema and `getFriendFeed` query via SQL subquery `(SELECT count(*) > 0 FROM post_reaction WHERE ... AND user_id = $userId)`. `FeedPostCard` now initializes `hasReacted` from the DTO instead of hardcoded `false`.
+3. **[MEDIUM] Dead PostReactionType class**: Removed unused `PostReactionType` class and its dependencies (`ValueObject`, `Result`, `z`). Kept `POST_REACTION_EMOJIS` const, `PostReactionEmoji` type, and refactored `isValidEmoji()` as standalone function.
+4. **[MEDIUM] Transaction in repo update**: Wrapped post update + reaction insert/delete in `db.transaction()` when reaction changes exist and no external transaction is provided.
+5. **[MEDIUM] Access control on GET reactions**: Same `canUserAccessPost()` check applied to `getPostReactionsController`.
 
 ### File List
 
@@ -308,6 +318,7 @@ Claude Opus 4.6
 - `apps/nextjs/src/application/use-cases/post/toggle-post-reaction.use-case.ts`
 - `apps/nextjs/src/application/use-cases/post/__tests__/toggle-post-reaction.use-case.test.ts`
 - `apps/nextjs/src/adapters/queries/post-reactions.query.ts`
+- `apps/nextjs/src/adapters/queries/post-access.query.ts` *(code review fix)*
 - `apps/nextjs/src/adapters/controllers/post/post-reactions.controller.ts`
 - `apps/nextjs/app/api/v1/posts/[postId]/reactions/route.ts`
 
@@ -324,4 +335,5 @@ Claude Opus 4.6
 - `apps/nextjs/app/(protected)/posts/[postId]/_components/post-detail.tsx` — Reaction display + toggle
 - `apps/nextjs/src/application/use-cases/post/__tests__/get-post-detail.use-case.test.ts` — Added reactions to reconstitute
 - `apps/nextjs/src/application/use-cases/post/__tests__/get-user-posts.use-case.test.ts` — Added reactions to reconstitute
-- `apps/nextjs/src/adapters/queries/__tests__/friend-feed.query.test.ts` — Updated sql mock + reactionCount in records
+- `apps/nextjs/src/adapters/queries/__tests__/friend-feed.query.test.ts` — Updated sql mock + reactionCount + hasReacted in records
+- `apps/nextjs/src/application/dto/feed/get-friend-feed.dto.ts` — Added `hasReacted` field *(code review fix)*

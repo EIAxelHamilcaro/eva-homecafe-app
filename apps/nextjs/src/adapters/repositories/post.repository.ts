@@ -49,43 +49,56 @@ export class DrizzlePostRepository implements IPostRepository {
 
   async update(entity: Post, trx?: Transaction): Promise<Result<Post>> {
     try {
-      const database = this.getDb(trx);
       const data = postToPersistence(entity);
       const postId = String(entity.id.value);
-
-      await database
-        .update(postTable)
-        .set({
-          content: data.content,
-          isPrivate: data.isPrivate,
-          images: data.images,
-          updatedAt: data.updatedAt ?? new Date(),
-        })
-        .where(eq(postTable.id, postId));
-
       const reactions = entity.get("reactions");
       const newReactions = reactions.getNewItems();
       const removedReactions = reactions.getRemovedItems();
 
-      for (const reaction of newReactions) {
-        await database.insert(postReactionTable).values({
-          postId,
-          userId: reaction.userId,
-          emoji: reaction.emoji,
-          createdAt: reaction.createdAt,
-        });
-      }
+      const hasReactionChanges =
+        newReactions.length > 0 || removedReactions.length > 0;
 
-      for (const reaction of removedReactions) {
+      const performUpdate = async (database: DbClient | Transaction) => {
         await database
-          .delete(postReactionTable)
-          .where(
-            and(
-              eq(postReactionTable.postId, postId),
-              eq(postReactionTable.userId, reaction.userId),
-              eq(postReactionTable.emoji, reaction.emoji),
-            ),
-          );
+          .update(postTable)
+          .set({
+            content: data.content,
+            isPrivate: data.isPrivate,
+            images: data.images,
+            updatedAt: data.updatedAt ?? new Date(),
+          })
+          .where(eq(postTable.id, postId));
+
+        for (const reaction of newReactions) {
+          await database.insert(postReactionTable).values({
+            postId,
+            userId: reaction.userId,
+            emoji: reaction.emoji,
+            createdAt: reaction.createdAt,
+          });
+        }
+
+        for (const reaction of removedReactions) {
+          await database
+            .delete(postReactionTable)
+            .where(
+              and(
+                eq(postReactionTable.postId, postId),
+                eq(postReactionTable.userId, reaction.userId),
+                eq(postReactionTable.emoji, reaction.emoji),
+              ),
+            );
+        }
+      };
+
+      if (trx) {
+        await performUpdate(trx);
+      } else if (hasReactionChanges) {
+        await db.transaction(async (tx) => {
+          await performUpdate(tx);
+        });
+      } else {
+        await performUpdate(db);
       }
 
       return Result.ok(entity);

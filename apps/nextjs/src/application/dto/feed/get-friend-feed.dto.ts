@@ -17,6 +17,7 @@ export const feedPostDtoSchema = z.object({
   updatedAt: z.string().nullable(),
   author: feedPostAuthorDtoSchema,
   reactionCount: z.number().int().nonnegative(),
+  hasReacted: z.boolean(),
 });
 
 export type IFeedPostDto = z.infer<typeof feedPostDtoSchema>;

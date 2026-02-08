@@ -39,7 +39,7 @@ vi.mock("drizzle-orm", () => ({
   sql: (strings: TemplateStringsArray, ...values: unknown[]) => ({
     strings,
     values,
-    as: (_alias: string) => "reactionCount",
+    as: (alias: string) => alias,
   }),
 }));
 
@@ -133,6 +133,7 @@ describe("getFriendFeed", () => {
         displayName: "Alice D.",
         avatarUrl: "https://example.com/avatar.jpg",
         reactionCount: 0,
+        hasReacted: false,
       },
     ];
 
@@ -165,6 +166,7 @@ describe("getFriendFeed", () => {
       "https://example.com/avatar.jpg",
     );
     expect(result.data[0]!.reactionCount).toBe(0);
+    expect(result.data[0]!.hasReacted).toBe(false);
   });
 
   it("should extract friend IDs correctly from both sender and receiver positions", async () => {
@@ -207,6 +209,7 @@ describe("getFriendFeed", () => {
         displayName: null,
         avatarUrl: null,
         reactionCount: 0,
+        hasReacted: false,
       },
     ];
 
@@ -285,6 +288,7 @@ describe("getFriendFeed", () => {
         displayName: "Charlie C.",
         avatarUrl: null,
         reactionCount: 0,
+        hasReacted: false,
       },
     ];
 
