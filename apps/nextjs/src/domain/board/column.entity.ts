@@ -38,6 +38,19 @@ export class Column extends Entity<IColumnProps> {
     return Option.fromNullable(card ?? null);
   }
 
+  insertCardAtPosition(card: Card, position: number): void {
+    card.updatePosition(position);
+    this._props.cards.push(card);
+    this._props.cards.sort((a, b) => a.get("position") - b.get("position"));
+    this.recalculatePositions();
+  }
+
+  recalculatePositions(): void {
+    this._props.cards.forEach((card, index) => {
+      card.updatePosition(index);
+    });
+  }
+
   static create(
     props: {
       title: string;

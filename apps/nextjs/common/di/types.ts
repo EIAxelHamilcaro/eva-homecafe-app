@@ -18,10 +18,15 @@ import type { SignInUseCase } from "@/application/use-cases/auth/sign-in.use-cas
 import type { SignOutUseCase } from "@/application/use-cases/auth/sign-out.use-case";
 import type { SignUpUseCase } from "@/application/use-cases/auth/sign-up.use-case";
 import type { VerifyEmailUseCase } from "@/application/use-cases/auth/verify-email.use-case";
+import type { AddCardToColumnUseCase } from "@/application/use-cases/board/add-card-to-column.use-case";
+import type { AddColumnUseCase } from "@/application/use-cases/board/add-column.use-case";
 import type { CreateBoardUseCase } from "@/application/use-cases/board/create-board.use-case";
+import type { CreateKanbanBoardUseCase } from "@/application/use-cases/board/create-kanban-board.use-case";
 import type { DeleteBoardUseCase } from "@/application/use-cases/board/delete-board.use-case";
 import type { GetUserBoardsUseCase } from "@/application/use-cases/board/get-user-boards.use-case";
+import type { MoveCardUseCase } from "@/application/use-cases/board/move-card.use-case";
 import type { UpdateBoardUseCase } from "@/application/use-cases/board/update-board.use-case";
+import type { UpdateCardUseCase } from "@/application/use-cases/board/update-card.use-case";
 import type { AddReactionUseCase } from "@/application/use-cases/chat/add-reaction.use-case";
 import type { CreateConversationUseCase } from "@/application/use-cases/chat/create-conversation.use-case";
 import type { GetConversationsUseCase } from "@/application/use-cases/chat/get-conversations.use-case";
@@ -86,10 +91,15 @@ export const DI_SYMBOLS = {
   AcceptInviteLinkUseCase: Symbol.for("AcceptInviteLinkUseCase"),
   GetNotificationsUseCase: Symbol.for("GetNotificationsUseCase"),
   MarkNotificationReadUseCase: Symbol.for("MarkNotificationReadUseCase"),
+  AddCardToColumnUseCase: Symbol.for("AddCardToColumnUseCase"),
+  AddColumnUseCase: Symbol.for("AddColumnUseCase"),
   CreateBoardUseCase: Symbol.for("CreateBoardUseCase"),
+  CreateKanbanBoardUseCase: Symbol.for("CreateKanbanBoardUseCase"),
   DeleteBoardUseCase: Symbol.for("DeleteBoardUseCase"),
   GetUserBoardsUseCase: Symbol.for("GetUserBoardsUseCase"),
+  MoveCardUseCase: Symbol.for("MoveCardUseCase"),
   UpdateBoardUseCase: Symbol.for("UpdateBoardUseCase"),
+  UpdateCardUseCase: Symbol.for("UpdateCardUseCase"),
   GenerateUploadUrlUseCase: Symbol.for("GenerateUploadUrlUseCase"),
   IMoodRepository: Symbol.for("IMoodRepository"),
   RecordMoodUseCase: Symbol.for("RecordMoodUseCase"),
@@ -139,10 +149,15 @@ export interface DI_RETURN_TYPES {
   AcceptInviteLinkUseCase: AcceptInviteLinkUseCase;
   GetNotificationsUseCase: GetNotificationsUseCase;
   MarkNotificationReadUseCase: MarkNotificationReadUseCase;
+  AddCardToColumnUseCase: AddCardToColumnUseCase;
+  AddColumnUseCase: AddColumnUseCase;
   CreateBoardUseCase: CreateBoardUseCase;
+  CreateKanbanBoardUseCase: CreateKanbanBoardUseCase;
   DeleteBoardUseCase: DeleteBoardUseCase;
   GetUserBoardsUseCase: GetUserBoardsUseCase;
+  MoveCardUseCase: MoveCardUseCase;
   UpdateBoardUseCase: UpdateBoardUseCase;
+  UpdateCardUseCase: UpdateCardUseCase;
   GenerateUploadUrlUseCase: GenerateUploadUrlUseCase;
   IMoodRepository: IMoodRepository;
   RecordMoodUseCase: RecordMoodUseCase;

@@ -14,8 +14,17 @@ export function boardToDto(board: Board): IBoardDto {
       cards: col.get("cards").map((c) => ({
         id: c.id.value.toString(),
         title: c.get("title").value,
+        description: match<string, string | null>(c.get("description"), {
+          Some: (desc) => desc,
+          None: () => null,
+        }),
         isCompleted: c.get("isCompleted"),
         position: c.get("position"),
+        progress: c.get("progress"),
+        dueDate: match<string, string | null>(c.get("dueDate"), {
+          Some: (date) => date,
+          None: () => null,
+        }),
       })),
     })),
     createdAt: board.get("createdAt").toISOString(),

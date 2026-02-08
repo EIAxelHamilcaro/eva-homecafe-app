@@ -1,5 +1,6 @@
-import { Entity, Option, UUID } from "@packages/ddd-kit";
+import { Entity, Option, Result, UUID } from "@packages/ddd-kit";
 import { CardId } from "./card-id";
+import type { CardProgress } from "./value-objects/card-progress.vo";
 import type { CardTitle } from "./value-objects/card-title.vo";
 
 export interface ICardProps {
@@ -32,11 +33,33 @@ export class Card extends Entity<ICardProps> {
     this._props.updatedAt = Option.some(new Date());
   }
 
+  updateDescription(description: string | undefined): void {
+    this._props.description = Option.fromNullable(description ?? null);
+    this._props.updatedAt = Option.some(new Date());
+  }
+
+  updateProgress(progress: CardProgress): Result<void> {
+    this._props.progress = progress.value;
+    this._props.updatedAt = Option.some(new Date());
+    return Result.ok();
+  }
+
+  updateDueDate(dueDate: string | undefined): void {
+    this._props.dueDate = Option.fromNullable(dueDate ?? null);
+    this._props.updatedAt = Option.some(new Date());
+  }
+
+  updatePosition(position: number): void {
+    this._props.position = position;
+  }
+
   static create(
     props: {
       title: CardTitle;
       description?: string;
       position: number;
+      progress?: number;
+      dueDate?: string;
     },
     id?: UUID<string | number>,
   ): Card {
@@ -46,8 +69,8 @@ export class Card extends Entity<ICardProps> {
         description: Option.fromNullable(props.description ?? null),
         isCompleted: false,
         position: props.position,
-        progress: 0,
-        dueDate: Option.none(),
+        progress: props.progress ?? 0,
+        dueDate: Option.fromNullable(props.dueDate ?? null),
         createdAt: new Date(),
         updatedAt: Option.none(),
       },

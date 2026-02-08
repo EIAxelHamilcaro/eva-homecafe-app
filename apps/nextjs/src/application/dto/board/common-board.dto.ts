@@ -4,8 +4,11 @@ import { boardTypeValues } from "@/domain/board/value-objects/board-type.vo";
 export const cardDtoSchema = z.object({
   id: z.string(),
   title: z.string(),
+  description: z.string().nullable(),
   isCompleted: z.boolean(),
   position: z.number(),
+  progress: z.number(),
+  dueDate: z.string().nullable(),
 });
 
 export const columnDtoSchema = z.object({
