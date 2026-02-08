@@ -48,13 +48,13 @@ development_status:
   1-5-edit-and-delete-posts: done
   epic-1-retrospective: done
 
-  epic-2: in-progress
+  epic-2: done
   2-1-browse-friends-public-feed: done
   2-2-react-to-posts-and-view-reactions: done
-  epic-2-retrospective: optional
+  epic-2-retrospective: done
 
-  epic-3: backlog
-  3-1-record-daily-mood: backlog
+  epic-3: in-progress
+  3-1-record-daily-mood: done
   3-2-view-mood-history-and-charts: backlog
   epic-3-retrospective: optional
 

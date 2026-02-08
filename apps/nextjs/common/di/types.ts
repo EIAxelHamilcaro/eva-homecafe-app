@@ -4,6 +4,7 @@ import type { IEmailProvider } from "@/application/ports/email.provider.port";
 import type { IFriendRequestRepository } from "@/application/ports/friend-request-repository.port";
 import type { IInviteTokenRepository } from "@/application/ports/invite-token-repository.port";
 import type { IMessageRepository } from "@/application/ports/message-repository.port";
+import type { IMoodRepository } from "@/application/ports/mood-repository.port";
 import type { INotificationRepository } from "@/application/ports/notification-repository.port";
 import type { IPostRepository } from "@/application/ports/post-repository.port";
 import type { IProfileRepository } from "@/application/ports/profile-repository.port";
@@ -29,6 +30,7 @@ import type { GetInviteLinkUseCase } from "@/application/use-cases/friend/get-in
 import type { GetPendingRequestsUseCase } from "@/application/use-cases/friend/get-pending-requests.use-case";
 import type { RespondFriendRequestUseCase } from "@/application/use-cases/friend/respond-friend-request.use-case";
 import type { SendFriendRequestUseCase } from "@/application/use-cases/friend/send-friend-request.use-case";
+import type { RecordMoodUseCase } from "@/application/use-cases/mood/record-mood.use-case";
 import type { GetNotificationsUseCase } from "@/application/use-cases/notification/get-notifications.use-case";
 import type { MarkNotificationReadUseCase } from "@/application/use-cases/notification/mark-notification-read.use-case";
 import type { CreatePostUseCase } from "@/application/use-cases/post/create-post.use-case";
@@ -79,6 +81,8 @@ export const DI_SYMBOLS = {
   GetNotificationsUseCase: Symbol.for("GetNotificationsUseCase"),
   MarkNotificationReadUseCase: Symbol.for("MarkNotificationReadUseCase"),
   GenerateUploadUrlUseCase: Symbol.for("GenerateUploadUrlUseCase"),
+  IMoodRepository: Symbol.for("IMoodRepository"),
+  RecordMoodUseCase: Symbol.for("RecordMoodUseCase"),
   IPostRepository: Symbol.for("IPostRepository"),
   CreatePostUseCase: Symbol.for("CreatePostUseCase"),
   DeletePostUseCase: Symbol.for("DeletePostUseCase"),
@@ -125,6 +129,8 @@ export interface DI_RETURN_TYPES {
   GetNotificationsUseCase: GetNotificationsUseCase;
   MarkNotificationReadUseCase: MarkNotificationReadUseCase;
   GenerateUploadUrlUseCase: GenerateUploadUrlUseCase;
+  IMoodRepository: IMoodRepository;
+  RecordMoodUseCase: RecordMoodUseCase;
   IPostRepository: IPostRepository;
   CreatePostUseCase: CreatePostUseCase;
   DeletePostUseCase: DeletePostUseCase;
