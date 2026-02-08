@@ -1,7 +1,11 @@
 import { match } from "@packages/ddd-kit";
 import { NextResponse } from "next/server";
 import sanitizeHtml from "sanitize-html";
+import { getJournalEntries } from "@/adapters/queries/journal.query";
+import { calculateStreak } from "@/adapters/queries/streak.query";
 import type { IGetSessionOutputDto } from "@/application/dto/get-session.dto";
+import type { IGetJournalEntriesOutputDto } from "@/application/dto/journal/get-journal-entries.dto";
+import type { IGetStreakOutputDto } from "@/application/dto/journal/get-streak.dto";
 import type { ICreatePostOutputDto } from "@/application/dto/post/create-post.dto";
 import { createPostInputDtoSchema } from "@/application/dto/post/create-post.dto";
 import type { IGetPostDetailOutputDto } from "@/application/dto/post/get-post-detail.dto";
@@ -143,4 +147,60 @@ export async function getPostDetailController(
   }
 
   return NextResponse.json(result.getValue());
+}
+
+const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
+
+export async function getJournalEntriesController(
+  request: Request,
+): Promise<NextResponse<IGetJournalEntriesOutputDto | { error: string }>> {
+  const session = await getAuthenticatedUser(request);
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const url = new URL(request.url);
+  const dateRaw = url.searchParams.get("date");
+  const pageRaw = url.searchParams.get("page");
+  const limitRaw = url.searchParams.get("limit");
+
+  const page = pageRaw ? Number.parseInt(pageRaw, 10) : Number.NaN;
+  const limit = limitRaw ? Number.parseInt(limitRaw, 10) : Number.NaN;
+
+  const date = dateRaw && DATE_REGEX.test(dateRaw) ? dateRaw : undefined;
+
+  try {
+    const result = await getJournalEntries(
+      session.user.id,
+      date,
+      page > 0 ? page : undefined,
+      limit > 0 && limit <= 100 ? limit : undefined,
+    );
+
+    return NextResponse.json(result);
+  } catch {
+    return NextResponse.json(
+      { error: "Failed to load journal entries" },
+      { status: 500 },
+    );
+  }
+}
+
+export async function getStreakController(
+  request: Request,
+): Promise<NextResponse<IGetStreakOutputDto | { error: string }>> {
+  const session = await getAuthenticatedUser(request);
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const result = await calculateStreak(session.user.id);
+    return NextResponse.json(result);
+  } catch {
+    return NextResponse.json(
+      { error: "Failed to calculate streak" },
+      { status: 500 },
+    );
+  }
 }

@@ -3,15 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import type { IGetUserPostsOutputDto } from "@/application/dto/post/get-user-posts.dto";
-
-function stripHtml(html: string): string {
-  return html.replace(/<[^>]*>/g, "");
-}
-
-function truncate(text: string, maxLength: number): string {
-  if (text.length <= maxLength) return text;
-  return `${text.slice(0, maxLength)}...`;
-}
+import { stripHtml, truncate } from "@/common/utils/text";
 
 export function PostsList() {
   const [data, setData] = useState<IGetUserPostsOutputDto | null>(null);
