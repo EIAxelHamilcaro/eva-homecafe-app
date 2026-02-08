@@ -39,6 +39,7 @@ vi.mock("drizzle-orm", () => ({
   sql: (strings: TemplateStringsArray, ...values: unknown[]) => ({
     strings,
     values,
+    as: (_alias: string) => "reactionCount",
   }),
 }));
 
@@ -131,6 +132,7 @@ describe("getFriendFeed", () => {
         authorImage: null,
         displayName: "Alice D.",
         avatarUrl: "https://example.com/avatar.jpg",
+        reactionCount: 0,
       },
     ];
 
@@ -204,6 +206,7 @@ describe("getFriendFeed", () => {
         authorImage: "https://example.com/user-image.jpg",
         displayName: null,
         avatarUrl: null,
+        reactionCount: 0,
       },
     ];
 
@@ -281,6 +284,7 @@ describe("getFriendFeed", () => {
         authorImage: null,
         displayName: "Charlie C.",
         avatarUrl: null,
+        reactionCount: 0,
       },
     ];
 

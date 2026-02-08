@@ -55,6 +55,8 @@ export async function getFriendFeed(
     eq(post.isPrivate, false),
   );
 
+  const reactionCountSubquery = sql<number>`(SELECT count(*)::int FROM post_reaction WHERE post_reaction.post_id = ${post.id})`;
+
   const [records, countResult] = await Promise.all([
     db
       .select({
@@ -68,6 +70,7 @@ export async function getFriendFeed(
         authorImage: user.image,
         displayName: profile.displayName,
         avatarUrl: profile.avatarUrl,
+        reactionCount: reactionCountSubquery.as("reactionCount"),
       })
       .from(post)
       .innerJoin(user, eq(post.userId, user.id))
@@ -97,7 +100,7 @@ export async function getFriendFeed(
       displayName: r.displayName ?? null,
       avatarUrl: r.avatarUrl ?? r.authorImage ?? null,
     },
-    reactionCount: 0,
+    reactionCount: r.reactionCount ?? 0,
   }));
 
   return {

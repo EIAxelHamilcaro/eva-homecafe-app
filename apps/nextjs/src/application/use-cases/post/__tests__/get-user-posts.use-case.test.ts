@@ -5,6 +5,7 @@ import type { IPostRepository } from "@/application/ports/post-repository.port";
 import { Post } from "@/domain/post/post.aggregate";
 import { PostId } from "@/domain/post/post-id";
 import { PostContent } from "@/domain/post/value-objects/post-content.vo";
+import { PostReactionsList } from "@/domain/post/watched-lists/post-reactions.list";
 import { GetUserPostsUseCase } from "../get-user-posts.use-case";
 
 function createMockPost(
@@ -19,6 +20,7 @@ function createMockPost(
       content,
       isPrivate: overrides.isPrivate ?? false,
       images: overrides.images ?? [],
+      reactions: PostReactionsList.create([]),
       createdAt: new Date("2026-01-15T10:00:00Z"),
       updatedAt: Option.none(),
     },

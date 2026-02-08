@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import type { IFeedPostDto } from "@/application/dto/feed/get-friend-feed.dto";
 import { stripHtml, truncate } from "@/common/utils/text";
 
@@ -41,6 +42,48 @@ interface FeedPostCardProps {
 
 export function FeedPostCard({ post }: FeedPostCardProps) {
   const displayName = post.author.displayName ?? post.author.name;
+  const [reactionCount, setReactionCount] = useState(post.reactionCount);
+  const [hasReacted, setHasReacted] = useState(false);
+  const [isToggling, setIsToggling] = useState(false);
+
+  async function handleReaction(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isToggling) return;
+
+    setIsToggling(true);
+    const previousCount = reactionCount;
+    const previousHasReacted = hasReacted;
+
+    setHasReacted(!hasReacted);
+    setReactionCount(hasReacted ? reactionCount - 1 : reactionCount + 1);
+
+    try {
+      const res = await fetch(`/api/v1/posts/${post.id}/reactions`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ emoji: "❤️" }),
+      });
+
+      if (!res.ok) {
+        setReactionCount(previousCount);
+        setHasReacted(previousHasReacted);
+      } else {
+        const data = (await res.json()) as { action: "added" | "removed" };
+        setHasReacted(data.action === "added");
+        if (data.action === "added" && previousHasReacted) {
+          setReactionCount(previousCount + 1);
+        } else if (data.action === "removed" && !previousHasReacted) {
+          setReactionCount(previousCount - 1);
+        }
+      }
+    } catch {
+      setReactionCount(previousCount);
+      setHasReacted(previousHasReacted);
+    } finally {
+      setIsToggling(false);
+    }
+  }
 
   return (
     <Link
@@ -90,7 +133,17 @@ export function FeedPostCard({ post }: FeedPostCardProps) {
       )}
 
       <div className="flex items-center gap-2 text-xs text-muted-foreground">
-        <span>{post.reactionCount} reactions</span>
+        <button
+          type="button"
+          onClick={handleReaction}
+          disabled={isToggling}
+          className={`flex items-center gap-1 rounded-full px-2 py-1 transition-colors ${
+            hasReacted ? "bg-red-50 text-red-500" : "hover:bg-muted"
+          }`}
+        >
+          <span>{hasReacted ? "❤️" : "🤍"}</span>
+          <span>{reactionCount}</span>
+        </button>
       </div>
     </Link>
   );

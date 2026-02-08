@@ -3,6 +3,7 @@ import {
   index,
   jsonb,
   pgTable,
+  primaryKey,
   text,
   timestamp,
 } from "drizzle-orm/pg-core";
@@ -23,5 +24,22 @@ export const post = pgTable(
   },
   (table) => [
     index("post_user_id_created_at_idx").on(table.userId, table.createdAt),
+  ],
+);
+
+export const postReaction = pgTable(
+  "post_reaction",
+  {
+    postId: text("post_id")
+      .notNull()
+      .references(() => post.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    emoji: text("emoji").notNull(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.postId, table.userId, table.emoji] }),
   ],
 );

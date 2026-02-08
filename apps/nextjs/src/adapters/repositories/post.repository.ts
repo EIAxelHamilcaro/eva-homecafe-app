@@ -7,6 +7,7 @@ import {
   Result,
 } from "@packages/ddd-kit";
 import {
+  and,
   type DbClient,
   db,
   desc,
@@ -14,7 +15,10 @@ import {
   count as sqlCount,
   type Transaction,
 } from "@packages/drizzle";
-import { post as postTable } from "@packages/drizzle/schema";
+import {
+  postReaction as postReactionTable,
+  post as postTable,
+} from "@packages/drizzle/schema";
 import {
   postToDomain,
   postToPersistence,
@@ -45,8 +49,11 @@ export class DrizzlePostRepository implements IPostRepository {
 
   async update(entity: Post, trx?: Transaction): Promise<Result<Post>> {
     try {
+      const database = this.getDb(trx);
       const data = postToPersistence(entity);
-      await this.getDb(trx)
+      const postId = String(entity.id.value);
+
+      await database
         .update(postTable)
         .set({
           content: data.content,
@@ -54,7 +61,33 @@ export class DrizzlePostRepository implements IPostRepository {
           images: data.images,
           updatedAt: data.updatedAt ?? new Date(),
         })
-        .where(eq(postTable.id, String(entity.id.value)));
+        .where(eq(postTable.id, postId));
+
+      const reactions = entity.get("reactions");
+      const newReactions = reactions.getNewItems();
+      const removedReactions = reactions.getRemovedItems();
+
+      for (const reaction of newReactions) {
+        await database.insert(postReactionTable).values({
+          postId,
+          userId: reaction.userId,
+          emoji: reaction.emoji,
+          createdAt: reaction.createdAt,
+        });
+      }
+
+      for (const reaction of removedReactions) {
+        await database
+          .delete(postReactionTable)
+          .where(
+            and(
+              eq(postReactionTable.postId, postId),
+              eq(postReactionTable.userId, reaction.userId),
+              eq(postReactionTable.emoji, reaction.emoji),
+            ),
+          );
+      }
+
       return Result.ok(entity);
     } catch (error) {
       return Result.fail(`Failed to update post: ${error}`);
@@ -93,6 +126,34 @@ export class DrizzlePostRepository implements IPostRepository {
       return Result.ok(Option.some(postResult.getValue()));
     } catch (error) {
       return Result.fail(`Failed to find post by id: ${error}`);
+    }
+  }
+
+  async findByIdWithReactions(id: PostId): Promise<Result<Option<Post>>> {
+    try {
+      const postId = String(id.value);
+
+      const [postRecords, reactionRecords] = await Promise.all([
+        db.select().from(postTable).where(eq(postTable.id, postId)).limit(1),
+        db
+          .select()
+          .from(postReactionTable)
+          .where(eq(postReactionTable.postId, postId)),
+      ]);
+
+      const record = postRecords[0];
+      if (!record) {
+        return Result.ok(Option.none());
+      }
+
+      const postResult = postToDomain(record, reactionRecords);
+      if (postResult.isFailure) {
+        return Result.fail(postResult.getError());
+      }
+
+      return Result.ok(Option.some(postResult.getValue()));
+    } catch (error) {
+      return Result.fail(`Failed to find post with reactions: ${error}`);
     }
   }
 

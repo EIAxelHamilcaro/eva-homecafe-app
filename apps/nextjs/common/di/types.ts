@@ -35,6 +35,7 @@ import type { CreatePostUseCase } from "@/application/use-cases/post/create-post
 import type { DeletePostUseCase } from "@/application/use-cases/post/delete-post.use-case";
 import type { GetPostDetailUseCase } from "@/application/use-cases/post/get-post-detail.use-case";
 import type { GetUserPostsUseCase } from "@/application/use-cases/post/get-user-posts.use-case";
+import type { TogglePostReactionUseCase } from "@/application/use-cases/post/toggle-post-reaction.use-case";
 import type { UpdatePostUseCase } from "@/application/use-cases/post/update-post.use-case";
 import type { CreateProfileUseCase } from "@/application/use-cases/profile/create-profile.use-case";
 import type { GetProfileUseCase } from "@/application/use-cases/profile/get-profile.use-case";
@@ -83,6 +84,7 @@ export const DI_SYMBOLS = {
   DeletePostUseCase: Symbol.for("DeletePostUseCase"),
   GetUserPostsUseCase: Symbol.for("GetUserPostsUseCase"),
   GetPostDetailUseCase: Symbol.for("GetPostDetailUseCase"),
+  TogglePostReactionUseCase: Symbol.for("TogglePostReactionUseCase"),
   UpdatePostUseCase: Symbol.for("UpdatePostUseCase"),
 };
 
@@ -128,5 +130,6 @@ export interface DI_RETURN_TYPES {
   DeletePostUseCase: DeletePostUseCase;
   GetUserPostsUseCase: GetUserPostsUseCase;
   GetPostDetailUseCase: GetPostDetailUseCase;
+  TogglePostReactionUseCase: TogglePostReactionUseCase;
   UpdatePostUseCase: UpdatePostUseCase;
 }
