@@ -1,8 +1,10 @@
 import { match } from "@packages/ddd-kit";
 import { NextResponse } from "next/server";
 import sanitizeHtml from "sanitize-html";
+import { getFriendFeed } from "@/adapters/queries/friend-feed.query";
 import { getJournalEntries } from "@/adapters/queries/journal.query";
 import { calculateStreak } from "@/adapters/queries/streak.query";
+import type { IGetFriendFeedOutputDto } from "@/application/dto/feed/get-friend-feed.dto";
 import type { IGetSessionOutputDto } from "@/application/dto/get-session.dto";
 import type { IGetJournalEntriesOutputDto } from "@/application/dto/journal/get-journal-entries.dto";
 import type { IGetStreakOutputDto } from "@/application/dto/journal/get-streak.dto";
@@ -298,5 +300,33 @@ export async function getStreakController(
       { error: "Failed to calculate streak" },
       { status: 500 },
     );
+  }
+}
+
+export async function getFriendFeedController(
+  request: Request,
+): Promise<NextResponse<IGetFriendFeedOutputDto | { error: string }>> {
+  const session = await getAuthenticatedUser(request);
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const url = new URL(request.url);
+  const pageRaw = url.searchParams.get("page");
+  const limitRaw = url.searchParams.get("limit");
+
+  const page = pageRaw ? Number.parseInt(pageRaw, 10) : Number.NaN;
+  const limit = limitRaw ? Number.parseInt(limitRaw, 10) : Number.NaN;
+
+  try {
+    const result = await getFriendFeed(
+      session.user.id,
+      page > 0 ? page : undefined,
+      limit > 0 && limit <= 100 ? limit : undefined,
+    );
+
+    return NextResponse.json(result);
+  } catch {
+    return NextResponse.json({ error: "Failed to load feed" }, { status: 500 });
   }
 }

@@ -48,8 +48,8 @@ development_status:
   1-5-edit-and-delete-posts: done
   epic-1-retrospective: done
 
-  epic-2: backlog
-  2-1-browse-friends-public-feed: backlog
+  epic-2: in-progress
+  2-1-browse-friends-public-feed: done
   2-2-react-to-posts-and-view-reactions: backlog
   epic-2-retrospective: optional
 
