@@ -5,6 +5,7 @@ import type { IFriendRequestRepository } from "@/application/ports/friend-reques
 import type { IInviteTokenRepository } from "@/application/ports/invite-token-repository.port";
 import type { IMessageRepository } from "@/application/ports/message-repository.port";
 import type { INotificationRepository } from "@/application/ports/notification-repository.port";
+import type { IPostRepository } from "@/application/ports/post-repository.port";
 import type { IProfileRepository } from "@/application/ports/profile-repository.port";
 import type { IStorageProvider } from "@/application/ports/storage.provider.port";
 import type { IUserRepository } from "@/application/ports/user.repository.port";
@@ -30,6 +31,7 @@ import type { RespondFriendRequestUseCase } from "@/application/use-cases/friend
 import type { SendFriendRequestUseCase } from "@/application/use-cases/friend/send-friend-request.use-case";
 import type { GetNotificationsUseCase } from "@/application/use-cases/notification/get-notifications.use-case";
 import type { MarkNotificationReadUseCase } from "@/application/use-cases/notification/mark-notification-read.use-case";
+import type { CreatePostUseCase } from "@/application/use-cases/post/create-post.use-case";
 import type { CreateProfileUseCase } from "@/application/use-cases/profile/create-profile.use-case";
 import type { GetProfileUseCase } from "@/application/use-cases/profile/get-profile.use-case";
 import type { UpdateProfileUseCase } from "@/application/use-cases/profile/update-profile.use-case";
@@ -72,6 +74,8 @@ export const DI_SYMBOLS = {
   GetNotificationsUseCase: Symbol.for("GetNotificationsUseCase"),
   MarkNotificationReadUseCase: Symbol.for("MarkNotificationReadUseCase"),
   GenerateUploadUrlUseCase: Symbol.for("GenerateUploadUrlUseCase"),
+  IPostRepository: Symbol.for("IPostRepository"),
+  CreatePostUseCase: Symbol.for("CreatePostUseCase"),
 };
 
 export interface DI_RETURN_TYPES {
@@ -111,4 +115,6 @@ export interface DI_RETURN_TYPES {
   GetNotificationsUseCase: GetNotificationsUseCase;
   MarkNotificationReadUseCase: MarkNotificationReadUseCase;
   GenerateUploadUrlUseCase: GenerateUploadUrlUseCase;
+  IPostRepository: IPostRepository;
+  CreatePostUseCase: CreatePostUseCase;
 }
