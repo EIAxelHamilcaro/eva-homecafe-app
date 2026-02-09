@@ -1,6 +1,7 @@
 import { Result } from "@packages/ddd-kit";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { ICreateMoodboardInputDto } from "@/application/dto/moodboard/create-moodboard.dto";
+import type { IEventDispatcher } from "@/application/ports/event-dispatcher.port";
 import type { IMoodboardRepository } from "@/application/ports/moodboard-repository.port";
 import type { MoodboardCreatedEvent } from "@/domain/moodboard/events/moodboard-created.event";
 import type { Moodboard } from "@/domain/moodboard/moodboard.aggregate";
@@ -9,6 +10,7 @@ import { CreateMoodboardUseCase } from "../create-moodboard.use-case";
 describe("CreateMoodboardUseCase", () => {
   let useCase: CreateMoodboardUseCase;
   let mockMoodboardRepo: IMoodboardRepository;
+  let mockEventDispatcher: IEventDispatcher;
 
   const validInput: ICreateMoodboardInputDto = {
     title: "My Inspiration Board",
@@ -33,7 +35,14 @@ describe("CreateMoodboardUseCase", () => {
       count: vi.fn(),
       findByUserId: vi.fn(),
     } as unknown as IMoodboardRepository;
-    useCase = new CreateMoodboardUseCase(mockMoodboardRepo);
+    mockEventDispatcher = {
+      dispatch: vi.fn(),
+      dispatchAll: vi.fn(),
+    };
+    useCase = new CreateMoodboardUseCase(
+      mockMoodboardRepo,
+      mockEventDispatcher,
+    );
   });
 
   describe("happy path", () => {
@@ -65,12 +74,11 @@ describe("CreateMoodboardUseCase", () => {
     it("should add MoodboardCreatedEvent with correct payload", async () => {
       await useCase.execute(validInput);
 
-      const createdMoodboard = vi.mocked(mockMoodboardRepo.create).mock
-        .calls[0]?.[0] as Moodboard;
-      expect(createdMoodboard.domainEvents).toHaveLength(1);
+      const events = vi.mocked(mockEventDispatcher.dispatchAll).mock
+        .calls[0]?.[0] as unknown[];
+      expect(events).toHaveLength(1);
 
-      const event = createdMoodboard
-        .domainEvents[0] as unknown as MoodboardCreatedEvent;
+      const event = events[0] as unknown as MoodboardCreatedEvent;
       expect(event.type).toBe("MoodboardCreated");
       expect(event.aggregateId).toBeDefined();
       expect(event.userId).toBe("user-123");

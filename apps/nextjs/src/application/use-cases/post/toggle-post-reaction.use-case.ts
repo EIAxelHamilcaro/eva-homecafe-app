@@ -3,6 +3,7 @@ import type {
   ITogglePostReactionInputDto,
   ITogglePostReactionOutputDto,
 } from "@/application/dto/post/toggle-post-reaction.dto";
+import type { IEventDispatcher } from "@/application/ports/event-dispatcher.port";
 import type { IPostRepository } from "@/application/ports/post-repository.port";
 import type { Post } from "@/domain/post/post.aggregate";
 import { PostId } from "@/domain/post/post-id";
@@ -11,7 +12,10 @@ import type { PostReactionEmoji } from "@/domain/post/value-objects/post-reactio
 export class TogglePostReactionUseCase
   implements UseCase<ITogglePostReactionInputDto, ITogglePostReactionOutputDto>
 {
-  constructor(private readonly postRepo: IPostRepository) {}
+  constructor(
+    private readonly postRepo: IPostRepository,
+    private readonly eventDispatcher: IEventDispatcher,
+  ) {}
 
   async execute(
     input: ITogglePostReactionInputDto,
@@ -37,6 +41,9 @@ export class TogglePostReactionUseCase
     if (updateResult.isFailure) {
       return Result.fail(updateResult.getError());
     }
+
+    await this.eventDispatcher.dispatchAll(post.domainEvents);
+    post.clearEvents();
 
     return Result.ok({
       postId,

@@ -5,6 +5,7 @@ import type {
   IUpdateCardOutputDto,
 } from "@/application/dto/board/update-card.dto";
 import type { IBoardRepository } from "@/application/ports/board-repository.port";
+import type { IEventDispatcher } from "@/application/ports/event-dispatcher.port";
 import { BoardId } from "@/domain/board/board-id";
 import { CardProgress } from "@/domain/board/value-objects/card-progress.vo";
 import { CardTitle } from "@/domain/board/value-objects/card-title.vo";
@@ -12,7 +13,10 @@ import { CardTitle } from "@/domain/board/value-objects/card-title.vo";
 export class UpdateCardUseCase
   implements UseCase<IUpdateCardInputDto, IUpdateCardOutputDto>
 {
-  constructor(private readonly boardRepo: IBoardRepository) {}
+  constructor(
+    private readonly boardRepo: IBoardRepository,
+    private readonly eventDispatcher: IEventDispatcher,
+  ) {}
 
   async execute(
     input: IUpdateCardInputDto,
@@ -70,6 +74,9 @@ export class UpdateCardUseCase
     if (saveResult.isFailure) {
       return Result.fail(saveResult.getError());
     }
+
+    await this.eventDispatcher.dispatchAll(board.domainEvents);
+    board.clearEvents();
 
     return Result.ok(boardToDto(board));
   }

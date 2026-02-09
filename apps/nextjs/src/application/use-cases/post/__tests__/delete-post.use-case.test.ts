@@ -1,6 +1,7 @@
 import { Option, Result } from "@packages/ddd-kit";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { IDeletePostInputDto } from "@/application/dto/post/delete-post.dto";
+import type { IEventDispatcher } from "@/application/ports/event-dispatcher.port";
 import type { IPostRepository } from "@/application/ports/post-repository.port";
 import type { PostDeletedEvent } from "@/domain/post/events/post-deleted.event";
 import { Post } from "@/domain/post/post.aggregate";
@@ -22,6 +23,7 @@ function createMockPost(overrides?: Partial<{ userId: string }>) {
 describe("DeletePostUseCase", () => {
   let useCase: DeletePostUseCase;
   let mockPostRepo: IPostRepository;
+  let mockEventDispatcher: IEventDispatcher;
   let mockPost: Post;
 
   const validInput: IDeletePostInputDto = {
@@ -46,7 +48,11 @@ describe("DeletePostUseCase", () => {
       count: vi.fn(),
       findByUserId: vi.fn(),
     } as unknown as IPostRepository;
-    useCase = new DeletePostUseCase(mockPostRepo);
+    mockEventDispatcher = {
+      dispatch: vi.fn(),
+      dispatchAll: vi.fn(),
+    };
+    useCase = new DeletePostUseCase(mockPostRepo, mockEventDispatcher);
   });
 
   describe("happy path", () => {
@@ -66,12 +72,16 @@ describe("DeletePostUseCase", () => {
     it("should add PostDeletedEvent before deletion", async () => {
       await useCase.execute(validInput);
 
-      expect(mockPost.domainEvents.some((e) => e.type === "PostDeleted")).toBe(
-        true,
-      );
+      const events = vi.mocked(mockEventDispatcher.dispatchAll).mock
+        .calls[0]?.[0] as unknown[];
+      expect(
+        events.some(
+          (e: unknown) => (e as { type: string }).type === "PostDeleted",
+        ),
+      ).toBe(true);
 
-      const event = mockPost.domainEvents.find(
-        (e) => e.type === "PostDeleted",
+      const event = events.find(
+        (e: unknown) => (e as { type: string }).type === "PostDeleted",
       ) as unknown as PostDeletedEvent;
       expect(event.userId).toBe("user-123");
     });

@@ -25,7 +25,11 @@ function createMockRepo() {
 }
 
 async function createTestBoardViaUseCase(repo: IBoardRepository) {
-  const createUC = new CreateBoardUseCase(repo);
+  const noopDispatcher = {
+    dispatch: async () => {},
+    dispatchAll: async () => {},
+  };
+  const createUC = new CreateBoardUseCase(repo, noopDispatcher);
   const result = await createUC.execute({
     title: "Test Board",
     type: "todo",

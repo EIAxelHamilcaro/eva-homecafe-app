@@ -41,7 +41,11 @@ async function createKanbanBoard(repo: IBoardRepository) {
 }
 
 async function createTodoBoard(repo: IBoardRepository) {
-  const createUC = new CreateBoardUseCase(repo);
+  const noopDispatcher = {
+    dispatch: async () => {},
+    dispatchAll: async () => {},
+  };
+  const createUC = new CreateBoardUseCase(repo, noopDispatcher);
   const result = await createUC.execute({
     title: "Todo Board",
     type: "todo",

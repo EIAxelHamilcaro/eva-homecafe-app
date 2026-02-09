@@ -2,6 +2,7 @@ import { Result } from "@packages/ddd-kit";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { ICreateBoardInputDto } from "@/application/dto/board/create-board.dto";
 import type { IBoardRepository } from "@/application/ports/board-repository.port";
+import type { IEventDispatcher } from "@/application/ports/event-dispatcher.port";
 import type { Board } from "@/domain/board/board.aggregate";
 import type { BoardCreatedEvent } from "@/domain/board/events/board-created.event";
 import { CreateBoardUseCase } from "../create-board.use-case";
@@ -9,6 +10,7 @@ import { CreateBoardUseCase } from "../create-board.use-case";
 describe("CreateBoardUseCase", () => {
   let useCase: CreateBoardUseCase;
   let mockBoardRepo: IBoardRepository;
+  let mockEventDispatcher: IEventDispatcher;
 
   const validInput: ICreateBoardInputDto = {
     title: "Groceries",
@@ -35,7 +37,11 @@ describe("CreateBoardUseCase", () => {
       count: vi.fn(),
       findByUserId: vi.fn(),
     } as unknown as IBoardRepository;
-    useCase = new CreateBoardUseCase(mockBoardRepo);
+    mockEventDispatcher = {
+      dispatch: vi.fn(),
+      dispatchAll: vi.fn(),
+    };
+    useCase = new CreateBoardUseCase(mockBoardRepo, mockEventDispatcher);
   });
 
   describe("happy path", () => {
@@ -100,12 +106,11 @@ describe("CreateBoardUseCase", () => {
     it("should add BoardCreatedEvent", async () => {
       await useCase.execute(validInput);
 
-      const createdBoard = vi.mocked(mockBoardRepo.create).mock
-        .calls[0]?.[0] as Board;
-      expect(createdBoard.domainEvents).toHaveLength(1);
+      const events = vi.mocked(mockEventDispatcher.dispatchAll).mock
+        .calls[0]?.[0] as unknown[];
+      expect(events).toHaveLength(1);
 
-      const event = createdBoard
-        .domainEvents[0] as unknown as BoardCreatedEvent;
+      const event = events[0] as unknown as BoardCreatedEvent;
       expect(event.type).toBe("BoardCreated");
       expect(event.userId).toBe("user-123");
       expect(event.boardType).toBe("todo");

@@ -1,6 +1,7 @@
 import { Option, Result, UUID } from "@packages/ddd-kit";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { ITogglePostReactionInputDto } from "@/application/dto/post/toggle-post-reaction.dto";
+import type { IEventDispatcher } from "@/application/ports/event-dispatcher.port";
 import type { IPostRepository } from "@/application/ports/post-repository.port";
 import { Post } from "@/domain/post/post.aggregate";
 import { PostId } from "@/domain/post/post-id";
@@ -30,6 +31,7 @@ function createTestPost(id: string, reactions: PostReaction[] = []): Post {
 describe("TogglePostReactionUseCase", () => {
   let useCase: TogglePostReactionUseCase;
   let mockPostRepo: IPostRepository;
+  let mockEventDispatcher: IEventDispatcher;
 
   const postId = "post-123";
   const userId = "user-456";
@@ -55,7 +57,11 @@ describe("TogglePostReactionUseCase", () => {
       findByUserId: vi.fn(),
       findByIdWithReactions: vi.fn(),
     } as unknown as IPostRepository;
-    useCase = new TogglePostReactionUseCase(mockPostRepo);
+    mockEventDispatcher = {
+      dispatch: vi.fn(),
+      dispatchAll: vi.fn(),
+    };
+    useCase = new TogglePostReactionUseCase(mockPostRepo, mockEventDispatcher);
   });
 
   describe("adding a reaction", () => {
@@ -194,10 +200,11 @@ describe("TogglePostReactionUseCase", () => {
 
       await useCase.execute(validInput);
 
-      const updatedPost = vi.mocked(mockPostRepo.update).mock
-        .calls[0]?.[0] as Post;
-      const events = updatedPost.domainEvents;
-      const reactedEvent = events.find((e) => e.type === "PostReacted");
+      const events = vi.mocked(mockEventDispatcher.dispatchAll).mock
+        .calls[0]?.[0] as unknown[];
+      const reactedEvent = events.find(
+        (e: unknown) => (e as { type: string }).type === "PostReacted",
+      );
       expect(reactedEvent).toBeDefined();
     });
 
@@ -210,10 +217,11 @@ describe("TogglePostReactionUseCase", () => {
 
       await useCase.execute(validInput);
 
-      const updatedPost = vi.mocked(mockPostRepo.update).mock
-        .calls[0]?.[0] as Post;
-      const events = updatedPost.domainEvents;
-      const reactedEvent = events.find((e) => e.type === "PostReacted");
+      const events = vi.mocked(mockEventDispatcher.dispatchAll).mock
+        .calls[0]?.[0] as unknown[];
+      const reactedEvent = events.find(
+        (e: unknown) => (e as { type: string }).type === "PostReacted",
+      );
       expect(reactedEvent).toBeDefined();
     });
   });

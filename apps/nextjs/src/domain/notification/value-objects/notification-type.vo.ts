@@ -5,12 +5,18 @@ export const NotificationTypeEnum = {
   FRIEND_REQUEST: "friend_request",
   FRIEND_ACCEPTED: "friend_accepted",
   NEW_MESSAGE: "new_message",
+  REWARD_EARNED: "reward_earned",
 } as const;
 
 export type NotificationTypeValue =
   (typeof NotificationTypeEnum)[keyof typeof NotificationTypeEnum];
 
-const schema = z.enum(["friend_request", "friend_accepted", "new_message"]);
+const schema = z.enum([
+  "friend_request",
+  "friend_accepted",
+  "new_message",
+  "reward_earned",
+]);
 
 export class NotificationType extends ValueObject<NotificationTypeValue> {
   protected validate(
@@ -51,6 +57,16 @@ export class NotificationType extends ValueObject<NotificationTypeValue> {
   static createNewMessage(): Result<NotificationType> {
     return NotificationType.create(
       NotificationTypeEnum.NEW_MESSAGE as NotificationTypeValue,
+    ) as Result<NotificationType>;
+  }
+
+  get isRewardEarned(): boolean {
+    return this.value === NotificationTypeEnum.REWARD_EARNED;
+  }
+
+  static createRewardEarned(): Result<NotificationType> {
+    return NotificationType.create(
+      NotificationTypeEnum.REWARD_EARNED as NotificationTypeValue,
     ) as Result<NotificationType>;
   }
 }

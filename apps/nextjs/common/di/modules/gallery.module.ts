@@ -13,13 +13,17 @@ export const createGalleryModule = () => {
 
   galleryModule
     .bind(DI_SYMBOLS.AddPhotoUseCase)
-    .toClass(AddPhotoUseCase, [DI_SYMBOLS.IGalleryRepository]);
+    .toClass(AddPhotoUseCase, [
+      DI_SYMBOLS.IGalleryRepository,
+      DI_SYMBOLS.IEventDispatcher,
+    ]);
 
   galleryModule
     .bind(DI_SYMBOLS.DeletePhotoUseCase)
     .toClass(DeletePhotoUseCase, [
       DI_SYMBOLS.IGalleryRepository,
       DI_SYMBOLS.IStorageProvider,
+      DI_SYMBOLS.IEventDispatcher,
     ]);
 
   return galleryModule;

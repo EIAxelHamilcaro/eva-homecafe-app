@@ -1,6 +1,7 @@
 import { Option, Result } from "@packages/ddd-kit";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { IRecordMoodInputDto } from "@/application/dto/mood/record-mood.dto";
+import type { IEventDispatcher } from "@/application/ports/event-dispatcher.port";
 import type { IMoodRepository } from "@/application/ports/mood-repository.port";
 import type { MoodRecordedEvent } from "@/domain/mood/events/mood-recorded.event";
 import { MoodEntry } from "@/domain/mood/mood-entry.aggregate";
@@ -11,6 +12,7 @@ import { RecordMoodUseCase } from "../record-mood.use-case";
 describe("RecordMoodUseCase", () => {
   let useCase: RecordMoodUseCase;
   let mockMoodRepo: IMoodRepository;
+  let mockEventDispatcher: IEventDispatcher;
 
   const validInput: IRecordMoodInputDto = {
     userId: "user-123",
@@ -40,7 +42,11 @@ describe("RecordMoodUseCase", () => {
       count: vi.fn(),
       findTodayByUserId: vi.fn().mockResolvedValue(Result.ok(Option.none())),
     } as unknown as IMoodRepository;
-    useCase = new RecordMoodUseCase(mockMoodRepo);
+    mockEventDispatcher = {
+      dispatch: vi.fn(),
+      dispatchAll: vi.fn(),
+    };
+    useCase = new RecordMoodUseCase(mockMoodRepo, mockEventDispatcher);
   });
 
   describe("happy path - create new mood entry", () => {
@@ -67,12 +73,11 @@ describe("RecordMoodUseCase", () => {
     it("should add MoodRecordedEvent with correct payload", async () => {
       await useCase.execute(validInput);
 
-      const createdEntry = vi.mocked(mockMoodRepo.create).mock
-        .calls[0]?.[0] as MoodEntry;
-      expect(createdEntry.domainEvents).toHaveLength(1);
+      const events = vi.mocked(mockEventDispatcher.dispatchAll).mock
+        .calls[0]?.[0] as unknown[];
+      expect(events).toHaveLength(1);
 
-      const event = createdEntry
-        .domainEvents[0] as unknown as MoodRecordedEvent;
+      const event = events[0] as unknown as MoodRecordedEvent;
       expect(event.type).toBe("MoodRecorded");
       expect(event.aggregateId).toBeDefined();
       expect(event.userId).toBe("user-123");
@@ -185,12 +190,11 @@ describe("RecordMoodUseCase", () => {
 
       await useCase.execute(validInput);
 
-      const updatedEntry = vi.mocked(mockMoodRepo.update).mock
-        .calls[0]?.[0] as MoodEntry;
-      expect(updatedEntry.domainEvents).toHaveLength(1);
+      const events = vi.mocked(mockEventDispatcher.dispatchAll).mock
+        .calls[0]?.[0] as unknown[];
+      expect(events).toHaveLength(1);
 
-      const event = updatedEntry
-        .domainEvents[0] as unknown as MoodRecordedEvent;
+      const event = events[0] as unknown as MoodRecordedEvent;
       expect(event.type).toBe("MoodRecorded");
       expect(event.category).toBe("bonheur");
       expect(event.intensity).toBe(7);

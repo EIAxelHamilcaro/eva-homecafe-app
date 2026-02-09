@@ -10,7 +10,10 @@ export const createMoodModule = () => {
 
   moodModule
     .bind(DI_SYMBOLS.RecordMoodUseCase)
-    .toClass(RecordMoodUseCase, [DI_SYMBOLS.IMoodRepository]);
+    .toClass(RecordMoodUseCase, [
+      DI_SYMBOLS.IMoodRepository,
+      DI_SYMBOLS.IEventDispatcher,
+    ]);
 
   return moodModule;
 };

@@ -9,6 +9,7 @@ import { createMoodboardModule } from "./modules/moodboard.module";
 import { createNotificationModule } from "./modules/notification.module";
 import { createPostModule } from "./modules/post.module";
 import { createProfileModule } from "./modules/profile.module";
+import { createRewardModule } from "./modules/reward.module";
 import { createUploadModule } from "./modules/upload.module";
 import { type DI_RETURN_TYPES, DI_SYMBOLS } from "./types";
 
@@ -27,6 +28,7 @@ ApplicationContainer.load(
 );
 ApplicationContainer.load(Symbol("PostModule"), createPostModule());
 ApplicationContainer.load(Symbol("ProfileModule"), createProfileModule());
+ApplicationContainer.load(Symbol("RewardModule"), createRewardModule());
 ApplicationContainer.load(Symbol("UploadModule"), createUploadModule());
 
 export function getInjection<K extends keyof typeof DI_SYMBOLS>(

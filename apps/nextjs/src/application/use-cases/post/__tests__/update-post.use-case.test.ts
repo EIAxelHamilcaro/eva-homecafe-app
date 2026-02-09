@@ -1,6 +1,7 @@
 import { Option, Result } from "@packages/ddd-kit";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { IUpdatePostInputDto } from "@/application/dto/post/update-post.dto";
+import type { IEventDispatcher } from "@/application/ports/event-dispatcher.port";
 import type { IPostRepository } from "@/application/ports/post-repository.port";
 import type { PostUpdatedEvent } from "@/domain/post/events/post-updated.event";
 import { Post } from "@/domain/post/post.aggregate";
@@ -23,6 +24,7 @@ function createMockPost(
 describe("UpdatePostUseCase", () => {
   let useCase: UpdatePostUseCase;
   let mockPostRepo: IPostRepository;
+  let mockEventDispatcher: IEventDispatcher;
 
   const validInput: IUpdatePostInputDto = {
     postId: "post-456",
@@ -48,7 +50,11 @@ describe("UpdatePostUseCase", () => {
       count: vi.fn(),
       findByUserId: vi.fn(),
     } as unknown as IPostRepository;
-    useCase = new UpdatePostUseCase(mockPostRepo);
+    mockEventDispatcher = {
+      dispatch: vi.fn(),
+      dispatchAll: vi.fn(),
+    };
+    useCase = new UpdatePostUseCase(mockPostRepo, mockEventDispatcher);
   });
 
   describe("happy path", () => {
@@ -120,10 +126,10 @@ describe("UpdatePostUseCase", () => {
       });
 
       expect(result.isSuccess).toBe(true);
-      const updatedPost = vi.mocked(mockPostRepo.update).mock
-        .calls[0]?.[0] as Post;
-      const updateEvents = updatedPost.domainEvents.filter(
-        (e) => e.type === "PostUpdated",
+      const events = vi.mocked(mockEventDispatcher.dispatchAll).mock
+        .calls[0]?.[0] as unknown[];
+      const updateEvents = events.filter(
+        (e: unknown) => (e as { type: string }).type === "PostUpdated",
       );
       expect(updateEvents).toHaveLength(1);
     });
@@ -131,14 +137,14 @@ describe("UpdatePostUseCase", () => {
     it("should add PostUpdatedEvent", async () => {
       await useCase.execute(validInput);
 
-      const updatedPost = vi.mocked(mockPostRepo.update).mock
-        .calls[0]?.[0] as Post;
-      const events = updatedPost.domainEvents.filter(
-        (e) => e.type === "PostUpdated",
+      const events = vi.mocked(mockEventDispatcher.dispatchAll).mock
+        .calls[0]?.[0] as unknown[];
+      const filteredEvents = events.filter(
+        (e: unknown) => (e as { type: string }).type === "PostUpdated",
       );
-      expect(events).toHaveLength(1);
+      expect(filteredEvents).toHaveLength(1);
 
-      const event = events[0] as unknown as PostUpdatedEvent;
+      const event = filteredEvents[0] as unknown as PostUpdatedEvent;
       expect(event.type).toBe("PostUpdated");
       expect(event.userId).toBe("user-123");
     });

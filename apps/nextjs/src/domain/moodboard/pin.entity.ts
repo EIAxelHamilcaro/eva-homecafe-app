@@ -41,6 +41,10 @@ export class Pin extends Entity<IPinProps> {
     );
   }
 
+  updatePosition(position: number): void {
+    this._props.position = position;
+  }
+
   static reconstitute(props: IPinProps, id: PinId): Pin {
     return new Pin(props, id);
   }

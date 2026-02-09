@@ -22,6 +22,7 @@ import {
 import {
   moodboardToDomain,
   moodboardToPersistence,
+  pinToPersistence,
 } from "@/adapters/mappers/moodboard.mapper";
 import type { IMoodboardRepository } from "@/application/ports/moodboard-repository.port";
 import type { Moodboard } from "@/domain/moodboard/moodboard.aggregate";
@@ -55,14 +56,42 @@ export class DrizzleMoodboardRepository implements IMoodboardRepository {
     trx?: Transaction,
   ): Promise<Result<Moodboard>> {
     try {
+      const moodboardId = String(entity.id.value);
       const data = moodboardToPersistence(entity);
-      await this.getDb(trx)
-        .update(moodboardTable)
-        .set({
-          title: data.title,
-          updatedAt: new Date(),
-        })
-        .where(eq(moodboardTable.id, String(entity.id.value)));
+
+      const performUpdate = async (client: DbClient | Transaction) => {
+        await client
+          .update(moodboardTable)
+          .set({
+            title: data.title,
+            updatedAt: new Date(),
+          })
+          .where(eq(moodboardTable.id, moodboardId));
+
+        await client
+          .delete(pinTable)
+          .where(eq(pinTable.moodboardId, moodboardId));
+
+        const pins = entity.get("pins");
+        if (pins.length > 0) {
+          const pinRows = pins.map((pin) => pinToPersistence(pin, moodboardId));
+          await client.insert(pinTable).values(
+            pinRows.map((p) => ({
+              ...p,
+              createdAt: p.createdAt ?? new Date(),
+            })),
+          );
+        }
+      };
+
+      if (trx) {
+        await performUpdate(trx);
+      } else {
+        await db.transaction(async (tx) => {
+          await performUpdate(tx);
+        });
+      }
+
       return Result.ok(entity);
     } catch (error) {
       return Result.fail(`Failed to update moodboard: ${error}`);

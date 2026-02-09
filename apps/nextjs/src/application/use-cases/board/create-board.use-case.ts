@@ -5,6 +5,7 @@ import type {
   ICreateBoardOutputDto,
 } from "@/application/dto/board/create-board.dto";
 import type { IBoardRepository } from "@/application/ports/board-repository.port";
+import type { IEventDispatcher } from "@/application/ports/event-dispatcher.port";
 import { Board } from "@/domain/board/board.aggregate";
 import { Card } from "@/domain/board/card.entity";
 import { Column } from "@/domain/board/column.entity";
@@ -15,7 +16,10 @@ import { CardTitle } from "@/domain/board/value-objects/card-title.vo";
 export class CreateBoardUseCase
   implements UseCase<ICreateBoardInputDto, ICreateBoardOutputDto>
 {
-  constructor(private readonly boardRepo: IBoardRepository) {}
+  constructor(
+    private readonly boardRepo: IBoardRepository,
+    private readonly eventDispatcher: IEventDispatcher,
+  ) {}
 
   async execute(
     input: ICreateBoardInputDto,
@@ -69,6 +73,9 @@ export class CreateBoardUseCase
     if (saveResult.isFailure) {
       return Result.fail(saveResult.getError());
     }
+
+    await this.eventDispatcher.dispatchAll(board.domainEvents);
+    board.clearEvents();
 
     return Result.ok(boardToDto(board));
   }

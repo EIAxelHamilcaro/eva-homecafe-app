@@ -3,6 +3,7 @@ import type {
   IRespondFriendRequestInputDto,
   IRespondFriendRequestOutputDto,
 } from "@/application/dto/friend/respond-friend-request.dto";
+import type { IEventDispatcher } from "@/application/ports/event-dispatcher.port";
 import type { IFriendRequestRepository } from "@/application/ports/friend-request-repository.port";
 import type { INotificationRepository } from "@/application/ports/notification-repository.port";
 import type { IProfileRepository } from "@/application/ports/profile-repository.port";
@@ -18,6 +19,7 @@ export class RespondFriendRequestUseCase
     private readonly friendRequestRepo: IFriendRequestRepository,
     private readonly notificationRepo: INotificationRepository,
     private readonly profileRepo: IProfileRepository,
+    private readonly eventDispatcher: IEventDispatcher,
   ) {}
 
   async execute(
@@ -59,6 +61,9 @@ export class RespondFriendRequestUseCase
     if (updateResult.isFailure) {
       return Result.fail(updateResult.getError());
     }
+
+    await this.eventDispatcher.dispatchAll(friendRequest.domainEvents);
+    friendRequest.clearEvents();
 
     if (input.accept) {
       const notifyResult = await this.notifySenderOfAcceptance(

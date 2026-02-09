@@ -3,6 +3,7 @@ import type {
   ICreatePostInputDto,
   ICreatePostOutputDto,
 } from "@/application/dto/post/create-post.dto";
+import type { IEventDispatcher } from "@/application/ports/event-dispatcher.port";
 import type { IPostRepository } from "@/application/ports/post-repository.port";
 import { Post } from "@/domain/post/post.aggregate";
 import { PostContent } from "@/domain/post/value-objects/post-content.vo";
@@ -10,7 +11,10 @@ import { PostContent } from "@/domain/post/value-objects/post-content.vo";
 export class CreatePostUseCase
   implements UseCase<ICreatePostInputDto, ICreatePostOutputDto>
 {
-  constructor(private readonly postRepo: IPostRepository) {}
+  constructor(
+    private readonly postRepo: IPostRepository,
+    private readonly eventDispatcher: IEventDispatcher,
+  ) {}
 
   async execute(
     input: ICreatePostInputDto,
@@ -36,6 +40,9 @@ export class CreatePostUseCase
     if (saveResult.isFailure) {
       return Result.fail(saveResult.getError());
     }
+
+    await this.eventDispatcher.dispatchAll(post.domainEvents);
+    post.clearEvents();
 
     return Result.ok({
       id: post.id.value.toString(),

@@ -1,6 +1,7 @@
 import { Option, Result } from "@packages/ddd-kit";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { IBoardRepository } from "@/application/ports/board-repository.port";
+import type { IEventDispatcher } from "@/application/ports/event-dispatcher.port";
 import type { Board } from "@/domain/board/board.aggregate";
 import type { CardCompletedEvent } from "@/domain/board/events/card-completed.event";
 import { AddCardToColumnUseCase } from "../add-card-to-column.use-case";
@@ -58,11 +59,16 @@ async function createBoardWithCard(repo: IBoardRepository) {
 describe("UpdateCardUseCase", () => {
   let useCase: UpdateCardUseCase;
   let mockBoardRepo: IBoardRepository;
+  let mockEventDispatcher: IEventDispatcher;
 
   beforeEach(() => {
     vi.clearAllMocks();
     mockBoardRepo = createMockRepo();
-    useCase = new UpdateCardUseCase(mockBoardRepo);
+    mockEventDispatcher = {
+      dispatch: vi.fn(),
+      dispatchAll: vi.fn(),
+    };
+    useCase = new UpdateCardUseCase(mockBoardRepo, mockEventDispatcher);
   });
 
   describe("happy path", () => {
@@ -140,9 +146,9 @@ describe("UpdateCardUseCase", () => {
         progress: 100,
       });
 
-      const updatedBoard = vi.mocked(mockBoardRepo.update).mock
-        .calls[0]?.[0] as Board;
-      const completionEvents = updatedBoard.domainEvents.filter(
+      const events = vi.mocked(mockEventDispatcher.dispatchAll).mock
+        .calls[0]?.[0] as unknown[];
+      const completionEvents = events.filter(
         (e) => (e as unknown as CardCompletedEvent).type === "CardCompleted",
       );
       expect(completionEvents).toHaveLength(1);
@@ -158,9 +164,9 @@ describe("UpdateCardUseCase", () => {
         progress: 50,
       });
 
-      const updatedBoard = vi.mocked(mockBoardRepo.update).mock
-        .calls[0]?.[0] as Board;
-      const completionEvents = updatedBoard.domainEvents.filter(
+      const events = vi.mocked(mockEventDispatcher.dispatchAll).mock
+        .calls[0]?.[0] as unknown[];
+      const completionEvents = (events ?? []).filter(
         (e) => (e as unknown as CardCompletedEvent).type === "CardCompleted",
       );
       expect(completionEvents).toHaveLength(0);

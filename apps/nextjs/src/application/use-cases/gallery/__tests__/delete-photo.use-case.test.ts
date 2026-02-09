@@ -1,6 +1,7 @@
 import { Option, Result } from "@packages/ddd-kit";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { IDeletePhotoInputDto } from "@/application/dto/gallery/delete-photo.dto";
+import type { IEventDispatcher } from "@/application/ports/event-dispatcher.port";
 import type { IGalleryRepository } from "@/application/ports/gallery-repository.port";
 import type { IStorageProvider } from "@/application/ports/storage.provider.port";
 import type { PhotoDeletedEvent } from "@/domain/gallery/events/photo-deleted.event";
@@ -22,6 +23,7 @@ function createMockPhoto(overrides?: Partial<{ userId: string }>) {
 describe("DeletePhotoUseCase", () => {
   let useCase: DeletePhotoUseCase;
   let mockGalleryRepo: IGalleryRepository;
+  let mockEventDispatcher: IEventDispatcher;
   let mockStorageProvider: IStorageProvider;
   let mockPhoto: Photo;
 
@@ -53,7 +55,15 @@ describe("DeletePhotoUseCase", () => {
       getUrl: vi.fn(),
       generatePresignedUploadUrl: vi.fn(),
     } as unknown as IStorageProvider;
-    useCase = new DeletePhotoUseCase(mockGalleryRepo, mockStorageProvider);
+    mockEventDispatcher = {
+      dispatch: vi.fn(),
+      dispatchAll: vi.fn(),
+    };
+    useCase = new DeletePhotoUseCase(
+      mockGalleryRepo,
+      mockStorageProvider,
+      mockEventDispatcher,
+    );
   });
 
   describe("happy path", () => {
@@ -82,8 +92,10 @@ describe("DeletePhotoUseCase", () => {
     it("should add PhotoDeletedEvent with correct payload", async () => {
       await useCase.execute(validInput);
 
-      const event = mockPhoto.domainEvents.find(
-        (e) => e.type === "PhotoDeleted",
+      const events = vi.mocked(mockEventDispatcher.dispatchAll).mock
+        .calls[0]?.[0] as unknown[];
+      const event = events.find(
+        (e: unknown) => (e as { type: string }).type === "PhotoDeleted",
       ) as unknown as PhotoDeletedEvent;
       expect(event).toBeDefined();
       expect(event.userId).toBe("user-123");

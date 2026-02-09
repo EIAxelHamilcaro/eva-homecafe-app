@@ -3,6 +3,7 @@ import type {
   ICreateMoodboardInputDto,
   ICreateMoodboardOutputDto,
 } from "@/application/dto/moodboard/create-moodboard.dto";
+import type { IEventDispatcher } from "@/application/ports/event-dispatcher.port";
 import type { IMoodboardRepository } from "@/application/ports/moodboard-repository.port";
 import { Moodboard } from "@/domain/moodboard/moodboard.aggregate";
 import { MoodboardTitle } from "@/domain/moodboard/value-objects/moodboard-title.vo";
@@ -10,7 +11,10 @@ import { MoodboardTitle } from "@/domain/moodboard/value-objects/moodboard-title
 export class CreateMoodboardUseCase
   implements UseCase<ICreateMoodboardInputDto, ICreateMoodboardOutputDto>
 {
-  constructor(private readonly moodboardRepo: IMoodboardRepository) {}
+  constructor(
+    private readonly moodboardRepo: IMoodboardRepository,
+    private readonly eventDispatcher: IEventDispatcher,
+  ) {}
 
   async execute(
     input: ICreateMoodboardInputDto,
@@ -33,6 +37,9 @@ export class CreateMoodboardUseCase
     if (saveResult.isFailure) {
       return Result.fail(saveResult.getError());
     }
+
+    await this.eventDispatcher.dispatchAll(moodboard.domainEvents);
+    moodboard.clearEvents();
 
     return Result.ok({
       id: moodboard.id.value.toString(),

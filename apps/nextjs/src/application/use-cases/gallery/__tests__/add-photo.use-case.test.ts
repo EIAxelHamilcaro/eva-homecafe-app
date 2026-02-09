@@ -1,6 +1,7 @@
 import { Result } from "@packages/ddd-kit";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { IAddPhotoInputDto } from "@/application/dto/gallery/add-photo.dto";
+import type { IEventDispatcher } from "@/application/ports/event-dispatcher.port";
 import type { IGalleryRepository } from "@/application/ports/gallery-repository.port";
 import type { PhotoUploadedEvent } from "@/domain/gallery/events/photo-uploaded.event";
 import type { Photo } from "@/domain/gallery/photo.aggregate";
@@ -9,6 +10,7 @@ import { AddPhotoUseCase } from "../add-photo.use-case";
 describe("AddPhotoUseCase", () => {
   let useCase: AddPhotoUseCase;
   let mockGalleryRepo: IGalleryRepository;
+  let mockEventDispatcher: IEventDispatcher;
 
   const validInput: IAddPhotoInputDto = {
     url: "https://r2.example.com/gallery/user-123/abc123.jpg",
@@ -36,7 +38,11 @@ describe("AddPhotoUseCase", () => {
       count: vi.fn(),
       findByUserId: vi.fn(),
     } as unknown as IGalleryRepository;
-    useCase = new AddPhotoUseCase(mockGalleryRepo);
+    mockEventDispatcher = {
+      dispatch: vi.fn(),
+      dispatchAll: vi.fn(),
+    };
+    useCase = new AddPhotoUseCase(mockGalleryRepo, mockEventDispatcher);
   });
 
   describe("happy path", () => {
@@ -84,12 +90,11 @@ describe("AddPhotoUseCase", () => {
     it("should add PhotoUploadedEvent with correct payload", async () => {
       await useCase.execute(validInput);
 
-      const createdPhoto = vi.mocked(mockGalleryRepo.create).mock
-        .calls[0]?.[0] as Photo;
-      expect(createdPhoto.domainEvents).toHaveLength(1);
+      const events = vi.mocked(mockEventDispatcher.dispatchAll).mock
+        .calls[0]?.[0] as unknown[];
+      expect(events).toHaveLength(1);
 
-      const event = createdPhoto
-        .domainEvents[0] as unknown as PhotoUploadedEvent;
+      const event = events[0] as unknown as PhotoUploadedEvent;
       expect(event.type).toBe("PhotoUploaded");
       expect(event.aggregateId).toBeDefined();
       expect(event.userId).toBe("user-123");

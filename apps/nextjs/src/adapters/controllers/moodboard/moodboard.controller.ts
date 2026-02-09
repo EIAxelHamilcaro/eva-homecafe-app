@@ -7,8 +7,12 @@ import {
   type MoodboardDetailDto,
 } from "@/adapters/queries/moodboard.query";
 import type { IGetSessionOutputDto } from "@/application/dto/get-session.dto";
+import type { IAddPinOutputDto } from "@/application/dto/moodboard/add-pin.dto";
+import { addPinInputDtoSchema } from "@/application/dto/moodboard/add-pin.dto";
 import type { ICreateMoodboardOutputDto } from "@/application/dto/moodboard/create-moodboard.dto";
 import { createMoodboardInputDtoSchema } from "@/application/dto/moodboard/create-moodboard.dto";
+import type { IDeleteMoodboardOutputDto } from "@/application/dto/moodboard/delete-moodboard.dto";
+import type { IDeletePinOutputDto } from "@/application/dto/moodboard/delete-pin.dto";
 import { getInjection } from "@/common/di/container";
 
 async function getAuthenticatedUser(
@@ -122,4 +126,110 @@ export async function createMoodboardController(
   }
 
   return NextResponse.json(result.getValue(), { status: 201 });
+}
+
+export async function addPinController(
+  request: Request,
+  moodboardId: string,
+): Promise<NextResponse<IAddPinOutputDto | { error: string }>> {
+  const session = await getAuthenticatedUser(request);
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  let json: unknown;
+  try {
+    json = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
+
+  const parsed = addPinInputDtoSchema.safeParse({
+    ...(json as Record<string, unknown>),
+    moodboardId,
+    userId: session.user.id,
+  });
+
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: parsed.error.issues[0]?.message ?? "Invalid input" },
+      { status: 400 },
+    );
+  }
+
+  const useCase = getInjection("AddPinUseCase");
+  const result = await useCase.execute(parsed.data);
+
+  if (result.isFailure) {
+    const error = result.getError();
+    if (error.includes("not found")) {
+      return NextResponse.json({ error }, { status: 404 });
+    }
+    if (error === "Forbidden") {
+      return NextResponse.json({ error }, { status: 403 });
+    }
+    return NextResponse.json({ error }, { status: 500 });
+  }
+
+  return NextResponse.json(result.getValue(), { status: 201 });
+}
+
+export async function deletePinController(
+  request: Request,
+  moodboardId: string,
+  pinId: string,
+): Promise<NextResponse<IDeletePinOutputDto | { error: string }>> {
+  const session = await getAuthenticatedUser(request);
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const useCase = getInjection("DeletePinUseCase");
+  const result = await useCase.execute({
+    moodboardId,
+    pinId,
+    userId: session.user.id,
+  });
+
+  if (result.isFailure) {
+    const error = result.getError();
+    if (error.includes("not found")) {
+      return NextResponse.json({ error }, { status: 404 });
+    }
+    if (error === "Forbidden") {
+      return NextResponse.json({ error }, { status: 403 });
+    }
+    return NextResponse.json({ error }, { status: 500 });
+  }
+
+  return NextResponse.json(result.getValue());
+}
+
+export async function deleteMoodboardController(
+  request: Request,
+  moodboardId: string,
+): Promise<NextResponse<IDeleteMoodboardOutputDto | { error: string }>> {
+  const session = await getAuthenticatedUser(request);
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const useCase = getInjection("DeleteMoodboardUseCase");
+  const result = await useCase.execute({
+    moodboardId,
+    userId: session.user.id,
+  });
+
+  if (result.isFailure) {
+    const error = result.getError();
+    if (error.includes("not found")) {
+      return NextResponse.json({ error }, { status: 404 });
+    }
+    if (error === "Forbidden") {
+      return NextResponse.json({ error }, { status: 403 });
+    }
+    return NextResponse.json({ error }, { status: 500 });
+  }
+
+  return NextResponse.json(result.getValue());
 }

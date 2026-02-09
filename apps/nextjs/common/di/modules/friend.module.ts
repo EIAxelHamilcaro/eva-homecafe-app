@@ -64,6 +64,7 @@ export const createFriendModule = () => {
       DI_SYMBOLS.IFriendRequestRepository,
       DI_SYMBOLS.INotificationRepository,
       DI_SYMBOLS.IProfileRepository,
+      DI_SYMBOLS.IEventDispatcher,
     ]);
 
   friendModule

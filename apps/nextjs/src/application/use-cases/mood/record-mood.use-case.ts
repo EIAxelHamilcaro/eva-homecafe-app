@@ -3,6 +3,7 @@ import type {
   IRecordMoodInputDto,
   IRecordMoodOutputDto,
 } from "@/application/dto/mood/record-mood.dto";
+import type { IEventDispatcher } from "@/application/ports/event-dispatcher.port";
 import type { IMoodRepository } from "@/application/ports/mood-repository.port";
 import { MoodEntry } from "@/domain/mood/mood-entry.aggregate";
 import { MoodCategory } from "@/domain/mood/value-objects/mood-category.vo";
@@ -11,7 +12,10 @@ import { MoodIntensity } from "@/domain/mood/value-objects/mood-intensity.vo";
 export class RecordMoodUseCase
   implements UseCase<IRecordMoodInputDto, IRecordMoodOutputDto>
 {
-  constructor(private readonly moodRepo: IMoodRepository) {}
+  constructor(
+    private readonly moodRepo: IMoodRepository,
+    private readonly eventDispatcher: IEventDispatcher,
+  ) {}
 
   async execute(
     input: IRecordMoodInputDto,
@@ -42,6 +46,9 @@ export class RecordMoodUseCase
         return Result.fail(updateResult.getError());
       }
 
+      await this.eventDispatcher.dispatchAll(entry.domainEvents);
+      entry.clearEvents();
+
       return Result.ok(this.toOutputDto(entry, true));
     }
 
@@ -60,6 +67,9 @@ export class RecordMoodUseCase
     if (saveResult.isFailure) {
       return Result.fail(saveResult.getError());
     }
+
+    await this.eventDispatcher.dispatchAll(entry.domainEvents);
+    entry.clearEvents();
 
     return Result.ok(this.toOutputDto(entry, false));
   }

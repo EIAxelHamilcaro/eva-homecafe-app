@@ -3,6 +3,7 @@ import type {
   IUpdatePostInputDto,
   IUpdatePostOutputDto,
 } from "@/application/dto/post/update-post.dto";
+import type { IEventDispatcher } from "@/application/ports/event-dispatcher.port";
 import type { IPostRepository } from "@/application/ports/post-repository.port";
 import { PostId } from "@/domain/post/post-id";
 import { PostContent } from "@/domain/post/value-objects/post-content.vo";
@@ -10,7 +11,10 @@ import { PostContent } from "@/domain/post/value-objects/post-content.vo";
 export class UpdatePostUseCase
   implements UseCase<IUpdatePostInputDto, IUpdatePostOutputDto>
 {
-  constructor(private readonly postRepo: IPostRepository) {}
+  constructor(
+    private readonly postRepo: IPostRepository,
+    private readonly eventDispatcher: IEventDispatcher,
+  ) {}
 
   async execute(
     input: IUpdatePostInputDto,
@@ -52,6 +56,9 @@ export class UpdatePostUseCase
     if (saveResult.isFailure) {
       return Result.fail(saveResult.getError());
     }
+
+    await this.eventDispatcher.dispatchAll(post.domainEvents);
+    post.clearEvents();
 
     return Result.ok({
       id: post.id.value.toString(),

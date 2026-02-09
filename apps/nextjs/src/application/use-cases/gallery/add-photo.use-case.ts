@@ -3,6 +3,7 @@ import type {
   IAddPhotoInputDto,
   IAddPhotoOutputDto,
 } from "@/application/dto/gallery/add-photo.dto";
+import type { IEventDispatcher } from "@/application/ports/event-dispatcher.port";
 import type { IGalleryRepository } from "@/application/ports/gallery-repository.port";
 import { Photo } from "@/domain/gallery/photo.aggregate";
 import { PhotoCaption } from "@/domain/gallery/value-objects/photo-caption.vo";
@@ -10,7 +11,10 @@ import { PhotoCaption } from "@/domain/gallery/value-objects/photo-caption.vo";
 export class AddPhotoUseCase
   implements UseCase<IAddPhotoInputDto, IAddPhotoOutputDto>
 {
-  constructor(private readonly galleryRepo: IGalleryRepository) {}
+  constructor(
+    private readonly galleryRepo: IGalleryRepository,
+    private readonly eventDispatcher: IEventDispatcher,
+  ) {}
 
   async execute(input: IAddPhotoInputDto): Promise<Result<IAddPhotoOutputDto>> {
     let caption: Option<PhotoCaption> = Option.none();
@@ -42,6 +46,9 @@ export class AddPhotoUseCase
     if (saveResult.isFailure) {
       return Result.fail(saveResult.getError());
     }
+
+    await this.eventDispatcher.dispatchAll(photo.domainEvents);
+    photo.clearEvents();
 
     return Result.ok({
       id: photo.id.value.toString(),

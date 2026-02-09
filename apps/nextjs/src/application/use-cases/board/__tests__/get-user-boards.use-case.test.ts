@@ -26,7 +26,11 @@ async function createTestBoard(
   repo: IBoardRepository,
   type: "todo" | "kanban" = "todo",
 ) {
-  const createUC = new CreateBoardUseCase(repo);
+  const noopDispatcher = {
+    dispatch: async () => {},
+    dispatchAll: async () => {},
+  };
+  const createUC = new CreateBoardUseCase(repo, noopDispatcher);
   await createUC.execute({
     title: "Test Board",
     type,

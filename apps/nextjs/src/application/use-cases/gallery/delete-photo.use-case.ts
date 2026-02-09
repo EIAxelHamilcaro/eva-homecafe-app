@@ -3,6 +3,7 @@ import type {
   IDeletePhotoInputDto,
   IDeletePhotoOutputDto,
 } from "@/application/dto/gallery/delete-photo.dto";
+import type { IEventDispatcher } from "@/application/ports/event-dispatcher.port";
 import type { IGalleryRepository } from "@/application/ports/gallery-repository.port";
 import type { IStorageProvider } from "@/application/ports/storage.provider.port";
 import { PhotoId } from "@/domain/gallery/photo-id";
@@ -13,6 +14,7 @@ export class DeletePhotoUseCase
   constructor(
     private readonly galleryRepo: IGalleryRepository,
     private readonly storageProvider: IStorageProvider,
+    private readonly eventDispatcher: IEventDispatcher,
   ) {}
 
   async execute(
@@ -54,6 +56,9 @@ export class DeletePhotoUseCase
     if (deleteResult.isFailure) {
       return Result.fail(deleteResult.getError());
     }
+
+    await this.eventDispatcher.dispatchAll(photo.domainEvents);
+    photo.clearEvents();
 
     return Result.ok({ id: input.photoId });
   }

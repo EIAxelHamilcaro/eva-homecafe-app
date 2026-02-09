@@ -1,6 +1,7 @@
 import { Result } from "@packages/ddd-kit";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { ICreatePostInputDto } from "@/application/dto/post/create-post.dto";
+import type { IEventDispatcher } from "@/application/ports/event-dispatcher.port";
 import type { IPostRepository } from "@/application/ports/post-repository.port";
 import type { PostCreatedEvent } from "@/domain/post/events/post-created.event";
 import type { Post } from "@/domain/post/post.aggregate";
@@ -9,6 +10,7 @@ import { CreatePostUseCase } from "../create-post.use-case";
 describe("CreatePostUseCase", () => {
   let useCase: CreatePostUseCase;
   let mockPostRepo: IPostRepository;
+  let mockEventDispatcher: IEventDispatcher;
 
   const validInput: ICreatePostInputDto = {
     content: "<p>Hello world</p>",
@@ -33,7 +35,11 @@ describe("CreatePostUseCase", () => {
       count: vi.fn(),
       findByUserId: vi.fn(),
     } as unknown as IPostRepository;
-    useCase = new CreatePostUseCase(mockPostRepo);
+    mockEventDispatcher = {
+      dispatch: vi.fn(),
+      dispatchAll: vi.fn(),
+    };
+    useCase = new CreatePostUseCase(mockPostRepo, mockEventDispatcher);
   });
 
   describe("happy path", () => {
@@ -104,11 +110,11 @@ describe("CreatePostUseCase", () => {
     it("should add PostCreatedEvent with correct payload", async () => {
       await useCase.execute(validInput);
 
-      const createdPost = vi.mocked(mockPostRepo.create).mock
-        .calls[0]?.[0] as Post;
-      expect(createdPost.domainEvents).toHaveLength(1);
+      const events = vi.mocked(mockEventDispatcher.dispatchAll).mock
+        .calls[0]?.[0] as unknown[];
+      expect(events).toHaveLength(1);
 
-      const event = createdPost.domainEvents[0] as unknown as PostCreatedEvent;
+      const event = events[0] as unknown as PostCreatedEvent;
       expect(event.type).toBe("PostCreated");
       expect(event.aggregateId).toBeDefined();
       expect(event.userId).toBe("user-123");
@@ -118,9 +124,9 @@ describe("CreatePostUseCase", () => {
     it("should add PostCreatedEvent with isPrivate=true for journal", async () => {
       await useCase.execute({ ...validInput, isPrivate: true });
 
-      const createdPost = vi.mocked(mockPostRepo.create).mock
-        .calls[0]?.[0] as Post;
-      const event = createdPost.domainEvents[0] as unknown as PostCreatedEvent;
+      const events = vi.mocked(mockEventDispatcher.dispatchAll).mock
+        .calls[0]?.[0] as unknown[];
+      const event = events[0] as unknown as PostCreatedEvent;
       expect(event.isPrivate).toBe(true);
     });
   });

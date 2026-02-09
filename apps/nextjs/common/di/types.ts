@@ -2,6 +2,7 @@ import type { IAuthProvider } from "@/application/ports/auth.service.port";
 import type { IBoardRepository } from "@/application/ports/board-repository.port";
 import type { IConversationRepository } from "@/application/ports/conversation-repository.port";
 import type { IEmailProvider } from "@/application/ports/email.provider.port";
+import type { IEventDispatcher } from "@/application/ports/event-dispatcher.port";
 import type { IFriendRequestRepository } from "@/application/ports/friend-request-repository.port";
 import type { IGalleryRepository } from "@/application/ports/gallery-repository.port";
 import type { IInviteTokenRepository } from "@/application/ports/invite-token-repository.port";
@@ -11,6 +12,7 @@ import type { IMoodboardRepository } from "@/application/ports/moodboard-reposit
 import type { INotificationRepository } from "@/application/ports/notification-repository.port";
 import type { IPostRepository } from "@/application/ports/post-repository.port";
 import type { IProfileRepository } from "@/application/ports/profile-repository.port";
+import type { IRewardRepository } from "@/application/ports/reward-repository.port";
 import type { IStorageProvider } from "@/application/ports/storage.provider.port";
 import type { IUserRepository } from "@/application/ports/user.repository.port";
 import type { ForgotPasswordUseCase } from "@/application/use-cases/auth/forgot-password.use-case";
@@ -45,7 +47,10 @@ import type { SendFriendRequestUseCase } from "@/application/use-cases/friend/se
 import type { AddPhotoUseCase } from "@/application/use-cases/gallery/add-photo.use-case";
 import type { DeletePhotoUseCase } from "@/application/use-cases/gallery/delete-photo.use-case";
 import type { RecordMoodUseCase } from "@/application/use-cases/mood/record-mood.use-case";
+import type { AddPinUseCase } from "@/application/use-cases/moodboard/add-pin.use-case";
 import type { CreateMoodboardUseCase } from "@/application/use-cases/moodboard/create-moodboard.use-case";
+import type { DeleteMoodboardUseCase } from "@/application/use-cases/moodboard/delete-moodboard.use-case";
+import type { DeletePinUseCase } from "@/application/use-cases/moodboard/delete-pin.use-case";
 import type { GetNotificationsUseCase } from "@/application/use-cases/notification/get-notifications.use-case";
 import type { MarkNotificationReadUseCase } from "@/application/use-cases/notification/mark-notification-read.use-case";
 import type { CreatePostUseCase } from "@/application/use-cases/post/create-post.use-case";
@@ -57,6 +62,7 @@ import type { UpdatePostUseCase } from "@/application/use-cases/post/update-post
 import type { CreateProfileUseCase } from "@/application/use-cases/profile/create-profile.use-case";
 import type { GetProfileUseCase } from "@/application/use-cases/profile/get-profile.use-case";
 import type { UpdateProfileUseCase } from "@/application/use-cases/profile/update-profile.use-case";
+import type { EvaluateAchievementUseCase } from "@/application/use-cases/reward/evaluate-achievement.use-case";
 import type { GenerateUploadUrlUseCase } from "@/application/use-cases/upload/generate-upload-url.use-case";
 
 export const DI_SYMBOLS = {
@@ -65,6 +71,7 @@ export const DI_SYMBOLS = {
   IBoardRepository: Symbol.for("IBoardRepository"),
   IEmailProvider: Symbol.for("IEmailProvider"),
   IConversationRepository: Symbol.for("IConversationRepository"),
+  IEventDispatcher: Symbol.for("IEventDispatcher"),
   IMessageRepository: Symbol.for("IMessageRepository"),
   IProfileRepository: Symbol.for("IProfileRepository"),
   IStorageProvider: Symbol.for("IStorageProvider"),
@@ -112,9 +119,14 @@ export const DI_SYMBOLS = {
   IMoodRepository: Symbol.for("IMoodRepository"),
   IMoodboardRepository: Symbol.for("IMoodboardRepository"),
   RecordMoodUseCase: Symbol.for("RecordMoodUseCase"),
+  AddPinUseCase: Symbol.for("AddPinUseCase"),
   CreateMoodboardUseCase: Symbol.for("CreateMoodboardUseCase"),
+  DeleteMoodboardUseCase: Symbol.for("DeleteMoodboardUseCase"),
+  DeletePinUseCase: Symbol.for("DeletePinUseCase"),
   IPostRepository: Symbol.for("IPostRepository"),
+  IRewardRepository: Symbol.for("IRewardRepository"),
   CreatePostUseCase: Symbol.for("CreatePostUseCase"),
+  EvaluateAchievementUseCase: Symbol.for("EvaluateAchievementUseCase"),
   DeletePostUseCase: Symbol.for("DeletePostUseCase"),
   GetUserPostsUseCase: Symbol.for("GetUserPostsUseCase"),
   GetPostDetailUseCase: Symbol.for("GetPostDetailUseCase"),
@@ -128,6 +140,7 @@ export interface DI_RETURN_TYPES {
   IBoardRepository: IBoardRepository;
   IEmailProvider: IEmailProvider;
   IConversationRepository: IConversationRepository;
+  IEventDispatcher: IEventDispatcher;
   IMessageRepository: IMessageRepository;
   IProfileRepository: IProfileRepository;
   IStorageProvider: IStorageProvider;
@@ -175,9 +188,14 @@ export interface DI_RETURN_TYPES {
   IMoodRepository: IMoodRepository;
   IMoodboardRepository: IMoodboardRepository;
   RecordMoodUseCase: RecordMoodUseCase;
+  AddPinUseCase: AddPinUseCase;
   CreateMoodboardUseCase: CreateMoodboardUseCase;
+  DeleteMoodboardUseCase: DeleteMoodboardUseCase;
+  DeletePinUseCase: DeletePinUseCase;
   IPostRepository: IPostRepository;
+  IRewardRepository: IRewardRepository;
   CreatePostUseCase: CreatePostUseCase;
+  EvaluateAchievementUseCase: EvaluateAchievementUseCase;
   DeletePostUseCase: DeletePostUseCase;
   GetUserPostsUseCase: GetUserPostsUseCase;
   GetPostDetailUseCase: GetPostDetailUseCase;

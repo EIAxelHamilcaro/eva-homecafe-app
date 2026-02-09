@@ -26,7 +26,10 @@ export const createBoardModule = () => {
 
   boardModule
     .bind(DI_SYMBOLS.CreateBoardUseCase)
-    .toClass(CreateBoardUseCase, [DI_SYMBOLS.IBoardRepository]);
+    .toClass(CreateBoardUseCase, [
+      DI_SYMBOLS.IBoardRepository,
+      DI_SYMBOLS.IEventDispatcher,
+    ]);
 
   boardModule
     .bind(DI_SYMBOLS.CreateKanbanBoardUseCase)
@@ -50,7 +53,10 @@ export const createBoardModule = () => {
 
   boardModule
     .bind(DI_SYMBOLS.UpdateCardUseCase)
-    .toClass(UpdateCardUseCase, [DI_SYMBOLS.IBoardRepository]);
+    .toClass(UpdateCardUseCase, [
+      DI_SYMBOLS.IBoardRepository,
+      DI_SYMBOLS.IEventDispatcher,
+    ]);
 
   return boardModule;
 };

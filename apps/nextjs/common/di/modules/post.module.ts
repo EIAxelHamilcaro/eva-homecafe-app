@@ -15,11 +15,17 @@ export const createPostModule = () => {
 
   postModule
     .bind(DI_SYMBOLS.CreatePostUseCase)
-    .toClass(CreatePostUseCase, [DI_SYMBOLS.IPostRepository]);
+    .toClass(CreatePostUseCase, [
+      DI_SYMBOLS.IPostRepository,
+      DI_SYMBOLS.IEventDispatcher,
+    ]);
 
   postModule
     .bind(DI_SYMBOLS.DeletePostUseCase)
-    .toClass(DeletePostUseCase, [DI_SYMBOLS.IPostRepository]);
+    .toClass(DeletePostUseCase, [
+      DI_SYMBOLS.IPostRepository,
+      DI_SYMBOLS.IEventDispatcher,
+    ]);
 
   postModule
     .bind(DI_SYMBOLS.GetUserPostsUseCase)
@@ -31,11 +37,17 @@ export const createPostModule = () => {
 
   postModule
     .bind(DI_SYMBOLS.TogglePostReactionUseCase)
-    .toClass(TogglePostReactionUseCase, [DI_SYMBOLS.IPostRepository]);
+    .toClass(TogglePostReactionUseCase, [
+      DI_SYMBOLS.IPostRepository,
+      DI_SYMBOLS.IEventDispatcher,
+    ]);
 
   postModule
     .bind(DI_SYMBOLS.UpdatePostUseCase)
-    .toClass(UpdatePostUseCase, [DI_SYMBOLS.IPostRepository]);
+    .toClass(UpdatePostUseCase, [
+      DI_SYMBOLS.IPostRepository,
+      DI_SYMBOLS.IEventDispatcher,
+    ]);
 
   return postModule;
 };

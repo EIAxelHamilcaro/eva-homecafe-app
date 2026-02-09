@@ -3,13 +3,17 @@ import type {
   IDeletePostInputDto,
   IDeletePostOutputDto,
 } from "@/application/dto/post/delete-post.dto";
+import type { IEventDispatcher } from "@/application/ports/event-dispatcher.port";
 import type { IPostRepository } from "@/application/ports/post-repository.port";
 import { PostId } from "@/domain/post/post-id";
 
 export class DeletePostUseCase
   implements UseCase<IDeletePostInputDto, IDeletePostOutputDto>
 {
-  constructor(private readonly postRepo: IPostRepository) {}
+  constructor(
+    private readonly postRepo: IPostRepository,
+    private readonly eventDispatcher: IEventDispatcher,
+  ) {}
 
   async execute(
     input: IDeletePostInputDto,
@@ -38,6 +42,9 @@ export class DeletePostUseCase
     if (deleteResult.isFailure) {
       return Result.fail(deleteResult.getError());
     }
+
+    await this.eventDispatcher.dispatchAll(post.domainEvents);
+    post.clearEvents();
 
     return Result.ok({ id: input.postId });
   }

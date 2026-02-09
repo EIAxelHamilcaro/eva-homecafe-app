@@ -9,7 +9,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { INotificationRepository } from "@/application/ports/notification-repository.port";
 import { Notification } from "@/domain/notification/notification.aggregate";
 import { NotificationId } from "@/domain/notification/notification-id";
-import { NotificationType } from "@/domain/notification/value-objects/notification-type.vo";
+import {
+  NotificationType,
+  type NotificationTypeValue,
+} from "@/domain/notification/value-objects/notification-type.vo";
 import { GetNotificationsUseCase } from "../get-notifications.use-case";
 
 describe("GetNotificationsUseCase", () => {
@@ -40,10 +43,14 @@ describe("GetNotificationsUseCase", () => {
   const createMockNotification = (
     id: string,
     userId: string,
-    type: "friend_request" | "friend_accepted" | "new_message",
+    type:
+      | "friend_request"
+      | "friend_accepted"
+      | "new_message"
+      | "reward_earned",
     options?: { readAt?: Date },
   ): Notification => {
-    const typeVO = NotificationType.create(type);
+    const typeVO = NotificationType.create(type as NotificationTypeValue);
     if (typeVO.isFailure) throw new Error("Invalid type");
 
     return Notification.reconstitute(

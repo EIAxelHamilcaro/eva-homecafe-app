@@ -1,8 +1,10 @@
 import { Option, Result, UUID } from "@packages/ddd-kit";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { IEventDispatcher } from "@/application/ports/event-dispatcher.port";
 import type { IFriendRequestRepository } from "@/application/ports/friend-request-repository.port";
 import type { INotificationRepository } from "@/application/ports/notification-repository.port";
 import type { IProfileRepository } from "@/application/ports/profile-repository.port";
+import type { FriendRequestAcceptedEvent } from "@/domain/friend/events/friend-request-accepted.event";
 import { FriendRequest } from "@/domain/friend/friend-request.aggregate";
 import type { Notification } from "@/domain/notification/notification.aggregate";
 import { Profile } from "@/domain/profile/profile.aggregate";
@@ -14,6 +16,7 @@ describe("RespondFriendRequestUseCase", () => {
   let mockFriendRequestRepo: IFriendRequestRepository;
   let mockNotificationRepo: INotificationRepository;
   let mockProfileRepo: IProfileRepository;
+  let mockEventDispatcher: IEventDispatcher;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -61,10 +64,16 @@ describe("RespondFriendRequestUseCase", () => {
       existsByUserId: vi.fn(),
     } as unknown as IProfileRepository;
 
+    mockEventDispatcher = {
+      dispatch: vi.fn(),
+      dispatchAll: vi.fn(),
+    };
+
     useCase = new RespondFriendRequestUseCase(
       mockFriendRequestRepo,
       mockNotificationRepo,
       mockProfileRepo,
+      mockEventDispatcher,
     );
   });
 
@@ -123,6 +132,44 @@ describe("RespondFriendRequestUseCase", () => {
       expect(output.message).toContain("accepted");
       expect(mockFriendRequestRepo.update).toHaveBeenCalledOnce();
       expect(mockNotificationRepo.create).toHaveBeenCalledOnce();
+    });
+
+    it("should dispatch FriendRequestAcceptedEvent on accept", async () => {
+      const senderId = "sender-123";
+      const receiverId = "receiver-456";
+      const requestId = new UUID().value.toString();
+      const friendRequest = createMockFriendRequest(senderId, receiverId);
+      const profile = createMockProfile(receiverId, "Receiver Name");
+
+      vi.mocked(mockFriendRequestRepo.findById).mockResolvedValue(
+        Result.ok(Option.some(friendRequest)),
+      );
+      vi.mocked(mockFriendRequestRepo.update).mockResolvedValue(
+        Result.ok(friendRequest),
+      );
+      vi.mocked(mockProfileRepo.findByUserId).mockResolvedValue(
+        Result.ok(Option.some(profile!)),
+      );
+      vi.mocked(mockNotificationRepo.create).mockResolvedValue(
+        Result.ok({} as Notification),
+      );
+
+      await useCase.execute({
+        requestId,
+        accept: true,
+        userId: receiverId,
+      });
+
+      const events = vi.mocked(mockEventDispatcher.dispatchAll).mock
+        .calls[0]?.[0] as unknown[];
+      const acceptedEvent = events.find(
+        (e) =>
+          (e as unknown as FriendRequestAcceptedEvent).type ===
+          "FriendRequestAccepted",
+      ) as unknown as FriendRequestAcceptedEvent;
+      expect(acceptedEvent).toBeDefined();
+      expect(acceptedEvent.senderId).toBe(senderId);
+      expect(acceptedEvent.receiverId).toBe(receiverId);
     });
 
     it("should reject a friend request successfully", async () => {
