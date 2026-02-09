@@ -3,6 +3,7 @@ import type { IBoardRepository } from "@/application/ports/board-repository.port
 import type { IConversationRepository } from "@/application/ports/conversation-repository.port";
 import type { IEmailProvider } from "@/application/ports/email.provider.port";
 import type { IFriendRequestRepository } from "@/application/ports/friend-request-repository.port";
+import type { IGalleryRepository } from "@/application/ports/gallery-repository.port";
 import type { IInviteTokenRepository } from "@/application/ports/invite-token-repository.port";
 import type { IMessageRepository } from "@/application/ports/message-repository.port";
 import type { IMoodRepository } from "@/application/ports/mood-repository.port";
@@ -40,6 +41,7 @@ import type { GetInviteLinkUseCase } from "@/application/use-cases/friend/get-in
 import type { GetPendingRequestsUseCase } from "@/application/use-cases/friend/get-pending-requests.use-case";
 import type { RespondFriendRequestUseCase } from "@/application/use-cases/friend/respond-friend-request.use-case";
 import type { SendFriendRequestUseCase } from "@/application/use-cases/friend/send-friend-request.use-case";
+import type { AddPhotoUseCase } from "@/application/use-cases/gallery/add-photo.use-case";
 import type { RecordMoodUseCase } from "@/application/use-cases/mood/record-mood.use-case";
 import type { GetNotificationsUseCase } from "@/application/use-cases/notification/get-notifications.use-case";
 import type { MarkNotificationReadUseCase } from "@/application/use-cases/notification/mark-notification-read.use-case";
@@ -81,6 +83,7 @@ export const DI_SYMBOLS = {
   GetProfileUseCase: Symbol.for("GetProfileUseCase"),
   UpdateProfileUseCase: Symbol.for("UpdateProfileUseCase"),
   IFriendRequestRepository: Symbol.for("IFriendRequestRepository"),
+  IGalleryRepository: Symbol.for("IGalleryRepository"),
   IInviteTokenRepository: Symbol.for("IInviteTokenRepository"),
   INotificationRepository: Symbol.for("INotificationRepository"),
   SendFriendRequestUseCase: Symbol.for("SendFriendRequestUseCase"),
@@ -100,6 +103,7 @@ export const DI_SYMBOLS = {
   MoveCardUseCase: Symbol.for("MoveCardUseCase"),
   UpdateBoardUseCase: Symbol.for("UpdateBoardUseCase"),
   UpdateCardUseCase: Symbol.for("UpdateCardUseCase"),
+  AddPhotoUseCase: Symbol.for("AddPhotoUseCase"),
   GenerateUploadUrlUseCase: Symbol.for("GenerateUploadUrlUseCase"),
   IMoodRepository: Symbol.for("IMoodRepository"),
   RecordMoodUseCase: Symbol.for("RecordMoodUseCase"),
@@ -139,6 +143,7 @@ export interface DI_RETURN_TYPES {
   GetProfileUseCase: GetProfileUseCase;
   UpdateProfileUseCase: UpdateProfileUseCase;
   IFriendRequestRepository: IFriendRequestRepository;
+  IGalleryRepository: IGalleryRepository;
   IInviteTokenRepository: IInviteTokenRepository;
   INotificationRepository: INotificationRepository;
   SendFriendRequestUseCase: SendFriendRequestUseCase;
@@ -158,6 +163,7 @@ export interface DI_RETURN_TYPES {
   MoveCardUseCase: MoveCardUseCase;
   UpdateBoardUseCase: UpdateBoardUseCase;
   UpdateCardUseCase: UpdateCardUseCase;
+  AddPhotoUseCase: AddPhotoUseCase;
   GenerateUploadUrlUseCase: GenerateUploadUrlUseCase;
   IMoodRepository: IMoodRepository;
   RecordMoodUseCase: RecordMoodUseCase;

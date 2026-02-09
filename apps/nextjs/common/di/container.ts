@@ -3,6 +3,7 @@ import { createAuthModule } from "./modules/auth.module";
 import { createBoardModule } from "./modules/board.module";
 import { createChatModule } from "./modules/chat.module";
 import { createFriendModule } from "./modules/friend.module";
+import { createGalleryModule } from "./modules/gallery.module";
 import { createMoodModule } from "./modules/mood.module";
 import { createNotificationModule } from "./modules/notification.module";
 import { createPostModule } from "./modules/post.module";
@@ -16,6 +17,7 @@ ApplicationContainer.load(Symbol("AuthModule"), createAuthModule());
 ApplicationContainer.load(Symbol("BoardModule"), createBoardModule());
 ApplicationContainer.load(Symbol("ChatModule"), createChatModule());
 ApplicationContainer.load(Symbol("FriendModule"), createFriendModule());
+ApplicationContainer.load(Symbol("GalleryModule"), createGalleryModule());
 ApplicationContainer.load(Symbol("MoodModule"), createMoodModule());
 ApplicationContainer.load(
   Symbol("NotificationModule"),

@@ -2,6 +2,7 @@ export * from "./auth";
 export * from "./board";
 export * from "./chat";
 export * from "./friend";
+export * from "./gallery";
 export * from "./mood";
 export * from "./notification";
 export * from "./post";
