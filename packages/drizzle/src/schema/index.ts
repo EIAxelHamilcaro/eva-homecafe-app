@@ -4,6 +4,7 @@ export * from "./chat";
 export * from "./friend";
 export * from "./gallery";
 export * from "./mood";
+export * from "./moodboard";
 export * from "./notification";
 export * from "./post";
 export * from "./profile";

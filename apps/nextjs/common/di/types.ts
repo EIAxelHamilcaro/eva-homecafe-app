@@ -7,6 +7,7 @@ import type { IGalleryRepository } from "@/application/ports/gallery-repository.
 import type { IInviteTokenRepository } from "@/application/ports/invite-token-repository.port";
 import type { IMessageRepository } from "@/application/ports/message-repository.port";
 import type { IMoodRepository } from "@/application/ports/mood-repository.port";
+import type { IMoodboardRepository } from "@/application/ports/moodboard-repository.port";
 import type { INotificationRepository } from "@/application/ports/notification-repository.port";
 import type { IPostRepository } from "@/application/ports/post-repository.port";
 import type { IProfileRepository } from "@/application/ports/profile-repository.port";
@@ -44,6 +45,7 @@ import type { SendFriendRequestUseCase } from "@/application/use-cases/friend/se
 import type { AddPhotoUseCase } from "@/application/use-cases/gallery/add-photo.use-case";
 import type { DeletePhotoUseCase } from "@/application/use-cases/gallery/delete-photo.use-case";
 import type { RecordMoodUseCase } from "@/application/use-cases/mood/record-mood.use-case";
+import type { CreateMoodboardUseCase } from "@/application/use-cases/moodboard/create-moodboard.use-case";
 import type { GetNotificationsUseCase } from "@/application/use-cases/notification/get-notifications.use-case";
 import type { MarkNotificationReadUseCase } from "@/application/use-cases/notification/mark-notification-read.use-case";
 import type { CreatePostUseCase } from "@/application/use-cases/post/create-post.use-case";
@@ -108,7 +110,9 @@ export const DI_SYMBOLS = {
   DeletePhotoUseCase: Symbol.for("DeletePhotoUseCase"),
   GenerateUploadUrlUseCase: Symbol.for("GenerateUploadUrlUseCase"),
   IMoodRepository: Symbol.for("IMoodRepository"),
+  IMoodboardRepository: Symbol.for("IMoodboardRepository"),
   RecordMoodUseCase: Symbol.for("RecordMoodUseCase"),
+  CreateMoodboardUseCase: Symbol.for("CreateMoodboardUseCase"),
   IPostRepository: Symbol.for("IPostRepository"),
   CreatePostUseCase: Symbol.for("CreatePostUseCase"),
   DeletePostUseCase: Symbol.for("DeletePostUseCase"),
@@ -169,7 +173,9 @@ export interface DI_RETURN_TYPES {
   DeletePhotoUseCase: DeletePhotoUseCase;
   GenerateUploadUrlUseCase: GenerateUploadUrlUseCase;
   IMoodRepository: IMoodRepository;
+  IMoodboardRepository: IMoodboardRepository;
   RecordMoodUseCase: RecordMoodUseCase;
+  CreateMoodboardUseCase: CreateMoodboardUseCase;
   IPostRepository: IPostRepository;
   CreatePostUseCase: CreatePostUseCase;
   DeletePostUseCase: DeletePostUseCase;

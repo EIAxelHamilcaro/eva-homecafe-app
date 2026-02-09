@@ -5,6 +5,7 @@ import { createChatModule } from "./modules/chat.module";
 import { createFriendModule } from "./modules/friend.module";
 import { createGalleryModule } from "./modules/gallery.module";
 import { createMoodModule } from "./modules/mood.module";
+import { createMoodboardModule } from "./modules/moodboard.module";
 import { createNotificationModule } from "./modules/notification.module";
 import { createPostModule } from "./modules/post.module";
 import { createProfileModule } from "./modules/profile.module";
@@ -19,6 +20,7 @@ ApplicationContainer.load(Symbol("ChatModule"), createChatModule());
 ApplicationContainer.load(Symbol("FriendModule"), createFriendModule());
 ApplicationContainer.load(Symbol("GalleryModule"), createGalleryModule());
 ApplicationContainer.load(Symbol("MoodModule"), createMoodModule());
+ApplicationContainer.load(Symbol("MoodboardModule"), createMoodboardModule());
 ApplicationContainer.load(
   Symbol("NotificationModule"),
   createNotificationModule(),
