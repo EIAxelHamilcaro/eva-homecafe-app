@@ -571,6 +571,19 @@ export default async function DashboardPage() {
 packages/ui/src/components/ui/  # shadcn (auto-generated)
 ```
 
+### shadcn/ui Import Path Fix (Required After Every Install)
+
+After running `pnpm ui:add <component>`, generated files may contain broken import paths. Fix them before committing:
+
+**Broken:** `from "/src/libs/utils"` or `from "@/lib/utils"`
+**Fixed:** `from "../../libs/utils"`
+
+**Steps:**
+1. Run `pnpm ui:add <component>`
+2. Check generated files in `packages/ui/src/components/ui/`
+3. Fix any `utils` import paths to `../../libs/utils`
+4. Run `pnpm fix` to format
+
 ## Monorepo
 
 - `apps/nextjs/` - Web + API
