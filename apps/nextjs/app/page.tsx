@@ -1,5 +1,12 @@
-import type { ReactNode } from "react";
+import { redirect } from "next/navigation";
+import { authGuard } from "@/adapters/guards/auth.guard";
 
-export default function Home(): ReactNode {
+export default async function Home() {
+  const guardResult = await authGuard();
+
+  if (guardResult.authenticated) {
+    redirect("/dashboard");
+  }
+
   return <main className="bg-background text-foreground">homecafe</main>;
 }
