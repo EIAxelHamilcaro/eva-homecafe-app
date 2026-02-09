@@ -6,6 +6,7 @@ import {
 } from "@/adapters/queries/gallery.query";
 import type { IAddPhotoOutputDto } from "@/application/dto/gallery/add-photo.dto";
 import { addPhotoInputDtoSchema } from "@/application/dto/gallery/add-photo.dto";
+import type { IDeletePhotoOutputDto } from "@/application/dto/gallery/delete-photo.dto";
 import type { IGetSessionOutputDto } from "@/application/dto/get-session.dto";
 import { getInjection } from "@/common/di/container";
 
@@ -92,4 +93,33 @@ export async function addPhotoController(
   }
 
   return NextResponse.json(result.getValue(), { status: 201 });
+}
+
+export async function deletePhotoController(
+  request: Request,
+  photoId: string,
+): Promise<NextResponse<IDeletePhotoOutputDto | { error: string }>> {
+  const session = await getAuthenticatedUser(request);
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const useCase = getInjection("DeletePhotoUseCase");
+  const result = await useCase.execute({
+    photoId,
+    userId: session.user.id,
+  });
+
+  if (result.isFailure) {
+    const error = result.getError();
+    if (error === "Photo not found") {
+      return NextResponse.json({ error }, { status: 404 });
+    }
+    if (error === "Forbidden") {
+      return NextResponse.json({ error }, { status: 403 });
+    }
+    return NextResponse.json({ error }, { status: 500 });
+  }
+
+  return NextResponse.json(result.getValue());
 }

@@ -1,4 +1,5 @@
 import { Aggregate, type Option, Result, UUID } from "@packages/ddd-kit";
+import { PhotoDeletedEvent } from "./events/photo-deleted.event";
 import { PhotoUploadedEvent } from "./events/photo-uploaded.event";
 import { PhotoId } from "./photo-id";
 import type { PhotoCaption } from "./value-objects/photo-caption.vo";
@@ -56,6 +57,16 @@ export class Photo extends Aggregate<IPhotoProps> {
     );
 
     return Result.ok(photo);
+  }
+
+  markDeleted(): void {
+    this.addEvent(
+      new PhotoDeletedEvent(
+        this.id.value.toString(),
+        this._props.userId,
+        this._props.url,
+      ),
+    );
   }
 
   static reconstitute(props: IPhotoProps, id: PhotoId): Photo {

@@ -42,6 +42,7 @@ import type { GetPendingRequestsUseCase } from "@/application/use-cases/friend/g
 import type { RespondFriendRequestUseCase } from "@/application/use-cases/friend/respond-friend-request.use-case";
 import type { SendFriendRequestUseCase } from "@/application/use-cases/friend/send-friend-request.use-case";
 import type { AddPhotoUseCase } from "@/application/use-cases/gallery/add-photo.use-case";
+import type { DeletePhotoUseCase } from "@/application/use-cases/gallery/delete-photo.use-case";
 import type { RecordMoodUseCase } from "@/application/use-cases/mood/record-mood.use-case";
 import type { GetNotificationsUseCase } from "@/application/use-cases/notification/get-notifications.use-case";
 import type { MarkNotificationReadUseCase } from "@/application/use-cases/notification/mark-notification-read.use-case";
@@ -104,6 +105,7 @@ export const DI_SYMBOLS = {
   UpdateBoardUseCase: Symbol.for("UpdateBoardUseCase"),
   UpdateCardUseCase: Symbol.for("UpdateCardUseCase"),
   AddPhotoUseCase: Symbol.for("AddPhotoUseCase"),
+  DeletePhotoUseCase: Symbol.for("DeletePhotoUseCase"),
   GenerateUploadUrlUseCase: Symbol.for("GenerateUploadUrlUseCase"),
   IMoodRepository: Symbol.for("IMoodRepository"),
   RecordMoodUseCase: Symbol.for("RecordMoodUseCase"),
@@ -164,6 +166,7 @@ export interface DI_RETURN_TYPES {
   UpdateBoardUseCase: UpdateBoardUseCase;
   UpdateCardUseCase: UpdateCardUseCase;
   AddPhotoUseCase: AddPhotoUseCase;
+  DeletePhotoUseCase: DeletePhotoUseCase;
   GenerateUploadUrlUseCase: GenerateUploadUrlUseCase;
   IMoodRepository: IMoodRepository;
   RecordMoodUseCase: RecordMoodUseCase;
