@@ -1,159 +1,194 @@
-import { useState } from "react";
-import { FlatList, RefreshControl, Text, View } from "react-native";
+import { type Href, useRouter } from "expo-router";
+import { UserPlus, Users } from "lucide-react-native";
+import { useMemo, useState } from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  RefreshControl,
+  Share,
+  Text,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { PublicPostCard } from "@/components/social/public-post-card";
+import { Button } from "@/components/ui";
+import { useFriendFeed } from "@/lib/api/hooks/use-friend-feed";
+import { useTogglePostReaction } from "@/lib/api/hooks/use-posts";
 import {
-  PublicPostCard,
-  type PublicPostCardProps,
-} from "@/components/social/public-post-card";
-
-type PublicPost = Omit<
-  PublicPostCardProps,
-  | "onPress"
-  | "onAuthorPress"
-  | "onStickerPress"
-  | "onLikePress"
-  | "onCommentPress"
-  | "onRepostPress"
-  | "onSharePress"
-  | "className"
->;
-
-const MOCK_PUBLIC_POSTS: PublicPost[] = [
-  {
-    id: "1",
-    authorName: "Marie Dupont",
-    authorAvatar: "https://i.pravatar.cc/150?img=1",
-    date: "Aujourd'hui",
-    time: "14h30",
-    content:
-      "Journée incroyable au café ! Le nouveau blend colombien est une pure merveille. Qui d'autre l'a essayé ?",
-    likesCount: 24,
-    commentsCount: 5,
-    isLiked: true,
-  },
-  {
-    id: "2",
-    authorName: "Thomas Martin",
-    authorAvatar: "https://i.pravatar.cc/150?img=2",
-    date: "Hier",
-    time: "18h15",
-    content:
-      "Premier jour de ma routine café matinale. Objectif : 30 jours de café conscient. Jour 1 ✅",
-    likesCount: 42,
-    commentsCount: 12,
-    stickerUrl:
-      "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcHVrNDloYnV0bGx0OG1rMnVxZ2x3cWF0dWJ0a2N4c3BjMnZ2bHE4aiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/gjrYDwbjnK8x36xZIO/giphy.gif",
-    isLiked: false,
-  },
-  {
-    id: "3",
-    authorName: "Sophie Bernard",
-    authorAvatar: "https://i.pravatar.cc/150?img=3",
-    date: "22 janv.",
-    time: "09h00",
-    content:
-      "Petit moment de bonheur ce matin avec mon latte art. Après des semaines d'entraînement, je commence enfin à maîtriser la rosetta !",
-    likesCount: 89,
-    commentsCount: 23,
-    isLiked: true,
-  },
-  {
-    id: "4",
-    authorName: "Lucas Petit",
-    date: "21 janv.",
-    time: "16h45",
-    content:
-      "Découverte du jour : le cold brew maison, c'est tellement simple et délicieux ! Recette dans les commentaires.",
-    likesCount: 156,
-    commentsCount: 34,
-    isLiked: false,
-  },
-  {
-    id: "5",
-    authorName: "Emma Leroy",
-    authorAvatar: "https://i.pravatar.cc/150?img=5",
-    date: "20 janv.",
-    time: "11h20",
-    content:
-      "Week-end de détente avec un bon livre et mon café préféré. Parfois, les petits plaisirs sont les meilleurs !",
-    likesCount: 67,
-    commentsCount: 8,
-    isLiked: true,
-  },
-];
+  formatPostDate,
+  formatPostTime,
+  stripHtml,
+} from "@/lib/utils/post-format";
+import type { FeedPost } from "@/types/post";
 
 export default function SocialScreen() {
-  const [posts, setPosts] = useState(MOCK_PUBLIC_POSTS);
-  const [refreshing, setRefreshing] = useState(false);
+  const router = useRouter();
+  const {
+    data,
+    isLoading,
+    error,
+    refetch,
+    isRefetching,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useFriendFeed();
+  const toggleReaction = useTogglePostReaction();
 
-  const handleRefresh = async () => {
-    setRefreshing(true);
-    // TODO: Fetch latest posts from backend
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setRefreshing(false);
-  };
+  const [localLikes, setLocalLikes] = useState<Record<string, boolean>>({});
+  const [localCounts, setLocalCounts] = useState<Record<string, number>>({});
 
-  const handleLikePost = (postId: string) => {
-    setPosts((prev) =>
-      prev.map((post) =>
-        post.id === postId
-          ? {
-              ...post,
-              isLiked: !post.isLiked,
-              likesCount: post.isLiked
-                ? post.likesCount - 1
-                : post.likesCount + 1,
-            }
-          : post,
-      ),
-    );
+  const posts = useMemo(
+    () => data?.pages.flatMap((page) => page.data) ?? [],
+    [data],
+  );
+  const hasFriends = data?.pages[0]?.hasFriends ?? true;
+
+  const handleLikePress = (
+    postId: string,
+    currentlyLiked: boolean,
+    currentCount: number,
+  ) => {
+    setLocalLikes((prev) => ({ ...prev, [postId]: !currentlyLiked }));
+    setLocalCounts((prev) => ({
+      ...prev,
+      [postId]: currentlyLiked ? currentCount - 1 : currentCount + 1,
+    }));
+    toggleReaction.mutate({ postId, emoji: "heart" });
   };
 
   const handlePostPress = (postId: string) => {
-    console.log("Open post:", postId);
-    // TODO: Navigate to post detail
-  };
-
-  const handleAuthorPress = (authorName: string) => {
-    console.log("Open author profile:", authorName);
-    // TODO: Navigate to author profile
+    router.push(`/(protected)/journal/post/${postId}` as Href);
   };
 
   const handleCommentPress = (postId: string) => {
-    console.log("Open comments:", postId);
-    // TODO: Navigate to comments
+    router.push(`/(protected)/journal/post/${postId}` as Href);
   };
 
-  const handleSharePress = (postId: string) => {
-    console.log("Share post:", postId);
-    // TODO: Open share sheet
+  const handleSharePress = async (postId: string) => {
+    try {
+      await Share.share({
+        message: "Regarde ce post sur HomeCafe !",
+        url: `https://homecafe.app/posts/${postId}`,
+      });
+    } catch (_) {
+      // Share cancellation is expected on iOS
+    }
   };
 
-  const renderPost = ({ item }: { item: PublicPost }) => (
+  const isLiked = (post: FeedPost) => localLikes[post.id] ?? post.hasReacted;
+
+  const likesCount = (post: FeedPost) =>
+    localCounts[post.id] ?? post.reactionCount;
+
+  const handleEndReached = () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  };
+
+  const renderPost = ({ item }: { item: FeedPost }) => (
     <PublicPostCard
-      {...item}
+      id={item.id}
+      authorName={item.author.displayName || item.author.name}
+      authorAvatar={item.author.avatarUrl ?? undefined}
+      date={formatPostDate(item.createdAt)}
+      time={formatPostTime(item.createdAt)}
+      content={stripHtml(item.content)}
+      likesCount={likesCount(item)}
+      isLiked={isLiked(item)}
       onPress={() => handlePostPress(item.id)}
-      onAuthorPress={() => handleAuthorPress(item.authorName)}
-      onLikePress={() => handleLikePost(item.id)}
+      onLikePress={() =>
+        handleLikePress(item.id, isLiked(item), likesCount(item))
+      }
       onCommentPress={() => handleCommentPress(item.id)}
       onSharePress={() => handleSharePress(item.id)}
       className="mb-4"
     />
   );
 
+  if (isLoading) {
+    return (
+      <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
+        <View className="flex-1 items-center justify-center">
+          <ActivityIndicator size="large" color="#F691C3" />
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (error) {
+    return (
+      <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
+        <View className="flex-1 items-center justify-center px-4">
+          <Text className="text-center text-base text-destructive">
+            Erreur lors du chargement du feed
+          </Text>
+          <Text className="mt-2 text-center text-sm text-muted-foreground">
+            {error.message}
+          </Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (!hasFriends) {
+    return (
+      <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
+        <View className="flex-1 px-4">
+          <Text className="mb-4 text-2xl font-bold text-foreground">
+            Social
+          </Text>
+          <View className="flex-1 items-center justify-center">
+            <UserPlus size={48} color="#9CA3AF" />
+            <Text className="mt-4 text-xl font-bold text-foreground">
+              Ajoutez des amis
+            </Text>
+            <Text className="mb-6 mt-2 text-center text-base text-muted-foreground">
+              Partagez votre code ami pour voir les posts de vos proches
+            </Text>
+            <Button
+              onPress={() => router.push("/(protected)/(tabs)/friends" as Href)}
+              className="flex-row items-center justify-center gap-2"
+            >
+              <UserPlus size={20} color="#fff" />
+              <Text className="text-base font-semibold text-white">
+                Ajouter des amis
+              </Text>
+            </Button>
+          </View>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (posts.length === 0) {
+    return (
+      <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
+        <View className="flex-1 px-4">
+          <Text className="mb-4 text-2xl font-bold text-foreground">
+            Social
+          </Text>
+          <View className="flex-1 items-center justify-center">
+            <Users size={48} color="#9CA3AF" />
+            <Text className="mt-4 text-xl font-bold text-foreground">
+              Aucun post pour le moment
+            </Text>
+            <Text className="mt-2 text-center text-base text-muted-foreground">
+              Vos amis n'ont pas encore publie de posts publics
+            </Text>
+          </View>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
       <View className="flex-1 px-4">
-        {/* Header */}
         <Text className="mb-4 text-2xl font-bold text-foreground">Social</Text>
 
-        {/* Section title */}
-        <Text className="mb-4 text-lg font-semibold text-foreground">
-          Derniers posts publics
-        </Text>
-
-        {/* Post feed */}
         <FlatList
           data={posts}
           renderItem={renderPost}
@@ -162,18 +197,20 @@ export default function SocialScreen() {
           contentContainerStyle={{ paddingBottom: 24 }}
           refreshControl={
             <RefreshControl
-              refreshing={refreshing}
-              onRefresh={handleRefresh}
+              refreshing={isRefetching}
+              onRefresh={refetch}
               tintColor="#F691C3"
               colors={["#F691C3"]}
             />
           }
-          ListEmptyComponent={
-            <View className="flex-1 items-center justify-center py-12">
-              <Text className="text-base text-muted-foreground">
-                Aucun post public pour le moment
-              </Text>
-            </View>
+          onEndReached={handleEndReached}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={
+            isFetchingNextPage ? (
+              <View className="items-center py-4">
+                <ActivityIndicator size="small" color="#F691C3" />
+              </View>
+            ) : null
           }
         />
       </View>

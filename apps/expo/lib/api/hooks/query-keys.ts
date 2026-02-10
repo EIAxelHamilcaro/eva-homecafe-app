@@ -60,3 +60,9 @@ export const postKeys = {
   reactions: (postId: string) =>
     [...postKeys.all, "reactions", postId] as const,
 };
+
+export const feedKeys = {
+  all: ["feed"] as const,
+  list: (page?: number, limit?: number) =>
+    [...feedKeys.all, "list", { page, limit }] as const,
+};

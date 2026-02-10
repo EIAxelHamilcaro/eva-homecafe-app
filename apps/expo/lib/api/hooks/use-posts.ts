@@ -6,7 +6,7 @@ import type {
   UpdatePostInput,
 } from "@/types/post";
 import { api } from "../client";
-import { journalKeys, postKeys } from "./query-keys";
+import { feedKeys, journalKeys, postKeys } from "./query-keys";
 
 export { postKeys };
 
@@ -27,6 +27,7 @@ export function useCreatePost() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: journalKeys.all });
       queryClient.invalidateQueries({ queryKey: postKeys.all });
+      queryClient.invalidateQueries({ queryKey: feedKeys.all });
     },
   });
 }
@@ -56,6 +57,7 @@ export function useDeletePost() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: journalKeys.all });
       queryClient.invalidateQueries({ queryKey: postKeys.all });
+      queryClient.invalidateQueries({ queryKey: feedKeys.all });
     },
   });
 }
@@ -74,6 +76,7 @@ export function useTogglePostReaction() {
       });
       queryClient.invalidateQueries({ queryKey: journalKeys.all });
       queryClient.invalidateQueries({ queryKey: postKeys.all });
+      queryClient.invalidateQueries({ queryKey: feedKeys.all });
     },
   });
 }

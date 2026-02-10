@@ -57,3 +57,27 @@ export interface ToggleReactionResponse {
   emoji: string;
   action: "added" | "removed";
 }
+
+export interface FeedPostAuthor {
+  id: string;
+  name: string;
+  displayName: string | null;
+  avatarUrl: string | null;
+}
+
+export interface FeedPost {
+  id: string;
+  content: string;
+  images: string[];
+  createdAt: string;
+  updatedAt: string | null;
+  author: FeedPostAuthor;
+  reactionCount: number;
+  hasReacted: boolean;
+}
+
+export interface FeedResponse {
+  data: FeedPost[];
+  hasFriends: boolean;
+  pagination: Pagination;
+}
