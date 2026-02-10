@@ -87,8 +87,58 @@ development_status:
   8-5-gallery-and-moodboard-widgets: done
   epic-8-retrospective: done
 
-  epic-9: in-progress
+  epic-9: done
   9-1-settings-and-preferences-page: done
   9-2-contact-page: done
   9-3-public-landing-page-and-seo: done
-  epic-9-retrospective: optional
+  epic-9-retrospective: done
+
+  # ═══════════════════════════════════════════════════════
+  # WEB MVP COMPLETE — Epics 1-9 done
+  # ═══════════════════════════════════════════════════════
+
+  # ═══════════════════════════════════════════════════════
+  # MOBILE PHASE (Expo React Native — iOS & Android)
+  # PRD: "Platform parity — both platforms cover all features"
+  # Architecture: TanStack React Query + SecureStore + Expo EAS
+  # Figma: 27 mobile screens defined
+  # Expo app scaffolded: apps/expo/ (~50 component files)
+  # ═══════════════════════════════════════════════════════
+
+  epic-10: backlog
+  10-1-journal-and-posts-mobile: backlog
+  10-2-social-feed-and-reactions-mobile: backlog
+  epic-10-retrospective: optional
+
+  epic-11: backlog
+  11-1-mood-tracking-mobile: backlog
+  11-2-organisation-todo-kanban-timeline-mobile: backlog
+  epic-11-retrospective: optional
+
+  epic-12: backlog
+  12-1-photo-gallery-mobile: backlog
+  12-2-moodboard-management-mobile: backlog
+  epic-12-retrospective: optional
+
+  epic-13: backlog
+  13-1-stickers-and-badge-collections-mobile: backlog
+  13-2-dashboard-widgets-real-api-connection-mobile: backlog
+  epic-13-retrospective: optional
+
+  epic-14: backlog
+  14-1-settings-and-preferences-mobile: backlog
+  14-2-push-notifications-expo-eas: backlog
+  14-3-friend-qr-scanning-and-deep-links: backlog
+  14-4-auth-polish-forgot-and-reset-password: backlog
+  epic-14-retrospective: optional
+
+  # ═══════════════════════════════════════════════════════
+  # TECHNICAL DEBT & PRODUCTION READINESS (cross-platform)
+  # ═══════════════════════════════════════════════════════
+
+  epic-15: backlog
+  15-1-database-push-and-production-deployment: backlog
+  15-2-delete-account-use-case-and-account-cascade: backlog
+  15-3-og-images-and-visual-assets: backlog
+  15-4-i18n-wiring: backlog
+  epic-15-retrospective: optional

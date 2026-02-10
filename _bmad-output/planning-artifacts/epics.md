@@ -289,6 +289,36 @@ Users can manage their settings and notification preferences, access a contact p
 **FRs covered:** FR75, FR76, FR77, FR78, FR79, FR80, FR81
 **Dependencies:** None (standalone)
 
+### Epic 10: Mobile Content — Posts, Journal & Social
+Mobile implementation of content creation, journal, and social feed features. Backend API shared with web (Epics 1-2). Expo app has placeholder screens and existing journal/social components to build upon. Uses TanStack React Query for API calls and SecureStore for auth tokens.
+**FRs covered:** FR18, FR19, FR20, FR21, FR22, FR23, FR24, FR25, FR26, FR27, FR28, FR29 (mobile)
+**Dependencies:** Epics 1-2 (backend exists), Expo auth + API client (already functional)
+
+### Epic 11: Mobile Tracking — Mood, Tasks & Calendar
+Mobile implementation of mood tracking and organization features. Backend API shared with web (Epics 3-4). Expo app has complete UI with mock data for mood charts, todo lists, kanban boards, and calendar — needs API connection to replace mock data.
+**FRs covered:** FR30, FR31, FR32, FR33, FR34, FR35, FR36, FR37, FR38, FR39, FR40, FR41, FR42 (mobile)
+**Dependencies:** Epics 3-4 (backend exists), Expo UI components (mock data implementations exist)
+
+### Epic 12: Mobile Visual — Gallery & Moodboards
+Mobile implementation of photo gallery and moodboard features. Backend API shared with web (Epics 5-6). Gallery is placeholder, moodboard has partial UI with mock data. expo-image-picker and expo-camera already installed.
+**FRs covered:** FR48, FR49, FR50, FR51, FR52, FR53, FR54 (mobile)
+**Dependencies:** Epics 5-6 (backend exists), shared upload endpoint
+
+### Epic 13: Mobile Gamification & Dashboard
+Mobile implementation of sticker/badge collections and dashboard widget API connection. Backend API shared with web (Epics 7-8). Dashboard has 8 widget components using mock data. Sticker/badge screens are placeholders with existing UI components.
+**FRs covered:** FR55, FR56, FR57, FR58, FR59, FR60, FR61, FR62, FR63, FR64, FR65, FR66, FR67, FR68, FR69 (mobile)
+**Dependencies:** Epics 7-8 (backend exists), Expo dashboard widgets (mock data)
+
+### Epic 14: Mobile Polish — Settings, Push & QR
+Mobile-specific features: connect settings UI to API, Expo EAS push notifications, friend QR code scanning, deep links, and auth flow completion (forgot/reset password). Settings screen UI exists with TODO handlers. expo-notifications and expo-camera installed.
+**FRs covered:** FR8, FR9, FR70, FR71, FR72, FR73, FR74, FR75, FR76 (mobile)
+**Dependencies:** Epic 9 (settings backend), Expo EAS configuration
+
+### Epic 15: Technical Debt & Production Readiness
+Cross-platform technical debt accumulated over 9 web epics: database migration push (9 epics), DeleteAccountUseCase implementation, OG image creation, and i18n wiring. Prepares codebase for production deployment on Vercel (web) and Expo EAS (mobile).
+**FRs covered:** FR9 (delete account), NFR12 (GDPR deletion)
+**Dependencies:** All previous epics (debt items span full codebase)
+
 ---
 
 ## Epic 1: Content Creation & Personal Journal
@@ -1063,3 +1093,363 @@ So that I understand the product and am motivated to sign up.
 **Given** the landing page
 **When** rendered
 **Then** it uses SSR for optimal SEO performance
+
+---
+
+## Epic 10: Mobile Content — Posts, Journal & Social
+
+Mobile implementation of content creation, journal, and social feed. Backend API shared with web. Expo app has placeholder screens and existing journal/social components. Uses TanStack React Query + SecureStore auth.
+
+### Story 10.1: Journal & Posts (Mobile)
+
+As a **mobile user**,
+I want to create, view, edit, and delete posts from my phone,
+So that I can maintain my journal and share content on the go.
+
+**Acceptance Criteria:**
+
+**Given** an authenticated mobile user
+**When** they navigate to the journal screen
+**Then** they see their private posts grouped by date, fetched via TanStack Query from `/api/v1/posts`
+
+**Given** an authenticated mobile user
+**When** they create a post with rich text and optional images (via expo-image-picker)
+**Then** the post is persisted via the shared API and appears in their journal or social feed
+
+**Given** an authenticated mobile user viewing a post
+**When** they tap edit or delete
+**Then** the post is updated or removed via the API and the local query cache is invalidated
+
+**Given** an authenticated mobile user
+**When** they view their journal
+**Then** they see their streak counter and can browse entries by date
+
+**Given** the existing Expo components
+**When** implementing this story
+**Then** reuse existing `components/journal/` components and `lib/api/hooks/` patterns
+
+### Story 10.2: Social Feed & Reactions (Mobile)
+
+As a **mobile user**,
+I want to browse my friends' public posts and react to them,
+So that I can stay connected with friends from my phone.
+
+**Acceptance Criteria:**
+
+**Given** an authenticated mobile user with friends
+**When** they navigate to the social feed screen
+**Then** they see a paginated feed of friends' public posts fetched from `/api/v1/feed`
+
+**Given** an authenticated mobile user viewing a friend's post
+**When** they tap the react button
+**Then** the reaction toggles and the count updates optimistically via TanStack Query mutation
+
+**Given** an authenticated mobile user with no friends
+**When** they navigate to the social feed
+**Then** they see an empty state encouraging friend code sharing
+
+**Given** the existing Expo components
+**When** implementing this story
+**Then** reuse existing `components/social/` components (PublicPostCard, etc.)
+
+---
+
+## Epic 11: Mobile Tracking — Mood, Tasks & Calendar
+
+Mobile implementation of mood tracking and organization. Expo app has complete UI with mock data for mood charts, todo lists, kanban boards, and calendar. This epic replaces mock data with real API calls.
+
+### Story 11.1: Mood Tracking (Mobile)
+
+As a **mobile user**,
+I want to record my daily mood and view mood charts from my phone,
+So that I can track my emotional patterns on the go.
+
+**Acceptance Criteria:**
+
+**Given** an authenticated mobile user
+**When** they open the mood tracker
+**Then** they see 9 mood categories with intensity slider, fetched from and submitted to `/api/v1/moods`
+
+**Given** an authenticated mobile user with mood entries
+**When** they view mood history
+**Then** they see weekly bar chart and 6-month trends using victory-native charts connected to real API data
+
+**Given** the existing Expo mood UI
+**When** implementing this story
+**Then** replace mock data in `components/moodboard/` with TanStack Query hooks calling the mood API
+
+### Story 11.2: Organisation — Todo, Kanban, Timeline (Mobile)
+
+As a **mobile user**,
+I want to manage my tasks through todo lists, kanban boards, and calendar from my phone,
+So that I can organize my projects anywhere.
+
+**Acceptance Criteria:**
+
+**Given** an authenticated mobile user
+**When** they navigate to the organisation screen
+**Then** they see three view tabs (todo, kanban, chronology) with data from `/api/v1/boards`
+
+**Given** an authenticated mobile user on the kanban view
+**When** they drag a card between columns
+**Then** the card moves with 60fps animation (react-native-draggable-flatlist) and persists via API
+
+**Given** an authenticated mobile user on the calendar view
+**When** they view the chronology
+**Then** they see cards with due dates on react-native-calendars, connected to real API data
+
+**Given** the existing Expo organisation UI
+**When** implementing this story
+**Then** replace mock data in `components/organisation/` with TanStack Query hooks calling the boards API
+
+---
+
+## Epic 12: Mobile Visual — Gallery & Moodboards
+
+Mobile implementation of photo gallery and moodboard features. Gallery screen is placeholder, moodboard has partial UI. expo-image-picker and expo-camera already installed.
+
+### Story 12.1: Photo Gallery (Mobile)
+
+As a **mobile user**,
+I want to upload, browse, and delete photos from my phone gallery,
+So that I can build my visual collection using my phone camera or photo library.
+
+**Acceptance Criteria:**
+
+**Given** an authenticated mobile user
+**When** they navigate to the gallery screen
+**Then** they see a photo grid fetched from `/api/v1/gallery`
+
+**Given** an authenticated mobile user
+**When** they tap upload and select photos via expo-image-picker
+**Then** photos are uploaded via the shared upload endpoint (context: gallery) using the ApiClient.uploadFile method
+
+**Given** an authenticated mobile user
+**When** they long-press or swipe a photo to delete
+**Then** the photo is removed from the gallery via API
+
+**Given** no photos in gallery
+**When** the user views the gallery
+**Then** they see an empty state encouraging first upload
+
+### Story 12.2: Moodboard Management (Mobile)
+
+As a **mobile user**,
+I want to create and manage moodboards from my phone,
+So that I can curate visual inspiration anywhere.
+
+**Acceptance Criteria:**
+
+**Given** an authenticated mobile user
+**When** they navigate to the moodboard screen
+**Then** they see their moodboards fetched from `/api/v1/moodboards`
+
+**Given** an authenticated mobile user viewing a moodboard
+**When** they pin an image (via expo-image-picker) or a color
+**Then** the pin is persisted via API
+
+**Given** the existing Expo moodboard UI
+**When** implementing this story
+**Then** replace mock data with TanStack Query hooks calling the moodboard API
+
+---
+
+## Epic 13: Mobile Gamification & Dashboard
+
+Mobile implementation of sticker/badge collections and dashboard widget real API connection. Dashboard has 8 widget components using mock data. Sticker/badge screens are placeholders.
+
+### Story 13.1: Stickers & Badge Collections (Mobile)
+
+As a **mobile user**,
+I want to view my sticker and badge collections and see earning criteria,
+So that I can track my achievements and stay motivated.
+
+**Acceptance Criteria:**
+
+**Given** an authenticated mobile user
+**When** they navigate to the stickers screen
+**Then** they see earned stickers highlighted and unearned grayed out, fetched from `/api/v1/rewards`
+
+**Given** an authenticated mobile user
+**When** they navigate to the badges/rewards screen
+**Then** they see earned badges highlighted with earning criteria from API
+
+**Given** the existing Expo components
+**When** implementing this story
+**Then** reuse existing `components/badges/` and `components/stickers/` components
+
+### Story 13.2: Dashboard Widgets — Real API Connection (Mobile)
+
+As a **mobile user**,
+I want my dashboard widgets to show real data instead of mock data,
+So that I have an accurate overview of all my content.
+
+**Acceptance Criteria:**
+
+**Given** an authenticated mobile user
+**When** they view the home dashboard
+**Then** all 8 widgets display real data fetched from their respective API endpoints
+
+**Given** the existing dashboard widget components
+**When** implementing this story
+**Then** replace mock data imports in `(tabs)/_components/` with TanStack Query hooks
+
+**Given** a new user with no data
+**When** they view the dashboard
+**Then** widgets show contextual empty states with first-action prompts
+
+---
+
+## Epic 14: Mobile Polish — Settings, Push & QR
+
+Mobile-specific features: settings API connection, Expo EAS push notifications, QR code scanning, and auth flow completion.
+
+### Story 14.1: Settings & Preferences (Mobile)
+
+As a **mobile user**,
+I want to manage my preferences from the settings screen,
+So that I can customize notifications, privacy, and appearance.
+
+**Acceptance Criteria:**
+
+**Given** an authenticated mobile user
+**When** they navigate to settings
+**Then** their current preferences are loaded from `/api/v1/settings`
+
+**Given** an authenticated mobile user
+**When** they toggle notification or privacy settings
+**Then** changes are persisted via PATCH `/api/v1/settings`
+
+**Given** the existing settings screen UI
+**When** implementing this story
+**Then** connect the TODO handlers in `settings/index.tsx` to real API calls
+
+### Story 14.2: Push Notifications — Expo EAS
+
+As a **mobile user**,
+I want to receive push notifications for journal reminders, friend activity, messages, and badges,
+So that I stay engaged without opening the app.
+
+**Acceptance Criteria:**
+
+**Given** a mobile user with push notifications enabled
+**When** a domain event triggers a notification (message received, badge earned, friend request)
+**Then** an Expo push notification is delivered to their device
+
+**Given** a mobile user
+**When** they first open the app
+**Then** they are prompted for notification permissions via expo-notifications
+
+**Given** the Expo EAS configuration
+**When** implementing this story
+**Then** register push tokens via API, create IPushNotificationProvider implementation for Expo EAS
+
+### Story 14.3: Friend QR Scanning & Deep Links
+
+As a **mobile user**,
+I want to scan a friend's QR code to add them instantly,
+So that connecting with friends is frictionless.
+
+**Acceptance Criteria:**
+
+**Given** a mobile user
+**When** they open the QR scanner (expo-camera)
+**Then** scanning a valid friend QR code sends a friend request via API
+
+**Given** a user who receives a friend invite link
+**When** they tap the link on their phone
+**Then** they are deep-linked to the app with the friend code pre-filled
+
+**Given** a mobile user on the add friend screen
+**When** they enter a friend code manually
+**Then** a friend request is sent via `/api/v1/friends`
+
+### Story 14.4: Auth Polish — Forgot & Reset Password
+
+As a **mobile user**,
+I want to reset my password from my phone,
+So that I can recover my account without a computer.
+
+**Acceptance Criteria:**
+
+**Given** a mobile user on the login screen
+**When** they tap "Forgot password" and enter their email
+**Then** a reset code is sent via the existing `/api/v1/auth/forgot-password` endpoint
+
+**Given** a mobile user with a reset code
+**When** they enter the code and a new password
+**Then** the password is reset via the existing API and they are redirected to login
+
+---
+
+## Epic 15: Technical Debt & Production Readiness
+
+Cross-platform technical debt accumulated over 9 web epics. Prepares codebase for production deployment.
+
+### Story 15.1: Database Push & Production Deployment
+
+As a **developer**,
+I want to push all accumulated database migrations and deploy to production,
+So that the app is accessible to real users.
+
+**Acceptance Criteria:**
+
+**Given** 9 epics of database migrations generated but never pushed
+**When** the developer runs db:push against the production database
+**Then** all schema changes are applied and the production database matches the local schema
+
+**Given** the Next.js web app and Expo mobile app
+**When** deployed to Vercel and Expo EAS respectively
+**Then** both apps are accessible and functional with the production database
+
+### Story 15.2: DeleteAccountUseCase & Account Cascade
+
+As a **user**,
+I want to permanently delete my account and all associated data,
+So that my data is fully removed per GDPR requirements (FR9, NFR12).
+
+**Acceptance Criteria:**
+
+**Given** an authenticated user
+**When** they confirm account deletion
+**Then** all user data is cascade-deleted: posts, moods, boards, gallery photos, moodboards, friends, notifications, preferences, rewards
+
+**Given** the deletion cascade
+**When** executed
+**Then** R2 storage objects (photos, uploads) are also cleaned up
+
+**Given** the settings page (web + mobile)
+**When** the delete account button is clicked
+**Then** it calls the real DeleteAccountUseCase instead of signing out
+
+### Story 15.3: OG Images & Visual Assets
+
+As a **visitor**,
+I want to see proper preview images when HomeCafe links are shared on social media,
+So that the app looks professional and trustworthy.
+
+**Acceptance Criteria:**
+
+**Given** the landing page URL shared on social media
+**When** the platform fetches OG metadata
+**Then** `/og-landing.png` exists and renders a 1200x630 branded preview image
+
+**Given** the app
+**When** deployed
+**Then** favicon, app icons (iOS/Android), and splash screen assets are present
+
+### Story 15.4: i18n Wiring
+
+As a **user** who selected a language preference,
+I want the app UI to display in my chosen language,
+So that the interface matches my preference.
+
+**Acceptance Criteria:**
+
+**Given** a user with language preference set to "en" or "fr"
+**When** they use the web app
+**Then** UI text is displayed in their chosen language via next-intl
+
+**Given** a user with language preference on mobile
+**When** they use the Expo app
+**Then** UI text respects the language preference via React Native Intl
