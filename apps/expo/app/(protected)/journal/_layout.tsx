@@ -18,6 +18,13 @@ export default function JournalLayout() {
           animation: "slide_from_bottom",
         }}
       />
+      <Stack.Screen
+        name="edit/[id]"
+        options={{
+          presentation: "modal",
+          animation: "slide_from_bottom",
+        }}
+      />
     </Stack>
   );
 }

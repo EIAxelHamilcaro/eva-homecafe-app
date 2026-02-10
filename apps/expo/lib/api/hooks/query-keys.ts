@@ -46,3 +46,17 @@ export const notificationKeys = {
     [...notificationKeys.all, "list", { page, limit, unreadOnly }] as const,
   unreadCount: () => [...notificationKeys.all, "unreadCount"] as const,
 };
+
+export const journalKeys = {
+  all: ["journal"] as const,
+  list: (page?: number, limit?: number, date?: string) =>
+    [...journalKeys.all, "list", { page, limit, date }] as const,
+  streak: () => [...journalKeys.all, "streak"] as const,
+};
+
+export const postKeys = {
+  all: ["posts"] as const,
+  detail: (id: string) => [...postKeys.all, "detail", id] as const,
+  reactions: (postId: string) =>
+    [...postKeys.all, "reactions", postId] as const,
+};

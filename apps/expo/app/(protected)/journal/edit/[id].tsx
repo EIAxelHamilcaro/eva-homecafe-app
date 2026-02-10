@@ -1,6 +1,6 @@
-import { router } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { ImageIcon, Lock, X } from "lucide-react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Image,
@@ -16,25 +16,44 @@ import {
   PostEditor,
 } from "@/components/journal/post-editor";
 import { Avatar, Button } from "@/components/ui";
-import { useCreatePost } from "@/lib/api/hooks/use-posts";
+import { usePost, useUpdatePost } from "@/lib/api/hooks/use-posts";
 import { usePostImages } from "@/lib/hooks/use-image-picker";
 import { useToast } from "@/lib/toast/toast-context";
 import { useAuth } from "@/src/providers/auth-provider";
 
-export default function JournalCreateModal() {
+export default function EditPostScreen() {
+  const router = useRouter();
+  const { id } = useLocalSearchParams<{ id: string }>();
   const { user } = useAuth();
   const { showToast } = useToast();
-  const createPost = useCreatePost();
-  const { images, pickImages, removeImage, isUploading, canAddMore } =
-    usePostImages();
+  const { data: post, isLoading: isLoadingPost } = usePost(id ?? "");
+  const updatePost = useUpdatePost();
+  const {
+    images,
+    pickImages,
+    removeImage,
+    resetImages,
+    isUploading,
+    canAddMore,
+  } = usePostImages();
 
   const [postContent, setPostContent] = useState("");
   const [isPrivate, setIsPrivate] = useState(true);
   const [activeFormatting, setActiveFormatting] = useState<FormattingOption[]>(
     [],
   );
+  const [initialized, setInitialized] = useState(false);
 
-  const isSubmitting = createPost.isPending || isUploading;
+  useEffect(() => {
+    if (post && !initialized) {
+      setPostContent(post.content);
+      setIsPrivate(post.isPrivate);
+      resetImages(post.images);
+      setInitialized(true);
+    }
+  }, [post, initialized, resetImages]);
+
+  const isSubmitting = updatePost.isPending || isUploading;
 
   const handleClose = () => {
     if (router.canGoBack()) {
@@ -44,22 +63,23 @@ export default function JournalCreateModal() {
     }
   };
 
-  const handlePublish = () => {
-    if (!postContent.trim()) return;
+  const handleSave = () => {
+    if (!postContent.trim() || !id) return;
 
-    createPost.mutate(
+    updatePost.mutate(
       {
+        postId: id,
         content: postContent,
         isPrivate,
-        images: images.length > 0 ? images : undefined,
+        images,
       },
       {
         onSuccess: () => {
-          showToast("Post publié !", "success");
+          showToast("Post modifié !", "success");
           handleClose();
         },
         onError: (error) => {
-          showToast(error.message ?? "Erreur lors de la publication", "error");
+          showToast(error.message ?? "Erreur lors de la modification", "error");
         },
       },
     );
@@ -79,12 +99,43 @@ export default function JournalCreateModal() {
     setIsPrivate((prev) => !prev);
   };
 
-  const currentDate = new Date();
-  const formattedDate = currentDate.toLocaleDateString("fr-FR", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-  });
+  if (isLoadingPost) {
+    return (
+      <SafeAreaView className="flex-1 bg-background">
+        <View className="items-end px-4 py-2">
+          <Pressable
+            onPress={handleClose}
+            className="h-10 w-10 items-center justify-center rounded-full border-2 border-primary"
+          >
+            <X size={20} color="#F691C3" />
+          </Pressable>
+        </View>
+        <View className="flex-1 items-center justify-center">
+          <ActivityIndicator size="large" color="#F691C3" />
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (!post) {
+    return (
+      <SafeAreaView className="flex-1 bg-background">
+        <View className="items-end px-4 py-2">
+          <Pressable
+            onPress={handleClose}
+            className="h-10 w-10 items-center justify-center rounded-full border-2 border-primary"
+          >
+            <X size={20} color="#F691C3" />
+          </Pressable>
+        </View>
+        <View className="flex-1 items-center justify-center px-4">
+          <Text className="text-destructive text-center text-base">
+            Post introuvable
+          </Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-background">
@@ -112,8 +163,8 @@ export default function JournalCreateModal() {
               <Text className="text-lg font-bold text-foreground">
                 {user?.name ?? "Utilisateur"}
               </Text>
-              <Text className="text-sm text-muted-foreground capitalize">
-                {formattedDate}
+              <Text className="text-sm text-muted-foreground">
+                Modifier le post
               </Text>
             </View>
           </View>
@@ -190,15 +241,15 @@ export default function JournalCreateModal() {
 
         <View className="items-end py-4">
           <Button
-            onPress={handlePublish}
+            onPress={handleSave}
             disabled={!postContent.trim() || isSubmitting}
             className="px-8"
           >
-            {createPost.isPending ? (
+            {updatePost.isPending ? (
               <ActivityIndicator size="small" color="#FFFFFF" />
             ) : (
               <Text className="text-white font-semibold text-base">
-                Publier
+                Enregistrer
               </Text>
             )}
           </Button>
