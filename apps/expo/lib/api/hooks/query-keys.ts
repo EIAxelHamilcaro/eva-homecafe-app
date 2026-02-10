@@ -66,3 +66,11 @@ export const feedKeys = {
   list: (page?: number, limit?: number) =>
     [...feedKeys.all, "list", { page, limit }] as const,
 };
+
+export const moodKeys = {
+  all: ["mood"] as const,
+  today: () => [...moodKeys.all, "today"] as const,
+  week: () => [...moodKeys.all, "week"] as const,
+  stats: (period: string) => [...moodKeys.all, "stats", { period }] as const,
+  trends: () => [...moodKeys.all, "trends"] as const,
+};

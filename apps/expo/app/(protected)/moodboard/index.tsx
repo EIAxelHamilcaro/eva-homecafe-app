@@ -1,7 +1,15 @@
 import { type Href, useRouter } from "expo-router";
 import { Menu } from "lucide-react-native";
-import { useState } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  ActivityIndicator,
+  Alert,
+  Pressable,
+  RefreshControl,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { BadgeItem } from "@/components/badges/badge-item";
@@ -12,46 +20,122 @@ import {
   type WeeklyDataPoint,
 } from "@/components/moodboard/mood-chart";
 import { type DayMood, MoodGrid } from "@/components/moodboard/mood-grid";
-import { MoodLegend, type MoodType } from "@/components/moodboard/mood-legend";
+import {
+  MOOD_COLORS,
+  MOODS,
+  MoodLegend,
+  type MoodType,
+} from "@/components/moodboard/mood-legend";
 import { MoodSlider } from "@/components/moodboard/mood-slider";
 import { StickerItem } from "@/components/stickers/sticker-item";
 import { Button, Logo } from "@/components/ui";
+import {
+  useMoodTrends,
+  useMoodWeek,
+  useRecordMood,
+  useTodayMood,
+} from "@/lib/api/hooks/use-mood";
+import { cn } from "@/src/libs/utils";
+import type { MoodTrendsMonth, MoodWeekEntry } from "@/types/mood";
 
-const MOCK_WEEK_MOODS: DayMood[] = [
-  { day: "L", mood: "bonheur" },
-  { day: "M", mood: "excitation" },
-  { day: "Me", mood: "productivite" },
-  { day: "J", mood: "bonheur" },
-  { day: "V", mood: null },
-  { day: "S", mood: null },
-  { day: "D", mood: null },
+type DayOfWeekEN =
+  | "Monday"
+  | "Tuesday"
+  | "Wednesday"
+  | "Thursday"
+  | "Friday"
+  | "Saturday"
+  | "Sunday";
+
+const DAY_MAP: Record<DayOfWeekEN, DayMood["day"]> = {
+  Monday: "L",
+  Tuesday: "M",
+  Wednesday: "Me",
+  Thursday: "J",
+  Friday: "V",
+  Saturday: "S",
+  Sunday: "D",
+};
+
+const WEEK_ORDER: DayOfWeekEN[] = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday",
 ];
 
-const MOCK_WEEKLY_CHART_DATA: WeeklyDataPoint[] = [
-  { day: 1, value: 30, mood: "enervement" },
-  { day: 2, value: 45, mood: "anxiete" },
-  { day: 3, value: 60, mood: "calme" },
-  { day: 4, value: 55, mood: "productivite" },
-  { day: 5, value: 70, mood: "bonheur" },
-  { day: 6, value: 80, mood: "excitation" },
-  { day: 7, value: 85, mood: "bonheur" },
-];
+function mapWeekToGrid(entries: MoodWeekEntry[]): DayMood[] {
+  return WEEK_ORDER.map((day) => {
+    const entry = entries.find((e) => e.dayOfWeek === day);
+    return {
+      day: DAY_MAP[day],
+      mood: entry?.category ?? null,
+    };
+  });
+}
 
-const MOCK_MONTHLY_CHART_DATA: MonthlyDataPoint[] = [
-  { month: 1, value: 40, mood: "enervement" },
-  { month: 2, value: 55, mood: "calme" },
-  { month: 3, value: 35, mood: "tristesse" },
-  { month: 4, value: 65, mood: "productivite" },
-  { month: 5, value: 45, mood: "ennui" },
-  { month: 6, value: 90, mood: "bonheur" },
-];
+function mapWeekToChart(entries: MoodWeekEntry[]): WeeklyDataPoint[] {
+  return entries.map((e, i) => ({
+    day: i + 1,
+    value: e.intensity * 10,
+    mood: e.category,
+  }));
+}
+
+function mapTrendsToChart(months: MoodTrendsMonth[]): MonthlyDataPoint[] {
+  return months.map((m, i) => ({
+    month: i + 1,
+    value: m.averageIntensity * 10,
+    mood: m.dominantCategory,
+  }));
+}
 
 export default function MoodboardScreen() {
   const router = useRouter();
-  const [selectedDay, setSelectedDay] = useState<DayMood["day"] | null>(null);
-  const [weekMoods, setWeekMoods] = useState<DayMood[]>(MOCK_WEEK_MOODS);
-  const [moodValue, setMoodValue] = useState(50);
+  const [moodValue, setMoodValue] = useState(5);
   const [selectedMood, setSelectedMood] = useState<MoodType | null>(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const todayMood = useTodayMood();
+  const moodWeek = useMoodWeek();
+  const moodTrends = useMoodTrends();
+  const recordMood = useRecordMood();
+
+  useEffect(() => {
+    if (todayMood.data) {
+      setSelectedMood(todayMood.data.category);
+      setMoodValue(todayMood.data.intensity);
+    }
+  }, [todayMood.data]);
+
+  const weekMoods = useMemo<DayMood[]>(() => {
+    if (!moodWeek.data?.entries)
+      return WEEK_ORDER.map((d) => ({ day: DAY_MAP[d], mood: null }));
+    return mapWeekToGrid(moodWeek.data.entries);
+  }, [moodWeek.data]);
+
+  const weeklyChartData = useMemo<WeeklyDataPoint[]>(() => {
+    if (!moodWeek.data?.entries?.length) return [];
+    return mapWeekToChart(moodWeek.data.entries);
+  }, [moodWeek.data]);
+
+  const monthlyChartData = useMemo<MonthlyDataPoint[]>(() => {
+    if (!moodTrends.data?.months?.length) return [];
+    return mapTrendsToChart(moodTrends.data.months);
+  }, [moodTrends.data]);
+
+  const todayRefetch = todayMood.refetch;
+  const weekRefetch = moodWeek.refetch;
+  const trendsRefetch = moodTrends.refetch;
+
+  const onRefresh = useCallback(async () => {
+    setIsRefreshing(true);
+    await Promise.all([todayRefetch(), weekRefetch(), trendsRefetch()]);
+    setIsRefreshing(false);
+  }, [todayRefetch, weekRefetch, trendsRefetch]);
 
   const currentDate = new Date();
   const monthNames = [
@@ -73,28 +157,23 @@ export default function MoodboardScreen() {
     router.push("/(protected)/stickers" as Href);
   };
 
-  const handleDayPress = (day: DayMood["day"]) => {
-    setSelectedDay(day);
-  };
-
-  const handleValidateGrid = () => {
-    if (selectedDay && selectedMood) {
-      setWeekMoods((prev) =>
-        prev.map((m) =>
-          m.day === selectedDay ? { ...m, mood: selectedMood } : m,
-        ),
-      );
-      setSelectedDay(null);
-      setSelectedMood(null);
-    }
-  };
-
   const handleViewFullGraph = () => {
     router.push("/(protected)/moodboard/tracker" as Href);
   };
 
   const handleMoodSliderValidate = () => {
-    console.log("Mood value submitted:", moodValue);
+    if (!selectedMood) return;
+    recordMood.mutate(
+      { category: selectedMood, intensity: moodValue },
+      {
+        onSuccess: (data) => {
+          Alert.alert(
+            data.isUpdate ? "Humeur modifiée" : "Humeur enregistrée",
+            `${MOODS.find((m) => m.key === selectedMood)?.label} — intensité ${moodValue}/10`,
+          );
+        },
+      },
+    );
   };
 
   const handleMenuPress = () => {
@@ -109,12 +188,18 @@ export default function MoodboardScreen() {
     console.log("Invite friends pressed");
   };
 
+  const isLoading = todayMood.isLoading || moodWeek.isLoading;
+  const hasError = todayMood.isError || moodWeek.isError;
+
   return (
     <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
       <ScrollView
         className="flex-1"
         contentContainerClassName="px-4 pb-8"
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+        }
       >
         {/* Header with Logo and Menu */}
         <View className="flex-row items-center justify-between py-4">
@@ -158,41 +243,110 @@ export default function MoodboardScreen() {
         {/* Mood Legend Card */}
         <MoodLegend className="mb-4" />
 
-        {/* Mood Grid Card - "Que ressens-tu aujourd'hui?" */}
-        <MoodGrid
-          moods={weekMoods}
-          selectedDay={selectedDay}
-          onDayPress={handleDayPress}
-          onValidate={handleValidateGrid}
-          onViewFullGraph={handleViewFullGraph}
-          className="mb-4"
-        />
+        {/* Mood Grid Card */}
+        {isLoading ? (
+          <View className="bg-card mb-4 items-center justify-center rounded-xl border border-border p-8">
+            <ActivityIndicator size="small" />
+          </View>
+        ) : hasError ? (
+          <Pressable
+            onPress={() => {
+              todayMood.refetch();
+              moodWeek.refetch();
+            }}
+            className="bg-card mb-4 items-center rounded-xl border border-border p-6"
+          >
+            <Text className="text-muted-foreground text-sm">
+              Erreur de chargement. Appuie pour réessayer.
+            </Text>
+          </Pressable>
+        ) : (
+          <MoodGrid
+            moods={weekMoods}
+            onViewFullGraph={handleViewFullGraph}
+            showActions={true}
+            className="mb-4"
+          />
+        )}
+
+        {/* Mood Category Picker */}
+        <View className="bg-card mb-4 rounded-xl border border-border p-4 shadow-sm">
+          <Text className="text-foreground mb-2 text-lg font-semibold">
+            Choisis ton humeur
+          </Text>
+          <View className="flex-row flex-wrap gap-2">
+            {MOODS.map((mood) => (
+              <Pressable
+                key={mood.key}
+                onPress={() => setSelectedMood(mood.key)}
+                className={cn(
+                  "flex-row items-center gap-1.5 rounded-full border px-3 py-1.5",
+                  selectedMood === mood.key
+                    ? "border-primary bg-primary/10"
+                    : "border-border",
+                )}
+                accessibilityRole="radio"
+                accessibilityState={{ selected: selectedMood === mood.key }}
+                accessibilityLabel={mood.label}
+              >
+                <View
+                  className={cn("h-3 w-3 rounded-full", MOOD_COLORS[mood.key])}
+                />
+                <Text
+                  className={cn(
+                    "text-xs",
+                    selectedMood === mood.key
+                      ? "text-primary font-medium"
+                      : "text-foreground",
+                  )}
+                >
+                  {mood.label}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
+        </View>
 
         {/* Mood Slider Card */}
         <MoodSlider
           value={moodValue}
           onValueChange={setMoodValue}
           onValidate={handleMoodSliderValidate}
+          min={1}
+          max={10}
+          step={1}
+          disabled={!selectedMood || recordMood.isPending}
+          validateLabel={todayMood.data ? "Modifier" : "Valider"}
           className="mb-4"
         />
+
+        {recordMood.isError && (
+          <View className="mb-4 rounded-lg bg-red-50 p-3">
+            <Text className="text-sm text-red-600">
+              Erreur lors de l'enregistrement. Réessaye.
+            </Text>
+          </View>
+        )}
 
         {/* Suivi Weekly Line Chart */}
-        <MoodLineChart
-          data={MOCK_WEEKLY_CHART_DATA}
-          title="Suivi"
-          subtitle="Humeurs de la semaine (du 11 au 17 août)"
-          trendText="En hausse de 5.2% cette semaine"
-          className="mb-4"
-        />
+        {weeklyChartData.length > 0 && (
+          <MoodLineChart
+            data={weeklyChartData}
+            title="Suivi"
+            subtitle="Humeurs de la semaine"
+            className="mb-4"
+          />
+        )}
 
         {/* Suivi Monthly Bar Chart */}
-        <MoodBarChart
-          data={MOCK_MONTHLY_CHART_DATA}
-          title="Suivi"
-          subtitle="Moodboard janvier → juin 2025"
-          trendText="En hausse de 5.2% ce mois-ci"
-          className="mb-4"
-        />
+        {monthlyChartData.length > 0 && (
+          <MoodBarChart
+            data={monthlyChartData}
+            title="Suivi"
+            subtitle="Tendances sur 6 mois"
+            className="mb-4"
+          />
+        )}
 
         {/* Badges Card */}
         <Pressable

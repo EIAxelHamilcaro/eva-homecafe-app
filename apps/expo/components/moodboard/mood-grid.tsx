@@ -130,14 +130,16 @@ function MoodGrid({
               Voir le graphique entier
             </Text>
           </Pressable>
-          <Pressable
-            onPress={onValidate}
-            className="bg-primary rounded-full px-6 py-2 active:opacity-70"
-            accessibilityRole="button"
-            accessibilityLabel="Valider"
-          >
-            <Text className="text-sm font-medium text-white">Valider</Text>
-          </Pressable>
+          {onValidate && (
+            <Pressable
+              onPress={onValidate}
+              className="bg-primary rounded-full px-6 py-2 active:opacity-70"
+              accessibilityRole="button"
+              accessibilityLabel="Valider"
+            >
+              <Text className="text-sm font-medium text-white">Valider</Text>
+            </Pressable>
+          )}
         </View>
       )}
     </>
