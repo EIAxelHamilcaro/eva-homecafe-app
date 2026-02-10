@@ -29,7 +29,7 @@ export default async function RootLayout({
 
 export const metadata: Metadata = {
   title: {
-    default: "Homecafe",
+    default: "HomeCafe",
     template: "%s | Homecafe",
   },
   authors: [{ name: "AxelHamil", url: "https://github.com/axelhamil" }],
@@ -40,22 +40,33 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL("https://github.com/axelhamil"),
+  metadataBase: new URL("https://homecafe.app"),
   alternates: {
     canonical: "/",
   },
   openGraph: {
     type: "website",
-    locale: "en_US",
-    url: "https://github.com/axelhamil/nextjs-clean-architecture-starter",
-    title: "Homecafe",
-    siteName: "Homecafe",
-    images: [],
+    locale: "fr_FR",
+    url: "https://homecafe.app",
+    title: "HomeCafe",
+    description:
+      "Journal intime, suivi d'humeur, kanban, galerie photo et feed social — tout dans une appli cozy.",
+    siteName: "HomeCafe",
+    images: [
+      {
+        url: "/og-landing.png",
+        width: 1200,
+        height: 630,
+        alt: "HomeCafe",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Homecafe",
-    images: ["/og-image.png"],
+    title: "HomeCafe",
+    description:
+      "Journal intime, suivi d'humeur, kanban, galerie photo et feed social — tout dans une appli cozy.",
+    images: ["/og-landing.png"],
     creator: "@axelhamil",
   },
   robots: {
@@ -70,5 +81,5 @@ export const metadata: Metadata = {
     },
   },
   category: "technology",
-  applicationName: "Homecafe",
+  applicationName: "HomeCafe",
 };
