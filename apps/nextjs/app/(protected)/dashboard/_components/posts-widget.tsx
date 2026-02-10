@@ -4,8 +4,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@packages/ui/components/ui/card";
+import { LockKeyhole } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
-import { getJournalEntries } from "@/adapters/queries/journal.query";
+import { getUserRecentPosts } from "@/adapters/queries/user-posts.query";
 import { WidgetEmptyState } from "./widget-empty-state";
 
 interface PostsWidgetProps {
@@ -13,11 +15,14 @@ interface PostsWidgetProps {
 }
 
 export async function PostsWidget({ userId }: PostsWidgetProps) {
-  const result = await getJournalEntries(userId, undefined, 1, 3);
+  let posts: Awaited<ReturnType<typeof getUserRecentPosts>>;
+  try {
+    posts = await getUserRecentPosts(userId, 5);
+  } catch {
+    return <WidgetEmptyState type="posts" />;
+  }
 
-  const allPosts = result.groups.flatMap((g) => g.posts);
-
-  if (allPosts.length === 0) {
+  if (posts.length === 0) {
     return <WidgetEmptyState type="posts" />;
   }
 
@@ -32,16 +37,32 @@ export async function PostsWidget({ userId }: PostsWidgetProps) {
       </CardHeader>
       <CardContent>
         <ul className="space-y-3">
-          {allPosts.map((post) => (
+          {posts.map((post) => (
             <li key={post.id}>
               <Link
                 href={`/posts/${post.id}`}
-                className="block rounded-md p-2 hover:bg-muted/50"
+                className="flex gap-3 rounded-md p-2 hover:bg-muted/50"
               >
-                <p className="line-clamp-2 text-sm">{post.content}</p>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  {new Date(post.createdAt).toLocaleDateString()}
-                </p>
+                {post.images.length > 0 && post.images[0] && (
+                  <Image
+                    src={post.images[0]}
+                    alt=""
+                    width={48}
+                    height={48}
+                    className="size-12 shrink-0 rounded-md object-cover"
+                  />
+                )}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1">
+                    {post.isPrivate && (
+                      <LockKeyhole className="size-3 shrink-0 text-muted-foreground" />
+                    )}
+                    <p className="line-clamp-2 text-sm">{post.content}</p>
+                  </div>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {new Date(post.createdAt).toLocaleDateString()}
+                  </p>
+                </div>
               </Link>
             </li>
           ))}

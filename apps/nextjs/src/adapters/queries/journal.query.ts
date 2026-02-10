@@ -9,7 +9,7 @@ import type { IPostDto } from "@/application/dto/post/get-user-posts.dto";
 const DEFAULT_PAGE = 1;
 const DEFAULT_LIMIT = 20;
 
-function toPostDto(record: typeof post.$inferSelect): IPostDto {
+export function toPostDto(record: typeof post.$inferSelect): IPostDto {
   return {
     id: record.id,
     content: record.content,
