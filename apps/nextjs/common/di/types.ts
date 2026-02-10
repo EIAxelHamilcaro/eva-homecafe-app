@@ -39,6 +39,7 @@ import type { GetMessagesUseCase } from "@/application/use-cases/chat/get-messag
 import type { MarkConversationReadUseCase } from "@/application/use-cases/chat/mark-conversation-read.use-case";
 import type { SendMessageUseCase } from "@/application/use-cases/chat/send-message.use-case";
 import type { UploadMediaUseCase } from "@/application/use-cases/chat/upload-media.use-case";
+import type { SendContactMessageUseCase } from "@/application/use-cases/contact/send-contact-message.use-case";
 import type { AcceptInviteLinkUseCase } from "@/application/use-cases/friend/accept-invite-link.use-case";
 import type { GetFriendsUseCase } from "@/application/use-cases/friend/get-friends.use-case";
 import type { GetInviteLinkUseCase } from "@/application/use-cases/friend/get-invite-link.use-case";
@@ -69,6 +70,7 @@ import type { GetUserPreferencesUseCase } from "@/application/use-cases/user-pre
 import type { UpdateUserPreferencesUseCase } from "@/application/use-cases/user-preference/update-user-preferences.use-case";
 
 export const DI_SYMBOLS = {
+  SendContactMessageUseCase: Symbol.for("SendContactMessageUseCase"),
   IUserRepository: Symbol.for("IUserRepository"),
   IAuthProvider: Symbol.for("IAuthProvider"),
   IBoardRepository: Symbol.for("IBoardRepository"),
@@ -141,6 +143,7 @@ export const DI_SYMBOLS = {
 };
 
 export interface DI_RETURN_TYPES {
+  SendContactMessageUseCase: SendContactMessageUseCase;
   IUserRepository: IUserRepository;
   IAuthProvider: IAuthProvider;
   IBoardRepository: IBoardRepository;

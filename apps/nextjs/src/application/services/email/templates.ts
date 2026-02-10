@@ -67,4 +67,29 @@ export const EmailTemplates = {
       ${muted("Ce lien expire dans 24 heures.")}
     `),
   }),
+
+  contactForm: (data: {
+    name: string;
+    email: string;
+    subject: string;
+    message: string;
+  }) => ({
+    subject: `[Contact] ${data.subject}`,
+    html: baseLayout(`
+      ${paragraph(`Nouveau message de contact de <strong>${data.name}</strong> (${data.email})`)}
+      ${paragraph(`<strong>Sujet :</strong> ${data.subject}`)}
+      ${paragraph(data.message.replace(/\n/g, "<br>"))}
+      ${muted(`Répondre directement à : ${data.email}`)}
+    `),
+  }),
+
+  contactConfirmation: (name: string) => ({
+    subject: `${BRAND.name} — Nous avons reçu votre message`,
+    html: baseLayout(`
+      ${paragraph(`Bonjour ${name},`)}
+      ${paragraph("Nous avons bien reçu votre message et nous vous répondrons dans les plus brefs délais.")}
+      ${paragraph("Merci de nous avoir contactés !")}
+      ${muted(`L'équipe ${BRAND.name}`)}
+    `),
+  }),
 } as const;

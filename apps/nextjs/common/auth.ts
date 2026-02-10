@@ -4,7 +4,7 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
 import { ResendService } from "@/adapters/services/email/resend.service";
-import { EmailTemplates } from "@/adapters/services/email/templates";
+import { EmailTemplates } from "@/application/services/email/templates";
 
 const emailProvider = new ResendService();
 
