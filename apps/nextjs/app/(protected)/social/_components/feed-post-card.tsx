@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import type { IFeedPostDto } from "@/application/dto/feed/get-friend-feed.dto";
@@ -92,10 +93,13 @@ export function FeedPostCard({ post }: FeedPostCardProps) {
     >
       <div className="mb-3 flex items-center gap-3">
         {post.author.avatarUrl ? (
-          <img
+          <Image
             src={post.author.avatarUrl}
             alt=""
+            width={40}
+            height={40}
             className="h-10 w-10 rounded-full object-cover"
+            unoptimized
           />
         ) : (
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-sm font-medium text-primary">
@@ -117,11 +121,14 @@ export function FeedPostCard({ post }: FeedPostCardProps) {
       {post.images.length > 0 && (
         <div className="mb-2 flex gap-2">
           {post.images.slice(0, 3).map((img) => (
-            <img
+            <Image
               key={img}
               src={img}
               alt=""
+              width={80}
+              height={80}
               className="h-20 w-20 rounded object-cover"
+              unoptimized
             />
           ))}
           {post.images.length > 3 && (

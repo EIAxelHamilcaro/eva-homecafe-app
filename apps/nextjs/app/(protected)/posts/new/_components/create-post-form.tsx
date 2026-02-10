@@ -3,6 +3,7 @@
 import Underline from "@tiptap/extension-underline";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import Image from "next/image";
 import { useCallback, useRef, useState } from "react";
 
 export function CreatePostForm() {
@@ -165,10 +166,13 @@ export function CreatePostForm() {
         <div className="flex flex-wrap gap-2">
           {images.map((url, index) => (
             <div key={url} className="relative">
-              <img
+              <Image
                 src={url}
                 alt={`Attachment ${index + 1}`}
+                width={80}
+                height={80}
                 className="h-20 w-20 rounded-md object-cover"
+                unoptimized
               />
               <button
                 type="button"

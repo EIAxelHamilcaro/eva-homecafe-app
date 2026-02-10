@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
@@ -186,20 +187,25 @@ export function PostDetail({
           </div>
         </div>
 
+        {/* biome-ignore-start lint/security/noDangerouslySetInnerHtml: Tiptap rich text content */}
         <div
           className="prose prose-sm dark:prose-invert max-w-none"
           dangerouslySetInnerHTML={{ __html: data.content }}
         />
+        {/* biome-ignore-end lint/security/noDangerouslySetInnerHtml: Tiptap rich text content */}
 
         {data.images.length > 0 && (
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
             {data.images.map((img) => (
-              <img
-                key={img}
-                src={img}
-                alt=""
-                className="w-full rounded-lg object-cover"
-              />
+              <div key={img} className="relative aspect-video w-full">
+                <Image
+                  src={img}
+                  alt=""
+                  fill
+                  className="rounded-lg object-cover"
+                  unoptimized
+                />
+              </div>
             ))}
           </div>
         )}

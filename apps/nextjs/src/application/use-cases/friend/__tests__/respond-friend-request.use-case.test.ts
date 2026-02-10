@@ -114,7 +114,7 @@ describe("RespondFriendRequestUseCase", () => {
         Result.ok(friendRequest),
       );
       vi.mocked(mockProfileRepo.findByUserId).mockResolvedValue(
-        Result.ok(Option.some(profile!)),
+        Result.ok(Option.some(profile as Profile)),
       );
       vi.mocked(mockNotificationRepo.create).mockResolvedValue(
         Result.ok({} as Notification),
@@ -148,7 +148,7 @@ describe("RespondFriendRequestUseCase", () => {
         Result.ok(friendRequest),
       );
       vi.mocked(mockProfileRepo.findByUserId).mockResolvedValue(
-        Result.ok(Option.some(profile!)),
+        Result.ok(Option.some(profile as Profile)),
       );
       vi.mocked(mockNotificationRepo.create).mockResolvedValue(
         Result.ok({} as Notification),

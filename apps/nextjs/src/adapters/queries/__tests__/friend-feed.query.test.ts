@@ -154,19 +154,19 @@ describe("getFriendFeed", () => {
     const result = await getFriendFeed("user-123");
 
     expect(result.data).toHaveLength(1);
-    expect(result.data[0]!.id).toBe("post-1");
-    expect(result.data[0]!.content).toBe("<p>Hello from friend</p>");
-    expect(result.data[0]!.images).toEqual(["img1.jpg"]);
-    expect(result.data[0]!.createdAt).toBe("2026-02-08T14:00:00.000Z");
-    expect(result.data[0]!.updatedAt).toBeNull();
-    expect(result.data[0]!.author.id).toBe("friend-1");
-    expect(result.data[0]!.author.name).toBe("Alice");
-    expect(result.data[0]!.author.displayName).toBe("Alice D.");
-    expect(result.data[0]!.author.avatarUrl).toBe(
+    expect(result.data[0]?.id).toBe("post-1");
+    expect(result.data[0]?.content).toBe("<p>Hello from friend</p>");
+    expect(result.data[0]?.images).toEqual(["img1.jpg"]);
+    expect(result.data[0]?.createdAt).toBe("2026-02-08T14:00:00.000Z");
+    expect(result.data[0]?.updatedAt).toBeNull();
+    expect(result.data[0]?.author.id).toBe("friend-1");
+    expect(result.data[0]?.author.name).toBe("Alice");
+    expect(result.data[0]?.author.displayName).toBe("Alice D.");
+    expect(result.data[0]?.author.avatarUrl).toBe(
       "https://example.com/avatar.jpg",
     );
-    expect(result.data[0]!.reactionCount).toBe(0);
-    expect(result.data[0]!.hasReacted).toBe(false);
+    expect(result.data[0]?.reactionCount).toBe(0);
+    expect(result.data[0]?.hasReacted).toBe(false);
   });
 
   it("should extract friend IDs correctly from both sender and receiver positions", async () => {
@@ -229,10 +229,10 @@ describe("getFriendFeed", () => {
 
     const result = await getFriendFeed("user-123");
 
-    expect(result.data[0]!.author.avatarUrl).toBe(
+    expect(result.data[0]?.author.avatarUrl).toBe(
       "https://example.com/user-image.jpg",
     );
-    expect(result.data[0]!.author.displayName).toBeNull();
+    expect(result.data[0]?.author.displayName).toBeNull();
   });
 
   it("should apply pagination defaults", async () => {
@@ -308,7 +308,7 @@ describe("getFriendFeed", () => {
 
     const result = await getFriendFeed("user-123");
 
-    expect(result.data[0]!.createdAt).toBe("2026-02-08T10:00:00.000Z");
-    expect(result.data[0]!.updatedAt).toBe("2026-02-08T12:00:00.000Z");
+    expect(result.data[0]?.createdAt).toBe("2026-02-08T10:00:00.000Z");
+    expect(result.data[0]?.updatedAt).toBe("2026-02-08T12:00:00.000Z");
   });
 });

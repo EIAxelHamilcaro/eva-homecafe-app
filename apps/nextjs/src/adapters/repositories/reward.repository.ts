@@ -56,7 +56,7 @@ export class DrizzleRewardRepository implements IRewardRepository {
   }
 
   async update(
-    entity: UserReward,
+    _entity: UserReward,
     _trx?: Transaction,
   ): Promise<Result<UserReward>> {
     return Result.fail("UserReward is immutable — update not supported");

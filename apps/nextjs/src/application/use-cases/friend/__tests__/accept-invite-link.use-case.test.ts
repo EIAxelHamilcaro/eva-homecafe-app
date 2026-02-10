@@ -167,9 +167,9 @@ describe("AcceptInviteLinkUseCase", () => {
       vi.mocked(mockProfileRepo.findByUserId).mockImplementation(
         async (userId) => {
           if (userId === inviterId) {
-            return Result.ok(Option.some(inviterProfile!));
+            return Result.ok(Option.some(inviterProfile as Profile));
           }
-          return Result.ok(Option.some(acceptorProfile!));
+          return Result.ok(Option.some(acceptorProfile as Profile));
         },
       );
       vi.mocked(mockNotificationRepo.create).mockResolvedValue(

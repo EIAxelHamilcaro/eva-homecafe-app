@@ -25,7 +25,10 @@ export async function MoodboardWidget({ userId }: MoodboardWidgetProps) {
     return <WidgetEmptyState type="moodboard" />;
   }
 
-  const board = result.moodboards[0]!;
+  const board = result.moodboards[0];
+  if (!board) {
+    return <WidgetEmptyState type="moodboard" />;
+  }
   const additionalBoards = result.pagination.total - 1;
 
   return (

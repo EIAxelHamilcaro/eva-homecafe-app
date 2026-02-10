@@ -16,6 +16,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@packages/ui/components/ui/dialog";
+import Image from "next/image";
 import { useCallback, useState } from "react";
 import type { GalleryPhotoDto } from "@/adapters/queries/gallery.query";
 
@@ -59,11 +60,13 @@ export function PhotoViewModal({
             <DialogTitle>{photo.filename}</DialogTitle>
           </DialogHeader>
 
-          <div className="flex justify-center">
-            <img
+          <div className="relative flex min-h-[300px] justify-center">
+            <Image
               src={photo.url}
               alt={photo.caption || photo.filename}
-              className="max-h-[60vh] w-auto rounded-lg object-contain"
+              fill
+              className="rounded-lg object-contain"
+              unoptimized
             />
           </div>
 

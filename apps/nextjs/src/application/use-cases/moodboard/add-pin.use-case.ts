@@ -62,8 +62,8 @@ export class AddPinUseCase
     const pin = Pin.create({
       type: pinType,
       imageUrl:
-        pinType.value === "image"
-          ? Option.some(input.imageUrl!)
+        pinType.value === "image" && input.imageUrl
+          ? Option.some(input.imageUrl)
           : Option.none(),
       color: hexColor,
       position,

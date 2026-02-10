@@ -79,6 +79,7 @@ const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
   }
 
   return (
+    // biome-ignore-start lint/security/noDangerouslySetInnerHtml: shadcn chart theme CSS
     <style
       dangerouslySetInnerHTML={{
         __html: Object.entries(THEMES)
@@ -99,6 +100,7 @@ ${colorConfig
           .join("\n"),
       }}
     />
+    // biome-ignore-end lint/security/noDangerouslySetInnerHtml: shadcn chart theme CSS
   );
 };
 

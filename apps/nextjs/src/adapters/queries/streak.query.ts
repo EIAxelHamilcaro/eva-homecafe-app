@@ -45,7 +45,7 @@ export async function calculateStreak(
     normalizeDate(new Date(`${r.date}T00:00:00`)),
   );
   const firstEntry = dates[0] as Date;
-  const lastPostDate = result[0]!.date;
+  const lastPostDate = result[0]?.date ?? null;
   const today = normalizeDate(new Date());
 
   const startsFromToday = isSameDay(firstEntry, today);

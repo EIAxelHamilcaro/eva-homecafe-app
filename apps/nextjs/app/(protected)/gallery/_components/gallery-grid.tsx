@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import type {
   GalleryPhotoDto,
@@ -123,10 +124,13 @@ export function GalleryGrid({ onPhotoDeleted }: GalleryGridProps) {
             onClick={() => setSelectedPhoto(photo)}
             className="aspect-square overflow-hidden rounded-lg border transition-opacity hover:opacity-80"
           >
-            <img
+            <Image
               src={photo.url}
               alt={photo.caption || photo.filename}
+              width={160}
+              height={160}
               className="h-full w-full object-cover"
+              unoptimized
             />
           </button>
         ))}

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import type { IGetJournalEntriesOutputDto } from "@/application/dto/journal/get-journal-entries.dto";
@@ -142,11 +143,14 @@ export function JournalEntries() {
                     {post.images.length > 0 && (
                       <div className="flex gap-2">
                         {post.images.slice(0, 3).map((img) => (
-                          <img
+                          <Image
                             key={img}
                             src={img}
                             alt=""
+                            width={64}
+                            height={64}
                             className="h-16 w-16 rounded object-cover"
+                            unoptimized
                           />
                         ))}
                         {post.images.length > 3 && (

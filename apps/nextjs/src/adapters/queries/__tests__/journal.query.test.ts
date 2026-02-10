@@ -3,10 +3,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 vi.mock("@packages/drizzle", () => ({
   db: {
     select: () => ({
-      from: (table: unknown) => ({
-        where: (condition: unknown) => ({
-          orderBy: (order: unknown) => ({
-            limit: (l: number) => ({
+      from: (_table: unknown) => ({
+        where: (_condition: unknown) => ({
+          orderBy: (_order: unknown) => ({
+            limit: (_l: number) => ({
               offset: vi.fn().mockResolvedValue([]),
             }),
           }),
@@ -30,9 +30,9 @@ vi.mock("drizzle-orm", () => ({
   and: (...args: unknown[]) => args,
   eq: (a: unknown, b: unknown) => [a, b],
   desc: (a: unknown) => a,
-  sql: (strings: TemplateStringsArray, ...values: unknown[]) => ({
+  sql: (strings: TemplateStringsArray, ..._values: unknown[]) => ({
     strings,
-    values,
+    values: _values,
   }),
 }));
 
@@ -128,10 +128,10 @@ describe("getJournalEntries", () => {
     const result = await getJournalEntries("user-123");
 
     expect(result.groups).toHaveLength(2);
-    expect(result.groups[0]!.date).toBe("2026-02-08");
-    expect(result.groups[0]!.posts).toHaveLength(2);
-    expect(result.groups[1]!.date).toBe("2026-02-07");
-    expect(result.groups[1]!.posts).toHaveLength(1);
+    expect(result.groups[0]?.date).toBe("2026-02-08");
+    expect(result.groups[0]?.posts).toHaveLength(2);
+    expect(result.groups[1]?.date).toBe("2026-02-07");
+    expect(result.groups[1]?.posts).toHaveLength(1);
     expect(result.pagination.total).toBe(3);
   });
 
@@ -227,7 +227,8 @@ describe("getJournalEntries", () => {
 
     const result = await getJournalEntries("user-123");
 
-    const postDto = result.groups[0]!.posts[0]!;
+    const postDto = result.groups[0]
+      ?.posts[0] as (typeof result.groups)[number]["posts"][number];
     expect(postDto.createdAt).toBe("2026-02-08T14:30:00.000Z");
     expect(postDto.updatedAt).toBe("2026-02-08T15:00:00.000Z");
     expect(postDto.images).toEqual(["img1.jpg"]);

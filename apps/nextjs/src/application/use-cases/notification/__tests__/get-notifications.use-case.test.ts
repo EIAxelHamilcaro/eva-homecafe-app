@@ -171,7 +171,8 @@ describe("GetNotificationsUseCase", () => {
       expect(result.isSuccess).toBe(true);
       const output = result.getValue();
       expect(output.notifications).toHaveLength(1);
-      const notif = output.notifications[0]!;
+      const notif = output
+        .notifications[0] as (typeof output.notifications)[number];
       expect(notif.id).toBe("notif-1");
       expect(notif.userId).toBe(userId);
       expect(notif.type).toBe("friend_request");
@@ -199,7 +200,7 @@ describe("GetNotificationsUseCase", () => {
       expect(result.isSuccess).toBe(true);
       const output = result.getValue();
       expect(output.notifications).toHaveLength(1);
-      expect(output.notifications[0]!.readAt).toBeNull();
+      expect(output.notifications[0]?.readAt).toBeNull();
     });
 
     it("should return empty list when no notifications exist", async () => {

@@ -179,7 +179,7 @@ describe("GetUserPostsUseCase", () => {
       expect(result.isSuccess).toBe(true);
       const posts = result.getValue().posts;
       expect(posts).toHaveLength(1);
-      const post = posts[0]!;
+      const post = posts[0] as (typeof posts)[number];
       expect(post.id).toBeDefined();
       expect(post.content).toBe("<p>Test content</p>");
       expect(post.isPrivate).toBe(false);
