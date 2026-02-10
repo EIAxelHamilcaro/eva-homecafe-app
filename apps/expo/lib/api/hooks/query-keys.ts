@@ -67,6 +67,15 @@ export const feedKeys = {
     [...feedKeys.all, "list", { page, limit }] as const,
 };
 
+export const boardKeys = {
+  all: ["boards"] as const,
+  list: (type?: string, page?: number, limit?: number) =>
+    [...boardKeys.all, "list", { type, page, limit }] as const,
+  detail: (boardId: string) => [...boardKeys.all, "detail", boardId] as const,
+  chronology: (month?: string) =>
+    [...boardKeys.all, "chronology", { month }] as const,
+};
+
 export const moodKeys = {
   all: ["mood"] as const,
   today: () => [...moodKeys.all, "today"] as const,

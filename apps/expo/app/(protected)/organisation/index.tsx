@@ -1,164 +1,362 @@
-import { useState } from "react";
-import { ScrollView, Text, View } from "react-native";
+import { useQueryClient } from "@tanstack/react-query";
+import { useCallback, useMemo, useState } from "react";
+import {
+  ActivityIndicator,
+  Alert,
+  Pressable,
+  RefreshControl,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { Calendar, createDot } from "@/components/organisation/calendar";
+import {
+  Calendar,
+  createDot,
+  type DotColor,
+  type MarkedDate,
+} from "@/components/organisation/calendar";
 import {
   KanbanBoard,
   type KanbanColumnData,
 } from "@/components/organisation/kanban-board";
+import type { KanbanCardData } from "@/components/organisation/kanban-column";
 import {
   Timeline,
   type TimelineEvent,
+  type TimelineEventColor,
 } from "@/components/organisation/timeline";
-import {
-  type TodoItemData,
-  TodoList,
-} from "@/components/organisation/todo-list";
+import { TodoList } from "@/components/organisation/todo-list";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  boardKeys,
+  useBoards,
+  useChronology,
+  useMoveCard,
+  useUpdateBoard,
+} from "@/lib/api/hooks/use-boards";
+import type {
+  BoardDto,
+  ChronologyCard,
+  ChronologyEventDate,
+  GetBoardsResponse,
+} from "@/types/board";
 
-const MOCK_TODO_LISTS: { id: string; title: string; items: TodoItemData[] }[] =
-  [
-    {
-      id: "1",
-      title: "To do list 1",
-      items: [
-        { id: "1-1", label: "Chose à faire n°1", completed: true },
-        { id: "1-2", label: "Chose à faire n°2", completed: false },
-        { id: "1-3", label: "Chose à faire n°3", completed: false },
-        { id: "1-4", label: "Chose à faire n°4", completed: false },
-        { id: "1-5", label: "Chose à faire n°5", completed: false },
-      ],
-    },
-    {
-      id: "2",
-      title: "To do list 2",
-      items: [
-        { id: "2-1", label: "Chose à faire n°1", completed: true },
-        { id: "2-2", label: "Chose à faire n°2", completed: true },
-      ],
-    },
-    {
-      id: "3",
-      title: "To do list 3",
-      items: [],
-    },
-  ];
-
-const MOCK_KANBAN_COLUMNS: KanbanColumnData[] = [
-  {
-    id: "todo",
-    title: "À faire",
-    cards: [
-      {
-        id: "k1",
-        title: "Tâche 1",
-        labels: [
-          { id: "l1", color: "pink" },
-          { id: "l2", color: "orange" },
-        ],
-        progress: 25,
-      },
-      {
-        id: "k2",
-        title: "Tâche 2",
-        labels: [{ id: "l3", color: "green" }],
-        progress: 50,
-      },
-    ],
-  },
-  {
-    id: "inprogress",
-    title: "En cours",
-    cards: [
-      {
-        id: "k3",
-        title: "Tâche 3",
-        labels: [{ id: "l4", color: "blue" }],
-        progress: 75,
-      },
-    ],
-  },
-  {
-    id: "done",
-    title: "Terminé",
-    cards: [
-      {
-        id: "k4",
-        title: "Tâche 4",
-        labels: [{ id: "l5", color: "purple" }],
-        progress: 100,
-      },
-    ],
-  },
+const COLOR_CYCLE: TimelineEventColor[] = [
+  "pink",
+  "orange",
+  "yellow",
+  "green",
+  "blue",
+  "purple",
 ];
 
-const MOCK_TIMELINE_EVENTS: TimelineEvent[] = [
-  { id: "t1", title: "Sortie", time: "8h", color: "pink" },
-  { id: "t2", title: "Activité", time: "10h", color: "orange" },
-  { id: "t3", title: "Repas", time: "12h", color: "yellow" },
-  { id: "t4", title: "Repos", time: "14h", color: "green" },
-  { id: "t5", title: "Activité", time: "16h", color: "blue" },
-];
+function buildBoardColorMap(
+  cards: ChronologyCard[],
+  eventDates: Record<string, ChronologyEventDate>,
+): Record<string, TimelineEventColor> {
+  const map: Record<string, TimelineEventColor> = {};
+  let index = 0;
 
-const MOCK_MARKED_DATES = {
-  "2026-01-15": { dots: [createDot("pink"), createDot("orange")] },
-  "2026-01-16": { dots: [createDot("green")] },
-  "2026-01-20": { dots: [createDot("blue"), createDot("purple")] },
-  "2026-01-22": { dots: [createDot("pink")] },
-  "2026-01-25": { dots: [createDot("yellow"), createDot("green")] },
-};
+  for (const card of cards) {
+    if (!(card.boardId in map)) {
+      map[card.boardId] = COLOR_CYCLE[index % COLOR_CYCLE.length] ?? "pink";
+      index++;
+    }
+  }
+
+  for (const info of Object.values(eventDates)) {
+    for (const board of info.boards) {
+      if (!(board.id in map)) {
+        map[board.id] = COLOR_CYCLE[index % COLOR_CYCLE.length] ?? "pink";
+        index++;
+      }
+    }
+  }
+
+  return map;
+}
+
+function mapBoardToTodoList(board: BoardDto) {
+  return {
+    id: board.id,
+    title: board.title,
+    items: (board.columns[0]?.cards ?? []).map((card) => ({
+      id: card.id,
+      label: card.title,
+      completed: card.isCompleted,
+    })),
+  };
+}
+
+function mapBoardToKanban(board: BoardDto): KanbanColumnData[] {
+  return board.columns.map((col) => ({
+    id: col.id,
+    title: col.title,
+    cards: col.cards.map((card) => ({
+      id: card.id,
+      title: card.title,
+      progress: card.progress > 0 ? card.progress : undefined,
+    })),
+  }));
+}
+
+function mapChronologyToTimeline(
+  cards: ChronologyCard[],
+  colorMap: Record<string, TimelineEventColor>,
+): TimelineEvent[] {
+  return cards.map((card) => ({
+    id: card.id,
+    title: `${card.title} (${card.boardTitle})`,
+    time: new Date(card.dueDate).toLocaleDateString("fr-FR", {
+      day: "numeric",
+      month: "short",
+    }),
+    color: colorMap[card.boardId] ?? "pink",
+  }));
+}
+
+function formatRelativeDate(dueDate: string): string {
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  const due = new Date(dueDate);
+  due.setHours(0, 0, 0, 0);
+  const diffDays = Math.round(
+    (due.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
+  );
+
+  if (diffDays < 0) return `${Math.abs(diffDays)}j en retard`;
+  if (diffDays === 0) return "Aujourd'hui";
+  if (diffDays === 1) return "Demain";
+  return `Dans ${diffDays}j`;
+}
+
+function mapChronologyToCalendar(
+  eventDates: Record<string, ChronologyEventDate>,
+  colorMap: Record<string, TimelineEventColor>,
+): Record<string, MarkedDate> {
+  const result: Record<string, MarkedDate> = {};
+  for (const [date, info] of Object.entries(eventDates)) {
+    result[date] = {
+      dots: info.boards.map((b) =>
+        createDot((colorMap[b.id] ?? "pink") as DotColor, b.id),
+      ),
+    };
+  }
+  return result;
+}
 
 export default function OrganisationScreen() {
+  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState("todolist");
-  const [todoLists, setTodoLists] = useState(MOCK_TODO_LISTS);
-  const [kanbanColumns, setKanbanColumns] = useState(MOCK_KANBAN_COLUMNS);
-  const [selectedDate, setSelectedDate] = useState("2026-01-22");
+  const [selectedDate, setSelectedDate] = useState(
+    new Date().toISOString().split("T")[0],
+  );
+  const [calendarMonth, setCalendarMonth] = useState<string | undefined>();
 
-  const handleToggleTodoItem = (
-    listId: string,
-    itemId: string,
-    completed: boolean,
-  ) => {
-    setTodoLists((lists) =>
-      lists.map((list) =>
-        list.id === listId
-          ? {
-              ...list,
-              items: list.items.map((item) =>
-                item.id === itemId ? { ...item, completed } : item,
-              ),
-            }
-          : list,
-      ),
-    );
-  };
+  const todoBoardsQuery = useBoards("todo");
+  const kanbanBoardsQuery = useBoards("kanban");
+  const chronologyQuery = useChronology(calendarMonth);
+  const updateBoard = useUpdateBoard();
+  const moveCard = useMoveCard();
 
-  const handleAddTodoItem = (listId: string, label: string) => {
-    setTodoLists((lists) =>
-      lists.map((list) =>
-        list.id === listId
-          ? {
-              ...list,
-              items: [
-                ...list.items,
-                { id: `${listId}-${Date.now()}`, label, completed: false },
-              ],
-            }
-          : list,
+  const todoLists = useMemo(
+    () => (todoBoardsQuery.data?.boards ?? []).map(mapBoardToTodoList),
+    [todoBoardsQuery.data],
+  );
+
+  const kanbanBoards = kanbanBoardsQuery.data?.boards ?? [];
+
+  const boardColorMap = useMemo(
+    () =>
+      buildBoardColorMap(
+        chronologyQuery.data?.cards ?? [],
+        chronologyQuery.data?.eventDates ?? {},
       ),
-    );
-  };
+    [chronologyQuery.data],
+  );
+
+  const timelineEvents = useMemo(
+    () =>
+      mapChronologyToTimeline(chronologyQuery.data?.cards ?? [], boardColorMap),
+    [chronologyQuery.data?.cards, boardColorMap],
+  );
+
+  const markedDates = useMemo(
+    () =>
+      mapChronologyToCalendar(
+        chronologyQuery.data?.eventDates ?? {},
+        boardColorMap,
+      ),
+    [chronologyQuery.data?.eventDates, boardColorMap],
+  );
+
+  const upcomingEvents = useMemo((): TimelineEvent[] => {
+    const cards = (chronologyQuery.data?.cards ?? [])
+      .filter((card) => !card.isCompleted)
+      .sort(
+        (a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime(),
+      );
+    return cards.map((card) => ({
+      id: card.id,
+      title: `${card.title} (${card.boardTitle})`,
+      time: formatRelativeDate(card.dueDate),
+      color: (boardColorMap[card.boardId] ?? "pink") as TimelineEventColor,
+    }));
+  }, [chronologyQuery.data?.cards, boardColorMap]);
+
+  const handleToggleTodoItem = useCallback(
+    (boardId: string, cardId: string, _completed: boolean) => {
+      queryClient.setQueryData<GetBoardsResponse>(
+        boardKeys.list("todo", 1, 20),
+        (old) => {
+          if (!old) return old;
+          return {
+            ...old,
+            boards: old.boards.map((board) =>
+              board.id === boardId
+                ? {
+                    ...board,
+                    columns: board.columns.map((col) => ({
+                      ...col,
+                      cards: col.cards.map((card) =>
+                        card.id === cardId
+                          ? { ...card, isCompleted: !card.isCompleted }
+                          : card,
+                      ),
+                    })),
+                  }
+                : board,
+            ),
+          };
+        },
+      );
+      updateBoard.mutate(
+        { boardId, toggleCardIds: [cardId] },
+        {
+          onError: () => {
+            queryClient.invalidateQueries({
+              queryKey: boardKeys.list("todo", 1, 20),
+            });
+            Alert.alert("Erreur", "Impossible de modifier l'élément");
+          },
+        },
+      );
+    },
+    [queryClient, updateBoard],
+  );
+
+  const handleAddTodoItem = useCallback(
+    (boardId: string, label: string) => {
+      updateBoard.mutate(
+        { boardId, addCards: [{ title: label }] },
+        {
+          onError: () => {
+            Alert.alert("Erreur", "Impossible d'ajouter l'élément");
+          },
+        },
+      );
+    },
+    [updateBoard],
+  );
+
+  const handleKanbanCardReorder = useCallback(
+    (board: BoardDto, columnId: string, newCards: KanbanCardData[]) => {
+      const oldColumn = board.columns.find((c) => c.id === columnId);
+      if (!oldColumn) return;
+
+      let maxDist = 0;
+      let movedCardId = "";
+      let movedNewPosition = 0;
+
+      for (let i = 0; i < newCards.length; i++) {
+        const card = newCards[i];
+        if (!card) continue;
+        const oldIdx = oldColumn.cards.findIndex((c) => c.id === card.id);
+        if (oldIdx === -1) continue;
+        const dist = Math.abs(oldIdx - i);
+        if (dist > maxDist) {
+          maxDist = dist;
+          movedCardId = card.id;
+          movedNewPosition = i;
+        }
+      }
+
+      if (maxDist > 0 && movedCardId) {
+        moveCard.mutate(
+          {
+            boardId: board.id,
+            cardId: movedCardId,
+            toColumnId: columnId,
+            newPosition: movedNewPosition,
+          },
+          {
+            onError: () => {
+              queryClient.invalidateQueries({ queryKey: boardKeys.all });
+              Alert.alert("Erreur", "Impossible de déplacer la carte");
+            },
+          },
+        );
+      }
+    },
+    [moveCard, queryClient],
+  );
+
+  const handleKanbanCardPress = useCallback(
+    (board: BoardDto, columnId: string, cardId: string) => {
+      const otherColumns = board.columns.filter((c) => c.id !== columnId);
+      if (otherColumns.length === 0) return;
+
+      Alert.alert("Déplacer la carte", "Vers quelle colonne ?", [
+        ...otherColumns.map((col) => ({
+          text: col.title,
+          onPress: () => {
+            moveCard.mutate(
+              {
+                boardId: board.id,
+                cardId,
+                toColumnId: col.id,
+                newPosition: 0,
+              },
+              {
+                onError: () => {
+                  queryClient.invalidateQueries({ queryKey: boardKeys.all });
+                  Alert.alert("Erreur", "Impossible de déplacer la carte");
+                },
+              },
+            );
+          },
+        })),
+        { text: "Annuler", style: "cancel" as const },
+      ]);
+    },
+    [moveCard, queryClient],
+  );
+
+  const handleCalendarMonthChange = useCallback(
+    (date: { year: number; month: number }) => {
+      setCalendarMonth(`${date.year}-${String(date.month).padStart(2, "0")}`);
+    },
+    [],
+  );
+
+  const isRefreshing =
+    todoBoardsQuery.isRefetching ||
+    kanbanBoardsQuery.isRefetching ||
+    chronologyQuery.isRefetching;
+
+  const handleRefresh = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: boardKeys.all });
+  }, [queryClient]);
 
   return (
     <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
       <View className="flex-1 px-4">
-        {/* Header */}
         <Text className="mb-4 text-2xl font-bold text-foreground">
           Organisation
         </Text>
 
-        {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList scrollable>
             <TabsTrigger value="todolist">To do list</TabsTrigger>
@@ -168,80 +366,196 @@ export default function OrganisationScreen() {
             <TabsTrigger value="calendrier">Calendrier</TabsTrigger>
           </TabsList>
 
-          {/* To Do List Tab */}
           <TabsContent value="todolist">
             <ScrollView
               showsVerticalScrollIndicator={false}
               contentContainerStyle={{ gap: 24, paddingBottom: 24 }}
-            >
-              {todoLists.map((list) => (
-                <TodoList
-                  key={list.id}
-                  id={list.id}
-                  title={list.title}
-                  items={list.items}
-                  onToggleItem={handleToggleTodoItem}
-                  onAddItem={handleAddTodoItem}
+              refreshControl={
+                <RefreshControl
+                  refreshing={isRefreshing}
+                  onRefresh={handleRefresh}
                 />
-              ))}
+              }
+            >
+              {todoBoardsQuery.isLoading ? (
+                <View className="items-center py-12">
+                  <ActivityIndicator size="large" />
+                </View>
+              ) : todoBoardsQuery.isError ? (
+                <View className="items-center gap-2 py-12">
+                  <Text className="text-destructive">Erreur de chargement</Text>
+                  <Pressable onPress={() => todoBoardsQuery.refetch()}>
+                    <Text className="text-primary">Réessayer</Text>
+                  </Pressable>
+                </View>
+              ) : todoLists.length === 0 ? (
+                <View className="items-center py-12">
+                  <Text className="text-muted-foreground">
+                    Aucune liste pour le moment
+                  </Text>
+                </View>
+              ) : (
+                todoLists.map((list) => (
+                  <TodoList
+                    key={list.id}
+                    id={list.id}
+                    title={list.title}
+                    items={list.items}
+                    onToggleItem={handleToggleTodoItem}
+                    onAddItem={handleAddTodoItem}
+                  />
+                ))
+              )}
             </ScrollView>
           </TabsContent>
 
-          {/* Timings Tab */}
           <TabsContent value="timings">
             <ScrollView
               showsVerticalScrollIndicator={false}
               contentContainerStyle={{ gap: 24, paddingBottom: 24 }}
+              refreshControl={
+                <RefreshControl
+                  refreshing={isRefreshing}
+                  onRefresh={handleRefresh}
+                />
+              }
             >
-              <Timeline
-                title="Chronologie 1"
-                events={MOCK_TIMELINE_EVENTS}
-                showEditButton
-                onEdit={() => {}}
-              />
+              {chronologyQuery.isLoading ? (
+                <View className="items-center py-12">
+                  <ActivityIndicator size="large" />
+                </View>
+              ) : chronologyQuery.isError ? (
+                <View className="items-center gap-2 py-12">
+                  <Text className="text-destructive">Erreur de chargement</Text>
+                  <Pressable onPress={() => chronologyQuery.refetch()}>
+                    <Text className="text-primary">Réessayer</Text>
+                  </Pressable>
+                </View>
+              ) : upcomingEvents.length === 0 ? (
+                <View className="items-center py-12">
+                  <Text className="text-muted-foreground">
+                    Aucune échéance à venir
+                  </Text>
+                </View>
+              ) : (
+                <Timeline events={upcomingEvents} />
+              )}
             </ScrollView>
           </TabsContent>
 
-          {/* Kanban Tab */}
           <TabsContent value="kanban">
-            <KanbanBoard
-              columns={kanbanColumns}
-              onCardReorder={(columnId, cards) => {
-                setKanbanColumns((cols) =>
-                  cols.map((col) =>
-                    col.id === columnId ? { ...col, cards } : col,
-                  ),
-                );
-              }}
-            />
+            {kanbanBoardsQuery.isLoading ? (
+              <View className="items-center py-12">
+                <ActivityIndicator size="large" />
+              </View>
+            ) : kanbanBoardsQuery.isError ? (
+              <View className="items-center gap-2 py-12">
+                <Text className="text-destructive">Erreur de chargement</Text>
+                <Pressable onPress={() => kanbanBoardsQuery.refetch()}>
+                  <Text className="text-primary">Réessayer</Text>
+                </Pressable>
+              </View>
+            ) : kanbanBoards.length === 0 ? (
+              <View className="items-center py-12">
+                <Text className="text-muted-foreground">
+                  Aucun tableau kanban
+                </Text>
+              </View>
+            ) : (
+              <ScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ gap: 24, paddingBottom: 24 }}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={isRefreshing}
+                    onRefresh={handleRefresh}
+                  />
+                }
+              >
+                {kanbanBoards.map((board) => (
+                  <View key={board.id} className="gap-2">
+                    <Text className="font-semibold text-base text-foreground">
+                      {board.title}
+                    </Text>
+                    <KanbanBoard
+                      columns={mapBoardToKanban(board)}
+                      onCardPress={(colId, cardId) =>
+                        handleKanbanCardPress(board, colId, cardId)
+                      }
+                      onCardReorder={(colId, cards) =>
+                        handleKanbanCardReorder(board, colId, cards)
+                      }
+                    />
+                  </View>
+                ))}
+              </ScrollView>
+            )}
           </TabsContent>
 
-          {/* Chronologie Tab */}
           <TabsContent value="chronologie">
             <ScrollView
               showsVerticalScrollIndicator={false}
               contentContainerStyle={{ gap: 24, paddingBottom: 24 }}
+              refreshControl={
+                <RefreshControl
+                  refreshing={isRefreshing}
+                  onRefresh={handleRefresh}
+                />
+              }
             >
-              <Timeline
-                title="Chronologie 1"
-                events={MOCK_TIMELINE_EVENTS}
-                showEditButton
-                onEdit={() => {}}
-              />
-              <Timeline
-                title="Chronologie 2"
-                events={MOCK_TIMELINE_EVENTS.slice(0, 3)}
-              />
+              {chronologyQuery.isLoading ? (
+                <View className="items-center py-12">
+                  <ActivityIndicator size="large" />
+                </View>
+              ) : chronologyQuery.isError ? (
+                <View className="items-center gap-2 py-12">
+                  <Text className="text-destructive">Erreur de chargement</Text>
+                  <Pressable onPress={() => chronologyQuery.refetch()}>
+                    <Text className="text-primary">Réessayer</Text>
+                  </Pressable>
+                </View>
+              ) : timelineEvents.length === 0 ? (
+                <View className="items-center py-12">
+                  <Text className="text-muted-foreground">
+                    Aucun événement dans la chronologie
+                  </Text>
+                </View>
+              ) : (
+                <Timeline events={timelineEvents} />
+              )}
             </ScrollView>
           </TabsContent>
 
-          {/* Calendrier Tab */}
           <TabsContent value="calendrier">
-            <Calendar
-              selectedDate={selectedDate}
-              markedDates={MOCK_MARKED_DATES}
-              onDayPress={(date) => setSelectedDate(date.dateString)}
-            />
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              refreshControl={
+                <RefreshControl
+                  refreshing={isRefreshing}
+                  onRefresh={handleRefresh}
+                />
+              }
+            >
+              {chronologyQuery.isLoading ? (
+                <View className="items-center py-12">
+                  <ActivityIndicator size="large" />
+                </View>
+              ) : chronologyQuery.isError ? (
+                <View className="items-center gap-2 py-12">
+                  <Text className="text-destructive">Erreur de chargement</Text>
+                  <Pressable onPress={() => chronologyQuery.refetch()}>
+                    <Text className="text-primary">Réessayer</Text>
+                  </Pressable>
+                </View>
+              ) : (
+                <Calendar
+                  selectedDate={selectedDate}
+                  markedDates={markedDates}
+                  onDayPress={(date) => setSelectedDate(date.dateString)}
+                  onMonthChange={handleCalendarMonthChange}
+                />
+              )}
+            </ScrollView>
           </TabsContent>
         </Tabs>
       </View>
