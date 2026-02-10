@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import type { IGetMoodWeekOutputDto } from "@/application/dto/mood/get-mood-week.dto";
-import { getMoodColor, getMoodLabel } from "./mood-legend";
+import { getMoodColor, getMoodLabel } from "./mood-config";
 
 const WEEK_DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as const;
 

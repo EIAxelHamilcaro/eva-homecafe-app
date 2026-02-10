@@ -9,7 +9,7 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import type { IGetMoodStatsOutputDto } from "@/application/dto/mood/get-mood-stats.dto";
-import { getMoodColor, getMoodLabel } from "./mood-legend";
+import { getMoodColor, getMoodLabel } from "./mood-config";
 
 const chartConfig = {
   count: {

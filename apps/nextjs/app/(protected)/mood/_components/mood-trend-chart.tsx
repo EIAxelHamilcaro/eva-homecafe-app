@@ -9,7 +9,7 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import type { IGetMoodTrendsOutputDto } from "@/application/dto/mood/get-mood-trends.dto";
-import { getMoodColor, getMoodLabel } from "./mood-legend";
+import { getMoodColor, getMoodLabel } from "./mood-config";
 
 function formatMonth(monthStr: string): string {
   const [year, month] = monthStr.split("-");
