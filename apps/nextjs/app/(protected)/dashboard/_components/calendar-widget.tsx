@@ -12,8 +12,19 @@ interface CalendarWidgetProps {
   userId: string;
 }
 
+type DayEventInfo = {
+  hasTodo: boolean;
+  hasKanban: boolean;
+  count: number;
+};
+
 export async function CalendarWidget({ userId }: CalendarWidgetProps) {
-  const result = await getChronology(userId);
+  let result: Awaited<ReturnType<typeof getChronology>>;
+  try {
+    result = await getChronology(userId);
+  } catch {
+    return <WidgetEmptyState type="calendar" />;
+  }
 
   const eventDateKeys = Object.keys(result.eventDates);
 
@@ -41,11 +52,34 @@ export async function CalendarWidget({ userId }: CalendarWidgetProps) {
   }
 
   const currentMonthPrefix = `${year}-${String(month + 1).padStart(2, "0")}-`;
-  const eventDateSet = new Set(
-    eventDateKeys
-      .filter((d) => d.startsWith(currentMonthPrefix))
-      .map((d) => Number.parseInt(d.split("-")[2] ?? "0", 10)),
-  );
+  const dayEventMap = new Map<number, DayEventInfo>();
+
+  for (const c of result.cards) {
+    if (!c.dueDate.startsWith(currentMonthPrefix)) continue;
+    const dayNum = Number.parseInt(c.dueDate.split("-")[2] ?? "0", 10);
+    const existing = dayEventMap.get(dayNum);
+    if (existing) {
+      existing.count++;
+      if (c.boardType === "todo") existing.hasTodo = true;
+      if (c.boardType === "kanban") existing.hasKanban = true;
+    } else {
+      dayEventMap.set(dayNum, {
+        hasTodo: c.boardType === "todo",
+        hasKanban: c.boardType === "kanban",
+        count: 1,
+      });
+    }
+  }
+
+  function getDayColorClass(day: number): string {
+    const info = dayEventMap.get(day);
+    if (!info) return "";
+    if (info.hasTodo && info.hasKanban)
+      return "bg-primary/20 font-medium text-primary";
+    if (info.hasTodo)
+      return "bg-blue-100 font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-300";
+    return "bg-purple-100 font-medium text-purple-700 dark:bg-purple-900/30 dark:text-purple-300";
+  }
 
   return (
     <Card>
@@ -63,18 +97,24 @@ export async function CalendarWidget({ userId }: CalendarWidgetProps) {
               {day}
             </div>
           ))}
-          {days.map((day, i) => (
-            <div
-              key={`day-${day ?? `empty-${i}`}`}
-              className={`py-1 rounded ${
-                day && eventDateSet.has(day)
-                  ? "bg-primary/20 font-medium text-primary"
-                  : ""
-              } ${day === now.getDate() ? "ring-1 ring-primary" : ""}`}
-            >
-              {day ?? ""}
-            </div>
-          ))}
+          {days.map((day, i) => {
+            const eventInfo = day ? dayEventMap.get(day) : undefined;
+            return (
+              <div
+                key={`day-${day ?? `empty-${i}`}`}
+                className={`relative py-1 rounded ${
+                  day ? getDayColorClass(day) : ""
+                } ${day === now.getDate() ? "ring-1 ring-primary" : ""}`}
+              >
+                {day ?? ""}
+                {eventInfo && eventInfo.count > 1 && (
+                  <span className="absolute -top-1 -right-1 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-primary px-0.5 text-[9px] font-bold text-primary-foreground">
+                    {eventInfo.count > 9 ? "9+" : eventInfo.count}
+                  </span>
+                )}
+              </div>
+            );
+          })}
         </div>
         <p className="mt-2 text-xs text-muted-foreground text-center">
           {eventDateKeys.length} {eventDateKeys.length === 1 ? "day" : "days"}{" "}
