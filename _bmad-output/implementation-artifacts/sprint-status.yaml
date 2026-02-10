@@ -105,10 +105,10 @@ development_status:
   # Expo app scaffolded: apps/expo/ (~50 component files)
   # ═══════════════════════════════════════════════════════
 
-  epic-10: in-progress
+  epic-10: done
   10-1-journal-and-posts-mobile: done
   10-2-social-feed-and-reactions-mobile: done
-  epic-10-retrospective: optional
+  epic-10-retrospective: done
 
   epic-11: backlog
   11-1-mood-tracking-mobile: backlog
