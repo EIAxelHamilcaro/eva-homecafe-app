@@ -11,6 +11,7 @@ import { createPostModule } from "./modules/post.module";
 import { createProfileModule } from "./modules/profile.module";
 import { createRewardModule } from "./modules/reward.module";
 import { createUploadModule } from "./modules/upload.module";
+import { createUserPreferenceModule } from "./modules/user-preference.module";
 import { type DI_RETURN_TYPES, DI_SYMBOLS } from "./types";
 
 const ApplicationContainer = createContainer();
@@ -30,6 +31,10 @@ ApplicationContainer.load(Symbol("PostModule"), createPostModule());
 ApplicationContainer.load(Symbol("ProfileModule"), createProfileModule());
 ApplicationContainer.load(Symbol("RewardModule"), createRewardModule());
 ApplicationContainer.load(Symbol("UploadModule"), createUploadModule());
+ApplicationContainer.load(
+  Symbol("UserPreferenceModule"),
+  createUserPreferenceModule(),
+);
 
 export function getInjection<K extends keyof typeof DI_SYMBOLS>(
   symbol: K,

@@ -15,6 +15,7 @@ import type { IProfileRepository } from "@/application/ports/profile-repository.
 import type { IRewardRepository } from "@/application/ports/reward-repository.port";
 import type { IStorageProvider } from "@/application/ports/storage.provider.port";
 import type { IUserRepository } from "@/application/ports/user.repository.port";
+import type { IUserPreferenceRepository } from "@/application/ports/user-preference-repository.port";
 import type { ForgotPasswordUseCase } from "@/application/use-cases/auth/forgot-password.use-case";
 import type { GetSessionUseCase } from "@/application/use-cases/auth/get-session.use-case";
 import type { ResetPasswordUseCase } from "@/application/use-cases/auth/reset-password.use-case";
@@ -64,6 +65,8 @@ import type { GetProfileUseCase } from "@/application/use-cases/profile/get-prof
 import type { UpdateProfileUseCase } from "@/application/use-cases/profile/update-profile.use-case";
 import type { EvaluateAchievementUseCase } from "@/application/use-cases/reward/evaluate-achievement.use-case";
 import type { GenerateUploadUrlUseCase } from "@/application/use-cases/upload/generate-upload-url.use-case";
+import type { GetUserPreferencesUseCase } from "@/application/use-cases/user-preference/get-user-preferences.use-case";
+import type { UpdateUserPreferencesUseCase } from "@/application/use-cases/user-preference/update-user-preferences.use-case";
 
 export const DI_SYMBOLS = {
   IUserRepository: Symbol.for("IUserRepository"),
@@ -125,6 +128,7 @@ export const DI_SYMBOLS = {
   DeletePinUseCase: Symbol.for("DeletePinUseCase"),
   IPostRepository: Symbol.for("IPostRepository"),
   IRewardRepository: Symbol.for("IRewardRepository"),
+  IUserPreferenceRepository: Symbol.for("IUserPreferenceRepository"),
   CreatePostUseCase: Symbol.for("CreatePostUseCase"),
   EvaluateAchievementUseCase: Symbol.for("EvaluateAchievementUseCase"),
   DeletePostUseCase: Symbol.for("DeletePostUseCase"),
@@ -132,6 +136,8 @@ export const DI_SYMBOLS = {
   GetPostDetailUseCase: Symbol.for("GetPostDetailUseCase"),
   TogglePostReactionUseCase: Symbol.for("TogglePostReactionUseCase"),
   UpdatePostUseCase: Symbol.for("UpdatePostUseCase"),
+  GetUserPreferencesUseCase: Symbol.for("GetUserPreferencesUseCase"),
+  UpdateUserPreferencesUseCase: Symbol.for("UpdateUserPreferencesUseCase"),
 };
 
 export interface DI_RETURN_TYPES {
@@ -194,6 +200,7 @@ export interface DI_RETURN_TYPES {
   DeletePinUseCase: DeletePinUseCase;
   IPostRepository: IPostRepository;
   IRewardRepository: IRewardRepository;
+  IUserPreferenceRepository: IUserPreferenceRepository;
   CreatePostUseCase: CreatePostUseCase;
   EvaluateAchievementUseCase: EvaluateAchievementUseCase;
   DeletePostUseCase: DeletePostUseCase;
@@ -201,4 +208,6 @@ export interface DI_RETURN_TYPES {
   GetPostDetailUseCase: GetPostDetailUseCase;
   TogglePostReactionUseCase: TogglePostReactionUseCase;
   UpdatePostUseCase: UpdatePostUseCase;
+  GetUserPreferencesUseCase: GetUserPreferencesUseCase;
+  UpdateUserPreferencesUseCase: UpdateUserPreferencesUseCase;
 }

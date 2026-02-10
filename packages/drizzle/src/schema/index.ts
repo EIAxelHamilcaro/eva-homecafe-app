@@ -9,3 +9,4 @@ export * from "./notification";
 export * from "./post";
 export * from "./profile";
 export * from "./reward";
+export * from "./user-preference";

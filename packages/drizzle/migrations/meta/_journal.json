@@ -99,6 +99,13 @@
       "when": 1770650210251,
       "tag": "0013_classy_scorpion",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1770738523114,
+      "tag": "0014_curvy_ken_ellis",
+      "breakpoints": true
     }
   ]
 }

@@ -85,10 +85,10 @@ development_status:
   8-3-posts-and-messaging-widgets: done
   8-4-tasks-and-calendar-widgets: done
   8-5-gallery-and-moodboard-widgets: done
-  epic-8-retrospective: optional
+  epic-8-retrospective: done
 
-  epic-9: backlog
-  9-1-settings-and-preferences-page: backlog
+  epic-9: in-progress
+  9-1-settings-and-preferences-page: done
   9-2-contact-page: backlog
   9-3-public-landing-page-and-seo: backlog
   epic-9-retrospective: optional
