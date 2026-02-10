@@ -14,13 +14,19 @@ interface MoodboardWidgetProps {
 }
 
 export async function MoodboardWidget({ userId }: MoodboardWidgetProps) {
-  const result = await getUserMoodboards(userId, 1, 1);
+  let result: Awaited<ReturnType<typeof getUserMoodboards>>;
+  try {
+    result = await getUserMoodboards(userId, 1, 1);
+  } catch {
+    return <WidgetEmptyState type="moodboard" />;
+  }
 
   if (result.moodboards.length === 0) {
     return <WidgetEmptyState type="moodboard" />;
   }
 
   const board = result.moodboards[0]!;
+  const additionalBoards = result.pagination.total - 1;
 
   return (
     <Card>
@@ -57,6 +63,12 @@ export async function MoodboardWidget({ userId }: MoodboardWidgetProps) {
           ) : (
             <p className="mt-2 text-xs text-muted-foreground">
               {board.pinCount} {board.pinCount === 1 ? "pin" : "pins"}
+            </p>
+          )}
+          {additionalBoards > 0 && (
+            <p className="mt-2 text-center text-xs text-muted-foreground hover:underline">
+              +{additionalBoards} more{" "}
+              {additionalBoards === 1 ? "board" : "boards"}
             </p>
           )}
         </Link>

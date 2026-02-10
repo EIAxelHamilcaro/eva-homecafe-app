@@ -14,7 +14,12 @@ interface GalleryWidgetProps {
 }
 
 export async function GalleryWidget({ userId }: GalleryWidgetProps) {
-  const result = await getUserGallery(userId, 1, 4);
+  let result: Awaited<ReturnType<typeof getUserGallery>>;
+  try {
+    result = await getUserGallery(userId, 1, 4);
+  } catch {
+    return <WidgetEmptyState type="gallery" />;
+  }
 
   if (result.photos.length === 0) {
     return <WidgetEmptyState type="gallery" />;
@@ -46,6 +51,14 @@ export async function GalleryWidget({ userId }: GalleryWidgetProps) {
             </div>
           ))}
         </div>
+        {result.pagination.total > 4 && (
+          <Link
+            href="/gallery"
+            className="mt-3 block text-center text-xs text-muted-foreground hover:underline"
+          >
+            View all {result.pagination.total} photos
+          </Link>
+        )}
       </CardContent>
     </Card>
   );
