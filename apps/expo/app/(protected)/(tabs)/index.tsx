@@ -10,6 +10,7 @@ import { JournalWidget } from "./_components/journal-widget";
 import { MessagerieWidget } from "./_components/messagerie-widget";
 import { MoodWidget } from "./_components/mood-widget";
 import { MoodboardWidget } from "./_components/moodboard-widget";
+import { RewardsWidget } from "./_components/rewards-widget";
 import { SuiviWidgets } from "./_components/suivi-widgets";
 import { TodoWidget } from "./_components/todo-widget";
 
@@ -56,6 +57,9 @@ export default function HomeScreen() {
 
         {/* Mood widget */}
         <MoodWidget />
+
+        {/* Rewards widget */}
+        <RewardsWidget />
 
         {/* CTA button */}
         <InviteFriendsButton />

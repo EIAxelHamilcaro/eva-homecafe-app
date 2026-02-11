@@ -1,121 +1,33 @@
 import { router } from "expo-router";
 import { X } from "lucide-react-native";
-import { Pressable, SafeAreaView, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import { type BadgeData, BadgeGrid } from "@/components/badges/badge-grid";
+import { BadgeGrid } from "@/components/badges/badge-grid";
+import { useBadges } from "@/lib/api/hooks/use-rewards";
+import { colors } from "@/src/config/colors";
 
-const mockBadges: BadgeData[] = [
-  {
-    id: "1",
-    color: "orange",
-    type: "7_JOURS",
-    statusDots: ["green", "orange", "pink"],
-  },
-  {
-    id: "2",
-    color: "pink",
-    type: "14_JOURS",
-    statusDots: ["gray", "gray", "blue"],
-  },
-  {
-    id: "3",
-    color: "blue",
-    type: "1_MOIS",
-    statusDots: ["gray", "gray", "gray"],
-  },
-  {
-    id: "4",
-    color: "pink",
-    type: "7_JOURS",
-    statusDots: ["blue", "pink", "green"],
-  },
-  {
-    id: "5",
-    color: "orange",
-    type: "14_JOURS",
-    statusDots: ["orange", "gray", "pink"],
-  },
-  {
-    id: "6",
-    color: "yellow",
-    type: "1_MOIS",
-    statusDots: ["pink", "orange", "pink"],
-  },
-  {
-    id: "7",
-    color: "pink",
-    type: "7_JOURS",
-    statusDots: ["gray", "pink", "gray"],
-  },
-  {
-    id: "8",
-    color: "yellow",
-    type: "14_JOURS",
-    statusDots: ["green", "pink", "green"],
-  },
-  {
-    id: "9",
-    color: "orange",
-    type: "1_MOIS",
-    statusDots: ["pink", "gray", "gray"],
-  },
-  {
-    id: "10",
-    color: "yellow",
-    type: "7_JOURS",
-    statusDots: ["green", "gray", "blue"],
-  },
-  {
-    id: "11",
-    color: "blue",
-    type: "14_JOURS",
-    statusDots: ["gray", "pink", "gray"],
-  },
-  {
-    id: "12",
-    color: "purple",
-    type: "1_MOIS",
-    statusDots: ["green", "green", "gray"],
-  },
-  {
-    id: "13",
-    color: "orange",
-    type: "7_JOURS",
-    statusDots: ["green", "orange", "pink"],
-  },
-  {
-    id: "14",
-    color: "pink",
-    type: "14_JOURS",
-    statusDots: ["gray", "pink", "gray"],
-  },
-  {
-    id: "15",
-    color: "pink",
-    type: "1_MOIS",
-    statusDots: ["pink", "gray", "blue"],
-  },
-  {
-    id: "16",
-    color: "orange",
-    type: "7_JOURS",
-    statusDots: ["green", "pink", "blue"],
-  },
-  {
-    id: "17",
-    color: "blue",
-    type: "14_JOURS",
-    statusDots: ["gray", "gray", "gray"],
-  },
-  {
-    id: "18",
-    color: "purple",
-    type: "1_MOIS",
-    statusDots: ["gray", "gray", "gray"],
-  },
-];
+function BadgeSkeleton() {
+  return (
+    <View className="flex-1 px-4 pt-4">
+      {[0, 1, 2].map((row) => (
+        <View key={row} className="mb-6 flex-row justify-around">
+          {[0, 1].map((col) => (
+            <View key={col} className="items-center">
+              <View className="h-[144] w-[120] rounded-2xl bg-muted" />
+              <View className="mt-2 h-3 w-16 rounded-full bg-muted" />
+              <View className="mt-1 h-2 w-12 rounded-full bg-muted/60" />
+            </View>
+          ))}
+        </View>
+      ))}
+    </View>
+  );
+}
 
 export default function RecompensesModal() {
+  const { data, isLoading, error, refetch, isRefetching } = useBadges();
+
   const handleClose = () => {
     if (router.canGoBack()) {
       router.back();
@@ -127,22 +39,60 @@ export default function RecompensesModal() {
   return (
     <SafeAreaView className="flex-1 bg-background">
       <View className="flex-1">
-        {/* Close button */}
-        <View className="absolute right-4 top-4 z-10">
+        {/* Header */}
+        <View className="flex-row items-center justify-between px-4 pb-2 pt-4">
+          <Text className="text-xl font-bold text-foreground">
+            Mes Récompenses
+          </Text>
           <Pressable
             onPress={handleClose}
             className="h-10 w-10 items-center justify-center rounded-full border border-homecafe-pink bg-background active:bg-muted"
             accessibilityRole="button"
             accessibilityLabel="Fermer"
           >
-            <X size={20} color="#3D2E2E" strokeWidth={2} />
+            <X size={20} color={colors.foreground} strokeWidth={2} />
           </Pressable>
         </View>
 
-        {/* Badge grid */}
-        <View className="flex-1 px-4 pt-16">
-          <BadgeGrid badges={mockBadges} badgeSize={120} />
-        </View>
+        {/* Loading skeleton */}
+        {isLoading && <BadgeSkeleton />}
+
+        {/* Error state */}
+        {!isLoading && error && (
+          <View className="flex-1 items-center justify-center px-8">
+            <Text className="mb-4 text-center text-muted-foreground">
+              Impossible de charger les récompenses
+            </Text>
+            <Pressable
+              onPress={() => refetch()}
+              className="rounded-xl bg-primary px-6 py-3 active:opacity-80"
+            >
+              <Text className="font-medium text-primary-foreground">
+                Réessayer
+              </Text>
+            </Pressable>
+          </View>
+        )}
+
+        {/* Badge grid with pull-to-refresh */}
+        {!isLoading && !error && data && data.length > 0 && (
+          <BadgeGrid
+            rewards={data}
+            badgeSize={120}
+            refreshing={isRefetching}
+            onRefresh={() => refetch()}
+            className="flex-1 px-4"
+          />
+        )}
+
+        {/* Empty state */}
+        {!isLoading && !error && data && data.length === 0 && (
+          <View className="flex-1 items-center justify-center px-8">
+            <Text className="text-center text-muted-foreground">
+              Aucune récompense disponible pour le moment
+            </Text>
+          </View>
+        )}
       </View>
     </SafeAreaView>
   );

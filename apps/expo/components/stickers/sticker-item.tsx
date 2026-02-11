@@ -1,4 +1,5 @@
-import { View, type ViewProps } from "react-native";
+import { Check } from "lucide-react-native";
+import { Text, View, type ViewProps } from "react-native";
 import Svg, { Circle, Ellipse, G, Path, Rect } from "react-native-svg";
 
 import { cn } from "@/src/libs/utils";
@@ -19,6 +20,9 @@ type StickerType =
 interface StickerItemProps extends ViewProps {
   type: StickerType;
   size?: number;
+  earned?: boolean;
+  label?: string;
+  subtitle?: string;
   className?: string;
 }
 
@@ -443,14 +447,47 @@ const stickerComponents: Record<StickerType, React.FC<{ size: number }>> = {
 function StickerItem({
   type,
   size = 80,
+  earned,
+  label,
+  subtitle,
   className,
   ...props
 }: StickerItemProps) {
   const StickerComponent = stickerComponents[type];
 
   return (
-    <View className={cn("items-center justify-center", className)} {...props}>
-      <StickerComponent size={size} />
+    <View
+      className={cn(
+        "items-center justify-center",
+        earned === false && "opacity-40",
+        className,
+      )}
+      {...props}
+    >
+      <View>
+        <StickerComponent size={size} />
+        {earned && (
+          <View className="absolute -right-1 -top-1 h-5 w-5 items-center justify-center rounded-full bg-green-500">
+            <Check size={12} color="white" strokeWidth={3} />
+          </View>
+        )}
+      </View>
+      {label && (
+        <Text
+          className="mt-1 text-center text-xs font-medium text-foreground"
+          numberOfLines={1}
+        >
+          {label}
+        </Text>
+      )}
+      {subtitle && (
+        <Text
+          className="text-center text-[10px] text-muted-foreground"
+          numberOfLines={2}
+        >
+          {subtitle}
+        </Text>
+      )}
     </View>
   );
 }

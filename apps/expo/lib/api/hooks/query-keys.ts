@@ -92,6 +92,12 @@ export const moodKeys = {
   trends: () => [...moodKeys.all, "trends"] as const,
 };
 
+export const rewardKeys = {
+  all: ["rewards"] as const,
+  stickers: () => [...rewardKeys.all, "stickers"] as const,
+  badges: () => [...rewardKeys.all, "badges"] as const,
+};
+
 export const moodboardKeys = {
   all: ["moodboards"] as const,
   list: (page?: number, limit?: number) =>

@@ -1,39 +1,39 @@
 import { FlatList, RefreshControl, View, type ViewProps } from "react-native";
 
 import {
-  BADGE_VISUAL_MAP,
-  DEFAULT_BADGE_VISUAL,
+  DEFAULT_STICKER_VISUAL,
+  STICKER_VISUAL_MAP,
 } from "@/lib/constants/reward-visuals";
 import { cn } from "@/src/libs/utils";
 import type { RewardCollectionItemDto } from "@/types/reward";
 
-import { BadgeItem } from "./badge-item";
+import { StickerItem } from "./sticker-item";
 
-interface BadgeGridProps extends ViewProps {
+interface StickerGridProps extends ViewProps {
   rewards: RewardCollectionItemDto[];
-  badgeSize?: number;
+  stickerSize?: number;
   refreshing?: boolean;
   onRefresh?: () => void;
   className?: string;
 }
 
-function BadgeGrid({
+function StickerGrid({
   rewards,
-  badgeSize = 100,
+  stickerSize = 80,
   refreshing,
   onRefresh,
   className,
   ...props
-}: BadgeGridProps) {
+}: StickerGridProps) {
   return (
     <View className={cn("flex-1", className)} {...props}>
       <FlatList
         data={rewards}
-        numColumns={2}
+        numColumns={3}
         keyExtractor={(item) => item.id}
         columnWrapperStyle={{
           justifyContent: "space-around",
-          marginBottom: 16,
+          marginBottom: 20,
         }}
         contentContainerStyle={{ paddingVertical: 8 }}
         refreshControl={
@@ -45,14 +45,11 @@ function BadgeGrid({
           ) : undefined
         }
         renderItem={({ item }) => {
-          const visual = BADGE_VISUAL_MAP[item.key] ?? DEFAULT_BADGE_VISUAL;
+          const visual = STICKER_VISUAL_MAP[item.key] ?? DEFAULT_STICKER_VISUAL;
           return (
-            <BadgeItem
-              color={visual.color}
-              type={visual.type}
-              displayNumber={visual.displayNumber}
-              displayUnit={visual.displayUnit}
-              size={badgeSize}
+            <StickerItem
+              type={visual}
+              size={stickerSize}
               earned={item.earned}
               label={item.name}
               subtitle={
@@ -69,4 +66,4 @@ function BadgeGrid({
   );
 }
 
-export { BadgeGrid, type BadgeGridProps };
+export { StickerGrid, type StickerGridProps };

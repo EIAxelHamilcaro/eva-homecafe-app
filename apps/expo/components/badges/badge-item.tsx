@@ -1,4 +1,5 @@
-import { View, type ViewProps } from "react-native";
+import { Check } from "lucide-react-native";
+import { Text, View, type ViewProps } from "react-native";
 import Svg, {
   ClipPath,
   Defs,
@@ -21,6 +22,11 @@ interface BadgeItemProps extends ViewProps {
   type: BadgeType;
   statusDots?: [StatusDot, StatusDot, StatusDot];
   size?: number;
+  earned?: boolean;
+  label?: string;
+  subtitle?: string;
+  displayNumber?: string;
+  displayUnit?: string;
   className?: string;
 }
 
@@ -90,107 +96,134 @@ function BadgeItem({
   type,
   statusDots = ["gray", "gray", "gray"],
   size = 100,
+  earned,
+  label: badgeLabel,
+  subtitle,
+  displayNumber,
+  displayUnit,
   className,
   ...props
 }: BadgeItemProps) {
   const scheme = colorSchemes[color];
   const ribbon = ribbonColors[type];
-  const label = badgeLabels[type];
+  const labelText = badgeLabels[type];
+  const number = displayNumber ?? labelText.number;
+  const unit = displayUnit ?? labelText.label;
 
   const width = size;
   const height = size * 1.2;
 
   return (
-    <View className={cn("items-center", className)} {...props}>
-      <Svg width={width} height={height} viewBox="0 0 100 120">
-        <Defs>
-          <ClipPath id="shieldClip">
-            <Path d="M10 10 L90 10 L90 75 Q90 90 50 105 Q10 90 10 75 Z" />
-          </ClipPath>
-          <LinearGradient id="shieldGradient" x1="0" y1="0" x2="1" y2="1">
-            <Stop offset="0%" stopColor={scheme.secondary} />
-            <Stop offset="100%" stopColor={scheme.primary} />
-          </LinearGradient>
-        </Defs>
+    <View
+      className={cn(
+        "items-center",
+        earned === false && "opacity-40",
+        className,
+      )}
+      {...props}
+    >
+      <View>
+        <Svg width={width} height={height} viewBox="0 0 100 120">
+          <Defs>
+            <ClipPath id="shieldClip">
+              <Path d="M10 10 L90 10 L90 75 Q90 90 50 105 Q10 90 10 75 Z" />
+            </ClipPath>
+            <LinearGradient id="shieldGradient" x1="0" y1="0" x2="1" y2="1">
+              <Stop offset="0%" stopColor={scheme.secondary} />
+              <Stop offset="100%" stopColor={scheme.primary} />
+            </LinearGradient>
+          </Defs>
 
-        {/* Shield background */}
-        <Path
-          d="M10 10 L90 10 L90 75 Q90 90 50 105 Q10 90 10 75 Z"
-          fill="url(#shieldGradient)"
-          stroke={scheme.border}
-          strokeWidth="3"
-        />
+          {/* Shield background */}
+          <Path
+            d="M10 10 L90 10 L90 75 Q90 90 50 105 Q10 90 10 75 Z"
+            fill="url(#shieldGradient)"
+            stroke={scheme.border}
+            strokeWidth="3"
+          />
 
-        {/* Diagonal stripes */}
-        <G clipPath="url(#shieldClip)">
-          {[-60, -40, -20, 0, 20, 40, 60, 80, 100].map((offset) => (
-            <Rect
-              key={`stripe-${offset}`}
-              x={offset}
-              y="0"
-              width="12"
-              height="150"
-              fill={scheme.stripe}
-              opacity="0.4"
-              transform="rotate(-45 50 60)"
-            />
-          ))}
-        </G>
+          {/* Diagonal stripes */}
+          <G clipPath="url(#shieldClip)">
+            {[-60, -40, -20, 0, 20, 40, 60, 80, 100].map((offset) => (
+              <Rect
+                key={`stripe-${offset}`}
+                x={offset}
+                y="0"
+                width="12"
+                height="150"
+                fill={scheme.stripe}
+                opacity="0.4"
+                transform="rotate(-45 50 60)"
+              />
+            ))}
+          </G>
 
-        {/* Inner shield highlight */}
-        <Path
-          d="M18 18 L82 18 L82 72 Q82 84 50 96 Q18 84 18 72 Z"
-          fill="none"
-          stroke={scheme.stripe}
-          strokeWidth="2"
-          opacity="0.5"
-        />
+          {/* Inner shield highlight */}
+          <Path
+            d="M18 18 L82 18 L82 72 Q82 84 50 96 Q18 84 18 72 Z"
+            fill="none"
+            stroke={scheme.stripe}
+            strokeWidth="2"
+            opacity="0.5"
+          />
 
-        {/* Number */}
-        <SvgText
-          x="50"
-          y="55"
-          textAnchor="middle"
-          fontSize={label.number.length > 1 ? "36" : "42"}
-          fontWeight="bold"
-          fill={ribbon.bg}
-        >
-          {label.number}
-        </SvgText>
+          {/* Number */}
+          <SvgText
+            x="50"
+            y="55"
+            textAnchor="middle"
+            fontSize={number.length > 1 ? "36" : "42"}
+            fontWeight="bold"
+            fill={ribbon.bg}
+          >
+            {number}
+          </SvgText>
 
-        {/* Ribbon */}
-        <Path
-          d="M5 78 L20 72 L80 72 L95 78 L95 92 L80 86 L20 86 L5 92 Z"
-          fill={ribbon.bg}
-        />
+          {/* Ribbon */}
+          <Path
+            d="M5 78 L20 72 L80 72 L95 78 L95 92 L80 86 L20 86 L5 92 Z"
+            fill={ribbon.bg}
+          />
 
-        {/* Ribbon shadow */}
-        <Path
-          d="M20 86 L80 86 L80 90 L20 90 Z"
-          fill={ribbon.bg}
-          opacity="0.7"
-        />
+          {/* Ribbon shadow */}
+          <Path
+            d="M20 86 L80 86 L80 90 L20 90 Z"
+            fill={ribbon.bg}
+            opacity="0.7"
+          />
 
-        {/* Ribbon ends */}
-        <Path d="M5 78 L5 96 L12 90 L12 76 Z" fill={ribbon.bg} opacity="0.8" />
-        <Path
-          d="M95 78 L95 96 L88 90 L88 76 Z"
-          fill={ribbon.bg}
-          opacity="0.8"
-        />
+          {/* Ribbon ends */}
+          <Path
+            d="M5 78 L5 96 L12 90 L12 76 Z"
+            fill={ribbon.bg}
+            opacity="0.8"
+          />
+          <Path
+            d="M95 78 L95 96 L88 90 L88 76 Z"
+            fill={ribbon.bg}
+            opacity="0.8"
+          />
 
-        {/* Ribbon text */}
-        <SvgText
-          x="50"
-          y="83"
-          textAnchor="middle"
-          fontSize="12"
-          fontWeight="bold"
-          fill={ribbon.text}
-        >
-          {label.label}
-        </SvgText>
-      </Svg>
+          {/* Ribbon text */}
+          <SvgText
+            x="50"
+            y="83"
+            textAnchor="middle"
+            fontSize={unit.length > 5 ? "10" : "12"}
+            fontWeight="bold"
+            fill={ribbon.text}
+          >
+            {unit}
+          </SvgText>
+        </Svg>
+
+        {/* Earned indicator */}
+        {earned && (
+          <View className="absolute -right-1 -top-1 h-6 w-6 items-center justify-center rounded-full bg-green-500">
+            <Check size={14} color="white" strokeWidth={3} />
+          </View>
+        )}
+      </View>
 
       {/* Status dots */}
       <View className="mt-2 flex-row gap-1">
@@ -202,6 +235,23 @@ function BadgeItem({
           />
         ))}
       </View>
+
+      {badgeLabel && (
+        <Text
+          className="mt-1 text-center text-xs font-medium text-foreground"
+          numberOfLines={1}
+        >
+          {badgeLabel}
+        </Text>
+      )}
+      {subtitle && (
+        <Text
+          className="text-center text-[10px] text-muted-foreground"
+          numberOfLines={2}
+        >
+          {subtitle}
+        </Text>
+      )}
     </View>
   );
 }
