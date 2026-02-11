@@ -120,10 +120,10 @@ development_status:
   12-2-moodboard-management-mobile: done
   epic-12-retrospective: done
 
-  epic-13: in-progress
+  epic-13: done
   13-1-stickers-and-badge-collections-mobile: done
   13-2-dashboard-widgets-real-api-connection-mobile: done
-  epic-13-retrospective: optional
+  epic-13-retrospective: done
 
   epic-14: backlog
   14-1-settings-and-preferences-mobile: backlog
