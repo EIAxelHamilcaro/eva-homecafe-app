@@ -3,9 +3,10 @@ import type { ReactNode } from "react";
 
 import { NetworkProvider } from "@/lib/network/network-context";
 import { OfflineBanner } from "@/lib/network/offline-banner";
+import { usePushNotifications } from "@/lib/notifications/use-push-notifications";
 import { ToastProvider } from "@/lib/toast/toast-context";
 
-import { AuthProvider } from "./providers/auth-provider";
+import { AuthProvider, useAuth } from "./providers/auth-provider";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -16,16 +17,24 @@ const queryClient = new QueryClient({
   },
 });
 
+function PushNotificationSetup({ children }: { children: ReactNode }) {
+  const { isAuthenticated } = useAuth();
+  usePushNotifications(isAuthenticated);
+  return <>{children}</>;
+}
+
 export default function Providers({ children }: { children: ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <NetworkProvider>
-          <ToastProvider>
-            {children}
-            <OfflineBanner />
-          </ToastProvider>
-        </NetworkProvider>
+        <PushNotificationSetup>
+          <NetworkProvider>
+            <ToastProvider>
+              {children}
+              <OfflineBanner />
+            </ToastProvider>
+          </NetworkProvider>
+        </PushNotificationSetup>
       </AuthProvider>
     </QueryClientProvider>
   );

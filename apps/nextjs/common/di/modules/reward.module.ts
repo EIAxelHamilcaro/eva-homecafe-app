@@ -5,10 +5,15 @@ import {
 } from "@/adapters/queries/achievement.query";
 import { DrizzleRewardRepository } from "@/adapters/repositories/reward.repository";
 import { InProcessEventDispatcher } from "@/adapters/services/gamification/in-process-event-dispatcher";
+import { ExpoPushNotificationService } from "@/adapters/services/push/expo-push-notification.service";
 import { GamificationHandler } from "@/application/event-handlers/gamification.handler";
+import { PushNotificationHandler } from "@/application/event-handlers/push-notification.handler";
 import type { IAchievementQueryProvider } from "@/application/ports/achievement-query.provider.port";
 import type { INotificationRepository } from "@/application/ports/notification-repository.port";
+import type { IPushNotificationProvider } from "@/application/ports/push-notification-provider.port";
+import type { IPushTokenRepository } from "@/application/ports/push-token-repository.port";
 import type { IRewardRepository } from "@/application/ports/reward-repository.port";
+import type { IUserPreferenceRepository } from "@/application/ports/user-preference-repository.port";
 import { EvaluateAchievementUseCase } from "@/application/use-cases/reward/evaluate-achievement.use-case";
 import { DI_SYMBOLS } from "../types";
 
@@ -23,6 +28,10 @@ export const createRewardModule = () => {
   rewardModule
     .bind(DI_SYMBOLS.IRewardRepository)
     .toClass(DrizzleRewardRepository);
+
+  rewardModule
+    .bind(DI_SYMBOLS.IPushNotificationProvider)
+    .toClass(ExpoPushNotificationService);
 
   rewardModule
     .bind(DI_SYMBOLS.EvaluateAchievementUseCase)
@@ -41,11 +50,26 @@ export const createRewardModule = () => {
     );
 
   rewardModule.bind(DI_SYMBOLS.IEventDispatcher).toHigherOrderFunction(
-    (evaluateUseCase: EvaluateAchievementUseCase) => {
-      const handler = new GamificationHandler(evaluateUseCase);
-      return new InProcessEventDispatcher(handler);
+    (
+      evaluateUseCase: EvaluateAchievementUseCase,
+      pushProvider: IPushNotificationProvider,
+      pushTokenRepo: IPushTokenRepository,
+      userPrefRepo: IUserPreferenceRepository,
+    ) => {
+      const gamificationHandler = new GamificationHandler(evaluateUseCase);
+      const pushHandler = new PushNotificationHandler(
+        pushProvider,
+        pushTokenRepo,
+        userPrefRepo,
+      );
+      return new InProcessEventDispatcher(gamificationHandler, pushHandler);
     },
-    [DI_SYMBOLS.EvaluateAchievementUseCase],
+    [
+      DI_SYMBOLS.EvaluateAchievementUseCase,
+      DI_SYMBOLS.IPushNotificationProvider,
+      DI_SYMBOLS.IPushTokenRepository,
+      DI_SYMBOLS.IUserPreferenceRepository,
+    ],
   );
 
   return rewardModule;

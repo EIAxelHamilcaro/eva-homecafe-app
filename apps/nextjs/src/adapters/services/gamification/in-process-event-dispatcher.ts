@@ -1,14 +1,33 @@
 import type { DomainEvent } from "@packages/ddd-kit";
 import type { GamificationHandler } from "@/application/event-handlers/gamification.handler";
+import type { PushNotificationHandler } from "@/application/event-handlers/push-notification.handler";
 import type { IEventDispatcher } from "@/application/ports/event-dispatcher.port";
 
 export class InProcessEventDispatcher implements IEventDispatcher {
-  constructor(private readonly gamificationHandler: GamificationHandler) {}
+  constructor(
+    private readonly gamificationHandler: GamificationHandler,
+    private readonly pushNotificationHandler?: PushNotificationHandler,
+  ) {}
 
   async dispatch(event: DomainEvent): Promise<void> {
     try {
       await this.gamificationHandler.handle(event);
-    } catch {}
+    } catch (error) {
+      // biome-ignore lint/suspicious/noConsole: intentional server-side error logging for event handler failures
+      console.error("[EventDispatcher] GamificationHandler error:", error);
+    }
+
+    if (this.pushNotificationHandler) {
+      try {
+        await this.pushNotificationHandler.handle(event);
+      } catch (error) {
+        // biome-ignore lint/suspicious/noConsole: intentional server-side error logging for event handler failures
+        console.error(
+          "[EventDispatcher] PushNotificationHandler error:",
+          error,
+        );
+      }
+    }
   }
 
   async dispatchAll(events: DomainEvent[]): Promise<void> {

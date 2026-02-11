@@ -1,5 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-
+import Constants from "expo-constants";
+import * as Notifications from "expo-notifications";
+import { unregisterPushNotifications } from "@/lib/notifications/push-notifications";
 import type { AuthSession, User } from "@/types/auth";
 
 import { api } from "../client";
@@ -75,7 +77,19 @@ export function useSignOut() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: () => api.post<void>("/api/v1/auth/sign-out"),
+    mutationFn: async () => {
+      try {
+        const projectId =
+          Constants.expoConfig?.extra?.eas?.projectId ??
+          Constants.easConfig?.projectId;
+        const tokenData = await Notifications.getExpoPushTokenAsync({
+          projectId,
+        });
+        await unregisterPushNotifications(tokenData.data);
+      } catch {}
+
+      return api.post<void>("/api/v1/auth/sign-out");
+    },
     onSuccess: async () => {
       await api.clearToken();
       queryClient.setQueryData(authKeys.session(), null);

@@ -10,6 +10,7 @@ import { createMoodboardModule } from "./modules/moodboard.module";
 import { createNotificationModule } from "./modules/notification.module";
 import { createPostModule } from "./modules/post.module";
 import { createProfileModule } from "./modules/profile.module";
+import { createPushTokenModule } from "./modules/push-token.module";
 import { createRewardModule } from "./modules/reward.module";
 import { createUploadModule } from "./modules/upload.module";
 import { createUserPreferenceModule } from "./modules/user-preference.module";
@@ -31,6 +32,7 @@ ApplicationContainer.load(
 );
 ApplicationContainer.load(Symbol("PostModule"), createPostModule());
 ApplicationContainer.load(Symbol("ProfileModule"), createProfileModule());
+ApplicationContainer.load(Symbol("PushTokenModule"), createPushTokenModule());
 ApplicationContainer.load(Symbol("RewardModule"), createRewardModule());
 ApplicationContainer.load(Symbol("UploadModule"), createUploadModule());
 ApplicationContainer.load(

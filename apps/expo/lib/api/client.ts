@@ -97,8 +97,11 @@ class ApiClient {
     });
   }
 
-  delete<T>(endpoint: string): Promise<T> {
-    return this.fetch<T>(endpoint, { method: "DELETE" });
+  delete<T>(endpoint: string, body?: unknown): Promise<T> {
+    return this.fetch<T>(endpoint, {
+      method: "DELETE",
+      body: body ? JSON.stringify(body) : undefined,
+    });
   }
 
   async uploadFile<T>(

@@ -8,5 +8,6 @@ export * from "./moodboard";
 export * from "./notification";
 export * from "./post";
 export * from "./profile";
+export * from "./push-token";
 export * from "./reward";
 export * from "./user-preference";

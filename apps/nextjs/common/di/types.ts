@@ -12,6 +12,8 @@ import type { IMoodboardRepository } from "@/application/ports/moodboard-reposit
 import type { INotificationRepository } from "@/application/ports/notification-repository.port";
 import type { IPostRepository } from "@/application/ports/post-repository.port";
 import type { IProfileRepository } from "@/application/ports/profile-repository.port";
+import type { IPushNotificationProvider } from "@/application/ports/push-notification-provider.port";
+import type { IPushTokenRepository } from "@/application/ports/push-token-repository.port";
 import type { IRewardRepository } from "@/application/ports/reward-repository.port";
 import type { IStorageProvider } from "@/application/ports/storage.provider.port";
 import type { IUserRepository } from "@/application/ports/user.repository.port";
@@ -64,6 +66,8 @@ import type { UpdatePostUseCase } from "@/application/use-cases/post/update-post
 import type { CreateProfileUseCase } from "@/application/use-cases/profile/create-profile.use-case";
 import type { GetProfileUseCase } from "@/application/use-cases/profile/get-profile.use-case";
 import type { UpdateProfileUseCase } from "@/application/use-cases/profile/update-profile.use-case";
+import type { RegisterPushTokenUseCase } from "@/application/use-cases/push-token/register-push-token.use-case";
+import type { UnregisterPushTokenUseCase } from "@/application/use-cases/push-token/unregister-push-token.use-case";
 import type { EvaluateAchievementUseCase } from "@/application/use-cases/reward/evaluate-achievement.use-case";
 import type { GenerateUploadUrlUseCase } from "@/application/use-cases/upload/generate-upload-url.use-case";
 import type { GetUserPreferencesUseCase } from "@/application/use-cases/user-preference/get-user-preferences.use-case";
@@ -129,9 +133,13 @@ export const DI_SYMBOLS = {
   DeleteMoodboardUseCase: Symbol.for("DeleteMoodboardUseCase"),
   DeletePinUseCase: Symbol.for("DeletePinUseCase"),
   IPostRepository: Symbol.for("IPostRepository"),
+  IPushNotificationProvider: Symbol.for("IPushNotificationProvider"),
+  IPushTokenRepository: Symbol.for("IPushTokenRepository"),
   IRewardRepository: Symbol.for("IRewardRepository"),
   IUserPreferenceRepository: Symbol.for("IUserPreferenceRepository"),
   CreatePostUseCase: Symbol.for("CreatePostUseCase"),
+  RegisterPushTokenUseCase: Symbol.for("RegisterPushTokenUseCase"),
+  UnregisterPushTokenUseCase: Symbol.for("UnregisterPushTokenUseCase"),
   EvaluateAchievementUseCase: Symbol.for("EvaluateAchievementUseCase"),
   DeletePostUseCase: Symbol.for("DeletePostUseCase"),
   GetUserPostsUseCase: Symbol.for("GetUserPostsUseCase"),
@@ -202,9 +210,13 @@ export interface DI_RETURN_TYPES {
   DeleteMoodboardUseCase: DeleteMoodboardUseCase;
   DeletePinUseCase: DeletePinUseCase;
   IPostRepository: IPostRepository;
+  IPushNotificationProvider: IPushNotificationProvider;
+  IPushTokenRepository: IPushTokenRepository;
   IRewardRepository: IRewardRepository;
   IUserPreferenceRepository: IUserPreferenceRepository;
   CreatePostUseCase: CreatePostUseCase;
+  RegisterPushTokenUseCase: RegisterPushTokenUseCase;
+  UnregisterPushTokenUseCase: UnregisterPushTokenUseCase;
   EvaluateAchievementUseCase: EvaluateAchievementUseCase;
   DeletePostUseCase: DeletePostUseCase;
   GetUserPostsUseCase: GetUserPostsUseCase;

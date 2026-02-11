@@ -4,13 +4,22 @@ import { Checkbox } from "components/ui/checkbox";
 import { Dropdown } from "components/ui/dropdown";
 import { RadioGroup, RadioGroupItem } from "components/ui/radio-group";
 import { Toggle } from "components/ui/toggle";
+import * as Notifications from "expo-notifications";
 import { useRouter } from "expo-router";
 import { useSignOut } from "lib/api/hooks/use-auth";
 import { useGenerateInvite } from "lib/api/hooks/use-invite";
 import { useSettings, useUpdateSettings } from "lib/api/hooks/use-settings";
 import { ChevronLeft, ChevronRight, LogOut, Trash2 } from "lucide-react-native";
 import { useEffect, useState } from "react";
-import { Alert, Pressable, ScrollView, Share, Text, View } from "react-native";
+import {
+  Alert,
+  Linking,
+  Pressable,
+  ScrollView,
+  Share,
+  Text,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   languageOptions,
@@ -59,6 +68,13 @@ export default function SettingsScreen() {
   const [savingSection, setSavingSection] = useState<
     "notifications" | "customMode" | null
   >(null);
+  const [devicePushDenied, setDevicePushDenied] = useState(false);
+
+  useEffect(() => {
+    Notifications.getPermissionsAsync().then(({ status }) => {
+      setDevicePushDenied(status !== "granted");
+    });
+  }, []);
 
   useEffect(() => {
     if (settings) {
@@ -237,6 +253,18 @@ export default function SettingsScreen() {
                     onCheckedChange={setPushNotifications}
                   />
                 </View>
+
+                {pushNotifications && devicePushDenied && (
+                  <Pressable
+                    onPress={() => Linking.openSettings()}
+                    className="rounded-lg bg-amber-50 p-3"
+                  >
+                    <Text className="text-xs text-amber-700">
+                      Les notifications push sont désactivées au niveau du
+                      système. Appuyez ici pour ouvrir les réglages.
+                    </Text>
+                  </Pressable>
+                )}
 
                 <View className="h-px bg-border" />
 
