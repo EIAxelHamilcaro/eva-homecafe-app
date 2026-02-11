@@ -1,4 +1,4 @@
-# generated: 2026-02-08
+# generated: 2026-02-11
 # project: eva-homecafe-app
 # project_key: NOKEY
 # tracking_system: file-system
@@ -33,13 +33,17 @@
 # - SM typically creates next story after previous one is 'done' to incorporate learnings
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
-generated: 2026-02-08
+generated: 2026-02-11
 project: eva-homecafe-app
 project_key: NOKEY
 tracking_system: file-system
 story_location: _bmad-output/implementation-artifacts
 
 development_status:
+  # ═══════════════════════════════════════════════════════
+  # WEB MVP — Epics 1-9 (Next.js) — ALL DONE
+  # ═══════════════════════════════════════════════════════
+
   epic-1: done
   1-1-shared-file-upload-infrastructure: done
   1-2-create-a-post: done
@@ -94,15 +98,7 @@ development_status:
   epic-9-retrospective: done
 
   # ═══════════════════════════════════════════════════════
-  # WEB MVP COMPLETE — Epics 1-9 done
-  # ═══════════════════════════════════════════════════════
-
-  # ═══════════════════════════════════════════════════════
-  # MOBILE PHASE (Expo React Native — iOS & Android)
-  # PRD: "Platform parity — both platforms cover all features"
-  # Architecture: TanStack React Query + SecureStore + Expo EAS
-  # Figma: 27 mobile screens defined
-  # Expo app scaffolded: apps/expo/ (~50 component files)
+  # MOBILE PHASE (Expo React Native) — Epics 10-14 — ALL DONE
   # ═══════════════════════════════════════════════════════
 
   epic-10: done
@@ -125,7 +121,7 @@ development_status:
   13-2-dashboard-widgets-real-api-connection-mobile: done
   epic-13-retrospective: done
 
-  epic-14: in-progress
+  epic-14: done
   14-1-settings-and-preferences-mobile: done
   14-2-push-notifications-expo-eas: done
   14-3-friend-qr-scanning-and-deep-links: done
@@ -142,3 +138,39 @@ development_status:
   15-3-og-images-and-visual-assets: backlog
   15-4-i18n-wiring: backlog
   epic-15-retrospective: optional
+
+  # ═══════════════════════════════════════════════════════
+  # UI OVERHAUL — PIXEL-PERFECT SCREENSHOT ALIGNMENT
+  # Source of truth: .claude/screenshots/ (Desktop, Mobile, Tablet)
+  # NO Figma — screenshots are the ONLY reference
+  # ═══════════════════════════════════════════════════════
+
+  # --- Web UI Overhaul (apps/nextjs/) ---
+  # Reference: Desktop.png + Tablet.png
+  epic-16: backlog
+  16-1-design-system-extraction-and-token-setup: backlog
+  16-2-landing-page-auth-and-public-pages: backlog
+  16-3-dashboard-layout-and-all-widgets: backlog
+  16-4-journal-posts-and-rich-text-editor: backlog
+  16-5-social-feed-and-friend-profiles: backlog
+  16-6-mood-tracking-and-charts: backlog
+  16-7-organisation-todo-kanban-and-chronology: backlog
+  16-8-gallery-and-moodboard: backlog
+  16-9-rewards-stickers-and-badges: backlog
+  16-10-settings-messages-and-navigation-chrome: backlog
+  epic-16-retrospective: optional
+
+  # --- Mobile Native UI Overhaul (apps/expo/) ---
+  # Reference: Mobile.png
+  epic-17: backlog
+  17-1-mobile-design-system-and-native-token-setup: backlog
+  17-2-mobile-auth-screens: backlog
+  17-3-mobile-dashboard-and-tab-navigation: backlog
+  17-4-mobile-journal-and-posts: backlog
+  17-5-mobile-social-feed-and-friends: backlog
+  17-6-mobile-mood-tracking: backlog
+  17-7-mobile-organisation: backlog
+  17-8-mobile-gallery-and-moodboard: backlog
+  17-9-mobile-rewards-stickers-and-badges: backlog
+  17-10-mobile-settings-messages-and-notifications: backlog
+  epic-17-retrospective: optional

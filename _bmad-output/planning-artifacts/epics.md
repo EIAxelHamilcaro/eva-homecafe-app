@@ -319,6 +319,16 @@ Cross-platform technical debt accumulated over 9 web epics: database migration p
 **FRs covered:** FR9 (delete account), NFR12 (GDPR deletion)
 **Dependencies:** All previous epics (debt items span full codebase)
 
+### Epic 16: Web UI Overhaul — Pixel-Perfect Screenshot Alignment
+Complete visual overhaul of `apps/nextjs/` to achieve exact pixel-perfect fidelity with `.claude/screenshots/Desktop.png` and `.claude/screenshots/Tablet.png`. The screenshots are the single source of truth — no Figma, no interpretation, no approximation. Every screen, spacing, color, typography, and component must match exactly. Covers design token extraction, all 19 pages, 87 components, sidebar navigation, and responsive tablet adaptation.
+**NFRs covered:** NFR19 (responsive), NFR20 (pixel-perfect match), NFR23 (consistent navigation)
+**Dependencies:** Epics 1-9 (all web features must exist), Screenshots `.claude/screenshots/Desktop.png` + `.claude/screenshots/Tablet.png`
+
+### Epic 17: Mobile Native UI Overhaul — Pixel-Perfect Screenshot Alignment
+Complete visual overhaul of `apps/expo/` to achieve exact pixel-perfect fidelity with `.claude/screenshots/Mobile.png`. Web mobile designs adapted to native React Native components while preserving exact visual appearance. Covers native design tokens, all ~25 screens, ~55 components, bottom tab bar, and native-specific adaptations (safe areas, touch targets, native gestures).
+**NFRs covered:** NFR17 (iOS 15+/Android 10+), NFR20 (pixel-perfect match), NFR23 (bottom tab bar)
+**Dependencies:** Epics 10-14 (all mobile features must exist), Screenshot `.claude/screenshots/Mobile.png`
+
 ---
 
 ## Epic 1: Content Creation & Personal Journal
@@ -1453,3 +1463,512 @@ So that the interface matches my preference.
 **Given** a user with language preference on mobile
 **When** they use the Expo app
 **Then** UI text respects the language preference via React Native Intl
+
+---
+
+## Epic 16: Web UI Overhaul — Pixel-Perfect Screenshot Alignment
+
+The current web UI (`apps/nextjs/`) has diverged from the reference screenshots (`.claude/screenshots/Desktop.png`, `.claude/screenshots/Tablet.png`). This epic is a **complete visual overhaul** to achieve exact pixel-perfect fidelity with the screenshots. The screenshots are the single source of truth — no Figma links, no interpretation, no approximation. Every screen, every component, every spacing, every color must match exactly.
+
+**Source of truth:** `.claude/screenshots/Desktop.png` (desktop layouts), `.claude/screenshots/Tablet.png` (tablet layouts)
+**NFR covered:** NFR19 (responsive mobile-first), NFR20 (pixel-perfect Figma match — screenshots replace Figma), NFR23 (consistent navigation)
+
+### Story 16.1: Design System Extraction & Token Setup
+
+As a **developer**,
+I want to extract the exact design tokens from the screenshots and configure them as the project's design system,
+So that all subsequent stories use the correct foundation and every component is consistent.
+
+**Acceptance Criteria:**
+
+**Given** the Desktop, Mobile, and Tablet screenshots
+**When** the design tokens are extracted
+**Then** the following are documented and configured in Tailwind/CSS:
+- **Color palette**: exact hex values for beige/cream backgrounds, rose/magenta accent (CTA buttons), card backgrounds, text colors, border colors, chart colors (mood bar green/red/orange/blue), kanban column headers (blue, yellow, green, pink, orange)
+- **Typography**: font family, sizes, weights, line-heights for headings (h1-h4), body text, labels, captions, button text
+- **Spacing**: padding, margins, gaps used in cards, widgets, sections, page gutters
+- **Border radius**: card corners, button corners, avatar corners, input corners
+- **Shadows**: card shadow, modal shadow, dropdown shadow
+- **Component sizes**: avatar sizes, button heights, input heights, icon sizes
+
+**Given** the extracted tokens
+**When** applied to `tailwind.config`
+**Then** existing Tailwind classes map to the screenshot values
+**And** any custom CSS variables are defined in the global stylesheet
+
+**Given** the navigation patterns in screenshots
+**When** compared to current implementation
+**Then** sidebar (desktop/tablet) and page layout structure match exactly: sidebar width, content area margins, header height
+
+### Story 16.2: Landing Page, Auth & Public Pages
+
+As a **visitor**,
+I want the landing page, auth forms, and contact page to look exactly like the screenshots,
+So that my first impression matches the intended design.
+
+**Acceptance Criteria:**
+
+**Given** the landing page in Desktop.png (top-left cluster)
+**When** compared to current implementation
+**Then** the following match exactly:
+- Hero section: background image (floral/tree), overlay text positioning, CTA button style (rose/magenta)
+- "HomeCafé c'est quoi ?" section: layout, typography, spacing, illustrations
+- Features section: icon/illustration cards, grid layout, card styling
+- Testimonials: avatar images, quote styling, card layout
+- FAQ section: accordion styling, spacing
+- Footer: layout, links, spacing
+- Navbar: logo position, link styling, CTA button
+
+**Given** the auth pages in Desktop.png
+**When** compared to current implementation
+**Then** login, register, forgot-password, reset-password forms match: input styling, button styling, form width, spacing, background
+
+**Given** the contact page in Desktop.png
+**When** compared to current implementation
+**Then** form layout, connected/non-connected states match exactly
+
+**Given** the Tablet.png equivalents
+**When** viewed at tablet breakpoint
+**Then** all above pages adapt to tablet layout as shown in screenshots
+
+### Story 16.3: Dashboard Layout & All Widgets
+
+As a **user**,
+I want the dashboard to look exactly like the screenshots with all 8 widgets properly styled,
+So that the main hub matches the intended design.
+
+**Acceptance Criteria:**
+
+**Given** the dashboard in Desktop.png (middle-left area showing stats, charts, widgets)
+**When** compared to current implementation
+**Then** the following match exactly:
+- **Overall layout**: widget grid arrangement, spacing between widgets, page margins
+- **Mood widget**: weekly bar chart colors (exact green/red/orange/blue bars), chart sizing, trend indicator styling
+- **Journal widget**: cream/beige card background, text styling, compose input
+- **Posts widget**: post preview cards, thumbnail sizing, date formatting
+- **Messages widget**: conversation previews, unread indicators, avatar sizing
+- **Tasks widget**: todo item checkboxes, progress indicators
+- **Calendar widget**: month view grid, event markers, color coding
+- **Gallery widget**: photo grid thumbnails, rounded corners, spacing
+- **Moodboard widget**: preview thumbnails, board title styling
+- **Statistics display**: number formatting (16, 18), percentage displays (74%, 40%), stat card styling
+
+**Given** empty states in the dashboard
+**When** a new user views the dashboard
+**Then** each empty state matches screenshot styling: illustrations, prompt text, CTA button
+
+**Given** the Tablet.png dashboard layout
+**When** viewed at tablet breakpoint
+**Then** widget grid reflows to tablet layout as shown
+
+### Story 16.4: Journal, Posts & Rich Text Editor
+
+As a **user**,
+I want the journal, posts list, post detail, and rich text editor to look exactly like the screenshots,
+So that content creation and reading matches the intended design.
+
+**Acceptance Criteria:**
+
+**Given** the journal/posts screens in Desktop.png
+**When** compared to current implementation
+**Then** the following match exactly:
+- **Journal view**: cream/beige entry cards, date grouping headers, streak counter badge styling
+- **Posts list**: card layout, content preview truncation, visibility indicator, image thumbnails
+- **Post detail**: full content rendering, image display, metadata (date, visibility), action buttons
+- **Create post form**: rich text toolbar styling (bold/italic/underline buttons), text area sizing, image attachment UI, visibility toggle (private/public), submit button
+- **Edit post form**: same as create with pre-filled content
+- **Date navigator**: navigation arrows, date display format, active state styling
+
+**Given** the Tablet.png post/journal layouts
+**When** viewed at tablet breakpoint
+**Then** layouts adapt as shown in screenshots
+
+### Story 16.5: Social Feed & Friend Profiles
+
+As a **user**,
+I want the social feed, post reactions, and friend profiles to look exactly like the screenshots,
+So that the social experience matches the intended design.
+
+**Acceptance Criteria:**
+
+**Given** the social feed screens in Desktop.png
+**When** compared to current implementation
+**Then** the following match exactly:
+- **Feed layout**: post card styling (avatar, name, date, content, images, reactions)
+- **Reaction UI**: reaction button, count display, reaction picker
+- **Friend profile cards**: avatar, name, friend code display
+- **Empty states**: no-friends and no-posts states with illustrations
+
+**Given** the Tablet.png social feed layout
+**When** viewed at tablet breakpoint
+**Then** feed card layout adapts as shown
+
+### Story 16.6: Mood Tracking & Charts
+
+As a **user**,
+I want the mood tracking screens to look exactly like the screenshots,
+So that mood recording and visualization matches the intended design.
+
+**Acceptance Criteria:**
+
+**Given** the mood screens in Desktop.png (showing bar charts, trend charts, mood form)
+**When** compared to current implementation
+**Then** the following match exactly:
+- **Mood form**: 9 category buttons/cards (exact icons, labels, selected state), intensity slider (track color, thumb style, value display)
+- **Weekly bar chart**: bar colors per mood category (exact hex), bar width, spacing, axis labels, grid lines
+- **6-month trend chart**: line/area styling, data point markers, axis formatting
+- **Mood legend**: category colors, icon/emoji per category, description text
+- **Day-of-week view**: day labels, mood indicator per day, current day highlight
+- **Stats numbers**: percentage displays, formatting
+
+**Given** the Tablet.png mood layouts
+**When** viewed at tablet breakpoint
+**Then** chart sizing and form layout adapt as shown
+
+### Story 16.7: Organisation — Todo, Kanban & Chronology
+
+As a **user**,
+I want the organisation screens to look exactly like the screenshots,
+So that task management matches the intended design.
+
+**Acceptance Criteria:**
+
+**Given** the organisation screens in Desktop.png (bottom-left area showing large kanban board, calendar)
+**When** compared to current implementation
+**Then** the following match exactly:
+- **View tabs**: tab bar styling (todo/kanban/chronology), active tab indicator
+- **Todo list**: checkbox styling, item text, list card, completion strikethrough
+- **Kanban board**: column headers with exact colors (blue, yellow, green, pink, orange), column width, card styling (title, description, progress bar, due date badge), drag handle
+- **Kanban cards**: progress percentage indicator, due date pill, color-coded priority
+- **Chronology/calendar**: month grid, colored event markers matching board colors, date cells, today highlight
+- **Card detail modal**: title, description, progress slider, date picker
+- **Create dialogs**: form styling for new board/column/card
+
+**Given** the Tablet.png organisation layouts
+**When** viewed at tablet breakpoint
+**Then** kanban columns and calendar adapt as shown
+
+### Story 16.8: Gallery & Moodboard
+
+As a **user**,
+I want the gallery and moodboard screens to look exactly like the screenshots,
+So that visual content management matches the intended design.
+
+**Acceptance Criteria:**
+
+**Given** the gallery screens in Desktop.png (showing photo grid with various photos)
+**When** compared to current implementation
+**Then** the following match exactly:
+- **Photo grid**: thumbnail sizing, aspect ratio, gap between photos, rounded corners
+- **Photo modal/detail**: full-size image display, close button, metadata
+- **Upload UI**: upload button styling, drag-drop zone (if shown), progress indicator
+- **Empty state**: illustration and prompt text
+
+**Given** the moodboard screens in Desktop.png
+**When** compared to current implementation
+**Then** the following match exactly:
+- **Moodboard grid**: board preview cards, thumbnail composition
+- **Moodboard detail**: pin layout, image pins, color pins (color swatches)
+- **Add pin dialog**: image upload area, color picker
+- **Create moodboard dialog**: title input, submit button
+
+**Given** the Tablet.png gallery/moodboard layouts
+**When** viewed at tablet breakpoint
+**Then** grid columns and layouts adapt as shown
+
+### Story 16.9: Rewards, Stickers & Badges
+
+As a **user**,
+I want the rewards, stickers, and badges screens to look exactly like the screenshots,
+So that gamification visuals match the intended design.
+
+**Acceptance Criteria:**
+
+**Given** the rewards/stickers/badges screens in Desktop.png (top-right and middle areas showing colorful grids)
+**When** compared to current implementation
+**Then** the following match exactly:
+- **Sticker grid**: sticker card sizing, grid columns, earned vs unearned visual treatment (highlighted vs grayed out), sticker illustrations (exact artwork)
+- **Badge grid**: badge card sizing, badge illustrations (cafe-themed character mascots), earned glow/highlight, earning criteria text
+- **Reward tabs**: tab styling for switching between stickers/badges
+- **Collection views**: "View All" sections, progress indicators
+- **Individual reward cards**: illustration, title, criteria description, earned status indicator
+- **Rose/magenta CTA buttons**: exact button styling throughout rewards pages
+
+**Given** the Tablet.png rewards layouts
+**When** viewed at tablet breakpoint
+**Then** grid columns adapt as shown
+
+### Story 16.10: Settings, Messages & Navigation Chrome
+
+As a **user**,
+I want settings, messaging, and the global navigation to look exactly like the screenshots,
+So that the entire app shell and utility screens match the intended design.
+
+**Acceptance Criteria:**
+
+**Given** the settings screen in Desktop.png
+**When** compared to current implementation
+**Then** the following match exactly:
+- **Settings sections**: notification toggles, privacy section, customization section, about section, account actions (delete account)
+- **Form controls**: toggle switches, radio groups, dropdowns
+- **Section layout**: section headers, dividers, spacing
+
+**Given** the messaging screens in Desktop.png
+**When** compared to current implementation
+**Then** the following match exactly:
+- **Conversation list**: avatar, name, last message preview, unread badge, timestamp
+- **Conversation thread**: message bubbles (sent/received colors), timestamp, media attachments
+- **New message**: friend selector, compose input
+- **Notification list**: notification items, read/unread styling, icons
+
+**Given** the sidebar navigation in Desktop.png
+**When** compared to current implementation
+**Then** the following match exactly:
+- **Sidebar**: width, background color, logo, nav items (icons + labels), active item highlight, user avatar at bottom
+- **Page header**: breadcrumb/title area, action buttons
+
+**Given** the Tablet.png navigation
+**When** viewed at tablet breakpoint
+**Then** sidebar adapts as shown (collapsed or adjusted width)
+
+---
+
+## Epic 17: Mobile Native UI Overhaul — Pixel-Perfect Screenshot Alignment
+
+The current Expo app (`apps/expo/`) has diverged from the reference screenshots (`.claude/screenshots/Mobile.png`). This epic is a **complete visual overhaul** of the native mobile app to achieve exact pixel-perfect fidelity with the Mobile screenshot. Web mobile designs must be adapted to native React Native components while preserving exact visual appearance. The screenshots are the single source of truth.
+
+**Source of truth:** `.claude/screenshots/Mobile.png`
+**NFR covered:** NFR17 (iOS 15+/Android 10+), NFR20 (pixel-perfect match), NFR23 (bottom tab bar mobile)
+
+### Story 17.1: Mobile Design System & Native Token Setup
+
+As a **developer**,
+I want to extract the exact design tokens from the Mobile screenshot and configure them for React Native/NativeWind,
+So that all mobile components use the correct foundation.
+
+**Acceptance Criteria:**
+
+**Given** the Mobile.png screenshot
+**When** the design tokens are extracted
+**Then** the following are configured in NativeWind/Tailwind config + React Native StyleSheet:
+- **Color palette**: same hex values as web (beige/cream backgrounds, rose/magenta accents, chart colors, kanban colors)
+- **Typography**: native font family equivalent, sizes adapted for mobile density (sp/dp), weights, line-heights
+- **Spacing**: padding/margins scaled appropriately for mobile touch targets (minimum 44pt tap targets)
+- **Border radius**: consistent with web values but adapted for native rendering
+- **Shadows**: native shadow equivalents (iOS shadow + Android elevation)
+- **Safe areas**: proper SafeAreaView usage for notch/dynamic island devices
+
+**Given** the bottom tab bar in Mobile.png
+**When** implemented
+**Then** tab icons, labels, active/inactive colors, badge indicators match exactly
+
+### Story 17.2: Mobile Auth Screens
+
+As a **mobile user**,
+I want the auth screens to look exactly like the Mobile screenshot,
+So that onboarding feels polished and trustworthy.
+
+**Acceptance Criteria:**
+
+**Given** the auth screens in Mobile.png
+**When** compared to current Expo implementation
+**Then** the following match exactly:
+- **Login screen**: input fields (email, password), "Forgot password?" link, submit button (rose/magenta), register link
+- **Register screen**: input fields, terms checkbox, submit button, login link
+- **Forgot password screen**: email input, send code button, back link
+- **Reset password screen**: code input, new password input, submit button
+- **Shared auth elements**: logo placement, background color, form card styling, error message styling
+
+### Story 17.3: Mobile Dashboard & Tab Navigation
+
+As a **mobile user**,
+I want the dashboard and tab navigation to look exactly like the Mobile screenshot,
+So that the main hub matches the intended native design.
+
+**Acceptance Criteria:**
+
+**Given** the dashboard/home screen in Mobile.png
+**When** compared to current Expo implementation
+**Then** the following match exactly:
+- **Widget layout**: vertical scroll with widget cards, spacing between widgets
+- **Mood widget**: mini chart, trend indicator
+- **Journal widget**: quick-compose or recent entry preview
+- **Posts widget**: recent post previews
+- **Messages widget**: conversation previews
+- **Tasks widget**: todo items with checkboxes
+- **Calendar widget**: mini month view
+- **Gallery widget**: photo thumbnails
+- **Moodboard widget**: board preview
+- **Rewards widget**: recent badges/stickers earned
+- **Statistics displays**: percentage numbers, stat cards matching screenshot formatting
+- **"Invite friends" button**: styling matches screenshot exactly
+- **Empty states**: native illustrations and prompt text
+
+**Given** the bottom tab bar in Mobile.png
+**When** compared to current implementation
+**Then** tab icons, tab labels, active tab indicator, notification badges match exactly
+
+### Story 17.4: Mobile Journal & Posts
+
+As a **mobile user**,
+I want journal and post screens to look exactly like the Mobile screenshot,
+So that content creation on mobile matches the intended design.
+
+**Acceptance Criteria:**
+
+**Given** the journal/posts screens in Mobile.png
+**When** compared to current Expo implementation
+**Then** the following match exactly:
+- **Journal list**: cream/beige entry cards, date grouping, streak counter
+- **Post card**: content preview, image thumbnail, visibility badge, date
+- **Post detail**: full content, images, metadata, action buttons (edit/delete)
+- **Create post**: native rich text input, image picker integration, visibility toggle, submit button
+- **Edit post**: pre-filled form matching create layout
+- **Date navigation**: native date picker or navigator component
+
+### Story 17.5: Mobile Social Feed & Friends
+
+As a **mobile user**,
+I want the social feed, friend management, and QR screens to look exactly like the Mobile screenshot,
+So that social features feel native and polished.
+
+**Acceptance Criteria:**
+
+**Given** the social/friends screens in Mobile.png
+**When** compared to current Expo implementation
+**Then** the following match exactly:
+- **Social feed**: post cards with avatar, name, content, images, reactions
+- **Reaction UI**: tap-to-react button, count, reaction picker
+- **Friends list**: friend cards with avatar, name, status
+- **Add friend**: code input field, scan QR button
+- **QR code screen**: user's QR code display, friend code text, share button
+- **QR scanner**: camera view with scan overlay
+- **Friend profile**: public profile card layout
+
+### Story 17.6: Mobile Mood Tracking
+
+As a **mobile user**,
+I want mood tracking screens to look exactly like the Mobile screenshot,
+So that mood recording feels intuitive on mobile.
+
+**Acceptance Criteria:**
+
+**Given** the mood screens in Mobile.png (showing bar charts, color palette, mood form)
+**When** compared to current Expo implementation
+**Then** the following match exactly:
+- **Mood category selection**: 9 category buttons (exact icons, colors, labels), selected state
+- **Intensity slider**: native slider track color, thumb, value label
+- **Weekly bar chart**: bar colors per category (exact), axis labels, chart sizing for mobile
+- **6-month trend**: chart adapted for mobile width
+- **Mood legend**: category colors, icons, descriptions
+- **Stats**: percentage displays (74%, 40%), stat cards
+- **Color palette view**: circular color dots if shown in screenshot
+
+### Story 17.7: Mobile Organisation
+
+As a **mobile user**,
+I want the organisation screens to look exactly like the Mobile screenshot,
+So that task management is usable on mobile.
+
+**Acceptance Criteria:**
+
+**Given** the organisation screens in Mobile.png
+**When** compared to current Expo implementation
+**Then** the following match exactly:
+- **View tabs**: native tab switching (todo/kanban/chronology)
+- **Todo list**: native checkbox, item cards, completion styling
+- **Kanban board**: horizontal scrollable columns, color-coded headers, card styling adapted for mobile width
+- **Cards**: title, description, progress bar, due date badge
+- **Calendar/chronology**: native calendar component, colored event dots
+- **Create dialogs**: native modal/bottom sheet for new items
+
+### Story 17.8: Mobile Gallery & Moodboard
+
+As a **mobile user**,
+I want gallery and moodboard screens to look exactly like the Mobile screenshot,
+So that visual content management matches the intended native design.
+
+**Acceptance Criteria:**
+
+**Given** the gallery/moodboard screens in Mobile.png
+**When** compared to current Expo implementation
+**Then** the following match exactly:
+- **Photo grid**: thumbnail sizing for mobile, columns, gap, rounded corners
+- **Photo detail**: full-screen image view with native gestures (pinch-to-zoom)
+- **Upload**: native image picker integration, upload progress
+- **Moodboard grid**: board preview cards
+- **Moodboard detail**: pin layout adapted for mobile
+- **Pin management**: add image (camera/library picker), add color (native color picker)
+
+### Story 17.9: Mobile Rewards, Stickers & Badges
+
+As a **mobile user**,
+I want the rewards screens to look exactly like the Mobile screenshot,
+So that gamification visuals are engaging on mobile.
+
+**Acceptance Criteria:**
+
+**Given** the rewards/stickers/badges screens in Mobile.png (showing large character illustrations, sticker grids)
+**When** compared to current Expo implementation
+**Then** the following match exactly:
+- **Sticker grid**: sticker cards sized for mobile, earned/unearned treatment, exact artwork
+- **Badge grid**: badge illustrations (cafe-themed mascots at various sizes), earned glow
+- **Badge detail cards**: large mascot illustration, title, earning criteria, progress
+- **Reward tabs**: native tab switching between stickers/badges
+- **Collection overview**: earned count, total available, progress indicator
+- **Rose/magenta CTA buttons**: exact native button styling
+
+### Story 17.10: Mobile Settings, Messages & Notifications
+
+As a **mobile user**,
+I want settings, messaging, and notifications to look exactly like the Mobile screenshot,
+So that utility screens match the intended native design.
+
+**Acceptance Criteria:**
+
+**Given** the settings screen in Mobile.png
+**When** compared to current Expo implementation
+**Then** the following match exactly:
+- **Settings sections**: native toggle switches, section headers, dividers
+- **Notification preferences**: toggle for each notification type
+- **Privacy settings**: visibility toggle, data management options
+- **Account actions**: delete account button styling (destructive red)
+- **Profile edit**: input fields, avatar upload
+
+**Given** the messaging screens in Mobile.png
+**When** compared to current Expo implementation
+**Then** the following match exactly:
+- **Conversation list**: avatar, name, last message, unread badge, timestamp
+- **Chat thread**: message bubbles (native sizing), sent/received colors, media display, reaction bar
+- **New message**: friend selector, compose area
+- **Message input**: text input with media attach button
+
+**Given** the notification screens in Mobile.png
+**When** compared to current Expo implementation
+**Then** the following match exactly:
+- **Notification list**: notification items, read/unread styling, type icons, timestamps
+- **Empty state**: illustration and prompt
+
+---
+
+## Implementation Methodology for Epics 16 & 17
+
+### Screenshot Comparison Process (applies to ALL stories in Epics 16-17)
+
+Every story MUST follow this process:
+
+1. **Screenshot Analysis**: Open the relevant screenshot (Desktop/Tablet/Mobile) and isolate the screens being worked on
+2. **Current State Capture**: Take a screenshot or visually inspect the current implementation
+3. **Gap Identification**: Document EVERY visual difference — spacing, colors, typography, layout, icons, borders, shadows, sizing, alignment
+4. **Implementation**: Fix each gap systematically
+5. **Verification**: Compare the result against the screenshot at the exact same viewport size
+6. **Cross-breakpoint Check**: Verify the fix works at all relevant breakpoints (desktop+tablet for web, mobile for Expo)
+
+### Priority Order
+
+- **Story X.1** (design tokens) MUST be completed first for each platform — all other stories depend on correct tokens
+- Remaining stories can be parallelized but the recommended order follows user journey: auth → dashboard → content → social → tracking → organisation → visual → gamification → utility
+
+### Quality Gate
+
+No story is "done" until a side-by-side comparison with the screenshot shows **zero visible differences** at the target breakpoint(s).
