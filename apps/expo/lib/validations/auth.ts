@@ -14,11 +14,17 @@ export const signInSchema = z.object({
   password: z.string().min(1, "Le mot de passe est requis"),
 });
 
-export const signUpSchema = z.object({
-  name: nameSchema,
-  email: emailSchema,
-  password: passwordSchema,
-});
+export const signUpSchema = z
+  .object({
+    name: nameSchema,
+    email: emailSchema,
+    password: passwordSchema,
+    passwordConfirm: z.string().min(1, "Confirmer le mot de passe"),
+  })
+  .refine((data) => data.password === data.passwordConfirm, {
+    message: "Les mots de passe ne correspondent pas",
+    path: ["passwordConfirm"],
+  });
 
 export const forgotPasswordSchema = z.object({
   email: emailSchema,

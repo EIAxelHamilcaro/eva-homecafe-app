@@ -36,7 +36,7 @@ export {
 } from "./card";
 export { Checkbox, type CheckboxProps } from "./checkbox";
 export { Dropdown, type DropdownOption, type DropdownProps } from "./dropdown";
-export { Input, type InputProps, inputVariants, PasswordInput } from "./input";
+export { Input, type InputProps, PasswordInput } from "./input";
 export { Logo } from "./logo";
 export {
   Modal,

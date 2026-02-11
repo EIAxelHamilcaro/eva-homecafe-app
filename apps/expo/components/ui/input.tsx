@@ -1,4 +1,3 @@
-import { cva, type VariantProps } from "class-variance-authority";
 import { Eye, EyeOff } from "lucide-react-native";
 import * as React from "react";
 import {
@@ -11,50 +10,53 @@ import {
 
 import { cn } from "@/src/libs/utils";
 
-const inputVariants = cva(
-  "w-full rounded-md border bg-card px-4 py-3 font-normal text-base text-foreground",
-  {
-    variants: {
-      variant: {
-        default: "border-homecafe-grey-light focus:border-primary",
-        error: "border-destructive",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-    },
-  },
-);
-
-type InputProps = TextInputProps &
-  VariantProps<typeof inputVariants> & {
-    label?: string;
-    error?: string;
-    containerClassName?: string;
-    className?: string;
-  };
+type InputProps = TextInputProps & {
+  label?: string;
+  error?: string;
+  containerClassName?: string;
+  className?: string;
+};
 
 const Input = React.forwardRef<TextInput, InputProps>(
-  ({ label, error, variant, containerClassName, className, ...props }, ref) => {
+  (
+    { label, error, containerClassName, className, onFocus, onBlur, ...props },
+    ref,
+  ) => {
+    const [isFocused, setIsFocused] = React.useState(false);
+
     return (
       <View className={cn("w-full", containerClassName)}>
-        {label && (
-          <Text className="mb-1 text-sm font-normal text-homecafe-orange">
-            {label}
-          </Text>
-        )}
-        <TextInput
-          ref={ref}
+        <View
           className={cn(
-            inputVariants({ variant: error ? "error" : variant }),
-            className,
+            "rounded-md border px-4 pb-3 pt-2",
+            error
+              ? "border-red-500"
+              : isFocused
+                ? "border-homecafe-orange"
+                : "border-homecafe-grey",
           )}
-          placeholderTextColor="#9CA3AF"
-          {...props}
-        />
-        {error && (
-          <Text className="mt-1 text-sm text-destructive">{error}</Text>
-        )}
+        >
+          {label && (
+            <Text className="text-xs font-medium text-homecafe-orange">
+              {label}
+            </Text>
+          )}
+          <TextInput
+            ref={ref}
+            className={cn("p-0 text-sm text-foreground", className)}
+            placeholderTextColor="#9CA3AF"
+            onFocus={(e) => {
+              setIsFocused(true);
+              onFocus?.(e);
+            }}
+            onBlur={(e) => {
+              setIsFocused(false);
+              onBlur?.(e);
+            }}
+            {...props}
+          />
+        </View>
+        {error && <Text className="mt-1 text-xs text-red-500">{error}</Text>}
       </View>
     );
   },
@@ -72,16 +74,18 @@ const PasswordInput = React.forwardRef<TextInput, PasswordInputProps>(
     {
       label,
       error,
-      variant,
       containerClassName,
       className,
       showPassword,
       onTogglePassword,
+      onFocus,
+      onBlur,
       ...props
     },
     ref,
   ) => {
     const [isVisible, setIsVisible] = React.useState(showPassword ?? false);
+    const [isFocused, setIsFocused] = React.useState(false);
 
     const toggleVisibility = () => {
       if (onTogglePassword) {
@@ -95,37 +99,53 @@ const PasswordInput = React.forwardRef<TextInput, PasswordInputProps>(
 
     return (
       <View className={cn("w-full", containerClassName)}>
-        {label && (
-          <Text className="mb-1 text-sm font-normal text-homecafe-orange">
-            {label}
-          </Text>
-        )}
-        <View className="relative">
-          <TextInput
-            ref={ref}
-            className={cn(
-              inputVariants({ variant: error ? "error" : variant }),
-              "pr-12",
-              className,
+        <View
+          className={cn(
+            "flex-row items-center rounded-md border px-4 pb-3 pt-2",
+            error
+              ? "border-red-500"
+              : isFocused
+                ? "border-homecafe-orange"
+                : "border-homecafe-grey",
+          )}
+        >
+          <View className="flex-1">
+            {label && (
+              <Text className="text-xs font-medium text-homecafe-orange">
+                {label}
+              </Text>
             )}
-            secureTextEntry={!visible}
-            placeholderTextColor="#9CA3AF"
-            {...props}
-          />
+            <TextInput
+              ref={ref}
+              className={cn("p-0 text-sm text-foreground", className)}
+              secureTextEntry={!visible}
+              placeholderTextColor="#9CA3AF"
+              onFocus={(e) => {
+                setIsFocused(true);
+                onFocus?.(e);
+              }}
+              onBlur={(e) => {
+                setIsFocused(false);
+                onBlur?.(e);
+              }}
+              {...props}
+            />
+          </View>
           <Pressable
             onPress={toggleVisibility}
-            className="absolute right-3 top-1/2 -translate-y-1/2 p-1"
+            className="ml-2 p-1"
+            accessibilityLabel={
+              visible ? "Masquer le mot de passe" : "Afficher le mot de passe"
+            }
           >
             {visible ? (
-              <Eye size={24} color="#0062DD" />
+              <EyeOff size={20} color="#0062DD" />
             ) : (
-              <EyeOff size={24} color="#0062DD" />
+              <Eye size={20} color="#0062DD" />
             )}
           </Pressable>
         </View>
-        {error && (
-          <Text className="mt-1 text-sm text-destructive">{error}</Text>
-        )}
+        {error && <Text className="mt-1 text-xs text-red-500">{error}</Text>}
       </View>
     );
   },
@@ -133,4 +153,4 @@ const PasswordInput = React.forwardRef<TextInput, PasswordInputProps>(
 
 PasswordInput.displayName = "PasswordInput";
 
-export { Input, PasswordInput, inputVariants, type InputProps };
+export { Input, PasswordInput, type InputProps };

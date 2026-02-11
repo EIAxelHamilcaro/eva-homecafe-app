@@ -12,9 +12,11 @@ import {
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
+  Image,
   KeyboardAvoidingView,
   Platform,
   Pressable,
+  ScrollView,
   Text,
   View,
 } from "react-native";
@@ -23,7 +25,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function ResetPasswordScreen() {
   const { token } = useLocalSearchParams<{ token: string }>();
   const [isSuccess, setIsSuccess] = useState(false);
-  const [tokenExpired, setTokenExpired] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
 
   const {
     control,
@@ -43,6 +45,7 @@ export default function ResetPasswordScreen() {
       return;
     }
 
+    setServerError(null);
     resetPasswordMutation.mutate(
       { token, password: data.password },
       {
@@ -55,7 +58,9 @@ export default function ResetPasswordScreen() {
               error.code === "INVALID_TOKEN" ||
               error.code === "TOKEN_EXPIRED"
             ) {
-              setTokenExpired(true);
+              setServerError(
+                "Ce lien a expiré ou est invalide. Demandez un nouveau lien.",
+              );
               return;
             }
             setError("password", { message: error.message });
@@ -69,13 +74,13 @@ export default function ResetPasswordScreen() {
 
   if (!token) {
     return (
-      <SafeAreaView className="flex-1 items-center justify-center bg-card px-10">
+      <SafeAreaView className="flex-1 items-center justify-center bg-white px-8">
         <Text className="text-center text-lg text-homecafe-grey-dark">
           Lien invalide ou expiré.
         </Text>
         <Button
           onPress={() => router.replace("/(auth)/forgot-password")}
-          className="mt-6 rounded-full bg-homecafe-pink"
+          className="mt-6 rounded-full bg-homecafe-pink px-8"
         >
           Demander un nouveau lien
         </Button>
@@ -84,131 +89,139 @@ export default function ResetPasswordScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-card">
+    <SafeAreaView className="flex-1 bg-white">
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1"
       >
-        <View className="flex-1">
-          {/* Header with Logo */}
-          <View className="flex-row items-center justify-between px-5 py-4">
-            <Logo width={100} />
-            <Link href="/(auth)/login" asChild>
-              <Pressable className="rounded-full bg-homecafe-pink px-4 py-2">
-                <Text className="text-sm font-normal text-primary-foreground">
-                  Se connecter
-                </Text>
-              </Pressable>
-            </Link>
-          </View>
-
-          {/* Hero Image */}
-          <View className="mx-6 h-40 items-center justify-center overflow-hidden rounded-3xl bg-homecafe-pink-light">
-            <Logo width={180} />
-          </View>
-
-          {/* Header */}
-          <View className="px-10 pt-8">
-            <Text className="text-2xl font-medium text-homecafe-grey-dark">
-              {tokenExpired
-                ? "Lien expiré"
-                : isSuccess
-                  ? "Mot de passe modifié"
-                  : "Nouveau mot de passe"}
-            </Text>
-            <Text className="mt-2 text-sm text-homecafe-grey-dark">
-              {tokenExpired
-                ? "Le lien de réinitialisation a expiré ou est invalide."
-                : isSuccess
-                  ? "Votre mot de passe a été réinitialisé avec succès."
-                  : "Choisissez un nouveau mot de passe sécurisé."}
-            </Text>
-          </View>
-
-          {tokenExpired ? (
-            <View className="px-10 pt-6">
-              <Button
-                onPress={() => router.replace("/(auth)/forgot-password")}
-                className="rounded-full bg-homecafe-pink"
-              >
-                Demander un nouveau lien
-              </Button>
-            </View>
-          ) : !isSuccess ? (
-            <>
-              {/* Form */}
-              <View className="gap-4 px-10 pt-6">
-                <Controller
-                  control={control}
-                  name="password"
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <PasswordInput
-                      label="Nouveau mot de passe"
-                      placeholder="Minimum 8 caractères"
-                      value={value}
-                      onChangeText={onChange}
-                      onBlur={onBlur}
-                      error={errors.password?.message}
-                      autoCapitalize="none"
-                      autoComplete="new-password"
-                    />
-                  )}
-                />
-
-                <Controller
-                  control={control}
-                  name="passwordConfirm"
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <PasswordInput
-                      label="Confirmer le mot de passe"
-                      placeholder="Retapez votre mot de passe"
-                      value={value}
-                      onChangeText={onChange}
-                      onBlur={onBlur}
-                      error={errors.passwordConfirm?.message}
-                      autoCapitalize="none"
-                      autoComplete="new-password"
-                    />
-                  )}
-                />
-              </View>
-
-              {/* Submit Button */}
-              <View className="px-10 pt-6">
-                <Button
-                  onPress={handleSubmit(onSubmit)}
-                  loading={resetPasswordMutation.isPending}
-                  className="rounded-full bg-homecafe-pink"
-                >
-                  Réinitialiser
-                </Button>
-              </View>
-            </>
-          ) : (
-            <View className="px-10 pt-6">
-              <Button
-                onPress={() => router.replace("/(auth)/login")}
-                className="rounded-full bg-homecafe-pink"
-              >
-                Se connecter
-              </Button>
-            </View>
-          )}
-
-          {/* Back to login */}
-          {!isSuccess && !tokenExpired && (
-            <View className="flex-row items-center gap-1 px-10 pt-4">
-              <Text className="text-sm text-foreground">Tu te souviens ?</Text>
+        <ScrollView
+          className="flex-1"
+          contentContainerClassName="flex-grow"
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <View className="flex-1 px-8">
+            {/* Header */}
+            <View className="flex-row items-center justify-between py-4">
+              <Logo width={100} />
               <Link href="/(auth)/login" asChild>
-                <Pressable>
-                  <Text className="text-sm font-normal text-homecafe-blue">
-                    Connecte-toi
+                <Pressable className="rounded-full bg-homecafe-pink px-6 py-2.5">
+                  <Text className="text-sm font-medium text-white">
+                    Se connecter
                   </Text>
                 </Pressable>
               </Link>
             </View>
-          )}
-        </View>
+
+            {/* Hero Image */}
+            <View className="overflow-hidden rounded-[30px]">
+              <Image
+                source={require("@/assets/new-password-image.png")}
+                className="h-48 w-full"
+                resizeMode="cover"
+              />
+            </View>
+
+            {/* Title */}
+            <View className="pb-8 pt-8">
+              <Text className="text-2xl font-medium text-homecafe-grey-dark">
+                {isSuccess ? "Mot de passe modifié" : "Nouveau mot de passe"}
+              </Text>
+            </View>
+
+            {/* Content */}
+            <View className="gap-4">
+              {isSuccess ? (
+                <>
+                  <Text className="text-sm text-homecafe-grey-dark">
+                    Votre mot de passe a été réinitialisé avec succès.
+                  </Text>
+                  <Button
+                    onPress={() => router.replace("/(auth)/login")}
+                    className="self-start rounded-full bg-homecafe-pink px-8"
+                  >
+                    Se connecter
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Text className="text-sm text-homecafe-grey-dark">
+                    Choisissez un nouveau mot de passe sécurisé.
+                  </Text>
+
+                  <Controller
+                    control={control}
+                    name="password"
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <PasswordInput
+                        label="Nouveau mot de passe"
+                        placeholder="Minimum 8 caractères"
+                        value={value}
+                        onChangeText={onChange}
+                        onBlur={onBlur}
+                        error={errors.password?.message}
+                        autoCapitalize="none"
+                        autoComplete="new-password"
+                      />
+                    )}
+                  />
+
+                  <Controller
+                    control={control}
+                    name="passwordConfirm"
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <PasswordInput
+                        label="Confirmer le mot de passe"
+                        placeholder="Retapez votre mot de passe"
+                        value={value}
+                        onChangeText={onChange}
+                        onBlur={onBlur}
+                        error={errors.passwordConfirm?.message}
+                        autoCapitalize="none"
+                        autoComplete="new-password"
+                      />
+                    )}
+                  />
+
+                  {serverError && (
+                    <View className="gap-3">
+                      <View className="rounded-lg bg-red-50 p-3">
+                        <Text className="text-sm text-red-600">
+                          {serverError}
+                        </Text>
+                      </View>
+                      <Link href="/(auth)/forgot-password" asChild>
+                        <Pressable>
+                          <Text className="text-sm font-medium text-homecafe-blue">
+                            Demander un nouveau lien
+                          </Text>
+                        </Pressable>
+                      </Link>
+                    </View>
+                  )}
+
+                  <Button
+                    onPress={handleSubmit(onSubmit)}
+                    loading={resetPasswordMutation.isPending}
+                    className="self-start rounded-full bg-homecafe-pink px-8"
+                  >
+                    Réinitialiser
+                  </Button>
+
+                  <View className="pt-2">
+                    <Link href="/(auth)/login" asChild>
+                      <Pressable>
+                        <Text className="text-sm font-medium text-homecafe-blue">
+                          Retour à la connexion
+                        </Text>
+                      </Pressable>
+                    </Link>
+                  </View>
+                </>
+              )}
+            </View>
+          </View>
+        </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

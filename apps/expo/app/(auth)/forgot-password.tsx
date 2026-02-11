@@ -12,9 +12,11 @@ import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
   Alert,
+  Image,
   KeyboardAvoidingView,
   Platform,
   Pressable,
+  ScrollView,
   Text,
   View,
 } from "react-native";
@@ -52,100 +54,108 @@ export default function ForgotPasswordScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-card">
+    <SafeAreaView className="flex-1 bg-white">
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1"
       >
-        <View className="flex-1">
-          {/* Header with Logo */}
-          <View className="flex-row items-center justify-between px-5 py-4">
-            <Logo width={100} />
-            <Link href="/(auth)/login" asChild>
-              <Pressable className="rounded-full bg-homecafe-pink px-4 py-2">
-                <Text className="text-sm font-normal text-primary-foreground">
-                  Se connecter
-                </Text>
-              </Pressable>
-            </Link>
-          </View>
-
-          {/* Hero Image */}
-          <View className="mx-6 h-40 items-center justify-center overflow-hidden rounded-3xl bg-homecafe-pink-light">
-            <Logo width={180} />
-          </View>
-
-          {/* Header */}
-          <View className="px-10 pt-8">
-            <Text className="text-2xl font-medium text-homecafe-grey-dark">
-              Mot de passe oublié ?
-            </Text>
-            <Text className="mt-2 text-sm text-homecafe-grey-dark">
-              {isSubmitted
-                ? "Si un compte existe avec cette adresse, vous recevrez un email de réinitialisation."
-                : "Entrez votre email pour recevoir un lien de réinitialisation."}
-            </Text>
-          </View>
-
-          {!isSubmitted ? (
-            <>
-              {/* Form */}
-              <View className="gap-4 px-10 pt-6">
-                <Controller
-                  control={control}
-                  name="email"
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <Input
-                      label="E-mail"
-                      placeholder="votre@email.com"
-                      value={value}
-                      onChangeText={onChange}
-                      onBlur={onBlur}
-                      error={errors.email?.message}
-                      keyboardType="email-address"
-                      autoCapitalize="none"
-                      autoComplete="email"
-                    />
-                  )}
-                />
-              </View>
-
-              {/* Submit Button */}
-              <View className="px-10 pt-6">
-                <Button
-                  onPress={handleSubmit(onSubmit)}
-                  loading={forgotPasswordMutation.isPending}
-                  className="rounded-full bg-homecafe-pink"
-                >
-                  Envoyer le lien
-                </Button>
-              </View>
-            </>
-          ) : (
-            <View className="px-10 pt-6">
-              <Button
-                onPress={() => router.replace("/(auth)/login")}
-                className="rounded-full bg-homecafe-pink"
-              >
-                Retour à la connexion
-              </Button>
-            </View>
-          )}
-
-          {/* Back to login */}
-          {!isSubmitted && (
-            <View className="flex-row items-center gap-1 px-10 pt-4">
-              <Text className="text-sm text-foreground">Tu te souviens ?</Text>
+        <ScrollView
+          className="flex-1"
+          contentContainerClassName="flex-grow"
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <View className="flex-1 px-8">
+            {/* Header */}
+            <View className="flex-row items-center justify-between py-4">
+              <Logo width={100} />
               <Link href="/(auth)/login" asChild>
-                <Pressable>
-                  <Text className="text-sm font-normal text-homecafe-blue">
-                    Connecte-toi
+                <Pressable className="rounded-full bg-homecafe-pink px-6 py-2.5">
+                  <Text className="text-sm font-medium text-white">
+                    Se connecter
                   </Text>
                 </Pressable>
               </Link>
             </View>
-          )}
-        </View>
+
+            {/* Hero Image */}
+            <View className="overflow-hidden rounded-[30px]">
+              <Image
+                source={require("@/assets/reset-image.png")}
+                className="h-48 w-full"
+                resizeMode="cover"
+              />
+            </View>
+
+            {/* Title */}
+            <View className="pb-8 pt-8">
+              <Text className="text-2xl font-medium text-homecafe-grey-dark">
+                Mot de passe oublié ?
+              </Text>
+            </View>
+
+            {/* Content */}
+            <View className="gap-4">
+              {isSubmitted ? (
+                <>
+                  <Text className="text-sm text-homecafe-grey-dark">
+                    Si un compte existe avec cette adresse, vous recevrez un
+                    email de réinitialisation.
+                  </Text>
+                  <Button
+                    onPress={() => router.replace("/(auth)/login")}
+                    className="self-start rounded-full bg-homecafe-pink px-8"
+                  >
+                    Retour à la connexion
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Text className="text-sm text-homecafe-grey-dark">
+                    Entrez votre email pour recevoir un lien de
+                    réinitialisation.
+                  </Text>
+
+                  <Controller
+                    control={control}
+                    name="email"
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <Input
+                        label="E-mail"
+                        placeholder="votre@email.com"
+                        value={value}
+                        onChangeText={onChange}
+                        onBlur={onBlur}
+                        error={errors.email?.message}
+                        keyboardType="email-address"
+                        autoCapitalize="none"
+                        autoComplete="email"
+                      />
+                    )}
+                  />
+
+                  <Button
+                    onPress={handleSubmit(onSubmit)}
+                    loading={forgotPasswordMutation.isPending}
+                    className="self-start rounded-full bg-homecafe-pink px-8"
+                  >
+                    Envoyer le lien
+                  </Button>
+
+                  <View className="pt-2">
+                    <Link href="/(auth)/login" asChild>
+                      <Pressable>
+                        <Text className="text-sm font-medium text-homecafe-blue">
+                          Retour à la connexion
+                        </Text>
+                      </Pressable>
+                    </Link>
+                  </View>
+                </>
+              )}
+            </View>
+          </View>
+        </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
