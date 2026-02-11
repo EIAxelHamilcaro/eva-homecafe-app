@@ -2,11 +2,13 @@ import { useRouter } from "expo-router";
 import { ChevronRight, Mail } from "lucide-react-native";
 import { Pressable, Text, View } from "react-native";
 
-import { MOCK_UNREAD_MESSAGES } from "@/constants/dashboard-mock-data";
+import { useUnreadCount } from "@/lib/api/hooks/use-notifications";
 import { colors } from "@/src/config/colors";
 
 export function MessagerieWidget() {
   const router = useRouter();
+  const { data, isLoading, isError, refetch } = useUnreadCount();
+  const unreadCount = data?.unreadCount ?? 0;
 
   return (
     <Pressable
@@ -22,11 +24,21 @@ export function MessagerieWidget() {
             <Text className="text-lg font-semibold text-foreground">
               Messagerie
             </Text>
-            {MOCK_UNREAD_MESSAGES > 0 && (
+            {isLoading ? (
+              <View className="mt-1 h-4 w-32 rounded bg-muted" />
+            ) : isError ? (
+              <Text className="text-sm text-primary" onPress={() => refetch()}>
+                Réessayer
+              </Text>
+            ) : unreadCount > 0 ? (
               <Text className="text-sm text-muted-foreground">
-                {MOCK_UNREAD_MESSAGES} message
-                {MOCK_UNREAD_MESSAGES > 1 ? "s" : ""} non lu
-                {MOCK_UNREAD_MESSAGES > 1 ? "s" : ""}
+                {unreadCount > 1
+                  ? `${unreadCount} messages non lus`
+                  : `${unreadCount} message non lu`}
+              </Text>
+            ) : (
+              <Text className="text-sm text-muted-foreground">
+                Aucun message non lu
               </Text>
             )}
           </View>

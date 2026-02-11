@@ -122,7 +122,7 @@ development_status:
 
   epic-13: in-progress
   13-1-stickers-and-badge-collections-mobile: done
-  13-2-dashboard-widgets-real-api-connection-mobile: backlog
+  13-2-dashboard-widgets-real-api-connection-mobile: done
   epic-13-retrospective: optional
 
   epic-14: backlog
