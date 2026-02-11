@@ -28,6 +28,15 @@ export default async function ResetPasswordPage({
       <main className="flex flex-1">
         <div className="flex w-full flex-col justify-center px-8 lg:w-1/2 lg:px-16 xl:px-24">
           <div className="mx-auto w-full max-w-md pt-28">
+            <div className="relative mb-8 h-48 overflow-hidden rounded-[30px] lg:hidden">
+              <Image
+                src="/landing/new-password-image.png"
+                alt="Nouveau mot de passe"
+                fill
+                className="object-cover object-top"
+                priority
+              />
+            </div>
             <h1 className="mb-8 text-2xl font-medium text-homecafe-grey-dark">
               Nouveau mot de passe
             </h1>
