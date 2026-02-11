@@ -6,16 +6,20 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* HomeCafe Design System - Cozy & Warm */
+  /* HomeCafe Design System — Figma Source of Truth */
   --homecafe-pink: #f691c3;
   --homecafe-pink-light: #ffe4e8;
   --homecafe-pink-dark: #e91e63;
   --homecafe-cream: #fff8f0;
-  --homecafe-beige: #f5e6d3;
-  --homecafe-green: #4caf50;
+  --homecafe-beige: #fdecce;
+  --homecafe-green: #04a056;
   --homecafe-green-light: #c8e6c9;
-  --homecafe-orange: #ff9800;
+  --homecafe-orange: #f46604;
   --homecafe-orange-light: #ffe0b2;
+  --homecafe-blue: #0062dd;
+  --homecafe-yellow: #fdcb08;
+  --homecafe-grey: #dadada;
+  --homecafe-grey-dark: #7a7a7a;
 
   /* Soft Shadows */
   --shadow-soft-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
@@ -71,10 +75,14 @@
   --homecafe-pink-dark: #ec407a;
   --homecafe-cream: #2d2520;
   --homecafe-beige: #3d3530;
-  --homecafe-green: #66bb6a;
+  --homecafe-green: #2dd47a;
   --homecafe-green-light: #2e4a30;
-  --homecafe-orange: #ffb74d;
+  --homecafe-orange: #ff8a3d;
   --homecafe-orange-light: #4a3a25;
+  --homecafe-blue: #4d9aff;
+  --homecafe-yellow: #ffe04d;
+  --homecafe-grey: #3a3a3a;
+  --homecafe-grey-dark: #999;
 
   /* Soft Shadows (Dark) */
   --shadow-soft-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
@@ -133,6 +141,10 @@
   --color-homecafe-green-light: var(--homecafe-green-light);
   --color-homecafe-orange: var(--homecafe-orange);
   --color-homecafe-orange-light: var(--homecafe-orange-light);
+  --color-homecafe-blue: var(--homecafe-blue);
+  --color-homecafe-yellow: var(--homecafe-yellow);
+  --color-homecafe-grey: var(--homecafe-grey);
+  --color-homecafe-grey-dark: var(--homecafe-grey-dark);
 
   /* Standard Colors */
   --color-background: var(--background);

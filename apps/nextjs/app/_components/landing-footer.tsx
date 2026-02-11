@@ -1,34 +1,39 @@
 import { Button } from "@packages/ui/components/ui/button";
-import { Separator } from "@packages/ui/components/ui/separator";
 import Link from "next/link";
-import { LandingLogo } from "./landing-logo";
+import { LandingLogoFooter } from "./landing-logo-footer";
 
 export function LandingFooter() {
   return (
-    <footer className="border-t border-border bg-background py-10">
+    <footer className="bg-white py-10">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="flex flex-col items-center gap-6 sm:flex-row sm:justify-between">
           <Link href="/">
-            <LandingLogo width={120} height={75} />
+            <LandingLogoFooter width={225} height={61} />
           </Link>
 
           <nav
             aria-label="Footer navigation"
-            className="flex items-center gap-2"
+            className="flex items-center gap-6"
           >
-            <Button variant="ghost" asChild className="text-orange-400">
-              <Link href="/register">Inscription</Link>
-            </Button>
-            <Button variant="ghost" asChild className="text-blue-500">
-              <Link href="/contact">Contact</Link>
-            </Button>
+            <Link
+              href="/register"
+              className="text-xl font-medium text-homecafe-orange hover:underline"
+            >
+              Inscription
+            </Link>
+            <Link
+              href="/contact"
+              className="text-xl font-medium text-homecafe-blue hover:underline"
+            >
+              Contact
+            </Link>
           </nav>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <Button
               variant="ghost"
               size="icon"
-              className="rounded-full bg-homecafe-pink text-white hover:bg-homecafe-pink/80 hover:text-white"
+              className="size-10 rounded-full bg-homecafe-pink text-white hover:bg-homecafe-pink/80 hover:text-white"
               asChild
             >
               <a
@@ -45,7 +50,7 @@ export function LandingFooter() {
             <Button
               variant="ghost"
               size="icon"
-              className="rounded-full bg-homecafe-pink text-white hover:bg-homecafe-orange/80 hover:text-white"
+              className="size-10 rounded-full bg-homecafe-pink text-white hover:bg-homecafe-pink/80 hover:text-white"
               asChild
             >
               <a
@@ -62,7 +67,7 @@ export function LandingFooter() {
             <Button
               variant="ghost"
               size="icon"
-              className="rounded-full bg-homecafe-pink text-white hover:bg-homecafe-pink-dark/80 hover:text-white"
+              className="size-10 rounded-full bg-homecafe-pink text-white hover:bg-homecafe-pink/80 hover:text-white"
               asChild
             >
               <a
@@ -79,8 +84,8 @@ export function LandingFooter() {
           </div>
         </div>
 
-        <Separator className="my-6 h-5 bg-amber-300" />
-        <p className="text-center text-xs text-muted-foreground">
+        <hr className="my-6 border-homecafe-grey" />
+        <p className="text-center text-xs text-homecafe-grey-dark">
           Copyright &copy; {new Date().getFullYear()} BRIX Templates | All
           Rights Reserved | Terms and Conditions | Privacy Policy
         </p>

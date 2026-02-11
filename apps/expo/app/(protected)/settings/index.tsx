@@ -4,7 +4,6 @@ import { Checkbox } from "components/ui/checkbox";
 import { Dropdown } from "components/ui/dropdown";
 import { RadioGroup, RadioGroupItem } from "components/ui/radio-group";
 import { Toggle } from "components/ui/toggle";
-import * as Notifications from "expo-notifications";
 import { useRouter } from "expo-router";
 import { useSignOut } from "lib/api/hooks/use-auth";
 import { useGenerateInvite } from "lib/api/hooks/use-invite";
@@ -21,6 +20,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { getNotificationsModule } from "@/lib/notifications/safe-notifications";
 import {
   languageOptions,
   rewardsVisibilityOptions,
@@ -71,9 +71,14 @@ export default function SettingsScreen() {
   const [devicePushDenied, setDevicePushDenied] = useState(false);
 
   useEffect(() => {
-    Notifications.getPermissionsAsync().then(({ status }) => {
-      setDevicePushDenied(status !== "granted");
-    });
+    getNotificationsModule()
+      .then((Notifications) => {
+        if (!Notifications) return;
+        Notifications.getPermissionsAsync().then(({ status }) => {
+          setDevicePushDenied(status !== "granted");
+        });
+      })
+      .catch(() => {});
   }, []);
 
   useEffect(() => {

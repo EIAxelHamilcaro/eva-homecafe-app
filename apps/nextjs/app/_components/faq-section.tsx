@@ -10,19 +10,19 @@ import { faqItems } from "./faq-data";
 
 export function FaqSection() {
   return (
-    <section aria-label="FAQ" className="bg-background py-16 lg:py-24">
-      <div className="mx-auto max-w-5xl px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-x-8 gap-y-2 sm:grid-cols-2">
-          <Accordion type="multiple" className="space-y-2">
+    <section aria-label="FAQ" className="bg-white py-16 lg:py-24">
+      <div className="mx-auto max-w-[943px] px-6 lg:px-8">
+        <div className="grid grid-cols-1 gap-x-[175px] gap-y-0 sm:grid-cols-2">
+          <Accordion type="multiple">
             {faqItems
               .filter((_, i) => i % 2 === 0)
               .map((item) => (
                 <AccordionItem
                   key={item.question}
                   value={item.question}
-                  className="rounded-lg border bg-card px-5"
+                  className="border-b border-white py-0"
                 >
-                  <AccordionTrigger className="text-sm font-medium hover:no-underline">
+                  <AccordionTrigger className="py-4 text-base font-medium hover:no-underline">
                     {item.question}
                   </AccordionTrigger>
                   <AccordionContent className="text-muted-foreground">
@@ -31,16 +31,16 @@ export function FaqSection() {
                 </AccordionItem>
               ))}
           </Accordion>
-          <Accordion type="multiple" className="space-y-2">
+          <Accordion type="multiple">
             {faqItems
               .filter((_, i) => i % 2 === 1)
               .map((item) => (
                 <AccordionItem
                   key={item.question}
                   value={item.question}
-                  className="rounded-lg border bg-card px-5"
+                  className="border-b border-white py-0"
                 >
-                  <AccordionTrigger className="text-sm font-medium hover:no-underline">
+                  <AccordionTrigger className="py-4 text-base font-medium hover:no-underline">
                     {item.question}
                   </AccordionTrigger>
                   <AccordionContent className="text-muted-foreground">

@@ -1,5 +1,8 @@
 "use client";
 
+import { Button } from "@packages/ui/components/ui/button";
+import { Input } from "@packages/ui/components/ui/input";
+import { Label } from "@packages/ui/components/ui/label";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -92,20 +95,20 @@ export function RegisterForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <div className="rounded-xl border border-gray-200 px-4 pt-2 pb-3 transition-colors focus-within:border-rose-300">
-          <label
+        <div className="rounded-md border border-homecafe-grey px-4 pt-2 pb-3 transition-colors focus-within:border-homecafe-orange">
+          <Label
             htmlFor="name"
-            className="block text-xs font-medium text-rose-400"
+            className="text-xs font-medium text-homecafe-orange"
           >
             Nom
-          </label>
-          <input
+          </Label>
+          <Input
             id="name"
             type="text"
             placeholder="Votre nom"
             value={form.name}
             onChange={(e) => handleChange("name", e.target.value)}
-            className="w-full border-0 bg-transparent text-sm text-gray-900 outline-none placeholder:text-gray-400"
+            className="h-auto border-0 bg-transparent p-0 text-sm text-black shadow-none outline-none ring-0 placeholder:text-gray-400 focus-visible:ring-0"
             autoComplete="name"
           />
         </div>
@@ -115,20 +118,20 @@ export function RegisterForm() {
       </div>
 
       <div>
-        <div className="rounded-xl border border-gray-200 px-4 pt-2 pb-3 transition-colors focus-within:border-rose-300">
-          <label
+        <div className="rounded-md border border-homecafe-grey px-4 pt-2 pb-3 transition-colors focus-within:border-homecafe-orange">
+          <Label
             htmlFor="email"
-            className="block text-xs font-medium text-rose-400"
+            className="text-xs font-medium text-homecafe-orange"
           >
             E-mail
-          </label>
-          <input
+          </Label>
+          <Input
             id="email"
             type="email"
             placeholder="votre@email.com"
             value={form.email}
             onChange={(e) => handleChange("email", e.target.value)}
-            className="w-full border-0 bg-transparent text-sm text-gray-900 outline-none placeholder:text-gray-400"
+            className="h-auto border-0 bg-transparent p-0 text-sm text-black shadow-none outline-none ring-0 placeholder:text-gray-400 focus-visible:ring-0"
             autoComplete="email"
           />
         </div>
@@ -138,28 +141,30 @@ export function RegisterForm() {
       </div>
 
       <div>
-        <div className="flex items-center rounded-xl border border-gray-200 px-4 pt-2 pb-3 transition-colors focus-within:border-rose-300">
+        <div className="flex items-center rounded-md border border-homecafe-grey px-4 pt-2 pb-3 transition-colors focus-within:border-homecafe-orange">
           <div className="flex-1">
-            <label
+            <Label
               htmlFor="password"
-              className="block text-xs font-medium text-rose-400"
+              className="text-xs font-medium text-homecafe-orange"
             >
               Mot de passe
-            </label>
-            <input
+            </Label>
+            <Input
               id="password"
               type={showPassword ? "text" : "password"}
               placeholder="Minimum 8 caractères"
               value={form.password}
               onChange={(e) => handleChange("password", e.target.value)}
-              className="w-full border-0 bg-transparent text-sm text-gray-900 outline-none placeholder:text-gray-400"
+              className="h-auto border-0 bg-transparent p-0 text-sm text-black shadow-none outline-none ring-0 placeholder:text-gray-400 focus-visible:ring-0"
               autoComplete="new-password"
             />
           </div>
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="icon"
             onClick={() => setShowPassword(!showPassword)}
-            className="ml-2 text-blue-500 hover:text-blue-600"
+            className="ml-2 size-8 text-homecafe-blue hover:text-homecafe-blue/80"
             aria-label={
               showPassword
                 ? "Masquer le mot de passe"
@@ -171,7 +176,7 @@ export function RegisterForm() {
             ) : (
               <Eye className="size-5" />
             )}
-          </button>
+          </Button>
         </div>
         {errors.password && (
           <p className="mt-1 text-xs text-red-500">{errors.password}</p>
@@ -179,28 +184,30 @@ export function RegisterForm() {
       </div>
 
       <div>
-        <div className="flex items-center rounded-xl border border-gray-200 px-4 pt-2 pb-3 transition-colors focus-within:border-rose-300">
+        <div className="flex items-center rounded-md border border-homecafe-grey px-4 pt-2 pb-3 transition-colors focus-within:border-homecafe-orange">
           <div className="flex-1">
-            <label
+            <Label
               htmlFor="passwordConfirm"
-              className="block text-xs font-medium text-rose-400"
+              className="text-xs font-medium text-homecafe-orange"
             >
               Confirmer le mot de passe
-            </label>
-            <input
+            </Label>
+            <Input
               id="passwordConfirm"
               type={showPasswordConfirm ? "text" : "password"}
               placeholder="Retapez votre mot de passe"
               value={form.passwordConfirm}
               onChange={(e) => handleChange("passwordConfirm", e.target.value)}
-              className="w-full border-0 bg-transparent text-sm text-gray-900 outline-none placeholder:text-gray-400"
+              className="h-auto border-0 bg-transparent p-0 text-sm text-black shadow-none outline-none ring-0 placeholder:text-gray-400 focus-visible:ring-0"
               autoComplete="new-password"
             />
           </div>
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="icon"
             onClick={() => setShowPasswordConfirm(!showPasswordConfirm)}
-            className="ml-2 text-blue-500 hover:text-blue-600"
+            className="ml-2 size-8 text-homecafe-blue hover:text-homecafe-blue/80"
             aria-label={
               showPasswordConfirm
                 ? "Masquer le mot de passe"
@@ -212,7 +219,7 @@ export function RegisterForm() {
             ) : (
               <Eye className="size-5" />
             )}
-          </button>
+          </Button>
         </div>
         {errors.passwordConfirm && (
           <p className="mt-1 text-xs text-red-500">{errors.passwordConfirm}</p>
@@ -225,19 +232,21 @@ export function RegisterForm() {
         </div>
       )}
 
-      <button
+      <Button
         type="submit"
         disabled={submitting}
-        className="rounded-full bg-homecafe-pink px-8 py-2.5 text-sm font-medium text-white transition-colors hover:bg-homecafe-pink-dark disabled:opacity-50"
+        className="rounded-full bg-homecafe-pink px-8 py-2.5 text-sm font-medium text-white transition-colors hover:bg-homecafe-pink/80 disabled:opacity-50"
       >
         {submitting ? "Inscription en cours..." : "S'inscrire"}
-      </button>
+      </Button>
 
-      <p className="pt-2 text-sm text-gray-900">
+      <p className="text-[10px] text-homecafe-grey-dark">Mentions légales</p>
+
+      <p className="pt-2 text-sm text-black">
         Déjà membre ?{" "}
         <Link
           href="/login"
-          className="font-medium text-blue-500 hover:text-blue-600"
+          className="font-medium text-homecafe-blue hover:text-homecafe-blue/80"
         >
           Connecte-toi
         </Link>

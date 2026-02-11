@@ -11,7 +11,20 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
+import { CloseButton } from "@/components/messages/close-button";
+import { DateSeparator } from "@/components/messages/date-separator";
+import { NoMessagesEmpty } from "@/components/messages/empty-state";
+import {
+  ErrorBoundary,
+  ErrorState,
+} from "@/components/messages/error-boundary";
+import { ImageViewer } from "@/components/messages/image-viewer";
+import type { SelectedMedia } from "@/components/messages/media-picker";
+import { MediaPreview } from "@/components/messages/media-preview";
+import { MessageBubble } from "@/components/messages/message-bubble";
+import { MessageInput } from "@/components/messages/message-input";
+import { ReactionPicker } from "@/components/messages/reaction-picker";
+import { MessageListSkeleton } from "@/components/messages/skeleton";
 import type { Attachment, Message, ReactionEmoji } from "@/constants/chat";
 import { useMultipleMediaUpload } from "@/lib/api/hooks/use-media-upload";
 import { useMessages, useSendMessage } from "@/lib/api/hooks/use-messages";
@@ -19,18 +32,6 @@ import { useToggleReaction } from "@/lib/api/hooks/use-reactions";
 import { useSSE } from "@/lib/sse/use-sse";
 import { useToast } from "@/lib/toast/toast-context";
 import { useAuth } from "@/src/providers/auth-provider";
-
-import { CloseButton } from "./_components/close-button";
-import { DateSeparator } from "./_components/date-separator";
-import { NoMessagesEmpty } from "./_components/empty-state";
-import { ErrorBoundary, ErrorState } from "./_components/error-boundary";
-import { ImageViewer } from "./_components/image-viewer";
-import type { SelectedMedia } from "./_components/media-picker";
-import { MediaPreview } from "./_components/media-preview";
-import { MessageBubble } from "./_components/message-bubble";
-import { MessageInput } from "./_components/message-input";
-import { ReactionPicker } from "./_components/reaction-picker";
-import { MessageListSkeleton } from "./_components/skeleton";
 
 interface MessageWithSeparator {
   type: "message" | "separator";

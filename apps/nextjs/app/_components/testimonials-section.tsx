@@ -74,18 +74,18 @@ export function TestimonialsSection() {
   return (
     <section
       aria-label="Témoignages"
-      className="bg-[#DADADA]/20 py-16 lg:py-24"
+      className="bg-homecafe-grey/15 py-16 lg:py-24"
     >
       <div className="mx-auto max-w-6xl px-6 lg:px-8">
         <div className="flex items-center gap-4 lg:gap-6">
           <Button
-            variant="outline"
+            variant="ghost"
             size="icon"
-            className="hidden shrink-0 rounded-full sm:flex"
+            className="hidden shrink-0 sm:flex"
             aria-label="Témoignage précédent"
             onClick={goPrev}
           >
-            <ChevronLeft className="size-5" />
+            <ChevronLeft className="size-6" />
           </Button>
 
           <div className="grid flex-1 grid-cols-1 items-center gap-6 md:grid-cols-3">
@@ -95,20 +95,20 @@ export function TestimonialsSection() {
               return (
                 <Card
                   key={testimonial.id}
-                  className={`justify-between transition-all duration-300 ${
-                    isCenter ? "scale-105 py-8 shadow-lg" : "py-5 opacity-80"
+                  className={`justify-between border-homecafe-grey transition-all duration-300 ${
+                    isCenter ? "scale-105 py-10 shadow-md" : "py-8 opacity-80"
                   }`}
                 >
-                  <CardContent className="px-5">
+                  <CardContent className="flex-1">
                     <p
-                      className={`leading-relaxed text-muted-foreground ${isCenter ? "text-sm" : "text-xs"}`}
+                      className={`leading-relaxed text-black ${isCenter ? "text-base" : "text-sm"}`}
                     >
-                      &ldquo;{testimonial.quote}&rdquo;
+                      {testimonial.quote}
                     </p>
                   </CardContent>
-                  <CardFooter className="px-5">
-                    <p className="text-sm font-semibold text-foreground">
-                      {testimonial.name}, {testimonial.age}
+                  <CardFooter>
+                    <p className="text-sm text-homecafe-grey-dark">
+                      {testimonial.name}, {testimonial.age}.
                     </p>
                   </CardFooter>
                 </Card>
@@ -117,34 +117,32 @@ export function TestimonialsSection() {
           </div>
 
           <Button
-            variant="outline"
+            variant="ghost"
             size="icon"
-            className="hidden shrink-0 rounded-full sm:flex"
+            className="hidden shrink-0 sm:flex"
             aria-label="Témoignage suivant"
             onClick={goNext}
           >
-            <ChevronRight className="size-5" />
+            <ChevronRight className="size-6" />
           </Button>
         </div>
 
         <div className="mt-6 flex justify-center gap-2 sm:hidden">
           <Button
-            variant="outline"
+            variant="ghost"
             size="icon"
-            className="rounded-full"
             aria-label="Témoignage précédent"
             onClick={goPrev}
           >
-            <ChevronLeft className="size-4" />
+            <ChevronLeft className="size-5" />
           </Button>
           <Button
-            variant="outline"
+            variant="ghost"
             size="icon"
-            className="rounded-full"
             aria-label="Témoignage suivant"
             onClick={goNext}
           >
-            <ChevronRight className="size-4" />
+            <ChevronRight className="size-5" />
           </Button>
         </div>
       </div>

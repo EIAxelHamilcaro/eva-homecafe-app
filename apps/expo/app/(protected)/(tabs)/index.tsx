@@ -1,18 +1,16 @@
 import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
+import { CalendarWidget } from "@/components/dashboard/calendar-widget";
+import { GalleryWidget } from "@/components/dashboard/gallery-widget";
+import { InviteFriendsButton } from "@/components/dashboard/invite-friends-button";
+import { JournalWidget } from "@/components/dashboard/journal-widget";
+import { MessagerieWidget } from "@/components/dashboard/messagerie-widget";
+import { MoodWidget } from "@/components/dashboard/mood-widget";
+import { MoodboardWidget } from "@/components/dashboard/moodboard-widget";
+import { RewardsWidget } from "@/components/dashboard/rewards-widget";
+import { SuiviWidgets } from "@/components/dashboard/suivi-widgets";
+import { TodoWidget } from "@/components/dashboard/todo-widget";
 import { useAuth } from "@/src/providers/auth-provider";
-
-import { CalendarWidget } from "./_components/calendar-widget";
-import { GalleryWidget } from "./_components/gallery-widget";
-import { InviteFriendsButton } from "./_components/invite-friends-button";
-import { JournalWidget } from "./_components/journal-widget";
-import { MessagerieWidget } from "./_components/messagerie-widget";
-import { MoodWidget } from "./_components/mood-widget";
-import { MoodboardWidget } from "./_components/moodboard-widget";
-import { RewardsWidget } from "./_components/rewards-widget";
-import { SuiviWidgets } from "./_components/suivi-widgets";
-import { TodoWidget } from "./_components/todo-widget";
 
 export default function HomeScreen() {
   const { user } = useAuth();

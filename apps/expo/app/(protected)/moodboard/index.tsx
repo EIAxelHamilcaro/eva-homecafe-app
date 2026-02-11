@@ -13,12 +13,26 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { BadgeItem } from "@/components/badges/badge-item";
-import {
-  type MonthlyDataPoint,
-  MoodBarChart,
-  MoodLineChart,
-  type WeeklyDataPoint,
+import type {
+  MonthlyDataPoint,
+  WeeklyDataPoint,
 } from "@/components/moodboard/mood-chart";
+
+let MoodLineChart:
+  | typeof import("@/components/moodboard/mood-chart").MoodLineChart
+  | null = null;
+let MoodBarChart:
+  | typeof import("@/components/moodboard/mood-chart").MoodBarChart
+  | null = null;
+
+try {
+  const charts = require("@/components/moodboard/mood-chart");
+  MoodLineChart = charts.MoodLineChart;
+  MoodBarChart = charts.MoodBarChart;
+} catch {
+  // Skia/Reanimated native modules not available (Expo Go)
+}
+
 import { type DayMood, MoodGrid } from "@/components/moodboard/mood-grid";
 import {
   MOOD_COLORS,
@@ -329,7 +343,7 @@ export default function MoodboardScreen() {
         )}
 
         {/* Suivi Weekly Line Chart */}
-        {weeklyChartData.length > 0 && (
+        {MoodLineChart && weeklyChartData.length > 0 && (
           <MoodLineChart
             data={weeklyChartData}
             title="Suivi"
@@ -339,7 +353,7 @@ export default function MoodboardScreen() {
         )}
 
         {/* Suivi Monthly Bar Chart */}
-        {monthlyChartData.length > 0 && (
+        {MoodBarChart && monthlyChartData.length > 0 && (
           <MoodBarChart
             data={monthlyChartData}
             title="Suivi"

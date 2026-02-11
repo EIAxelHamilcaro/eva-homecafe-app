@@ -1,7 +1,9 @@
 import { useCallback, useState } from "react";
 import { FlatList, RefreshControl, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
+import { NoNotificationsEmpty } from "@/components/notifications/empty-state";
+import { NotificationItem } from "@/components/notifications/notification-item";
+import { NotificationListSkeleton } from "@/components/notifications/skeleton";
 import { useRespondRequest } from "@/lib/api/hooks/use-friend-requests";
 import {
   useMarkRead,
@@ -10,10 +12,6 @@ import {
 import { useSSE } from "@/lib/sse/use-sse";
 import { useAuth } from "@/src/providers/auth-provider";
 import type { Notification } from "@/types/notification";
-
-import { NoNotificationsEmpty } from "./_components/empty-state";
-import { NotificationItem } from "./_components/notification-item";
-import { NotificationListSkeleton } from "./_components/skeleton";
 
 export default function NotificationsScreen() {
   const { user } = useAuth();

@@ -1,30 +1,44 @@
 import { Button } from "@packages/ui/components/ui/button";
+import Image from "next/image";
 import Link from "next/link";
 
 export function HeroSection() {
   return (
     <section
       aria-labelledby="hero-heading"
-      className="flex min-h-[600px] items-center justify-center overflow-hidden bg-homecafe-cream bg-[url('/landing/hero-image.png')] bg-cover bg-center bg-blend-soft-light pt-20 lg:min-h-[700px]"
+      className="bg-white pt-28 pb-16 lg:pt-32 lg:pb-20"
     >
-      <div className="mx-auto max-w-3xl px-4 py-16 lg:py-24">
-        <div className="px-6 py-10 text-center md:rounded-3xl md:bg-white/90 md:px-14 md:py-14 md:shadow-[0_8px_32px_rgba(0,0,0,0.1)] md:backdrop-blur-sm">
-          <h1
-            id="hero-heading"
-            className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl"
-          >
-            Ton quotidien structuré avec douceur
-          </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-            HomeCafé est un espace personnel et apaisant où tu peux écrire,
-            suivre ton humeur, organiser ton quotidien et échanger avec
-            d'autres, à ton rythme. Bref, un lieu simple, chaleureux et vivant,
-            pensé pour te faire du bien.
-          </p>
-          <div className="mt-8">
-            <Button asChild size="lg" className="rounded-full px-8 shadow-md">
-              <Link href="/register">Commencer</Link>
-            </Button>
+      <div className="mx-auto max-w-334 px-6 lg:px-13">
+        <div className="relative flex min-h-125 items-center justify-center overflow-hidden rounded-[30px] lg:min-h-[620px]">
+          <Image
+            src="/landing/hero-image.png"
+            alt=""
+            fill
+            className="pointer-events-none object-cover opacity-50"
+            priority
+          />
+          <div className="relative z-10 mx-auto max-w-165.5 px-6 py-16 text-center">
+            <h1
+              id="hero-heading"
+              className="text-3xl font-medium tracking-tight text-black sm:text-4xl lg:text-[56px] lg:leading-[1.15]"
+            >
+              Ton quotidien structuré avec douceur
+            </h1>
+            <p className="mx-auto mt-8 max-w-143.5 text-sm leading-relaxed text-black">
+              HomeCafé est un espace personnel et apaisant où tu peux écrire,
+              suivre ton humeur, organiser ton quotidien et échanger avec
+              d'autres, à ton rythme. Bref, un lieu simple, chaleureux et
+              vivant, pensé pour te faire du bien.
+            </p>
+            <div className="mt-10">
+              <Button
+                asChild
+                size="lg"
+                className="rounded-full bg-homecafe-pink px-8 text-white shadow-md hover:bg-homecafe-pink/80"
+              >
+                <Link href="/register">Commencer</Link>
+              </Button>
+            </div>
           </div>
         </div>
       </div>

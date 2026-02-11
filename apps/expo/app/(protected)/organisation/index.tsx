@@ -17,11 +17,20 @@ import {
   type DotColor,
   type MarkedDate,
 } from "@/components/organisation/calendar";
-import {
-  KanbanBoard,
-  type KanbanColumnData,
-} from "@/components/organisation/kanban-board";
+import type { KanbanColumnData } from "@/components/organisation/kanban-board";
 import type { KanbanCardData } from "@/components/organisation/kanban-column";
+
+let KanbanBoard:
+  | typeof import("@/components/organisation/kanban-board").KanbanBoard
+  | null = null;
+
+try {
+  const kanban = require("@/components/organisation/kanban-board");
+  KanbanBoard = kanban.KanbanBoard;
+} catch {
+  // react-native-draggable-flatlist requires reanimated native (Expo Go)
+}
+
 import {
   Timeline,
   type TimelineEvent,
@@ -477,15 +486,21 @@ export default function OrganisationScreen() {
                     <Text className="font-semibold text-base text-foreground">
                       {board.title}
                     </Text>
-                    <KanbanBoard
-                      columns={mapBoardToKanban(board)}
-                      onCardPress={(colId, cardId) =>
-                        handleKanbanCardPress(board, colId, cardId)
-                      }
-                      onCardReorder={(colId, cards) =>
-                        handleKanbanCardReorder(board, colId, cards)
-                      }
-                    />
+                    {KanbanBoard ? (
+                      <KanbanBoard
+                        columns={mapBoardToKanban(board)}
+                        onCardPress={(colId, cardId) =>
+                          handleKanbanCardPress(board, colId, cardId)
+                        }
+                        onCardReorder={(colId, cards) =>
+                          handleKanbanCardReorder(board, colId, cards)
+                        }
+                      />
+                    ) : (
+                      <Text className="text-muted-foreground text-sm p-4">
+                        Kanban indisponible dans Expo Go
+                      </Text>
+                    )}
                   </View>
                 ))}
               </ScrollView>

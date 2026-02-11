@@ -77,7 +77,7 @@ export default function LoginScreen() {
           {/* Welcome Header */}
           <View className="px-10 pt-8">
             <Text className="text-2xl font-medium text-homecafe-grey-dark">
-              Bon retour !
+              C'est chouette de te revoir !
             </Text>
           </View>
 

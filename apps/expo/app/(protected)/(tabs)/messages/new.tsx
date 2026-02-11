@@ -10,19 +10,17 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
+import { CloseButton } from "@/components/messages/close-button";
+import {
+  NoSearchResultsEmpty,
+  SearchPromptEmpty,
+} from "@/components/messages/empty-state";
+import { RecipientItem } from "@/components/messages/recipient-item";
+import { RecipientListSkeleton } from "@/components/messages/skeleton";
 import type { Recipient } from "@/constants/chat";
 import { useCreateConversation } from "@/lib/api/hooks/use-conversations";
 import { useSearchRecipients } from "@/lib/api/hooks/use-recipients";
 import { useToast } from "@/lib/toast/toast-context";
-
-import { CloseButton } from "./_components/close-button";
-import {
-  NoSearchResultsEmpty,
-  SearchPromptEmpty,
-} from "./_components/empty-state";
-import { RecipientItem } from "./_components/recipient-item";
-import { RecipientListSkeleton } from "./_components/skeleton";
 
 export default function NewMessageScreen() {
   const router = useRouter();

@@ -1,10 +1,10 @@
 # CLAUDE.md
 
-Mobile UI: https://www.figma.com/design/OWDUW6CjzQDvqBTssiwz76/DashBox?node-id=584-13524&t=u3X4kL541eTAFlKu-4
+Mobile UI: https://www.figma.com/design/qGgfEcuAxoD7y6jimjlVU8/DashBox--copie-?node-id=584-13524&t=7Zs4ot8us7pVAwK4-4
 
-Desktop UI: https://www.figma.com/design/OWDUW6CjzQDvqBTssiwz76/DashBox?node-id=584-8655&t=u3X4kL541eTAFlKu-4
+Desktop UI: https://www.figma.com/design/qGgfEcuAxoD7y6jimjlVU8/DashBox--copie-?node-id=584-8655&t=7Zs4ot8us7pVAwK4-4
 
-Tablet UI: https://www.figma.com/design/OWDUW6CjzQDvqBTssiwz76/DashBox?node-id=584-10881&t=u3X4kL541eTAFlKu-4
+Tablet UI: https://www.figma.com/design/qGgfEcuAxoD7y6jimjlVU8/DashBox--copie-?node-id=584-10881&t=7Zs4ot8us7pVAwK4-4
 
 ## Quick Start
 

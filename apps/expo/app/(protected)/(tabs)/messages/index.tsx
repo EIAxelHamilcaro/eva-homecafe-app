@@ -3,18 +3,19 @@ import { PenSquare } from "lucide-react-native";
 import { useCallback, useMemo } from "react";
 import { FlatList, RefreshControl, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
+import { CloseButton } from "@/components/messages/close-button";
+import { ConversationItem } from "@/components/messages/conversation-item";
+import { NoConversationsEmpty } from "@/components/messages/empty-state";
+import {
+  ErrorBoundary,
+  ErrorState,
+} from "@/components/messages/error-boundary";
+import { FAB } from "@/components/messages/fab";
+import { ConversationListSkeleton } from "@/components/messages/skeleton";
 import type { Conversation } from "@/constants/chat";
 import { useConversations } from "@/lib/api/hooks/use-conversations";
 import { useSSE } from "@/lib/sse/use-sse";
 import { useAuth } from "@/src/providers/auth-provider";
-
-import { CloseButton } from "./_components/close-button";
-import { ConversationItem } from "./_components/conversation-item";
-import { NoConversationsEmpty } from "./_components/empty-state";
-import { ErrorBoundary, ErrorState } from "./_components/error-boundary";
-import { FAB } from "./_components/fab";
-import { ConversationListSkeleton } from "./_components/skeleton";
 
 export default function MessagesScreen() {
   const router = useRouter();
