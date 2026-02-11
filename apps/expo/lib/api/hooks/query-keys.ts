@@ -76,10 +76,27 @@ export const boardKeys = {
     [...boardKeys.all, "chronology", { month }] as const,
 };
 
+export const galleryKeys = {
+  all: ["gallery"] as const,
+  list: (page?: number, limit?: number) =>
+    [...galleryKeys.all, "list", { page, limit }] as const,
+  infinite: (limit?: number) =>
+    [...galleryKeys.all, "infinite", { limit }] as const,
+};
+
 export const moodKeys = {
   all: ["mood"] as const,
   today: () => [...moodKeys.all, "today"] as const,
   week: () => [...moodKeys.all, "week"] as const,
   stats: (period: string) => [...moodKeys.all, "stats", { period }] as const,
   trends: () => [...moodKeys.all, "trends"] as const,
+};
+
+export const moodboardKeys = {
+  all: ["moodboards"] as const,
+  list: (page?: number, limit?: number) =>
+    [...moodboardKeys.all, "list", { page, limit }] as const,
+  infinite: (limit?: number) =>
+    [...moodboardKeys.all, "infinite", { limit }] as const,
+  detail: (id: string) => [...moodboardKeys.all, "detail", id] as const,
 };

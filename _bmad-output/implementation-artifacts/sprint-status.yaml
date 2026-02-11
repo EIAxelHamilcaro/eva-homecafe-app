@@ -115,9 +115,9 @@ development_status:
   11-2-organisation-todo-kanban-timeline-mobile: done
   epic-11-retrospective: done
 
-  epic-12: backlog
-  12-1-photo-gallery-mobile: backlog
-  12-2-moodboard-management-mobile: backlog
+  epic-12: in-progress
+  12-1-photo-gallery-mobile: done
+  12-2-moodboard-management-mobile: done
   epic-12-retrospective: optional
 
   epic-13: backlog

@@ -9,6 +9,7 @@ import { InviteFriendsButton } from "./_components/invite-friends-button";
 import { JournalWidget } from "./_components/journal-widget";
 import { MessagerieWidget } from "./_components/messagerie-widget";
 import { MoodWidget } from "./_components/mood-widget";
+import { MoodboardWidget } from "./_components/moodboard-widget";
 import { SuiviWidgets } from "./_components/suivi-widgets";
 import { TodoWidget } from "./_components/todo-widget";
 
@@ -49,6 +50,9 @@ export default function HomeScreen() {
 
         {/* Journal widget */}
         <JournalWidget />
+
+        {/* Moodboard widget */}
+        <MoodboardWidget />
 
         {/* Mood widget */}
         <MoodWidget />

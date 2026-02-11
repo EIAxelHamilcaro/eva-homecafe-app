@@ -27,6 +27,13 @@ export default function ProtectedLayout() {
       <Stack.Screen name="journal" />
       <Stack.Screen name="moodboard" />
       <Stack.Screen
+        name="inspirations"
+        options={{
+          presentation: "modal",
+          animation: "fade",
+        }}
+      />
+      <Stack.Screen
         name="recompenses"
         options={{
           presentation: "modal",

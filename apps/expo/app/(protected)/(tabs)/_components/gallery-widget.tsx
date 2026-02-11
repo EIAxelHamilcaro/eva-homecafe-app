@@ -1,12 +1,16 @@
 import { useRouter } from "expo-router";
-import { ChevronRight, Image } from "lucide-react-native";
-import { Pressable, Text, View } from "react-native";
+import { ChevronRight, Plus } from "lucide-react-native";
+import { ActivityIndicator, Image, Pressable, Text, View } from "react-native";
 
-import { MOCK_GALLERY_IMAGES } from "@/constants/dashboard-mock-data";
+import { useGallery } from "@/lib/api/hooks/use-gallery";
 import { colors } from "@/src/config/colors";
 
 export function GalleryWidget() {
   const router = useRouter();
+  const { data, isLoading } = useGallery(1, 4);
+
+  const photos = data?.data ?? [];
+  const isEmpty = !isLoading && photos.length === 0;
 
   return (
     <Pressable
@@ -20,17 +24,41 @@ export function GalleryWidget() {
           <ChevronRight size={16} color={colors.primary} />
         </View>
       </View>
-      <View className="flex-row gap-2">
-        {MOCK_GALLERY_IMAGES.map((image) => (
-          <View
-            key={image.id}
-            className="flex-1 aspect-square items-center justify-center rounded-xl"
-            style={{ backgroundColor: image.color }}
-          >
-            <Image size={20} color={colors.white} />
-          </View>
-        ))}
-      </View>
+
+      {isLoading && (
+        <View className="h-20 items-center justify-center">
+          <ActivityIndicator size="small" color={colors.primary} />
+        </View>
+      )}
+
+      {isEmpty && (
+        <Pressable
+          onPress={() => router.push("/(protected)/galerie")}
+          className="flex-row items-center justify-center gap-2 rounded-xl bg-muted/50 py-6"
+        >
+          <Plus size={18} color="#B8A898" strokeWidth={2} />
+          <Text className="text-sm text-muted-foreground">
+            Ajoute ta première photo
+          </Text>
+        </Pressable>
+      )}
+
+      {!isLoading && photos.length > 0 && (
+        <View className="flex-row gap-2">
+          {photos.map((photo) => (
+            <View
+              key={photo.id}
+              className="flex-1 aspect-square overflow-hidden rounded-xl"
+            >
+              <Image
+                source={{ uri: photo.url }}
+                className="h-full w-full"
+                resizeMode="cover"
+              />
+            </View>
+          ))}
+        </View>
+      )}
     </Pressable>
   );
 }
