@@ -1,14 +1,5 @@
 "use client";
 
-import { Button } from "@packages/ui/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@packages/ui/components/ui/card";
-import { Input } from "@packages/ui/components/ui/input";
-import { Label } from "@packages/ui/components/ui/label";
 import Link from "next/link";
 import { useState } from "react";
 import { forgotPasswordSchema } from "../../_lib/schemas";
@@ -58,60 +49,67 @@ export function ForgotPasswordForm() {
 
   if (success) {
     return (
-      <Card>
-        <CardContent className="py-12 text-center">
-          <div className="mb-4 text-4xl">📧</div>
-          <h2 className="mb-2 text-xl font-semibold">Email envoyé</h2>
-          <p className="mb-6 text-muted-foreground">
-            Si un compte existe avec cette adresse, vous recevrez un email de
-            réinitialisation.
-          </p>
-          <Button variant="outline" asChild>
-            <Link href="/login">Retour à la connexion</Link>
-          </Button>
-        </CardContent>
-      </Card>
+      <div className="space-y-4">
+        <p className="text-sm text-gray-600">
+          Si un compte existe avec cette adresse, vous recevrez un email de
+          réinitialisation.
+        </p>
+        <Link
+          href="/login"
+          className="inline-block rounded-full bg-homecafe-pink px-8 py-2.5 text-sm font-medium text-white transition-colors hover:bg-homecafe-pink-dark"
+        >
+          Retour à la connexion
+        </Link>
+      </div>
     );
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Réinitialiser le mot de passe</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="votre@email.com"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                setError(null);
-              }}
-              aria-invalid={!!error}
-              autoComplete="email"
-            />
-            {error && <p className="text-sm text-destructive">{error}</p>}
-          </div>
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <p className="text-sm text-gray-600">
+        Entrez votre email pour recevoir un lien de réinitialisation.
+      </p>
 
-          <Button type="submit" className="w-full" disabled={submitting}>
-            {submitting ? "Envoi en cours..." : "Envoyer le lien"}
-          </Button>
+      <div>
+        <div className="rounded-xl border border-gray-200 px-4 pt-2 pb-3 transition-colors focus-within:border-rose-300">
+          <label
+            htmlFor="email"
+            className="block text-xs font-medium text-orange-400"
+          >
+            E-mail
+          </label>
+          <input
+            id="email"
+            type="email"
+            placeholder="votre@email.com"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              setError(null);
+            }}
+            className="w-full border-0 bg-transparent text-sm text-gray-900 outline-none placeholder:text-gray-400"
+            autoComplete="email"
+          />
+        </div>
+        {error && <p className="mt-1 text-xs text-orange-400">{error}</p>}
+      </div>
 
-          <p className="text-center text-sm text-muted-foreground">
-            <Link
-              href="/login"
-              className="font-medium text-foreground hover:underline"
-            >
-              Retour à la connexion
-            </Link>
-          </p>
-        </form>
-      </CardContent>
-    </Card>
+      <button
+        type="submit"
+        disabled={submitting}
+        className="rounded-full bg-homecafe-pink px-8 py-2.5 text-sm font-medium text-white transition-colors hover:bg-homecafe-pink-dark disabled:opacity-50"
+      >
+        {submitting ? "Envoi en cours..." : "Envoyer le lien"}
+      </button>
+
+      <p className="pt-2 text-sm text-gray-900">
+        <Link
+          href="/login"
+          className="font-medium text-blue-500 hover:text-blue-600"
+        >
+          Retour à la connexion
+        </Link>
+      </p>
+    </form>
   );
 }

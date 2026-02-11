@@ -2,40 +2,33 @@
 
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { registerSchema } from "../../_lib/schemas";
+import { resetPasswordSchema } from "../../../_lib/schemas";
 
 interface FormState {
-  name: string;
-  email: string;
   password: string;
   passwordConfirm: string;
 }
 
 interface FormErrors {
-  name?: string;
-  email?: string;
   password?: string;
   passwordConfirm?: string;
 }
 
-export function RegisterForm() {
-  const router = useRouter();
+export function ResetPasswordForm({ token }: { token: string }) {
   const [form, setForm] = useState<FormState>({
-    name: "",
-    email: "",
     password: "",
     passwordConfirm: "",
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitting, setSubmitting] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
 
   function validate(): FormErrors {
-    const result = registerSchema.safeParse(form);
+    const result = resetPasswordSchema.safeParse(form);
     if (result.success) return {};
     const errs: FormErrors = {};
     for (const issue of result.error.issues) {
@@ -63,88 +56,64 @@ export function RegisterForm() {
     setServerError(null);
 
     try {
-      const res = await fetch("/api/v1/auth/sign-up", {
+      const res = await fetch("/api/v1/auth/reset-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: form.name,
-          email: form.email,
-          password: form.password,
-        }),
+        body: JSON.stringify({ token, password: form.password }),
       });
 
       if (!res.ok) {
         const data = await res.json();
-        setServerError(data.error ?? "Impossible de créer le compte");
+        if (data.code === "INVALID_TOKEN" || data.code === "TOKEN_EXPIRED") {
+          setServerError(
+            "Ce lien a expiré ou est invalide. Demandez un nouveau lien.",
+          );
+        } else {
+          setServerError(data.error ?? "Une erreur est survenue");
+        }
         return;
       }
 
-      router.push("/dashboard");
+      setSuccess(true);
     } catch {
       setServerError(
-        "Impossible de créer le compte. Vérifiez votre connexion.",
+        "Impossible de réinitialiser le mot de passe. Vérifiez votre connexion.",
       );
     } finally {
       setSubmitting(false);
     }
   }
 
+  if (success) {
+    return (
+      <div className="space-y-4">
+        <p className="text-sm text-gray-600">
+          Votre mot de passe a été réinitialisé avec succès.
+        </p>
+        <Link
+          href="/login"
+          className="inline-block rounded-full bg-homecafe-pink px-8 py-2.5 text-sm font-medium text-white transition-colors hover:bg-homecafe-pink-dark"
+        >
+          Se connecter
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <div className="rounded-xl border border-gray-200 px-4 pt-2 pb-3 transition-colors focus-within:border-rose-300">
-          <label
-            htmlFor="name"
-            className="block text-xs font-medium text-rose-400"
-          >
-            Nom
-          </label>
-          <input
-            id="name"
-            type="text"
-            placeholder="Votre nom"
-            value={form.name}
-            onChange={(e) => handleChange("name", e.target.value)}
-            className="w-full border-0 bg-transparent text-sm text-gray-900 outline-none placeholder:text-gray-400"
-            autoComplete="name"
-          />
-        </div>
-        {errors.name && (
-          <p className="mt-1 text-xs text-red-500">{errors.name}</p>
-        )}
-      </div>
-
-      <div>
-        <div className="rounded-xl border border-gray-200 px-4 pt-2 pb-3 transition-colors focus-within:border-rose-300">
-          <label
-            htmlFor="email"
-            className="block text-xs font-medium text-rose-400"
-          >
-            E-mail
-          </label>
-          <input
-            id="email"
-            type="email"
-            placeholder="votre@email.com"
-            value={form.email}
-            onChange={(e) => handleChange("email", e.target.value)}
-            className="w-full border-0 bg-transparent text-sm text-gray-900 outline-none placeholder:text-gray-400"
-            autoComplete="email"
-          />
-        </div>
-        {errors.email && (
-          <p className="mt-1 text-xs text-red-500">{errors.email}</p>
-        )}
-      </div>
+      <p className="text-sm text-gray-600">
+        Choisissez un nouveau mot de passe sécurisé.
+      </p>
 
       <div>
         <div className="flex items-center rounded-xl border border-gray-200 px-4 pt-2 pb-3 transition-colors focus-within:border-rose-300">
           <div className="flex-1">
             <label
               htmlFor="password"
-              className="block text-xs font-medium text-rose-400"
+              className="block text-xs font-medium text-orange-400"
             >
-              Mot de passe
+              Nouveau mot de passe
             </label>
             <input
               id="password"
@@ -174,7 +143,7 @@ export function RegisterForm() {
           </button>
         </div>
         {errors.password && (
-          <p className="mt-1 text-xs text-red-500">{errors.password}</p>
+          <p className="mt-1 text-xs text-orange-400">{errors.password}</p>
         )}
       </div>
 
@@ -183,7 +152,7 @@ export function RegisterForm() {
           <div className="flex-1">
             <label
               htmlFor="passwordConfirm"
-              className="block text-xs font-medium text-rose-400"
+              className="block text-xs font-medium text-orange-400"
             >
               Confirmer le mot de passe
             </label>
@@ -215,13 +184,23 @@ export function RegisterForm() {
           </button>
         </div>
         {errors.passwordConfirm && (
-          <p className="mt-1 text-xs text-red-500">{errors.passwordConfirm}</p>
+          <p className="mt-1 text-xs text-orange-400">
+            {errors.passwordConfirm}
+          </p>
         )}
       </div>
 
       {serverError && (
-        <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600">
-          {serverError}
+        <div className="space-y-3">
+          <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600">
+            {serverError}
+          </div>
+          <Link
+            href="/forgot-password"
+            className="block text-sm font-medium text-blue-500 hover:text-blue-600"
+          >
+            Demander un nouveau lien
+          </Link>
         </div>
       )}
 
@@ -230,16 +209,15 @@ export function RegisterForm() {
         disabled={submitting}
         className="rounded-full bg-homecafe-pink px-8 py-2.5 text-sm font-medium text-white transition-colors hover:bg-homecafe-pink-dark disabled:opacity-50"
       >
-        {submitting ? "Inscription en cours..." : "S'inscrire"}
+        {submitting ? "Réinitialisation..." : "Réinitialiser"}
       </button>
 
       <p className="pt-2 text-sm text-gray-900">
-        Déjà membre ?{" "}
         <Link
           href="/login"
           className="font-medium text-blue-500 hover:text-blue-600"
         >
-          Connecte-toi
+          Retour à la connexion
         </Link>
       </p>
     </form>

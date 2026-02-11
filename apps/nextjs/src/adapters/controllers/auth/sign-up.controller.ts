@@ -17,7 +17,11 @@ export async function signUpController(request: Request) {
   const result = await useCase.execute(parsed.data);
 
   if (result.isFailure) {
-    return NextResponse.json({ error: result.getError() }, { status: 400 });
+    console.error("[sign-up]", result.getError());
+    return NextResponse.json(
+      { error: "Impossible de créer le compte" },
+      { status: 400 },
+    );
   }
 
   return NextResponse.json(result.getValue(), { status: 201 });

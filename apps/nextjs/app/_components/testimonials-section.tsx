@@ -1,66 +1,151 @@
+"use client";
+
+import { Button } from "@packages/ui/components/ui/button";
+import { Card, CardContent, CardFooter } from "@packages/ui/components/ui/card";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useCallback, useState } from "react";
+
 const testimonials = [
   {
+    id: "testimonial-1",
     quote:
-      "HomeCafe m'a aidée à prendre l'habitude d'écrire chaque jour. L'ambiance est tellement apaisante que ça fait partie de mon rituel du matin.",
-    name: "Lea",
-    role: "Étudiante en design, 22 ans",
+      "Depuis que j'utilise HomeCafé, j'ai enfin un endroit pour poser mes pensées sans jugement. Le journal m'aide à y voir plus clair dans mes journées et à mieux comprendre mes émotions.",
+    name: "Lisa",
+    age: "28 ans",
   },
   {
+    id: "testimonial-2",
     quote:
-      "J'utilise le kanban pour mes projets perso et le mood tracker tous les jours. Tout est au même endroit, c'est génial.",
-    name: "Theo",
-    role: "Développeur junior, 27 ans",
+      "Le suivi d'humeur a changé ma façon de voir mes semaines. Je repère mieux les moments où j'ai besoin de ralentir. C'est devenu un vrai rituel du soir.",
+    name: "Théo",
+    age: "24 ans",
   },
   {
+    id: "testimonial-3",
     quote:
-      "Le système de stickers me motive à garder mes streaks. Et le feed avec mes amis proches, c'est exactement ce que je cherchais.",
-    name: "Marie",
-    role: "Étudiante, 20 ans",
+      "J'adore le côté tout-en-un : mon kanban pour le boulot, mon journal pour moi, et le feed pour échanger avec mes amis. Tout est au même endroit, c'est reposant.",
+    name: "Camille",
+    age: "31 ans",
+  },
+  {
+    id: "testimonial-4",
+    quote:
+      "Les moodboards m'inspirent au quotidien. Je collectionne des images qui me font du bien et ça me motive. L'ambiance cozy de l'app rend tout plus agréable.",
+    name: "Inès",
+    age: "22 ans",
+  },
+  {
+    id: "testimonial-5",
+    quote:
+      "Grâce à HomeCafé, j'ai retrouvé une routine qui me convient. Les tâches ne sont plus stressantes, elles sont juste posées là, tranquillement, sans pression.",
+    name: "Maxime",
+    age: "26 ans",
+  },
+  {
+    id: "testimonial-6",
+    quote:
+      "Ce qui m'a surprise, c'est le feed social. C'est bienveillant, pas de course aux likes. On partage des vraies choses et ça fait du bien de se sentir écoutée.",
+    name: "Aïcha",
+    age: "29 ans",
   },
 ];
 
+function getVisibleIndices(center: number, total: number) {
+  const prev = (center - 1 + total) % total;
+  const next = (center + 1) % total;
+  return [prev, center, next];
+}
+
 export function TestimonialsSection() {
+  const [centerIndex, setCenterIndex] = useState(1);
+
+  const goNext = useCallback(() => {
+    setCenterIndex((prev) => (prev + 1) % testimonials.length);
+  }, []);
+
+  const goPrev = useCallback(() => {
+    setCenterIndex(
+      (prev) => (prev - 1 + testimonials.length) % testimonials.length,
+    );
+  }, []);
+
+  const visibleIndices = getVisibleIndices(centerIndex, testimonials.length);
+
   return (
     <section
-      aria-labelledby="testimonials-heading"
-      className="py-16 sm:py-20 lg:py-24"
+      aria-label="Témoignages"
+      className="bg-[#DADADA]/20 py-16 lg:py-24"
     >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="text-center">
-          <h2
-            id="testimonials-heading"
-            className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl"
+      <div className="mx-auto max-w-6xl px-6 lg:px-8">
+        <div className="flex items-center gap-4 lg:gap-6">
+          <Button
+            variant="outline"
+            size="icon"
+            className="hidden shrink-0 rounded-full sm:flex"
+            aria-label="Témoignage précédent"
+            onClick={goPrev}
           >
-            Ce qu'ils en disent
-          </h2>
-          <p className="mt-4 text-lg text-muted-foreground">
-            Nos premiers utilisateurs partagent leur expérience.
-          </p>
+            <ChevronLeft className="size-5" />
+          </Button>
+
+          <div className="grid flex-1 grid-cols-1 items-center gap-6 md:grid-cols-3">
+            {visibleIndices.map((index, position) => {
+              const testimonial = testimonials[index]!;
+              const isCenter = position === 1;
+              return (
+                <Card
+                  key={testimonial.id}
+                  className={`justify-between transition-all duration-300 ${
+                    isCenter ? "scale-105 py-8 shadow-lg" : "py-5 opacity-80"
+                  }`}
+                >
+                  <CardContent className="px-5">
+                    <p
+                      className={`leading-relaxed text-muted-foreground ${isCenter ? "text-sm" : "text-xs"}`}
+                    >
+                      &ldquo;{testimonial.quote}&rdquo;
+                    </p>
+                  </CardContent>
+                  <CardFooter className="px-5">
+                    <p className="text-sm font-semibold text-foreground">
+                      {testimonial.name}, {testimonial.age}
+                    </p>
+                  </CardFooter>
+                </Card>
+              );
+            })}
+          </div>
+
+          <Button
+            variant="outline"
+            size="icon"
+            className="hidden shrink-0 rounded-full sm:flex"
+            aria-label="Témoignage suivant"
+            onClick={goNext}
+          >
+            <ChevronRight className="size-5" />
+          </Button>
         </div>
-        <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {testimonials.map((testimonial) => (
-            <blockquote
-              key={testimonial.name}
-              className="rounded-xl border border-border bg-card p-6 shadow-sm"
-            >
-              <p className="text-sm leading-relaxed text-muted-foreground">
-                &ldquo;{testimonial.quote}&rdquo;
-              </p>
-              <footer className="mt-4 flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-rose-100 text-sm font-semibold text-rose-600">
-                  {testimonial.name[0]}
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-foreground">
-                    {testimonial.name}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {testimonial.role}
-                  </p>
-                </div>
-              </footer>
-            </blockquote>
-          ))}
+
+        <div className="mt-6 flex justify-center gap-2 sm:hidden">
+          <Button
+            variant="outline"
+            size="icon"
+            className="rounded-full"
+            aria-label="Témoignage précédent"
+            onClick={goPrev}
+          >
+            <ChevronLeft className="size-4" />
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            className="rounded-full"
+            aria-label="Témoignage suivant"
+            onClick={goNext}
+          >
+            <ChevronRight className="size-4" />
+          </Button>
         </div>
       </div>
     </section>

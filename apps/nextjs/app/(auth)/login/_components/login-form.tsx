@@ -1,14 +1,7 @@
 "use client";
 
 import { Button } from "@packages/ui/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@packages/ui/components/ui/card";
-import { Input } from "@packages/ui/components/ui/input";
-import { Label } from "@packages/ui/components/ui/label";
+import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -30,6 +23,7 @@ export function LoginForm() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitting, setSubmitting] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   function validate(): FormErrors {
     const result = loginSchema.safeParse(form);
@@ -81,74 +75,105 @@ export function LoginForm() {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Connexion</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="votre@email.com"
-              value={form.email}
-              onChange={(e) => handleChange("email", e.target.value)}
-              aria-invalid={!!errors.email}
-              autoComplete="email"
-            />
-            {errors.email && (
-              <p className="text-sm text-destructive">{errors.email}</p>
-            )}
-          </div>
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <div className="rounded-xl border border-gray-200 px-4 pt-2 pb-3 transition-colors focus-within:border-rose-300">
+          <label
+            htmlFor="email"
+            className="block text-xs font-medium text-orange-400"
+          >
+            E-mail
+          </label>
+          <input
+            id="email"
+            type="email"
+            placeholder="votre@email.com"
+            value={form.email}
+            onChange={(e) => handleChange("email", e.target.value)}
+            className="w-full border-0 bg-transparent text-sm text-gray-900 outline-none placeholder:text-gray-400"
+            autoComplete="email"
+          />
+        </div>
+        {errors.email && (
+          <p className="mt-1 text-xs text-orange-400">{errors.email}</p>
+        )}
+      </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="password">Mot de passe</Label>
-            <Input
+      <div>
+        <div className="flex items-center rounded-xl border border-gray-200 px-4 pt-2 pb-3 transition-colors focus-within:border-rose-300">
+          <div className="flex-1">
+            <label
+              htmlFor="password"
+              className="block text-xs font-medium text-orange-400"
+            >
+              Mot de passe
+            </label>
+            <input
               id="password"
-              type="password"
+              type={showPassword ? "text" : "password"}
               placeholder="Minimum 8 caractères"
               value={form.password}
               onChange={(e) => handleChange("password", e.target.value)}
-              aria-invalid={!!errors.password}
+              className="w-full border-0 bg-transparent text-sm text-gray-900 outline-none placeholder:text-gray-400"
               autoComplete="current-password"
             />
-            {errors.password && (
-              <p className="text-sm text-destructive">{errors.password}</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="ml-2 text-blue-500 hover:text-blue-600"
+            aria-label={
+              showPassword
+                ? "Masquer le mot de passe"
+                : "Afficher le mot de passe"
+            }
+          >
+            {showPassword ? (
+              <EyeOff className="size-5" />
+            ) : (
+              <Eye className="size-5" />
             )}
-          </div>
+          </button>
+        </div>
+        {errors.password && (
+          <p className="mt-1 text-xs text-red-500">{errors.password}</p>
+        )}
+      </div>
 
-          <div className="text-right">
-            <Link
-              href="/forgot-password"
-              className="text-sm text-muted-foreground hover:text-foreground"
-            >
-              Mot de passe oublié ?
-            </Link>
-          </div>
+      <div className="text-right">
+        <Link
+          href="/forgot-password"
+          className="font-medium text-blue-500 hover:text-blue-600"
+        >
+          Mot de passe oublié ?
+        </Link>
+      </div>
 
-          {serverError && (
-            <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-              {serverError}
-            </div>
-          )}
+      {serverError && (
+        <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600">
+          {serverError}
+        </div>
+      )}
 
-          <Button type="submit" className="w-full" disabled={submitting}>
-            {submitting ? "Connexion en cours..." : "Se connecter"}
-          </Button>
+      <Button
+        type="submit"
+        disabled={submitting}
+        className="rounded-full bg-homecafe-pink px-8 py-2.5 text-sm font-medium text-white transition-colors hover:bg-homecafe-pink-dark disabled:opacity-50"
+      >
+        {submitting ? "Connexion..." : "Se connecter"}
+      </Button>
 
-          <p className="text-center text-sm text-muted-foreground">
-            Pas encore de compte ?{" "}
-            <Link
-              href="/register"
-              className="font-medium text-foreground hover:underline"
-            >
-              S&apos;inscrire
-            </Link>
-          </p>
-        </form>
-      </CardContent>
-    </Card>
+      <p className="text-xs text-gray-400">Mentions légales</p>
+
+      <p className="pt-2 text-sm text-gray-900">
+        Pas encore membre ?{" "}
+        <Link
+          href="/register"
+          className="font-medium text-blue-500 hover:text-blue-600"
+        >
+          Inscris-toi
+        </Link>
+      </p>
+    </form>
   );
 }

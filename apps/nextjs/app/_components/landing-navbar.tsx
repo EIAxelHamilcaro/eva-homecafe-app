@@ -1,32 +1,20 @@
+import { Button } from "@packages/ui/components/ui/button";
 import Link from "next/link";
+import { LandingLogo } from "./landing-logo";
 
 export function LandingNavbar() {
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="absolute top-0 left-0 z-50 w-full">
       <nav
         aria-label="Navigation principale"
-        className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8"
+        className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5 lg:px-8"
       >
-        <Link
-          href="/"
-          className="text-xl font-bold tracking-tight text-foreground"
-        >
-          HomeCafe
+        <Link href="/">
+          <LandingLogo width={90} height={56} />
         </Link>
-        <div className="flex items-center gap-3">
-          <Link
-            href="/login"
-            className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-          >
-            Se connecter
-          </Link>
-          <Link
-            href="/register"
-            className="inline-flex h-9 items-center rounded-lg bg-rose-500 px-4 text-sm font-medium text-white transition-colors hover:bg-rose-600"
-          >
-            S'inscrire
-          </Link>
-        </div>
+        <Button asChild size="lg" className="rounded-full">
+          <Link href="/register">S'inscrire</Link>
+        </Button>
       </nav>
     </header>
   );

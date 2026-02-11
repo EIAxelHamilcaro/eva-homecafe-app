@@ -1,17 +1,18 @@
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
-import { authGuard } from "@/adapters/guards/auth.guard";
-import { FaqSection, faqItems } from "./_components/faq-section";
+import { CtaSection } from "./_components/cta-section";
+import { faqItems } from "./_components/faq-data";
+import { FaqSection } from "./_components/faq-section";
 import { FeaturesSection } from "./_components/features-section";
 import { HeroSection } from "./_components/hero-section";
 import { LandingFooter } from "./_components/landing-footer";
 import { LandingNavbar } from "./_components/landing-navbar";
+import { StatsSection } from "./_components/stats-section";
 import { TestimonialsSection } from "./_components/testimonials-section";
 
 export const metadata: Metadata = {
-  title: "HomeCafe — Ton quotidien structuré avec créativité",
+  title: "HomeCafe \u2014 Ton quotidien structur\u00e9 avec douceur",
   description:
-    "Journal intime, suivi d'humeur, kanban, galerie photo et feed social — tout dans une appli cozy. Gratuit.",
+    "HomeCaf\u00e9 est un espace personnel et apaisant o\u00f9 tu peux \u00e9crire, suivre ton humeur, organiser ton quotidien et \u00e9changer avec d'autres.",
   keywords: [
     "journal",
     "mood tracker",
@@ -20,30 +21,30 @@ export const metadata: Metadata = {
     "gallery",
     "moodboard",
     "productivity",
-    "bien-être",
+    "bien-\u00eatre",
   ],
   openGraph: {
     type: "website",
     locale: "fr_FR",
     url: "https://homecafe.app",
-    title: "HomeCafe — Ton quotidien structuré avec créativité",
+    title: "HomeCafe \u2014 Ton quotidien structur\u00e9 avec douceur",
     description:
-      "Journal intime, suivi d'humeur, kanban, galerie photo et feed social — tout dans une appli cozy.",
+      "HomeCaf\u00e9 est un espace personnel et apaisant o\u00f9 tu peux \u00e9crire, suivre ton humeur, organiser ton quotidien et \u00e9changer avec d'autres.",
     siteName: "HomeCafe",
     images: [
       {
         url: "/og-landing.png",
         width: 1200,
         height: 630,
-        alt: "HomeCafe — Ton quotidien structuré avec créativité",
+        alt: "HomeCafe \u2014 Ton quotidien structur\u00e9 avec douceur",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "HomeCafe — Ton quotidien structuré avec créativité",
+    title: "HomeCafe \u2014 Ton quotidien structur\u00e9 avec douceur",
     description:
-      "Journal intime, suivi d'humeur, kanban, galerie photo et feed social.",
+      "HomeCaf\u00e9 est un espace personnel et apaisant o\u00f9 tu peux \u00e9crire, suivre ton humeur, organiser ton quotidien et \u00e9changer avec d'autres.",
     images: ["/og-landing.png"],
   },
   alternates: {
@@ -59,7 +60,7 @@ const jsonLd = {
       name: "HomeCafe",
       url: "https://homecafe.app",
       description:
-        "Journal intime, suivi d'humeur, kanban, galerie photo et feed social.",
+        "HomeCaf\u00e9 est un espace personnel et apaisant o\u00f9 tu peux \u00e9crire, suivre ton humeur, organiser ton quotidien et \u00e9changer avec d'autres.",
     },
     {
       "@type": "FAQPage",
@@ -73,27 +74,16 @@ const jsonLd = {
 };
 
 export default async function Home() {
-  let authenticated = false;
-
-  try {
-    const guardResult = await authGuard();
-    authenticated = guardResult.authenticated;
-  } catch {
-    // Auth unavailable — show landing page for visitors
-  }
-
-  if (authenticated) {
-    redirect("/dashboard");
-  }
-
   return (
     <>
       <LandingNavbar />
       <main>
         <HeroSection />
+        <StatsSection />
         <FeaturesSection />
         <TestimonialsSection />
         <FaqSection />
+        <CtaSection />
       </main>
       <LandingFooter />
       <script

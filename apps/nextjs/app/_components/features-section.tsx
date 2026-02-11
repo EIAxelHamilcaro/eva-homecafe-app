@@ -1,39 +1,46 @@
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@packages/ui/components/ui/card";
+import Image from "next/image";
+
 const features = [
   {
-    title: "Journal & Posts",
+    title: "Du journaling",
     description:
-      "Exprime-toi librement avec du texte riche et des images. Public ou privé, à toi de choisir.",
-    icon: "\u270D\uFE0F",
+      "C'est un espace pour \u00e9crire librement, d\u00e9poser tes pens\u00e9es et suivre ton \u00e9volution au fil du temps. Que ce soit quelques lignes ou de longues pages, ton journal t'appartient.",
+    image: "/landing/card-1.png",
+    borderColor: "border-green-100",
   },
   {
-    title: "Suivi d'humeur",
+    title: "De l'organisation",
     description:
-      "Enregistre ton humeur au quotidien parmi 9 catégories et visualise tes tendances sur 6 mois.",
-    icon: "\uD83C\uDF08",
+      "C'est un outil pour organiser tes journ\u00e9es sans pression. T\u00e2ches, id\u00e9es, listes : tout est l\u00e0 pour t'aider \u00e0 avancer en douceur, sans te surcharger.",
+    image: "/landing/card-2.png",
+    borderColor: "border-pink-100",
   },
   {
-    title: "Organisation",
+    title: "Du suivi \u00e9motionnel",
     description:
-      "Gère tes projets avec des to-do lists, des tableaux kanban et une vue chronologie/calendrier.",
-    icon: "\uD83D\uDCCB",
+      "C'est le suivi de ton humeur, jour apr\u00e8s jour, sans jugement. Quelques couleurs, des mots simples, pour mieux comprendre ce que tu ressens et suivre ton \u00e9quilibre \u00e9motionnel dans le temps.",
+    image: "/landing/card-3.png",
+    borderColor: "border-orange-100",
   },
   {
-    title: "Feed social",
+    title: "Des rencontres",
     description:
-      "Partage avec tes proches, réagis à leurs posts et reste connecté dans un espace bienveillant.",
-    icon: "\uD83D\uDC9B",
+      "C'est une opportunit\u00e9 d'\u00e9changes avec d'autres personnes dans un espace bienveillant. Discussions l\u00e9g\u00e8res, messages priv\u00e9s et partages d'inspirations : ici, on prend le temps.",
+    image: "/landing/card-4.png",
+    borderColor: "border-blue-100",
   },
   {
-    title: "Galerie & Moodboard",
+    title: "Un espace sur mesure",
     description:
-      "Collectionne tes photos préférées et crée des moodboards visuels pour tes inspirations.",
-    icon: "\uD83D\uDDBC\uFE0F",
-  },
-  {
-    title: "Stickers & Badges",
-    description:
-      "Débloque des récompenses en maintenant tes habitudes. Collectionne stickers et badges !",
-    icon: "\u2B50",
+      "Personnalise ton espace HomeCaf\u00e9 selon tes besoins et ton rythme. Choisis ce que tu veux voir, organiser ou suivre afin de cr\u00e9er un lieu qui te ressemble vraiment.",
+    image: "/landing/card-5.png",
+    borderColor: "border-yellow-100",
   },
 ];
 
@@ -42,37 +49,55 @@ export function FeaturesSection() {
     <section
       id="features"
       aria-labelledby="features-heading"
-      className="bg-muted/50 py-16 sm:py-20 lg:py-24"
+      className="bg-background py-16 lg:py-24"
     >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="text-center">
-          <h2
-            id="features-heading"
-            className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl"
-          >
-            HomeCafe c'est quoi ?
-          </h2>
-          <p className="mt-4 text-lg text-muted-foreground">
-            Tout ce dont tu as besoin, dans un seul endroit chaleureux.
-          </p>
+      <div className="mx-auto max-w-6xl px-6 lg:px-8">
+        <h2
+          id="features-heading"
+          className="text-center text-3xl font-bold tracking-tight text-foreground sm:text-4xl"
+        >
+          HomeCaf&eacute;, c'est quoi ?
+        </h2>
+
+        <div className="mt-14 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {features.slice(0, 3).map((feature) => (
+            <FeatureCard key={feature.title} feature={feature} />
+          ))}
         </div>
-        <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {features.map((feature) => (
-            <div
-              key={feature.title}
-              className="rounded-xl border border-border bg-card p-6 shadow-sm transition-shadow hover:shadow-md"
-            >
-              <div className="mb-4 text-4xl">{feature.icon}</div>
-              <h3 className="text-lg font-semibold text-foreground">
-                {feature.title}
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                {feature.description}
-              </p>
+
+        <div className="mt-8 flex flex-col items-center gap-8 sm:flex-row sm:justify-center">
+          {features.slice(3).map((feature) => (
+            <div key={feature.title} className="w-full max-w-sm">
+              <FeatureCard feature={feature} />
             </div>
           ))}
         </div>
       </div>
     </section>
+  );
+}
+
+function FeatureCard({ feature }: { feature: (typeof features)[number] }) {
+  return (
+    <Card className={`border-12 py-0 ${feature.borderColor}`}>
+      <CardHeader className="px-5 pt-5 pb-0">
+        <CardTitle className="text-lg">{feature.title}</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4 px-5 pb-5">
+        <div className="aspect-4/3 overflow-hidden rounded-xl">
+          <Image
+            src={feature.image}
+            alt={feature.title}
+            className="h-full w-full object-cover"
+            loading="lazy"
+            width={"100"}
+            height={"100"}
+          />
+        </div>
+        <p className="text-sm leading-relaxed text-muted-foreground">
+          {feature.description}
+        </p>
+      </CardContent>
+    </Card>
   );
 }
