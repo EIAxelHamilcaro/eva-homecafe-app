@@ -17,7 +17,6 @@ export async function signInController(request: Request) {
   const result = await useCase.execute(parsed.data);
 
   if (result.isFailure) {
-    console.error("[sign-in]", result.getError());
     return NextResponse.json(
       { error: "Email ou mot de passe incorrect" },
       { status: 401 },

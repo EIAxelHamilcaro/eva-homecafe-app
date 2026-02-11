@@ -90,7 +90,9 @@ export function TestimonialsSection() {
 
           <div className="grid flex-1 grid-cols-1 items-center gap-6 md:grid-cols-3">
             {visibleIndices.map((index, position) => {
-              const testimonial = testimonials[index]!;
+              const testimonial = testimonials[
+                index
+              ] as (typeof testimonials)[number];
               const isCenter = position === 1;
               return (
                 <Card
