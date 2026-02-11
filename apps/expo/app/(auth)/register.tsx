@@ -2,12 +2,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "components/ui/button";
 import { Input, PasswordInput } from "components/ui/input";
 import { Logo } from "components/ui/logo";
-import { Link, router } from "expo-router";
+import { Link, router, useLocalSearchParams } from "expo-router";
 import { ApiError } from "lib/api/client";
 import { useSignUp } from "lib/api/hooks/use-auth";
 import { type SignUpFormData, signUpSchema } from "lib/validations/auth";
 import { Controller, useForm } from "react-hook-form";
 import {
+  Alert,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -15,8 +16,11 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useAcceptInvite } from "@/lib/api/hooks/use-invite";
 
 export default function RegisterScreen() {
+  const { invite } = useLocalSearchParams<{ invite?: string }>();
+
   const {
     control,
     handleSubmit,
@@ -28,10 +32,24 @@ export default function RegisterScreen() {
   });
 
   const signUpMutation = useSignUp();
+  const acceptInviteMutation = useAcceptInvite();
 
   const onSubmit = (data: SignUpFormData) => {
     signUpMutation.mutate(data, {
       onSuccess: () => {
+        if (invite) {
+          acceptInviteMutation.mutate(
+            { token: invite },
+            {
+              onError: () => {
+                Alert.alert(
+                  "Invitation",
+                  "L'invitation a expire, demandez un nouveau code a votre ami",
+                );
+              },
+            },
+          );
+        }
         router.replace("/");
       },
       onError: (error) => {

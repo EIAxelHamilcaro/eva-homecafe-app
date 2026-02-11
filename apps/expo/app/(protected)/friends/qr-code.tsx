@@ -1,8 +1,7 @@
 import { useRouter } from "expo-router";
-import * as Sharing from "expo-sharing";
 import { ArrowLeft, QrCode, Share2 } from "lucide-react-native";
 import { useCallback } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, Share, Text, View } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -49,11 +48,13 @@ export default function QRCodeScreen() {
   const handleShare = useCallback(async () => {
     if (!data?.inviteUrl) return;
 
-    const isAvailable = await Sharing.isAvailableAsync();
-    if (isAvailable) {
-      await Sharing.shareAsync(data.inviteUrl, {
-        dialogTitle: "Partager le lien d'invitation",
+    try {
+      await Share.share({
+        message: data.inviteUrl,
+        title: "Rejoins-moi sur HomeCafe",
       });
+    } catch {
+      // User cancelled or system error
     }
   }, [data?.inviteUrl]);
 

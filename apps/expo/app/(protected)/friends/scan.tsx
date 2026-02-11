@@ -1,26 +1,21 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { useRouter } from "expo-router";
 import { ArrowLeft, Camera, CheckCircle, XCircle } from "lucide-react-native";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/button";
+import { friendRequestKeys } from "@/lib/api/hooks/query-keys";
 import { useAcceptInvite } from "@/lib/api/hooks/use-invite";
+import {
+  isAlreadyFriendsError,
+  mapInviteApiError,
+} from "@/lib/utils/invite-errors";
+import { extractTokenFromUrl } from "@/lib/utils/invite-token";
 
 type ScanStatus = "scanning" | "processing" | "success" | "error";
-
-function extractTokenFromUrl(url: string): string | null {
-  try {
-    const urlObj = new URL(url);
-    return urlObj.searchParams.get("token");
-  } catch {
-    if (url.length === 36 || url.length === 32) {
-      return url;
-    }
-    return null;
-  }
-}
 
 function PermissionDenied({
   onRequestPermission,
@@ -101,9 +96,11 @@ function ScanResult({
 
 export default function ScanQRCodeScreen() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [permission, requestPermission] = useCameraPermissions();
   const [scanStatus, setScanStatus] = useState<ScanStatus>("scanning");
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
+  const isProcessingRef = useRef(false);
 
   const acceptInviteMutation = useAcceptInvite();
 
@@ -113,12 +110,16 @@ export default function ScanQRCodeScreen() {
 
   const handleBarCodeScanned = useCallback(
     async ({ data }: { data: string }) => {
-      if (scanStatus !== "scanning") return;
+      if (scanStatus !== "scanning" || isProcessingRef.current) return;
+      isProcessingRef.current = true;
 
       const token = extractTokenFromUrl(data);
       if (!token) {
         setScanStatus("error");
-        setErrorMessage("QR code invalide");
+        const looksLikeUrl = data.startsWith("http") || data.includes("://");
+        setErrorMessage(
+          looksLikeUrl ? "Lien d'invitation invalide" : "QR code non reconnu",
+        );
         return;
       }
 
@@ -129,18 +130,26 @@ export default function ScanQRCodeScreen() {
         {
           onSuccess: () => {
             setScanStatus("success");
+            queryClient.invalidateQueries({
+              queryKey: friendRequestKeys.all,
+            });
           },
           onError: (error) => {
-            setScanStatus("error");
-            setErrorMessage(error?.message || "Une erreur est survenue");
+            if (isAlreadyFriendsError(error?.message ?? "")) {
+              setScanStatus("success");
+            } else {
+              setScanStatus("error");
+              setErrorMessage(mapInviteApiError(error?.message ?? ""));
+            }
           },
         },
       );
     },
-    [scanStatus, acceptInviteMutation],
+    [scanStatus, acceptInviteMutation, queryClient],
   );
 
   const handleScanAgain = useCallback(() => {
+    isProcessingRef.current = false;
     setScanStatus("scanning");
     setErrorMessage(undefined);
   }, []);

@@ -18,7 +18,8 @@
       "bundleIdentifier": "com.axelhamil.evahomecafeapp",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
-      }
+      },
+      "associatedDomains": ["applinks:homecafe.app"]
     },
     "android": {
       "adaptiveIcon": {
@@ -26,7 +27,21 @@
         "backgroundColor": "#FFFAF5"
       },
       "package": "com.axelhamil.evahomecafeapp",
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "homecafe.app",
+              "pathPrefix": "/invite"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png",

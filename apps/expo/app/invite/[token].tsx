@@ -1,11 +1,17 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { Redirect, useLocalSearchParams, useRouter } from "expo-router";
 import { CheckCircle, Loader2, UserPlus, XCircle } from "lucide-react-native";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/button";
+import { friendRequestKeys } from "@/lib/api/hooks/query-keys";
 import { useAcceptInvite } from "@/lib/api/hooks/use-invite";
+import {
+  isAlreadyFriendsError,
+  mapInviteApiError,
+} from "@/lib/utils/invite-errors";
 import { useAuth } from "@/src/providers/auth-provider";
 
 type InviteStatus = "loading" | "processing" | "success" | "error";
@@ -13,24 +19,26 @@ type InviteStatus = "loading" | "processing" | "success" | "error";
 export default function InviteScreen() {
   const { token } = useLocalSearchParams<{ token: string }>();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { isAuthenticated, isLoading: isAuthLoading } = useAuth();
   const [status, setStatus] = useState<InviteStatus>("loading");
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
+  const hasMutatedRef = useRef(false);
 
   const acceptInviteMutation = useAcceptInvite();
 
   useEffect(() => {
     if (isAuthLoading) return;
-
-    if (!isAuthenticated) {
-      return;
-    }
+    if (!isAuthenticated) return;
 
     if (!token) {
       setStatus("error");
       setErrorMessage("Lien d'invitation invalide");
       return;
     }
+
+    if (hasMutatedRef.current) return;
+    hasMutatedRef.current = true;
 
     setStatus("processing");
 
@@ -39,14 +47,26 @@ export default function InviteScreen() {
       {
         onSuccess: () => {
           setStatus("success");
+          queryClient.invalidateQueries({ queryKey: friendRequestKeys.all });
         },
         onError: (error) => {
-          setStatus("error");
-          setErrorMessage(error?.message || "Une erreur est survenue");
+          const msg = error?.message ?? "";
+          if (isAlreadyFriendsError(msg)) {
+            setStatus("success");
+          } else {
+            setStatus("error");
+            setErrorMessage(mapInviteApiError(msg));
+          }
         },
       },
     );
-  }, [token, isAuthenticated, isAuthLoading, acceptInviteMutation]);
+  }, [
+    token,
+    isAuthenticated,
+    isAuthLoading,
+    acceptInviteMutation,
+    queryClient,
+  ]);
 
   if (isAuthLoading || status === "loading") {
     return (
