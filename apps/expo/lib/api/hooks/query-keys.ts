@@ -92,6 +92,11 @@ export const moodKeys = {
   trends: () => [...moodKeys.all, "trends"] as const,
 };
 
+export const settingsKeys = {
+  all: ["settings"] as const,
+  my: () => [...settingsKeys.all, "me"] as const,
+};
+
 export const rewardKeys = {
   all: ["rewards"] as const,
   stickers: () => [...rewardKeys.all, "stickers"] as const,

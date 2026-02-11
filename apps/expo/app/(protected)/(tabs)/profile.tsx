@@ -1,35 +1,28 @@
 import { Button } from "components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "components/ui/card";
+import { Dropdown } from "components/ui/dropdown";
 import { Logo } from "components/ui/logo";
+import { Toggle } from "components/ui/toggle";
 import { useRouter } from "expo-router";
 import { useSignOut } from "lib/api/hooks/use-auth";
 import { useGenerateInvite } from "lib/api/hooks/use-invite";
 import { useEnsureProfile } from "lib/api/hooks/use-profile";
-import { ChevronDown, Mail, Menu, User } from "lucide-react-native";
-import { useEffect, useState } from "react";
+import { useSettings, useUpdateSettings } from "lib/api/hooks/use-settings";
+import { Mail, Menu, User } from "lucide-react-native";
+import { useEffect } from "react";
 import {
   ActivityIndicator,
+  Alert,
   Image,
   Pressable,
   ScrollView,
-  Switch,
   Text,
   View,
 } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "src/providers/auth-provider";
-
-function DropdownField({ label }: { label: string }) {
-  return (
-    <View className="mb-3">
-      <Pressable className="flex-row items-center justify-between rounded-lg border border-border bg-background px-3 py-2">
-        <Text className="text-sm text-muted-foreground">{label}</Text>
-        <ChevronDown size={16} color="#8D7E7E" />
-      </Pressable>
-    </View>
-  );
-}
+import { languageOptions, timeFormatOptions } from "@/types/settings";
 
 export default function ProfileScreen() {
   const { user } = useAuth();
@@ -37,7 +30,8 @@ export default function ProfileScreen() {
   const signOutMutation = useSignOut();
   const { profile, isLoading, ensureProfile } = useEnsureProfile();
   const { data: inviteData } = useGenerateInvite();
-  const [profileVisible, setProfileVisible] = useState(true);
+  const { data: settings } = useSettings();
+  const updateSettings = useUpdateSettings();
 
   useEffect(() => {
     if (user?.name && !isLoading && !profile) {
@@ -119,22 +113,66 @@ export default function ProfileScreen() {
               <CardTitle className="text-lg">Préférences</CardTitle>
             </CardHeader>
             <CardContent>
-              <DropdownField label="Langue" />
-              <DropdownField label="Format heure" />
-              <View className="flex-row items-center justify-between py-2">
-                <Text className="text-sm text-foreground">Profil visible</Text>
-                <Switch
-                  value={profileVisible}
-                  onValueChange={setProfileVisible}
-                  trackColor={{ false: "#E8DED4", true: "#F691C3" }}
-                  thumbColor="#FFFFFF"
+              <View className="mb-3">
+                <Text className="mb-1 text-sm text-muted-foreground">
+                  Langue
+                </Text>
+                <Dropdown
+                  value={settings?.language ?? "fr"}
+                  options={languageOptions}
+                  onValueChange={(value) =>
+                    updateSettings.mutate(
+                      { language: value as "fr" | "en" },
+                      {
+                        onError: () =>
+                          Alert.alert(
+                            "Erreur",
+                            "Impossible de mettre à jour la langue.",
+                          ),
+                      },
+                    )
+                  }
                 />
               </View>
-              <Pressable className="mt-2 rounded-full bg-homecafe-pink px-4 py-2">
-                <Text className="text-center font-medium text-white">
-                  Valider les informations
+              <View className="mb-3">
+                <Text className="mb-1 text-sm text-muted-foreground">
+                  Format heure
                 </Text>
-              </Pressable>
+                <Dropdown
+                  value={settings?.timeFormat ?? "24h"}
+                  options={timeFormatOptions}
+                  onValueChange={(value) =>
+                    updateSettings.mutate(
+                      { timeFormat: value as "12h" | "24h" },
+                      {
+                        onError: () =>
+                          Alert.alert(
+                            "Erreur",
+                            "Impossible de mettre à jour le format heure.",
+                          ),
+                      },
+                    )
+                  }
+                />
+              </View>
+              <View className="flex-row items-center justify-between py-2">
+                <Text className="text-sm text-foreground">Profil visible</Text>
+                <Toggle
+                  checked={settings?.profileVisibility ?? true}
+                  onCheckedChange={(value) =>
+                    updateSettings.mutate(
+                      { profileVisibility: value },
+                      {
+                        onError: () =>
+                          Alert.alert(
+                            "Erreur",
+                            "Impossible de mettre à jour la visibilité.",
+                          ),
+                      },
+                    )
+                  }
+                />
+              </View>
             </CardContent>
           </Card>
 

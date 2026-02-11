@@ -125,8 +125,8 @@ development_status:
   13-2-dashboard-widgets-real-api-connection-mobile: done
   epic-13-retrospective: done
 
-  epic-14: backlog
-  14-1-settings-and-preferences-mobile: backlog
+  epic-14: in-progress
+  14-1-settings-and-preferences-mobile: done
   14-2-push-notifications-expo-eas: backlog
   14-3-friend-qr-scanning-and-deep-links: backlog
   14-4-auth-polish-forgot-and-reset-password: backlog
