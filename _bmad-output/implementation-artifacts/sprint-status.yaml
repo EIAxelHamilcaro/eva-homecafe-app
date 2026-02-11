@@ -129,7 +129,7 @@ development_status:
   14-1-settings-and-preferences-mobile: done
   14-2-push-notifications-expo-eas: done
   14-3-friend-qr-scanning-and-deep-links: done
-  14-4-auth-polish-forgot-and-reset-password: backlog
+  14-4-auth-polish-forgot-and-reset-password: done
   epic-14-retrospective: optional
 
   # ═══════════════════════════════════════════════════════

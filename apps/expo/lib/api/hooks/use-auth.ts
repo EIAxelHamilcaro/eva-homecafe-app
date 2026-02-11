@@ -100,6 +100,7 @@ export function useSignOut() {
 
 export interface ForgotPasswordInput {
   email: string;
+  redirectTo?: string;
 }
 
 export function useForgotPassword() {

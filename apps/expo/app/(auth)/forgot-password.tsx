@@ -11,6 +11,7 @@ import {
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
+  Alert,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -34,11 +35,20 @@ export default function ForgotPasswordScreen() {
   const forgotPasswordMutation = useForgotPassword();
 
   const onSubmit = (data: ForgotPasswordFormData) => {
-    forgotPasswordMutation.mutate(data, {
-      onSuccess: () => {
-        setIsSubmitted(true);
+    forgotPasswordMutation.mutate(
+      { ...data, redirectTo: "evahomecafeapp://reset-password" },
+      {
+        onSuccess: () => {
+          setIsSubmitted(true);
+        },
+        onError: () => {
+          Alert.alert(
+            "Erreur",
+            "Impossible d'envoyer l'email. Vérifiez votre connexion.",
+          );
+        },
       },
-    });
+    );
   };
 
   return (

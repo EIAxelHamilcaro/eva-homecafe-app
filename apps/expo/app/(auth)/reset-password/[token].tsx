@@ -23,6 +23,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function ResetPasswordScreen() {
   const { token } = useLocalSearchParams<{ token: string }>();
   const [isSuccess, setIsSuccess] = useState(false);
+  const [tokenExpired, setTokenExpired] = useState(false);
 
   const {
     control,
@@ -50,12 +51,14 @@ export default function ResetPasswordScreen() {
         },
         onError: (error) => {
           if (error instanceof ApiError) {
-            const errorMap: Record<string, string> = {
-              INVALID_TOKEN: "Le lien a expiré ou est invalide",
-              TOKEN_EXPIRED: "Le lien a expiré",
-            };
-            const message = errorMap[error.code] ?? error.message;
-            setError("password", { message });
+            if (
+              error.code === "INVALID_TOKEN" ||
+              error.code === "TOKEN_EXPIRED"
+            ) {
+              setTokenExpired(true);
+              return;
+            }
+            setError("password", { message: error.message });
           } else {
             setError("password", { message: "Une erreur est survenue" });
           }
@@ -107,16 +110,31 @@ export default function ResetPasswordScreen() {
           {/* Header */}
           <View className="px-10 pt-8">
             <Text className="text-2xl font-medium text-homecafe-grey-dark">
-              {isSuccess ? "Mot de passe modifié" : "Nouveau mot de passe"}
+              {tokenExpired
+                ? "Lien expiré"
+                : isSuccess
+                  ? "Mot de passe modifié"
+                  : "Nouveau mot de passe"}
             </Text>
             <Text className="mt-2 text-sm text-homecafe-grey-dark">
-              {isSuccess
-                ? "Votre mot de passe a été réinitialisé avec succès."
-                : "Choisissez un nouveau mot de passe sécurisé."}
+              {tokenExpired
+                ? "Le lien de réinitialisation a expiré ou est invalide."
+                : isSuccess
+                  ? "Votre mot de passe a été réinitialisé avec succès."
+                  : "Choisissez un nouveau mot de passe sécurisé."}
             </Text>
           </View>
 
-          {!isSuccess ? (
+          {tokenExpired ? (
+            <View className="px-10 pt-6">
+              <Button
+                onPress={() => router.replace("/(auth)/forgot-password")}
+                className="rounded-full bg-homecafe-pink"
+              >
+                Demander un nouveau lien
+              </Button>
+            </View>
+          ) : !isSuccess ? (
             <>
               {/* Form */}
               <View className="gap-4 px-10 pt-6">
@@ -178,7 +196,7 @@ export default function ResetPasswordScreen() {
           )}
 
           {/* Back to login */}
-          {!isSuccess && (
+          {!isSuccess && !tokenExpired && (
             <View className="flex-row items-center gap-1 px-10 pt-4">
               <Text className="text-sm text-foreground">Tu te souviens ?</Text>
               <Link href="/(auth)/login" asChild>
