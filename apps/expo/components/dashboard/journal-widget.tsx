@@ -12,7 +12,7 @@ export function JournalWidget() {
 
   return (
     <Pressable
-      onPress={() => router.push("/(protected)/journal/create")}
+      onPress={() => router.push("/(protected)/(tabs)/journal/create")}
       className="mb-4 rounded-2xl bg-card p-4 active:opacity-90"
     >
       <View className="flex-row items-center gap-3">

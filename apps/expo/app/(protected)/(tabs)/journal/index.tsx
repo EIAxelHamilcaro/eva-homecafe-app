@@ -43,11 +43,11 @@ export default function JournalScreen() {
     ) ?? [];
 
   const handleAddPost = () => {
-    router.push("/(protected)/journal/create" as Href);
+    router.push("/(protected)/(tabs)/journal/create" as Href);
   };
 
   const handlePostPress = (postId: string) => {
-    router.push(`/(protected)/journal/post/${postId}` as Href);
+    router.push(`/(protected)/(tabs)/journal/post/${postId}` as Href);
   };
 
   const handleLikePress = (postId: string) => {
@@ -64,7 +64,7 @@ export default function JournalScreen() {
   };
 
   const handleCommentPress = (postId: string) => {
-    router.push(`/(protected)/journal/post/${postId}` as Href);
+    router.push(`/(protected)/(tabs)/journal/post/${postId}` as Href);
   };
 
   const handleRepostPress = (_postId: string) => {};

@@ -59,11 +59,11 @@ export default function SocialScreen() {
   };
 
   const handlePostPress = (postId: string) => {
-    router.push(`/(protected)/journal/post/${postId}` as Href);
+    router.push(`/(protected)/(tabs)/journal/post/${postId}` as Href);
   };
 
   const handleCommentPress = (postId: string) => {
-    router.push(`/(protected)/journal/post/${postId}` as Href);
+    router.push(`/(protected)/(tabs)/journal/post/${postId}` as Href);
   };
 
   const handleSharePress = async (postId: string) => {
@@ -149,7 +149,7 @@ export default function SocialScreen() {
               Partagez votre code ami pour voir les posts de vos proches
             </Text>
             <Button
-              onPress={() => router.push("/(protected)/(tabs)/friends" as Href)}
+              onPress={() => router.push("/(protected)/friends" as Href)}
               className="flex-row items-center justify-center gap-2"
             >
               <UserPlus size={20} color="#fff" />

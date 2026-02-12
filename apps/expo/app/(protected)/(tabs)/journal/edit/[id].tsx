@@ -59,7 +59,7 @@ export default function EditPostScreen() {
     if (router.canGoBack()) {
       router.back();
     } else {
-      router.replace("/(protected)/journal");
+      router.replace("/(protected)/(tabs)/journal");
     }
   };
 

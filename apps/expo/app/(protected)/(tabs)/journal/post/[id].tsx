@@ -46,7 +46,7 @@ export default function PostDetailScreen() {
 
   const handleEditPress = () => {
     if (id) {
-      router.push(`/(protected)/journal/edit/${id}` as Href);
+      router.push(`/(protected)/(tabs)/journal/edit/${id}` as Href);
     }
   };
 
@@ -64,7 +64,7 @@ export default function PostDetailScreen() {
             deletePost.mutate(id, {
               onSuccess: () => {
                 showToast("Post supprimé", "success");
-                router.replace("/(protected)/journal");
+                router.replace("/(protected)/(tabs)/journal");
               },
               onError: (err) => {
                 showToast(
