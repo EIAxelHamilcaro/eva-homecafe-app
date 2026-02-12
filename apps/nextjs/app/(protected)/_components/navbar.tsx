@@ -29,7 +29,7 @@ export function Navbar({ user }: { user: IUserDto }) {
     <header className="fixed top-0 left-0 z-50 w-full border-b border-border bg-white">
       <nav
         aria-label="Navigation principale"
-        className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-6"
+        className="mx-auto flex h-18 max-w-7xl items-center justify-between px-6"
       >
         <Link href="/dashboard" className="shrink-0">
           <Image
@@ -44,10 +44,10 @@ export function Navbar({ user }: { user: IUserDto }) {
         <div className="flex items-center gap-1">
           <Link
             href="/dashboard"
-            className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            className="rounded-full p-2 font-extrabold text-homecafe-orange transition-colors hover:bg-muted"
             aria-label="Rechercher"
           >
-            <Search size={18} />
+            <Search size={20} />
           </Link>
 
           {navItems.map((item) => {
@@ -58,8 +58,8 @@ export function Navbar({ user }: { user: IUserDto }) {
                 href={item.href}
                 className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
                   active
-                    ? "text-homecafe-pink"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    ? "text-homecafe-yellow"
+                    : "text-foreground hover:text-homecafe-yellow"
                 }`}
               >
                 {item.label}

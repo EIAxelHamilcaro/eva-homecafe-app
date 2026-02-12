@@ -6,25 +6,28 @@ import {
   MessageCircle,
   Users,
 } from "lucide-react-native";
-import { Platform, View } from "react-native";
+import { View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { colors } from "@/src/config/colors";
 
 export default function TabLayout() {
+  const insets = useSafeAreaInsets();
+
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: false,
-        tabBarActiveTintColor: colors.primary,
+        tabBarActiveTintColor: colors.homecafe.yellow,
         tabBarInactiveTintColor: colors.icon.muted,
         tabBarStyle: {
           backgroundColor: colors.white,
           borderTopColor: colors.border,
           borderTopWidth: 1,
-          height: Platform.OS === "ios" ? 84 : 60,
+          height: 56 + insets.bottom,
           paddingTop: 8,
-          paddingBottom: Platform.OS === "ios" ? 28 : 8,
+          paddingBottom: insets.bottom,
         },
       }}
     >
