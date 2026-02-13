@@ -614,13 +614,16 @@ Composants disponibles :
 - `Form` (react-hook-form) — `@packages/ui/components/ui/form`
 - `Chart` (recharts) — `@packages/ui/components/ui/chart`
 
-### 2. Data fetching : Server Components + React Query + Server Actions
+### 2. Data Fetching (Next.js 16)
 
-**Pas de `fetch()` brut dans les composants.** Voici quand utiliser quoi :
+**JAMAIS de `fetch()` brut ou `apiFetch()` dans un composant.** 3 mécanismes, chacun avec un rôle précis :
 
-#### Server Components (par défaut pour les lectures)
+#### Server Components — lecture initiale (par défaut)
+
+Toute `page.tsx` est un Server Component. Les données initiales se chargent **côté serveur** via les queries CQRS (`src/adapters/queries/`) et se passent en props aux composants enfants.
+
 ```typescript
-// page.tsx — Server Component, fetch direct côté serveur
+// page.tsx — TOUJOURS un Server Component
 export default async function PostsPage() {
   const session = await requireAuth();
   const posts = await getUserPostsQuery(session.user.id);
@@ -628,67 +631,64 @@ export default async function PostsPage() {
 }
 ```
 
-#### React Query (pour les données dynamiques côté client)
-Hooks déjà disponibles dans `app/(protected)/_hooks/` :
-- `use-posts.ts` — usePostsQuery, usePostDetailQuery, useToggleReactionMutation, etc.
-- `use-feed.ts` — useFeedQuery
-- `use-gallery.ts` — useGalleryQuery
-- `use-boards.ts` — useBoardsQuery
-- `use-journal.ts` — useJournalQuery
-- `use-mood.ts` — useMoodQuery
-- `use-moodboard.ts` — useMoodboardQuery
-- `use-notifications.ts` — useNotificationsQuery
-- `use-settings.ts` — useSettingsQuery
+**Utiliser quand :** affichage initial d'une page, données qui n'ont pas besoin de refresh temps réel.
 
-**Utiliser ces hooks** pour :
-- Données temps réel (commentaires, réactions, feed)
-- Pagination côté client
-- Optimistic updates
-- Invalidation après mutation
+#### Server Actions — mutations (create, update, delete)
 
-#### Server Actions (pour les mutations/formulaires)
-Actions déjà disponibles dans `src/adapters/actions/` :
-- `post.actions.ts` — createPostAction, updatePostAction, deletePostAction
-- `mood.actions.ts`
-- `gallery.actions.ts`
-- `moodboard.actions.ts`
-- `profile.actions.ts`
-- `settings.actions.ts`
-- `auth.actions.ts`
-
-**Utiliser les Server Actions** pour :
-- Soumission de formulaires
-- Mutations simples (create, update, delete)
-- Actions qui nécessitent `revalidatePath`
+Toute écriture passe par une Server Action (`src/adapters/actions/{domain}.actions.ts`). Les actions appellent le use case via DI, puis `revalidatePath()` pour invalider le cache.
 
 ```typescript
-// Pattern : Server Action dans un formulaire
+// Pattern : composant client qui appelle une Server Action
 "use client";
 import { createPostAction } from "@/adapters/actions/post.actions";
 
 function CreatePostForm() {
-  async function handleSubmit(formData: FormData) {
-    const result = await createPostAction({
-      content: formData.get("content") as string,
-      isPrivate: false,
-    });
+  async function handleSubmit(data: FormData) {
+    const result = await createPostAction({ content: "...", isPrivate: false });
     if (!result.success) { /* gérer erreur */ }
   }
   return <form action={handleSubmit}>...</form>;
 }
 ```
 
-#### Arbre de décision data fetching
+**Utiliser quand :** formulaires, boutons d'action (supprimer, modifier, toggle), toute opération qui modifie des données.
+
+#### React Query — données dynamiques côté client
+
+Les hooks React Query (`app/(protected)/_hooks/use-{domain}.ts`) servent pour les données qui changent fréquemment ou nécessitent de l'interactivité côté client.
+
+```typescript
+// Pattern : hook React Query dans un composant client
+"use client";
+import { usePostCommentsQuery, useAddCommentMutation } from "@/(protected)/_hooks/use-posts";
+
+function CommentsSection({ postId }: { postId: string }) {
+  const { data, isLoading } = usePostCommentsQuery(postId);
+  const addComment = useAddCommentMutation(postId);
+  // ...
+}
+```
+
+**Utiliser quand :** commentaires, réactions, feed temps réel, pagination côté client, optimistic updates, polling, données qui changent sans navigation.
+
+#### Arbre de décision
 
 ```
-Lecture initiale de page ?
-├─ Oui → Server Component (fetch côté serveur, passer en props)
-└─ Non → Données dynamiques côté client ?
-         ├─ Oui → React Query hook (depuis _hooks/)
-         └─ Non → Mutation / soumission ?
-                  ├─ Oui → Server Action (depuis adapters/actions/)
-                  └─ Non → Tu n'as pas besoin de fetch
+La page se charge pour la première fois ?
+├─ Oui → Server Component : query CQRS côté serveur, passer en props
+└─ Non
+   L'utilisateur modifie des données ? (formulaire, bouton d'action)
+   ├─ Oui → Server Action : appeler l'action, revalidatePath automatique
+   └─ Non
+      Les données changent sans navigation ? (commentaires, réactions, polling)
+      ├─ Oui → React Query hook : useQuery/useMutation depuis _hooks/
+      └─ Non → Pas besoin de fetch, c'est déjà dans les props
 ```
+
+**INTERDIT :**
+- `fetch()` ou `apiFetch()` directement dans un composant
+- `useEffect` + `fetch` pour charger des données
+- Appeler une route API depuis le client alors qu'une Server Action existe
 
 ### 3. Design : coller au Figma pixel par pixel
 
