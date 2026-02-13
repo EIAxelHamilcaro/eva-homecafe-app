@@ -1,7 +1,11 @@
 "use client";
 
 import { Button } from "@packages/ui/components/ui/button";
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
+import {
+  useSettingsQuery,
+  useUpdateSettingsMutation,
+} from "@/app/(protected)/_hooks/use-settings";
 import { AboutSection } from "./about-section";
 import { AccountActionsSection } from "./account-actions-section";
 import { NotificationPreferencesSection } from "./notification-preferences-section";
@@ -25,74 +29,56 @@ const defaultSettings: SettingsState = {
 };
 
 export function SettingsForm() {
-  const [settings, setSettings] = useState<SettingsState>(defaultSettings);
-  const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [localSettings, setLocalSettings] = useState<SettingsState | null>(
+    null,
+  );
   const [success, setSuccess] = useState<string | null>(null);
 
-  const fetchSettings = useCallback(async () => {
-    try {
-      const res = await fetch("/api/v1/settings");
-      if (!res.ok) {
-        setError("Impossible de charger les paramètres");
-        return;
-      }
-      const data = await res.json();
-      setSettings({
-        emailNotifications: data.emailNotifications,
-        pushNotifications: data.pushNotifications,
-        notifyNewMessages: data.notifyNewMessages,
-        notifyFriendActivity: data.notifyFriendActivity,
-        notifyBadgesEarned: data.notifyBadgesEarned,
-        notifyJournalReminder: data.notifyJournalReminder,
-      });
-    } catch {
-      setError("Impossible de charger les paramètres");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const {
+    data: serverSettings,
+    isLoading,
+    error: loadError,
+  } = useSettingsQuery();
+  const updateSettings = useUpdateSettingsMutation();
 
-  useEffect(() => {
-    fetchSettings();
-  }, [fetchSettings]);
+  const settings: SettingsState = localSettings ?? {
+    emailNotifications:
+      serverSettings?.emailNotifications ?? defaultSettings.emailNotifications,
+    pushNotifications:
+      serverSettings?.pushNotifications ?? defaultSettings.pushNotifications,
+    notifyNewMessages:
+      serverSettings?.notifyNewMessages ?? defaultSettings.notifyNewMessages,
+    notifyFriendActivity:
+      serverSettings?.notifyFriendActivity ??
+      defaultSettings.notifyFriendActivity,
+    notifyBadgesEarned:
+      serverSettings?.notifyBadgesEarned ?? defaultSettings.notifyBadgesEarned,
+    notifyJournalReminder:
+      serverSettings?.notifyJournalReminder ??
+      defaultSettings.notifyJournalReminder,
+  };
 
   const handleChange = (
     field: keyof SettingsState,
     value: boolean | string,
   ) => {
-    setSettings((prev) => ({ ...prev, [field]: value }));
+    setLocalSettings((prev) => ({
+      ...(prev ?? settings),
+      [field]: value,
+    }));
     setSuccess(null);
   };
 
-  const handleSave = async () => {
-    setSubmitting(true);
-    setError(null);
+  const handleSave = () => {
     setSuccess(null);
-
-    try {
-      const res = await fetch("/api/v1/settings", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(settings),
-      });
-
-      if (!res.ok) {
-        const data = await res.json();
-        setError(data.error ?? "Impossible de sauvegarder les paramètres");
-        return;
-      }
-
-      setSuccess("Paramètres sauvegardés");
-    } catch {
-      setError("Impossible de sauvegarder les paramètres");
-    } finally {
-      setSubmitting(false);
-    }
+    updateSettings.mutate(settings, {
+      onSuccess: () => {
+        setSuccess("Paramètres sauvegardés");
+      },
+    });
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="space-y-4">
         <div className="h-64 animate-pulse rounded-lg bg-muted" />
@@ -102,6 +88,10 @@ export function SettingsForm() {
       </div>
     );
   }
+
+  const error =
+    loadError?.message ??
+    (updateSettings.isError ? updateSettings.error.message : null);
 
   return (
     <div className="space-y-4">
@@ -127,8 +117,14 @@ export function SettingsForm() {
         </div>
       )}
 
-      <Button onClick={handleSave} disabled={submitting} className="w-full">
-        {submitting ? "Sauvegarde..." : "Enregistrer les préférences"}
+      <Button
+        onClick={handleSave}
+        disabled={updateSettings.isPending}
+        className="w-full"
+      >
+        {updateSettings.isPending
+          ? "Sauvegarde..."
+          : "Enregistrer les préférences"}
       </Button>
 
       <AboutSection />

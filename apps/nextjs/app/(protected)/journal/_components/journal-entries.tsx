@@ -14,15 +14,13 @@ import {
 import { Globe, Lock, Maximize2, Pencil } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  startTransition,
-  useCallback,
-  useEffect,
-  useOptimistic,
-  useState,
-} from "react";
+import { startTransition, useOptimistic, useState } from "react";
 import { RichTextEditor } from "@/app/_components/rich-text-editor";
-import type { IGetJournalEntriesOutputDto } from "@/application/dto/journal/get-journal-entries.dto";
+import {
+  useEditJournalEntryMutation,
+  useJournalEntriesQuery,
+} from "@/app/(protected)/_hooks/use-journal";
+import { useTogglePrivacyMutation } from "@/app/(protected)/_hooks/use-posts";
 import type { IPostDto } from "@/application/dto/post/get-user-posts.dto";
 import { stripHtml, truncate } from "@/common/utils/text";
 
@@ -48,40 +46,9 @@ function formatTime(isoString: string): string {
 }
 
 export function JournalEntries() {
-  const [data, setData] = useState<IGetJournalEntriesOutputDto | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const fetchEntries = useCallback(async (opts?: { silent?: boolean }) => {
-    if (!opts?.silent) {
-      setLoading(true);
-      setError(null);
-    }
-    try {
-      const res = await fetch("/api/v1/journal?page=1&limit=10");
-      if (!res.ok) {
-        try {
-          const err = (await res.json()) as { error?: string };
-          setError(err.error ?? "Impossible de charger les entrées");
-        } catch {
-          setError("Impossible de charger les entrées");
-        }
-        return;
-      }
-      const json = (await res.json()) as IGetJournalEntriesOutputDto;
-      setData(json);
-    } catch {
-      setError("Impossible de charger les entrées");
-    } finally {
-      if (!opts?.silent) setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchEntries();
-    const handler = () => fetchEntries();
-    window.addEventListener("journal:post-created", handler);
-    return () => window.removeEventListener("journal:post-created", handler);
-  }, [fetchEntries]);
+  const { data, isLoading, error } = useJournalEntriesQuery(1);
+  const togglePrivacy = useTogglePrivacyMutation();
+  const editEntry = useEditJournalEntryMutation();
 
   const [optimisticToggles, setOptimisticToggle] = useOptimistic(
     {} as Record<string, boolean>,
@@ -101,29 +68,20 @@ export function JournalEntries() {
     setEditingPost(post);
   }
 
-  async function handleEditSubmit(data: { html: string; images: string[] }) {
+  async function handleEditSubmit(submitData: {
+    html: string;
+    images: string[];
+  }) {
     if (!editingPost) return;
-    const res = await fetch(`/api/v1/posts/${editingPost.id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        content: data.html,
-        isPrivate: editingPost.isPrivate,
-        images: data.images,
-      }),
+    await editEntry.mutateAsync({
+      postId: editingPost.id,
+      content: submitData.html,
+      images: submitData.images,
     });
-    if (!res.ok) {
-      const body = await res.json().catch(() => null);
-      throw new Error(
-        (body as { error?: string } | null)?.error ??
-          "Erreur lors de la sauvegarde",
-      );
-    }
     setEditingPost(null);
-    fetchEntries();
   }
 
-  async function togglePrivacy(
+  function handleTogglePrivacy(
     e: React.MouseEvent,
     postId: string,
     currentIsPrivate: boolean,
@@ -143,18 +101,7 @@ export function JournalEntries() {
       });
     }, 400);
 
-    try {
-      const res = await fetch(`/api/v1/posts/${postId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ isPrivate: !currentIsPrivate }),
-      });
-      if (res.ok) {
-        fetchEntries({ silent: true });
-      }
-    } catch {
-      fetchEntries({ silent: true });
-    }
+    togglePrivacy.mutate({ postId, isPrivate: !currentIsPrivate });
   }
 
   return (
@@ -178,7 +125,7 @@ export function JournalEntries() {
       </CardHeader>
 
       <CardContent className="max-h-[55vh] overflow-y-auto lg:h-[calc(100vh-26rem)] lg:max-h-none">
-        {loading && (
+        {isLoading && (
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
               <div key={i} className="h-32 animate-pulse rounded-xl bg-muted" />
@@ -188,11 +135,11 @@ export function JournalEntries() {
 
         {error && (
           <div className="rounded-xl border border-destructive/50 bg-destructive/10 p-4 text-center text-destructive">
-            {error}
+            {error.message}
           </div>
         )}
 
-        {!loading && !error && (!data || data.groups.length === 0) && (
+        {!isLoading && !error && (!data || data.groups.length === 0) && (
           <div className="rounded-xl border-12 border-homecafe-green/20 p-8 text-center">
             <p className="text-sm text-muted-foreground">
               Aucune entrée pour le moment
@@ -200,7 +147,7 @@ export function JournalEntries() {
           </div>
         )}
 
-        {!loading && !error && data && data.groups.length > 0 && (
+        {!isLoading && !error && data && data.groups.length > 0 && (
           <div className="space-y-3">
             {data.groups.flatMap((group) =>
               group.posts.map((post) => (
@@ -230,7 +177,7 @@ export function JournalEntries() {
                           <button
                             type="button"
                             onClick={(e) =>
-                              togglePrivacy(e, post.id, isPrivate)
+                              handleTogglePrivacy(e, post.id, isPrivate)
                             }
                             title={
                               isPrivate

@@ -7,8 +7,8 @@ import {
 } from "@packages/ui/components/ui/dialog";
 import { Globe, Lock, Pen, User } from "lucide-react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { createPostAction } from "@/adapters/actions/post.actions";
 import { RichTextEditor } from "@/app/_components/rich-text-editor";
 
 interface JournalWidgetClientProps {
@@ -28,30 +28,20 @@ export function JournalWidgetClient({
 }: JournalWidgetClientProps) {
   const [open, setOpen] = useState(false);
   const [isPrivate, setIsPrivate] = useState(true);
-  const router = useRouter();
 
   async function handleSubmit(data: { html: string; images: string[] }) {
-    const res = await fetch("/api/v1/posts", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        content: data.html,
-        isPrivate,
-        images: data.images,
-        createdAt: selectedDate,
-      }),
+    const result = await createPostAction({
+      content: data.html,
+      isPrivate,
+      images: data.images,
+      createdAt: selectedDate,
     });
 
-    if (!res.ok) {
-      const body = await res.json().catch(() => null);
-      throw new Error(
-        (body as { error?: string } | null)?.error ??
-          "Erreur lors de la sauvegarde",
-      );
+    if (!result.success) {
+      throw new Error(result.error);
     }
 
     setOpen(false);
-    router.refresh();
   }
 
   return (

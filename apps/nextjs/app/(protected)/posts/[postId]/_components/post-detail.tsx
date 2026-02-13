@@ -13,10 +13,17 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
-import type { IGetPostCommentsOutputDto } from "@/adapters/queries/post-comments.query";
-import type { IGetPostReactionsOutputDto } from "@/adapters/queries/post-reactions.query";
-import type { IGetPostDetailOutputDto } from "@/application/dto/post/get-post-detail.dto";
+import { useRef, useState } from "react";
+import {
+  useAddCommentMutation,
+  useDeleteCommentMutation,
+  useDeletePostMutation,
+  usePostCommentsQuery,
+  usePostDetailQuery,
+  usePostReactionsQuery,
+  useToggleReactionMutation,
+  useUpdateCommentMutation,
+} from "@/app/(protected)/_hooks/use-posts";
 
 function formatDateHeading(isoString: string): string {
   const date = new Date(isoString);
@@ -52,16 +59,6 @@ function formatRelativeTime(isoString: string): string {
   });
 }
 
-function hasUserLiked(
-  reactions: IGetPostReactionsOutputDto | null,
-  currentUserId: string,
-): boolean {
-  if (!reactions) return false;
-  return reactions.reactions.some(
-    (r) => r.emoji === "\u2764\uFE0F" && r.userId === currentUserId,
-  );
-}
-
 interface PostDetailProps {
   postId: string;
   currentUserId: string;
@@ -70,172 +67,77 @@ interface PostDetailProps {
 export function PostDetail({ postId, currentUserId }: PostDetailProps) {
   const router = useRouter();
   const commentInputRef = useRef<HTMLTextAreaElement>(null);
-  const [data, setData] = useState<IGetPostDetailOutputDto | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [deleting, setDeleting] = useState(false);
+
+  const { data, isLoading, error: postError } = usePostDetailQuery(postId);
+  const { data: reactions } = usePostReactionsQuery(postId);
+  const { data: comments } = usePostCommentsQuery(postId);
+
+  const toggleReaction = useToggleReactionMutation(postId);
+  const addComment = useAddCommentMutation(postId);
+  const deleteComment = useDeleteCommentMutation(postId);
+  const updateComment = useUpdateCommentMutation(postId);
+  const deletePost = useDeletePostMutation();
+
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [reactions, setReactions] = useState<IGetPostReactionsOutputDto | null>(
-    null,
-  );
-  const [togglingEmoji, setTogglingEmoji] = useState<string | null>(null);
-  const [comments, setComments] = useState<IGetPostCommentsOutputDto | null>(
-    null,
-  );
   const [commentText, setCommentText] = useState("");
-  const [submittingComment, setSubmittingComment] = useState(false);
-  const [deletingCommentId, setDeletingCommentId] = useState<string | null>(
-    null,
-  );
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editingCommentText, setEditingCommentText] = useState("");
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
-  const fetchReactions = useCallback(async () => {
-    try {
-      const res = await fetch(`/api/v1/posts/${postId}/reactions`);
-      if (res.ok) {
-        const json = (await res.json()) as IGetPostReactionsOutputDto;
-        setReactions(json);
-      }
-    } catch {}
-  }, [postId]);
-
-  const fetchComments = useCallback(async () => {
-    try {
-      const res = await fetch(`/api/v1/posts/${postId}/comments`);
-      if (res.ok) {
-        const json = (await res.json()) as IGetPostCommentsOutputDto;
-        setComments(json);
-      }
-    } catch {}
-  }, [postId]);
-
-  const handleToggleReaction = async (emoji: string) => {
-    if (togglingEmoji) return;
-    setTogglingEmoji(emoji);
-    try {
-      const res = await fetch(`/api/v1/posts/${postId}/reactions`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ emoji }),
-      });
-      if (res.ok) {
-        await fetchReactions();
-      }
-    } catch {
-    } finally {
-      setTogglingEmoji(null);
-    }
+  const handleToggleReaction = (emoji: string) => {
+    if (toggleReaction.isPending) return;
+    toggleReaction.mutate({ emoji });
   };
 
-  const handleSubmitComment = async () => {
+  const handleSubmitComment = () => {
     const trimmed = commentText.trim();
-    if (!trimmed || submittingComment) return;
-    setSubmittingComment(true);
-    try {
-      const res = await fetch(`/api/v1/posts/${postId}/comments`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content: trimmed }),
-      });
-      if (res.ok) {
-        setCommentText("");
-        await fetchComments();
-      }
-    } catch {
-    } finally {
-      setSubmittingComment(false);
-    }
+    if (!trimmed || addComment.isPending) return;
+    addComment.mutate(
+      { content: trimmed },
+      { onSuccess: () => setCommentText("") },
+    );
   };
 
-  const handleUpdateComment = async (commentId: string) => {
+  const handleUpdateComment = (commentId: string) => {
     const trimmed = editingCommentText.trim();
     if (!trimmed) return;
-    try {
-      const res = await fetch(`/api/v1/posts/${postId}/comments/${commentId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content: trimmed }),
-      });
-      if (res.ok) {
-        setEditingCommentId(null);
-        setEditingCommentText("");
-        await fetchComments();
-      }
-    } catch {}
+    updateComment.mutate(
+      { commentId, content: trimmed },
+      {
+        onSuccess: () => {
+          setEditingCommentId(null);
+          setEditingCommentText("");
+        },
+      },
+    );
   };
 
-  const handleDeleteComment = async (commentId: string) => {
-    if (deletingCommentId) return;
-    setDeletingCommentId(commentId);
-    try {
-      const res = await fetch(`/api/v1/posts/${postId}/comments/${commentId}`, {
-        method: "DELETE",
-      });
-      if (res.ok) {
-        await fetchComments();
-      }
-    } catch {
-    } finally {
-      setDeletingCommentId(null);
-    }
+  const handleDeleteComment = (commentId: string) => {
+    if (deleteComment.isPending) return;
+    deleteComment.mutate({ commentId });
   };
 
-  const handleDelete = async () => {
-    setDeleting(true);
-    try {
-      const res = await fetch(`/api/v1/posts/${postId}`, {
-        method: "DELETE",
-      });
-      if (!res.ok) {
-        let errMsg = "Impossible de supprimer la publication";
-        try {
-          const err = await res.json();
-          errMsg = err.error ?? errMsg;
-        } catch {}
-        setError(errMsg);
-        setDeleting(false);
-        setShowDeleteConfirm(false);
-        return;
-      }
-      router.push(data?.isPrivate ? "/journal" : "/posts");
-    } catch {
-      setError("Impossible de supprimer la publication");
-      setDeleting(false);
-      setShowDeleteConfirm(false);
-    }
+  const handleDelete = () => {
+    setDeleteError(null);
+    deletePost.mutate(
+      { postId },
+      {
+        onSuccess: () => {
+          router.push(data?.isPrivate ? "/journal" : "/posts");
+        },
+        onError: (err) => {
+          setDeleteError(
+            err.message || "Impossible de supprimer la publication",
+          );
+          setShowDeleteConfirm(false);
+        },
+      },
+    );
   };
 
-  const fetchPost = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch(`/api/v1/posts/${postId}`);
-      if (!res.ok) {
-        let errMsg = "Impossible de charger la publication";
-        try {
-          const err = await res.json();
-          errMsg = err.error ?? errMsg;
-        } catch {}
-        setError(errMsg);
-        return;
-      }
-      const json = (await res.json()) as IGetPostDetailOutputDto;
-      setData(json);
-    } catch {
-      setError("Impossible de charger la publication");
-    } finally {
-      setLoading(false);
-    }
-  }, [postId]);
+  const error = postError?.message ?? deleteError;
 
-  useEffect(() => {
-    fetchPost();
-    fetchReactions();
-    fetchComments();
-  }, [fetchPost, fetchReactions, fetchComments]);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="mx-auto max-w-2xl space-y-4 px-4 py-8">
         <div className="h-8 w-48 animate-pulse rounded bg-muted" />
@@ -244,7 +146,7 @@ export function PostDetail({ postId, currentUserId }: PostDetailProps) {
     );
   }
 
-  if (error) {
+  if (error && !data) {
     return (
       <div className="mx-auto max-w-2xl space-y-4 px-4 py-8">
         <button
@@ -267,7 +169,11 @@ export function PostDetail({ postId, currentUserId }: PostDetailProps) {
 
   const isOwner = data.userId === currentUserId;
   const likeCount = reactions?.totalCount ?? 0;
-  const userLiked = hasUserLiked(reactions, currentUserId);
+  const userLiked = reactions
+    ? reactions.reactions.some(
+        (r) => r.emoji === "\u2764\uFE0F" && r.userId === currentUserId,
+      )
+    : false;
   const commentList = comments?.comments ?? [];
 
   return (
@@ -327,7 +233,7 @@ export function PostDetail({ postId, currentUserId }: PostDetailProps) {
           <button
             type="button"
             onClick={() => handleToggleReaction("\u2764\uFE0F")}
-            disabled={togglingEmoji !== null}
+            disabled={toggleReaction.isPending}
             className="flex items-center gap-1.5 p-2 transition-colors disabled:opacity-50"
           >
             <Heart
@@ -373,10 +279,10 @@ export function PostDetail({ postId, currentUserId }: PostDetailProps) {
             <button
               type="button"
               onClick={handleSubmitComment}
-              disabled={!commentText.trim() || submittingComment}
+              disabled={!commentText.trim() || addComment.isPending}
               className="rounded-full bg-homecafe-pink px-6 py-2 text-sm font-medium text-white transition-colors hover:bg-homecafe-pink-dark disabled:opacity-50"
             >
-              {submittingComment ? "Envoi..." : "Envoyer"}
+              {addComment.isPending ? "Envoi..." : "Envoyer"}
             </button>
           </div>
         </div>
@@ -467,7 +373,7 @@ export function PostDetail({ postId, currentUserId }: PostDetailProps) {
                         <button
                           type="button"
                           onClick={() => handleDeleteComment(comment.id)}
-                          disabled={deletingCommentId === comment.id}
+                          disabled={deleteComment.isPending}
                           title="Supprimer"
                           className="p-1 text-muted-foreground transition-colors hover:text-destructive disabled:opacity-50"
                         >
@@ -502,6 +408,12 @@ export function PostDetail({ postId, currentUserId }: PostDetailProps) {
         </div>
       )}
 
+      {deleteError && (
+        <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-center text-destructive">
+          {deleteError}
+        </div>
+      )}
+
       {showDeleteConfirm && (
         <div className="rounded-lg border border-border bg-white p-6 dark:bg-card">
           <p className="mb-4 text-sm text-foreground">
@@ -512,15 +424,15 @@ export function PostDetail({ postId, currentUserId }: PostDetailProps) {
             <button
               type="button"
               onClick={handleDelete}
-              disabled={deleting}
+              disabled={deletePost.isPending}
               className="rounded-full bg-destructive px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-destructive/90 disabled:opacity-50"
             >
-              {deleting ? "Suppression..." : "Confirmer"}
+              {deletePost.isPending ? "Suppression..." : "Confirmer"}
             </button>
             <button
               type="button"
               onClick={() => setShowDeleteConfirm(false)}
-              disabled={deleting}
+              disabled={deletePost.isPending}
               className="rounded-full border border-border px-5 py-2 text-sm transition-colors hover:bg-muted disabled:opacity-50"
             >
               Annuler

@@ -3,8 +3,11 @@
 import { Heart, Lock, MessageCircleMore, Unlock } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
-import type { IGetUserPostsOutputDto } from "@/application/dto/post/get-user-posts.dto";
+import { useState } from "react";
+import {
+  usePostsQuery,
+  useTogglePrivacyMutation,
+} from "@/app/(protected)/_hooks/use-posts";
 import { stripHtml, truncate } from "@/common/utils/text";
 
 function formatDateHeading(isoString: string): string {
@@ -25,56 +28,21 @@ function formatTime(isoString: string): string {
 }
 
 export function PostsList() {
-  const [data, setData] = useState<IGetUserPostsOutputDto | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
+  const { data, isLoading, error } = usePostsQuery(page);
+  const togglePrivacy = useTogglePrivacyMutation();
 
-  const fetchPosts = useCallback(async (currentPage: number) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch(`/api/v1/posts?page=${currentPage}&limit=10`);
-      if (!res.ok) {
-        const err = await res.json();
-        setError(err.error ?? "Failed to load posts");
-        return;
-      }
-      const json = (await res.json()) as IGetUserPostsOutputDto;
-      setData(json);
-    } catch {
-      setError("Failed to load posts");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchPosts(page);
-  }, [page, fetchPosts]);
-
-  async function togglePrivacy(
+  function handleTogglePrivacy(
     e: React.MouseEvent,
     postId: string,
     currentIsPrivate: boolean,
   ) {
     e.preventDefault();
     e.stopPropagation();
-    try {
-      const res = await fetch(`/api/v1/posts/${postId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ isPrivate: !currentIsPrivate }),
-      });
-      if (res.ok) {
-        fetchPosts(page);
-      }
-    } catch {
-      /* empty */
-    }
+    togglePrivacy.mutate({ postId, isPrivate: !currentIsPrivate });
   }
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="space-y-4">
         {[1, 2, 3].map((i) => (
@@ -87,7 +55,7 @@ export function PostsList() {
   if (error) {
     return (
       <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-center text-destructive">
-        {error}
+        {error.message}
       </div>
     );
   }
@@ -128,7 +96,7 @@ export function PostsList() {
 
             <button
               type="button"
-              onClick={(e) => togglePrivacy(e, post.id, post.isPrivate)}
+              onClick={(e) => handleTogglePrivacy(e, post.id, post.isPrivate)}
               title={
                 post.isPrivate
                   ? "Privé — cliquer pour rendre public"

@@ -7,7 +7,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { IGetPostDetailOutputDto } from "@/application/dto/post/get-post-detail.dto";
+import { updatePostAction } from "@/adapters/actions/post.actions";
+import { usePostDetailQuery } from "@/app/(protected)/_hooks/use-posts";
 
 export function EditPostForm({
   postId,
@@ -21,9 +22,11 @@ export function EditPostForm({
   const [images, setImages] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [initialized, setInitialized] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const { data: post, isLoading: postLoading } = usePostDetailQuery(postId);
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -37,37 +40,17 @@ export function EditPostForm({
   });
 
   useEffect(() => {
-    const fetchPost = async () => {
-      try {
-        const res = await fetch(`/api/v1/posts/${postId}`);
-        if (!res.ok) {
-          let errMsg = "Failed to load post";
-          try {
-            const err = await res.json();
-            errMsg = err.error ?? errMsg;
-          } catch {}
-          setError(errMsg);
-          return;
-        }
-        const post = (await res.json()) as IGetPostDetailOutputDto;
-        if (post.userId !== currentUserId) {
-          setError("You do not have permission to edit this post");
-          return;
-        }
-        editor?.commands.setContent(post.content);
-        setIsPrivate(post.isPrivate);
-        setImages(post.images);
-      } catch {
-        setError("Failed to load post");
-      } finally {
-        setLoading(false);
+    if (post && editor && !initialized) {
+      if (post.userId !== currentUserId) {
+        setError("You do not have permission to edit this post");
+        return;
       }
-    };
-
-    if (editor) {
-      fetchPost();
+      editor.commands.setContent(post.content);
+      setIsPrivate(post.isPrivate);
+      setImages(post.images);
+      setInitialized(true);
     }
-  }, [postId, editor, currentUserId]);
+  }, [post, editor, currentUserId, initialized]);
 
   const handleImageUpload = useCallback(async (file: File) => {
     setIsUploading(true);
@@ -142,23 +125,15 @@ export function EditPostForm({
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(`/api/v1/posts/${postId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          content,
-          isPrivate,
-          images,
-        }),
+      const result = await updatePostAction(postId, {
+        content,
+        isPrivate,
+        images,
       });
 
-      if (!response.ok) {
-        let errMsg = "Failed to update post";
-        try {
-          const data = await response.json();
-          errMsg = data.error ?? errMsg;
-        } catch {}
-        throw new Error(errMsg);
+      if (!result.success) {
+        setError(result.error);
+        return;
       }
 
       router.push(`/posts/${postId}`);
@@ -169,7 +144,7 @@ export function EditPostForm({
     }
   };
 
-  if (loading) {
+  if (postLoading && !initialized) {
     return (
       <div className="space-y-4">
         <div className="h-8 w-48 animate-pulse rounded bg-muted" />

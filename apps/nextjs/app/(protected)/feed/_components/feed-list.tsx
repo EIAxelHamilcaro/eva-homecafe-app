@@ -3,8 +3,8 @@
 import { Heart, Lock, MessageCircleMore } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
-import type { IGetFriendFeedOutputDto } from "@/application/dto/feed/get-friend-feed.dto";
+import { useState } from "react";
+import { useUnifiedFeedQuery } from "@/app/(protected)/_hooks/use-feed";
 import { stripHtml, truncate } from "@/common/utils/text";
 
 function formatDateHeading(isoString: string): string {
@@ -29,37 +29,10 @@ interface FeedListProps {
 }
 
 export function FeedList({ currentUserId }: FeedListProps) {
-  const [data, setData] = useState<IGetFriendFeedOutputDto | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
+  const { data, isLoading, error } = useUnifiedFeedQuery(page);
 
-  const fetchFeed = useCallback(async (currentPage: number) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch(
-        `/api/v1/feed/unified?page=${currentPage}&limit=10`,
-      );
-      if (!res.ok) {
-        const err = await res.json();
-        setError(err.error ?? "Impossible de charger le feed");
-        return;
-      }
-      const json = (await res.json()) as IGetFriendFeedOutputDto;
-      setData(json);
-    } catch {
-      setError("Impossible de charger le feed");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchFeed(page);
-  }, [page, fetchFeed]);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="space-y-4">
         {[1, 2, 3].map((i) => (
@@ -72,7 +45,7 @@ export function FeedList({ currentUserId }: FeedListProps) {
   if (error) {
     return (
       <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-center text-destructive">
-        {error}
+        {error.message}
       </div>
     );
   }

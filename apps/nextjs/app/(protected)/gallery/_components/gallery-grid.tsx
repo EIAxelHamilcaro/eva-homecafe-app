@@ -2,11 +2,12 @@
 
 import { Mountain } from "lucide-react";
 import Image from "next/image";
-import { useCallback, useEffect, useState } from "react";
-import type {
-  GalleryPhotoDto,
-  GetUserGalleryOutputDto,
-} from "@/adapters/queries/gallery.query";
+import { useState } from "react";
+import type { GalleryPhotoDto } from "@/adapters/queries/gallery.query";
+import {
+  useDeletePhotoMutation,
+  useGalleryQuery,
+} from "@/app/(protected)/_hooks/use-gallery";
 import { PhotoViewModal } from "./photo-view-modal";
 
 const TALL_POSITIONS = new Set([0, 5]);
@@ -16,70 +17,28 @@ function isTall(index: number): boolean {
 }
 
 export function GalleryGrid() {
-  const [data, setData] = useState<GetUserGalleryOutputDto | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [selectedPhoto, setSelectedPhoto] = useState<GalleryPhotoDto | null>(
     null,
   );
 
-  const loadGallery = useCallback(async (pageNum: number) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch(`/api/v1/gallery?page=${pageNum}&limit=20`);
-      if (!res.ok) {
-        setError("Impossible de charger la galerie");
-        return;
-      }
-      const json: GetUserGalleryOutputDto = await res.json();
-      setData(json);
-    } catch {
-      setError("Impossible de charger la galerie");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const { data, isLoading, error } = useGalleryQuery(page);
+  const deletePhoto = useDeletePhotoMutation();
 
-  useEffect(() => {
-    loadGallery(page);
-  }, [page, loadGallery]);
-
-  const handleDelete = useCallback(async (photoId: string) => {
-    const res = await fetch(`/api/v1/gallery/${photoId}`, {
-      method: "DELETE",
-    });
-
-    if (!res.ok) {
-      const json = await res.json();
-      throw new Error(json.error || "Impossible de supprimer la photo");
-    }
-
-    setData((prev) => {
-      if (!prev) return prev;
-      return {
-        ...prev,
-        photos: prev.photos.filter((p) => p.id !== photoId),
-        pagination: {
-          ...prev.pagination,
-          total: prev.pagination.total - 1,
-        },
-      };
-    });
-
+  const handleDelete = async (photoId: string) => {
+    await deletePhoto.mutateAsync({ photoId });
     setSelectedPhoto(null);
-  }, []);
+  };
 
-  if (loading && !data) {
+  if (isLoading && !data) {
     return (
       <div
         className="grid grid-cols-2 gap-3 sm:grid-cols-3"
         style={{ gridAutoRows: "8rem" }}
       >
-        {Array.from({ length: 6 }).map((_, i) => (
+        {["s1", "s2", "s3", "s4", "s5", "s6"].map((id, i) => (
           <div
-            key={`skeleton-${i}`}
+            key={id}
             className={`animate-pulse rounded-xl bg-muted ${isTall(i) ? "row-span-2" : ""}`}
           />
         ))}
@@ -90,10 +49,10 @@ export function GalleryGrid() {
   if (error) {
     return (
       <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-center text-red-700 text-sm">
-        <p>{error}</p>
+        <p>{error.message}</p>
         <button
           type="button"
-          onClick={() => loadGallery(page)}
+          onClick={() => setPage(page)}
           className="mt-3 rounded-full bg-red-600 px-4 py-1.5 text-white text-xs hover:bg-red-700"
         >
           Réessayer
@@ -147,7 +106,7 @@ export function GalleryGrid() {
           <button
             type="button"
             onClick={() => setPage((p) => Math.max(1, p - 1))}
-            disabled={!data.pagination.hasPreviousPage || loading}
+            disabled={!data.pagination.hasPreviousPage || isLoading}
             className="rounded-full border px-4 py-1.5 text-sm disabled:cursor-not-allowed disabled:opacity-50"
           >
             Précédent
@@ -158,7 +117,7 @@ export function GalleryGrid() {
           <button
             type="button"
             onClick={() => setPage((p) => p + 1)}
-            disabled={!data.pagination.hasNextPage || loading}
+            disabled={!data.pagination.hasNextPage || isLoading}
             className="rounded-full border px-4 py-1.5 text-sm disabled:cursor-not-allowed disabled:opacity-50"
           >
             Suivant

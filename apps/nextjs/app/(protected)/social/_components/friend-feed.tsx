@@ -1,50 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
-import type { IGetFriendFeedOutputDto } from "@/application/dto/feed/get-friend-feed.dto";
+import { useState } from "react";
+import { useFriendFeedQuery } from "@/app/(protected)/_hooks/use-feed";
 import { FeedPostCard } from "./feed-post-card";
 
 export function FriendFeed() {
-  const [data, setData] = useState<IGetFriendFeedOutputDto | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
-
-  const fetchFeed = useCallback(async (currentPage: number) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const params = new URLSearchParams();
-      params.set("page", String(currentPage));
-      params.set("limit", "20");
-
-      const res = await fetch(`/api/v1/feed?${params.toString()}`);
-      if (!res.ok) {
-        try {
-          const err = (await res.json()) as { error?: string };
-          setError(err.error ?? "Failed to load feed");
-        } catch {
-          setError("Failed to load feed");
-        }
-        return;
-      }
-      const json = (await res.json()) as IGetFriendFeedOutputDto;
-      setData(json);
-    } catch {
-      setError("Failed to load feed");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchFeed(page);
-  }, [page, fetchFeed]);
+  const { data, isLoading, error } = useFriendFeedQuery(page);
 
   return (
     <div>
-      {loading && (
+      {isLoading && (
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
             <div key={i} className="h-40 animate-pulse rounded-lg bg-muted" />
@@ -54,11 +21,11 @@ export function FriendFeed() {
 
       {error && (
         <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-center text-destructive">
-          {error}
+          {error.message}
         </div>
       )}
 
-      {!loading && !error && data && !data.hasFriends && (
+      {!isLoading && !error && data && !data.hasFriends && (
         <div className="rounded-lg border border-dashed p-8 text-center">
           <p className="mb-2 text-lg font-medium text-muted-foreground">
             No posts in your feed yet
@@ -76,7 +43,7 @@ export function FriendFeed() {
         </div>
       )}
 
-      {!loading &&
+      {!isLoading &&
         !error &&
         data &&
         data.hasFriends &&
@@ -91,7 +58,7 @@ export function FriendFeed() {
           </div>
         )}
 
-      {!loading && !error && data && data.data.length > 0 && (
+      {!isLoading && !error && data && data.data.length > 0 && (
         <div className="space-y-4">
           {data.data.map((feedPost) => (
             <FeedPostCard key={feedPost.id} post={feedPost} />

@@ -5,6 +5,7 @@ import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "next/image";
 import { useCallback, useRef, useState } from "react";
+import { createPostAction } from "@/adapters/actions/post.actions";
 
 export function CreatePostForm() {
   const [isPrivate, setIsPrivate] = useState(false);
@@ -99,19 +100,15 @@ export function CreatePostForm() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/v1/posts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          content,
-          isPrivate,
-          images,
-        }),
+      const result = await createPostAction({
+        content,
+        isPrivate,
+        images,
       });
 
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error ?? "Failed to create post");
+      if (!result.success) {
+        setError(result.error);
+        return;
       }
 
       editor?.commands.clearContent();

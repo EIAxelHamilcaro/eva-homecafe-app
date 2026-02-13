@@ -3,71 +3,14 @@
 import { Button } from "@packages/ui/components/ui/button";
 import { Card } from "@packages/ui/components/ui/card";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useMoodboardsQuery } from "@/app/(protected)/_hooks/use-moodboard";
 import { MoodboardDetail } from "./moodboard-detail";
 
-interface MoodboardPinPreview {
-  id: string;
-  type: string;
-  imageUrl: string | null;
-  color: string | null;
-  position: number;
-}
-
-interface MoodboardListItem {
-  id: string;
-  title: string;
-  pinCount: number;
-  previewPins: MoodboardPinPreview[];
-  createdAt: string;
-}
-
-interface PaginationData {
-  page: number;
-  limit: number;
-  total: number;
-  totalPages: number;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-}
-
-interface MoodboardsResponse {
-  moodboards: MoodboardListItem[];
-  pagination: PaginationData;
-}
-
 export function MoodboardGrid() {
-  const [data, setData] = useState<MoodboardsResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-
-  useEffect(() => {
-    async function fetchMoodboards() {
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await fetch(
-          `/api/v1/moodboards?page=${page}&limit=20`,
-        );
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || "Failed to load moodboards");
-        }
-        const result: MoodboardsResponse = await response.json();
-        setData(result);
-      } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "Failed to load moodboards",
-        );
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchMoodboards();
-  }, [page]);
+  const { data, isLoading, error } = useMoodboardsQuery(page);
 
   if (selectedId) {
     return (
@@ -78,7 +21,7 @@ export function MoodboardGrid() {
     );
   }
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {["sk-1", "sk-2", "sk-3", "sk-4", "sk-5", "sk-6"].map((key) => (
@@ -91,7 +34,7 @@ export function MoodboardGrid() {
   if (error) {
     return (
       <div className="flex flex-col items-center gap-4 py-12 text-center">
-        <p className="text-destructive">{error}</p>
+        <p className="text-destructive">{error.message}</p>
         <Button variant="outline" onClick={() => setPage(page)}>
           Retry
         </Button>
