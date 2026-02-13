@@ -584,6 +584,127 @@ After running `pnpm ui:add <component>`, generated files may contain broken impo
 3. Fix any `utils` import paths to `../../libs/utils`
 4. Run `pnpm fix` to format
 
+## Frontend Rules (CRITICAL)
+
+### 1. TOUJOURS utiliser les composants shadcn/ui
+
+**JAMAIS de `<button>`, `<input>`, `<select>` natifs.** Utiliser les composants de `@packages/ui/`.
+
+Composants disponibles :
+- `Button` — `@packages/ui/components/ui/button`
+- `Input` — `@packages/ui/components/ui/input`
+- `Textarea` — `@packages/ui/components/ui/textarea`
+- `Label` — `@packages/ui/components/ui/label`
+- `Card`, `CardHeader`, `CardContent`, `CardFooter` — `@packages/ui/components/ui/card`
+- `Dialog`, `DialogTrigger`, `DialogContent`, etc. — `@packages/ui/components/ui/dialog`
+- `Select`, `SelectTrigger`, `SelectContent`, `SelectItem` — `@packages/ui/components/ui/select`
+- `Tabs`, `TabsList`, `TabsTrigger`, `TabsContent` — `@packages/ui/components/ui/tabs`
+- `Badge` — `@packages/ui/components/ui/badge`
+- `Checkbox` — `@packages/ui/components/ui/checkbox`
+- `Switch` — `@packages/ui/components/ui/switch`
+- `Accordion`, `AccordionItem`, `AccordionTrigger`, `AccordionContent` — `@packages/ui/components/ui/accordion`
+- `AlertDialog` — `@packages/ui/components/ui/alert-dialog`
+- `DropdownMenu` — `@packages/ui/components/ui/dropdown-menu`
+- `Popover` — `@packages/ui/components/ui/popover`
+- `Calendar` — `@packages/ui/components/ui/calendar`
+- `Progress` — `@packages/ui/components/ui/progress`
+- `Slider` — `@packages/ui/components/ui/slider`
+- `Separator` — `@packages/ui/components/ui/separator`
+- `RadioGroup` — `@packages/ui/components/ui/radio-group`
+- `Form` (react-hook-form) — `@packages/ui/components/ui/form`
+- `Chart` (recharts) — `@packages/ui/components/ui/chart`
+
+### 2. Data fetching : Server Components + React Query + Server Actions
+
+**Pas de `fetch()` brut dans les composants.** Voici quand utiliser quoi :
+
+#### Server Components (par défaut pour les lectures)
+```typescript
+// page.tsx — Server Component, fetch direct côté serveur
+export default async function PostsPage() {
+  const session = await requireAuth();
+  const posts = await getUserPostsQuery(session.user.id);
+  return <PostsList initialData={posts} />;
+}
+```
+
+#### React Query (pour les données dynamiques côté client)
+Hooks déjà disponibles dans `app/(protected)/_hooks/` :
+- `use-posts.ts` — usePostsQuery, usePostDetailQuery, useToggleReactionMutation, etc.
+- `use-feed.ts` — useFeedQuery
+- `use-gallery.ts` — useGalleryQuery
+- `use-boards.ts` — useBoardsQuery
+- `use-journal.ts` — useJournalQuery
+- `use-mood.ts` — useMoodQuery
+- `use-moodboard.ts` — useMoodboardQuery
+- `use-notifications.ts` — useNotificationsQuery
+- `use-settings.ts` — useSettingsQuery
+
+**Utiliser ces hooks** pour :
+- Données temps réel (commentaires, réactions, feed)
+- Pagination côté client
+- Optimistic updates
+- Invalidation après mutation
+
+#### Server Actions (pour les mutations/formulaires)
+Actions déjà disponibles dans `src/adapters/actions/` :
+- `post.actions.ts` — createPostAction, updatePostAction, deletePostAction
+- `mood.actions.ts`
+- `gallery.actions.ts`
+- `moodboard.actions.ts`
+- `profile.actions.ts`
+- `settings.actions.ts`
+- `auth.actions.ts`
+
+**Utiliser les Server Actions** pour :
+- Soumission de formulaires
+- Mutations simples (create, update, delete)
+- Actions qui nécessitent `revalidatePath`
+
+```typescript
+// Pattern : Server Action dans un formulaire
+"use client";
+import { createPostAction } from "@/adapters/actions/post.actions";
+
+function CreatePostForm() {
+  async function handleSubmit(formData: FormData) {
+    const result = await createPostAction({
+      content: formData.get("content") as string,
+      isPrivate: false,
+    });
+    if (!result.success) { /* gérer erreur */ }
+  }
+  return <form action={handleSubmit}>...</form>;
+}
+```
+
+#### Arbre de décision data fetching
+
+```
+Lecture initiale de page ?
+├─ Oui → Server Component (fetch côté serveur, passer en props)
+└─ Non → Données dynamiques côté client ?
+         ├─ Oui → React Query hook (depuis _hooks/)
+         └─ Non → Mutation / soumission ?
+                  ├─ Oui → Server Action (depuis adapters/actions/)
+                  └─ Non → Tu n'as pas besoin de fetch
+```
+
+### 3. Design : coller au Figma pixel par pixel
+
+- **Consulter le Figma** avant chaque page (liens en haut de ce fichier)
+- Respecter les spacings, couleurs, tailles de police, border-radius EXACTS du Figma
+- Ne PAS improviser le design — si c'est pas dans le Figma, demander
+- Utiliser Tailwind pour le styling, les valeurs doivent matcher le Figma
+- Tester le responsive (mobile-first → tablet → desktop)
+
+### 4. Composants : pas de demi-mesure
+
+- Chaque feature doit être **100% branchée** — pas de placeholder, pas de TODO visible
+- Si un bouton existe, il doit fonctionner
+- Si une liste existe, elle doit être connectée aux vraies données
+- Loading states, empty states, error states : tous gérés
+
 ## Monorepo
 
 - `apps/nextjs/` - Web + API
