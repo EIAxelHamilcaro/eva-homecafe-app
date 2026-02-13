@@ -50,7 +50,7 @@ async function ProfileData() {
       profile={profile}
       earnedRewardsCount={earnedCount}
       totalRewardsCount={totalCount}
-      earnedBadges={badges.filter((b) => b.earned).slice(0, 3)}
+      earnedBadges={allRewards.filter((r) => r.earned).slice(0, 3)}
       allRewards={allRewards}
     />
   );

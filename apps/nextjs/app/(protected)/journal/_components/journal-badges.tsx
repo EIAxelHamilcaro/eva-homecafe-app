@@ -37,7 +37,7 @@ function BadgePreview({ badge }: { badge: RewardCollectionItemDto }) {
   const streakImage = STREAK_BADGE_IMAGE[badge.key];
   const emojiBadge = EMOJI_BADGES[badge.key];
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center gap-1.5">
       {streakImage ? (
         <Image
           src={streakImage}
@@ -53,6 +53,9 @@ function BadgePreview({ badge }: { badge: RewardCollectionItemDto }) {
           <span className="text-2xl">{emojiBadge?.emoji ?? "🏅"}</span>
         </div>
       )}
+      <span className="max-w-20 text-center text-[10px] font-medium leading-tight text-foreground">
+        {badge.name}
+      </span>
     </div>
   );
 }

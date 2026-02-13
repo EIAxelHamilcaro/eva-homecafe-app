@@ -369,7 +369,7 @@ export function ProfileContent({
         </div>
 
         {/* Récompenses */}
-        <Card>
+        <Card className="border-0">
           <CardContent className="p-6">
             <h2 className="font-semibold text-lg">Récompenses</h2>
             <p className="text-xs text-muted-foreground">
@@ -381,24 +381,30 @@ export function ProfileContent({
                   const streakImage = STREAK_BADGE_IMAGE[badge.key];
                   const emojiBadge = EMOJI_BADGES[badge.key];
                   return (
-                    <div key={badge.id} className="flex flex-col items-center">
+                    <div
+                      key={badge.id}
+                      className="flex flex-col items-center gap-1.5"
+                    >
                       {streakImage ? (
                         <Image
                           src={streakImage}
                           alt={badge.name}
-                          width={88}
-                          height={88}
+                          width={72}
+                          height={72}
                           className="object-contain"
                         />
                       ) : (
                         <div
-                          className={`flex h-[88px] w-[88px] items-center justify-center rounded-2xl ${emojiBadge?.bg ?? "bg-gray-100"}`}
+                          className={`flex h-[72px] w-[72px] items-center justify-center rounded-2xl ${emojiBadge?.bg ?? "bg-gray-100"}`}
                         >
-                          <span className="text-3xl">
+                          <span className="text-2xl">
                             {emojiBadge?.emoji ?? "🏅"}
                           </span>
                         </div>
                       )}
+                      <span className="max-w-20 text-center text-[10px] font-medium leading-tight text-foreground">
+                        {badge.name}
+                      </span>
                     </div>
                   );
                 })
@@ -413,21 +419,21 @@ export function ProfileContent({
                       key={src}
                       src={src}
                       alt="Badge"
-                      width={88}
-                      height={88}
+                      width={72}
+                      height={72}
                       className="object-contain opacity-30 grayscale"
                     />
                   ))}
                 </div>
               )}
             </div>
-            <Button
-              size="sm"
-              className="mt-4 rounded-full bg-homecafe-pink px-6 text-white hover:bg-homecafe-pink/90"
+            <button
+              type="button"
               onClick={() => setShowRewardsDialog(true)}
+              className="mt-4 inline-block rounded-full bg-homecafe-pink px-6 py-1.5 text-sm font-medium text-white hover:opacity-90"
             >
               Voir tout
-            </Button>
+            </button>
           </CardContent>
         </Card>
       </div>

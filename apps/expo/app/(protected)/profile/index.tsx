@@ -22,6 +22,7 @@ import {
 import QRCode from "react-native-qrcode-svg";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "src/providers/auth-provider";
+import { JournalBadges } from "@/components/journal/journal-badges";
 import { languageOptions, timeFormatOptions } from "@/types/settings";
 
 export default function ProfileScreen() {
@@ -176,46 +177,9 @@ export default function ProfileScreen() {
             </CardContent>
           </Card>
 
-          <Card className="mb-4">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg">Badges</CardTitle>
-              <Text className="text-xs text-muted-foreground">
-                Tous les badges que tu as obtenu en tenant un journal régulier
-              </Text>
-            </CardHeader>
-            <CardContent>
-              <View className="flex-row justify-around py-4">
-                <View className="items-center">
-                  <View className="mb-2 h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-red-100">
-                    <View className="h-16 w-16 items-center justify-center rounded-full bg-gradient-to-b from-red-400 to-red-600">
-                      <Text className="text-xs font-bold text-white">7</Text>
-                      <Text className="text-xs font-bold text-white">
-                        JOURS
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-                <View className="items-center">
-                  <View className="mb-2 h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-purple-100">
-                    <View className="h-16 w-16 items-center justify-center rounded-full bg-gradient-to-b from-purple-400 to-purple-600">
-                      <Text className="text-xs font-bold text-white">14</Text>
-                      <Text className="text-xs font-bold text-white">
-                        JOURS
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-                <View className="items-center">
-                  <View className="mb-2 h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-blue-100">
-                    <View className="h-16 w-16 items-center justify-center rounded-full bg-gradient-to-b from-blue-400 to-blue-600">
-                      <Text className="text-xs font-bold text-white">1</Text>
-                      <Text className="text-xs font-bold text-white">MOIS</Text>
-                    </View>
-                  </View>
-                </View>
-              </View>
-            </CardContent>
-          </Card>
+          <View className="mb-4">
+            <JournalBadges />
+          </View>
 
           <Card className="mb-4">
             <CardHeader className="pb-2">

@@ -1,182 +1,137 @@
 import { type Href, useRouter } from "expo-router";
-import { Flame, NotebookPen, Plus } from "lucide-react-native";
-import { useState } from "react";
-import { ActivityIndicator, Text, View } from "react-native";
+import { Maximize2 } from "lucide-react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { type PostData, PostFeed } from "@/components/journal/post-feed";
-import { Button, Logo } from "@/components/ui";
+import { JournalBadges } from "@/components/journal/journal-badges";
+import { JournalEntryCard } from "@/components/journal/journal-entry-card";
+import { JournalGallery } from "@/components/journal/journal-gallery";
+import { JournalHeader } from "@/components/journal/journal-header";
 import { useJournalEntries } from "@/lib/api/hooks/use-journal";
-import { useJournalStreak } from "@/lib/api/hooks/use-journal-streak";
-import { useTogglePostReaction } from "@/lib/api/hooks/use-posts";
-import {
-  formatPostDate,
-  formatPostTime,
-  stripHtml,
-} from "@/lib/utils/post-format";
-import type { Post } from "@/types/post";
+import { colors } from "@/src/config/colors";
 
-function mapPostToPostData(post: Post, isLiked: boolean): PostData {
-  return {
-    id: post.id,
-    date: formatPostDate(post.createdAt),
-    time: formatPostTime(post.createdAt),
-    content: stripHtml(post.content),
-    likesCount: 0,
-    isPrivate: post.isPrivate,
-    isLiked,
-  };
+function getLocalDateString(): string {
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, "0");
+  const d = String(now.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+interface JournalEntry {
+  id: string;
+  groupDate: string;
+  content: string;
+  isPrivate: boolean;
+  images: string[];
+  createdAt: string;
+}
+
+function SkeletonCard() {
+  return <View className="h-32 rounded-xl bg-muted" />;
 }
 
 export default function JournalScreen() {
   const router = useRouter();
-  const { data, isLoading, error } = useJournalEntries();
-  const { data: streakData } = useJournalStreak();
-  const toggleReaction = useTogglePostReaction();
-  const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
+  const today = getLocalDateString();
+  const { data, isLoading, error } = useJournalEntries(1, 5);
 
-  const posts: PostData[] =
+  const entries: JournalEntry[] =
     data?.groups.flatMap((group) =>
-      group.posts.map((post) =>
-        mapPostToPostData(post, likedPosts.has(post.id)),
-      ),
+      group.posts.map((post) => ({
+        id: post.id,
+        groupDate: group.date,
+        content: post.content,
+        isPrivate: post.isPrivate,
+        images: post.images,
+        createdAt: post.createdAt,
+      })),
     ) ?? [];
-
-  const handleAddPost = () => {
-    router.push("/(protected)/(tabs)/journal/create" as Href);
-  };
 
   const handlePostPress = (postId: string) => {
     router.push(`/(protected)/(tabs)/journal/post/${postId}` as Href);
   };
 
-  const handleLikePress = (postId: string) => {
-    setLikedPosts((prev) => {
-      const next = new Set(prev);
-      if (next.has(postId)) {
-        next.delete(postId);
-      } else {
-        next.add(postId);
-      }
-      return next;
-    });
-    toggleReaction.mutate({ postId, emoji: "❤️" });
-  };
-
-  const handleCommentPress = (postId: string) => {
-    router.push(`/(protected)/(tabs)/journal/post/${postId}` as Href);
-  };
-
-  const handleRepostPress = (_postId: string) => {};
-
-  const handleSharePress = (_postId: string) => {};
-
-  const HeaderComponent = (
-    <View className="mb-4">
-      {streakData && streakData.currentStreak > 0 && (
-        <View className="flex-row items-center gap-2 mb-4 bg-orange-50 rounded-xl p-3 border border-orange-200">
-          <Flame size={20} color="#F97316" />
-          <Text className="text-orange-700 font-semibold text-base">
-            {streakData.currentStreak} jours de suite
-          </Text>
-          {streakData.longestStreak > streakData.currentStreak && (
-            <Text className="text-orange-400 text-sm">
-              (record : {streakData.longestStreak})
-            </Text>
-          )}
-        </View>
-      )}
-
-      <Button
-        onPress={handleAddPost}
-        className="flex-row items-center justify-center gap-2"
-      >
-        <Plus size={20} color="#fff" />
-        <Text className="text-white font-semibold text-base">
-          Ajouter un post
-        </Text>
-      </Button>
-
-      <View className="mt-6 mb-2">
-        <Text className="text-foreground text-2xl font-bold">
-          Derniers posts
-        </Text>
-      </View>
-    </View>
-  );
-
-  if (isLoading) {
-    return (
-      <SafeAreaView className="flex-1 bg-background">
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#F691C3" />
-        </View>
-      </SafeAreaView>
-    );
-  }
-
-  if (error) {
-    return (
-      <SafeAreaView className="flex-1 bg-background">
-        <View className="flex-1 items-center justify-center px-4">
-          <Text className="text-destructive text-center text-base">
-            Erreur lors du chargement du journal
-          </Text>
-          <Text className="text-muted-foreground text-center text-sm mt-2">
-            {error.message}
-          </Text>
-        </View>
-      </SafeAreaView>
-    );
-  }
-
-  if (posts.length === 0) {
-    return (
-      <SafeAreaView className="flex-1 bg-background">
-        <View className="flex-1 px-4">
-          <View className="items-center py-4">
-            <Logo width={80} />
-          </View>
-          <View className="flex-1 items-center justify-center">
-            <NotebookPen size={48} color="#9CA3AF" />
-            <Text className="text-foreground text-xl font-bold mt-4">
-              Votre journal est vide
-            </Text>
-            <Text className="text-muted-foreground text-center text-base mt-2 mb-6">
-              Commencez par ecrire votre premier post
-            </Text>
-            <Button
-              onPress={handleAddPost}
-              className="flex-row items-center justify-center gap-2"
-            >
-              <Plus size={20} color="#fff" />
-              <Text className="text-white font-semibold text-base">
-                Ecrire mon premier post
-              </Text>
-            </Button>
-          </View>
-        </View>
-      </SafeAreaView>
-    );
-  }
-
   return (
-    <SafeAreaView className="flex-1 bg-background">
-      <View className="flex-1 px-4">
-        <View className="items-center py-4">
-          <Logo width={80} />
+    <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
+      <ScrollView
+        className="flex-1 px-4"
+        contentContainerStyle={{ paddingBottom: 24 }}
+        showsVerticalScrollIndicator={false}
+      >
+        <JournalHeader today={today} />
+
+        <View className="mt-4">
+          <View className="mb-3 flex-row items-start justify-between">
+            <View>
+              <Text className="text-lg font-semibold text-foreground">
+                Derniers posts
+              </Text>
+              <Text className="text-sm text-muted-foreground">
+                Tes posts sont class{"\u00E9"}s de mani{"\u00E8"}re
+                chronologique
+              </Text>
+            </View>
+            <Pressable
+              onPress={() => router.push("/(protected)/(tabs)/journal" as Href)}
+              className="h-8 w-8 items-center justify-center rounded-full active:bg-muted"
+              hitSlop={8}
+            >
+              <Maximize2 size={16} color={colors.mutedForeground} />
+            </Pressable>
+          </View>
+
+          {isLoading && (
+            <View className="gap-4">
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+            </View>
+          )}
+
+          {error && (
+            <View className="rounded-xl border border-destructive/50 bg-destructive/10 p-4">
+              <Text className="text-center text-sm text-destructive">
+                Impossible de charger les entr{"\u00E9"}es
+              </Text>
+            </View>
+          )}
+
+          {!isLoading && !error && entries.length === 0 && (
+            <View
+              className="rounded-xl p-8"
+              style={{
+                borderWidth: 12,
+                borderColor: "rgba(4, 160, 86, 0.2)",
+              }}
+            >
+              <Text className="text-center text-sm text-muted-foreground">
+                Aucune entr{"\u00E9"}e pour le moment
+              </Text>
+            </View>
+          )}
+
+          {!isLoading &&
+            !error &&
+            entries.map((entry) => (
+              <JournalEntryCard
+                key={entry.id}
+                id={entry.id}
+                groupDate={entry.groupDate}
+                content={entry.content}
+                isPrivate={entry.isPrivate}
+                images={entry.images}
+                createdAt={entry.createdAt}
+                onPress={() => handlePostPress(entry.id)}
+              />
+            ))}
         </View>
 
-        <PostFeed
-          posts={posts}
-          onPostPress={handlePostPress}
-          onLikePress={handleLikePress}
-          onCommentPress={handleCommentPress}
-          onRepostPress={handleRepostPress}
-          onSharePress={handleSharePress}
-          ListHeaderComponent={HeaderComponent}
-        />
-      </View>
+        <View className="mt-4 gap-4">
+          <JournalGallery />
+          <JournalBadges />
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }

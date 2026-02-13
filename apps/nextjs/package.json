@@ -27,6 +27,7 @@
     "@packages/drizzle": "workspace:*",
     "@packages/ui": "workspace:*",
     "@tailwindcss/postcss": "^4.1.18",
+    "@tanstack/react-query": "^5.90.16",
     "@tiptap/extension-mention": "^3.19.0",
     "@tiptap/extension-underline": "^3.19.0",
     "@tiptap/pm": "^3.19.0",

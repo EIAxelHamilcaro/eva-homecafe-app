@@ -27,9 +27,9 @@ interface PhotoViewModalProps {
 }
 
 function formatFileSize(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  if (bytes < 1024) return `${bytes} o`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} Ko`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} Mo`;
 }
 
 export function PhotoViewModal({
@@ -47,7 +47,9 @@ export function PhotoViewModal({
     try {
       await onDelete(photo.id);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete photo");
+      setError(
+        err instanceof Error ? err.message : "Impossible de supprimer la photo",
+      );
       setDeleting(false);
     }
   }, [photo.id, onDelete]);
@@ -65,29 +67,30 @@ export function PhotoViewModal({
               src={photo.url}
               alt={photo.caption || photo.filename}
               fill
-              className="rounded-lg object-contain"
-              unoptimized
+              className="rounded-xl object-contain"
             />
           </div>
 
-          <div className="flex items-center justify-between text-gray-500 text-sm">
+          <div className="flex items-center justify-between text-sm text-muted-foreground">
             <div className="flex gap-4">
               <span>{formatFileSize(photo.size)}</span>
-              <span>{new Date(photo.createdAt).toLocaleDateString()}</span>
+              <span>
+                {new Date(photo.createdAt).toLocaleDateString("fr-FR")}
+              </span>
               {photo.caption && <span>{photo.caption}</span>}
             </div>
             <button
               type="button"
               onClick={() => setDeleteDialogOpen(true)}
               disabled={deleting}
-              className="rounded-lg border border-red-200 px-3 py-1 text-red-600 text-sm hover:bg-red-50 disabled:opacity-50"
+              className="rounded-full border border-red-200 px-3 py-1 text-red-600 text-sm hover:bg-red-50 disabled:opacity-50"
             >
-              {deleting ? "Deleting..." : "Delete"}
+              {deleting ? "Suppression…" : "Supprimer"}
             </button>
           </div>
 
           {error && (
-            <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-red-700 text-sm">
+            <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-red-700 text-sm">
               {error}
             </div>
           )}
@@ -97,20 +100,20 @@ export function PhotoViewModal({
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Photo</AlertDialogTitle>
+            <AlertDialogTitle>Supprimer la photo</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. The photo will be permanently
-              removed.
+              Cette action est irréversible. La photo sera définitivement
+              supprimée.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={deleting}>Annuler</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
               disabled={deleting}
               className="bg-red-600 hover:bg-red-700"
             >
-              {deleting ? "Deleting..." : "Delete"}
+              {deleting ? "Suppression…" : "Supprimer"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

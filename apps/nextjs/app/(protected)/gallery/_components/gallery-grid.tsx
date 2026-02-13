@@ -1,5 +1,6 @@
 "use client";
 
+import { Mountain } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import type {
@@ -8,11 +9,13 @@ import type {
 } from "@/adapters/queries/gallery.query";
 import { PhotoViewModal } from "./photo-view-modal";
 
-interface GalleryGridProps {
-  onPhotoDeleted?: () => void;
+const TALL_POSITIONS = new Set([0, 5]);
+
+function isTall(index: number): boolean {
+  return TALL_POSITIONS.has(index % 6);
 }
 
-export function GalleryGrid({ onPhotoDeleted }: GalleryGridProps) {
+export function GalleryGrid() {
   const [data, setData] = useState<GetUserGalleryOutputDto | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -27,13 +30,13 @@ export function GalleryGrid({ onPhotoDeleted }: GalleryGridProps) {
     try {
       const res = await fetch(`/api/v1/gallery?page=${pageNum}&limit=20`);
       if (!res.ok) {
-        setError("Failed to load gallery");
+        setError("Impossible de charger la galerie");
         return;
       }
       const json: GetUserGalleryOutputDto = await res.json();
       setData(json);
     } catch {
-      setError("Failed to load gallery");
+      setError("Impossible de charger la galerie");
     } finally {
       setLoading(false);
     }
@@ -43,61 +46,57 @@ export function GalleryGrid({ onPhotoDeleted }: GalleryGridProps) {
     loadGallery(page);
   }, [page, loadGallery]);
 
-  const handleDelete = useCallback(
-    async (photoId: string) => {
-      const res = await fetch(`/api/v1/gallery/${photoId}`, {
-        method: "DELETE",
-      });
+  const handleDelete = useCallback(async (photoId: string) => {
+    const res = await fetch(`/api/v1/gallery/${photoId}`, {
+      method: "DELETE",
+    });
 
-      if (!res.ok) {
-        const json = await res.json();
-        throw new Error(json.error || "Failed to delete photo");
-      }
+    if (!res.ok) {
+      const json = await res.json();
+      throw new Error(json.error || "Impossible de supprimer la photo");
+    }
 
-      setData((prev) => {
-        if (!prev) return prev;
-        return {
-          ...prev,
-          photos: prev.photos.filter((p) => p.id !== photoId),
-          pagination: {
-            ...prev.pagination,
-            total: prev.pagination.total - 1,
-          },
-        };
-      });
+    setData((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        photos: prev.photos.filter((p) => p.id !== photoId),
+        pagination: {
+          ...prev.pagination,
+          total: prev.pagination.total - 1,
+        },
+      };
+    });
 
-      setSelectedPhoto(null);
-      onPhotoDeleted?.();
-    },
-    [onPhotoDeleted],
-  );
-
-  const handlePrevPage = useCallback(() => {
-    setPage((p) => Math.max(1, p - 1));
-  }, []);
-
-  const handleNextPage = useCallback(() => {
-    setPage((p) => p + 1);
+    setSelectedPhoto(null);
   }, []);
 
   if (loading && !data) {
     return (
-      <div className="text-center text-gray-400 text-sm">
-        Loading gallery...
+      <div
+        className="grid grid-cols-2 gap-3 sm:grid-cols-3"
+        style={{ gridAutoRows: "8rem" }}
+      >
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div
+            key={`skeleton-${i}`}
+            className={`animate-pulse rounded-xl bg-muted ${isTall(i) ? "row-span-2" : ""}`}
+          />
+        ))}
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-center text-red-700 text-sm">
+      <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-center text-red-700 text-sm">
         <p>{error}</p>
         <button
           type="button"
           onClick={() => loadGallery(page)}
-          className="mt-2 rounded bg-red-600 px-3 py-1 text-white text-xs hover:bg-red-700"
+          className="mt-3 rounded-full bg-red-600 px-4 py-1.5 text-white text-xs hover:bg-red-700"
         >
-          Retry
+          Réessayer
         </button>
       </div>
     );
@@ -105,10 +104,13 @@ export function GalleryGrid({ onPhotoDeleted }: GalleryGridProps) {
 
   if (!data || (data.photos.length === 0 && page === 1)) {
     return (
-      <div className="rounded-lg border-2 border-dashed p-12 text-center text-gray-500">
-        <p className="text-lg">Your gallery is empty</p>
-        <p className="mt-2 text-sm">
-          Upload your first photo to start your collection
+      <div className="rounded-xl bg-homecafe-beige/30 p-12 text-center">
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-homecafe-beige">
+          <Mountain className="h-8 w-8 text-muted-foreground/50" />
+        </div>
+        <p className="font-medium text-foreground">Ta galerie est vide</p>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Ajoute ta première photo pour commencer ta collection
         </p>
       </div>
     );
@@ -116,21 +118,25 @@ export function GalleryGrid({ onPhotoDeleted }: GalleryGridProps) {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-        {data.photos.map((photo) => (
+      <div
+        className="grid grid-cols-2 gap-3 sm:grid-cols-3"
+        style={{ gridAutoRows: "8rem" }}
+      >
+        {data.photos.map((photo, index) => (
           <button
             key={photo.id}
             type="button"
             onClick={() => setSelectedPhoto(photo)}
-            className="aspect-square overflow-hidden rounded-lg border transition-opacity hover:opacity-80"
+            className={`group relative overflow-hidden rounded-xl bg-muted transition-transform hover:scale-[1.02] ${
+              isTall(index) ? "row-span-2" : ""
+            }`}
           >
             <Image
               src={photo.url}
               alt={photo.caption || photo.filename}
-              width={160}
-              height={160}
-              className="h-full w-full object-cover"
-              unoptimized
+              fill
+              className="object-cover transition-opacity group-hover:opacity-90"
+              sizes="(max-width: 640px) 50vw, 33vw"
             />
           </button>
         ))}
@@ -140,22 +146,22 @@ export function GalleryGrid({ onPhotoDeleted }: GalleryGridProps) {
         <div className="flex items-center justify-center gap-4">
           <button
             type="button"
-            onClick={handlePrevPage}
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={!data.pagination.hasPreviousPage || loading}
-            className="rounded-lg border px-4 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-full border px-4 py-1.5 text-sm disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Previous
+            Précédent
           </button>
-          <span className="text-gray-600 text-sm">
-            Page {data.pagination.page} of {data.pagination.totalPages}
+          <span className="text-sm text-muted-foreground">
+            {data.pagination.page} / {data.pagination.totalPages}
           </span>
           <button
             type="button"
-            onClick={handleNextPage}
+            onClick={() => setPage((p) => p + 1)}
             disabled={!data.pagination.hasNextPage || loading}
-            className="rounded-lg border px-4 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-full border px-4 py-1.5 text-sm disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Next
+            Suivant
           </button>
         </div>
       )}

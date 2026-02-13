@@ -8,11 +8,8 @@ import { signInInputDtoSchema } from "@/application/dto/sign-in.dto";
 import type { ISignOutOutputDto } from "@/application/dto/sign-out.dto";
 import type { ISignUpOutputDto } from "@/application/dto/sign-up.dto";
 import { signUpInputDtoSchema } from "@/application/dto/sign-up.dto";
+import type { ActionResult } from "@/common/action-result";
 import { getInjection } from "@/common/di/container";
-
-type ActionResult<T> =
-  | { success: true; data: T }
-  | { success: false; error: string };
 
 export async function signInAction(
   input: unknown,

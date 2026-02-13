@@ -4,6 +4,9 @@ import createNextIntlPlugin from "next-intl/plugin";
 const nextConfig = {
   transpilePackages: ["@packages/ui", "@packages/drizzle", "@packages/ddd-kit"],
   pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
+  images: {
+    unoptimized: process.env.NODE_ENV === "development",
+  },
   webpack: (config) => {
     // Prioritize .web.tsx over .tsx for web platform
     // Order: .web.tsx -> .tsx -> .ts -> .js
