@@ -37,7 +37,6 @@ async function fetchFriends(): Promise<MentionItem[]> {
 interface RichTextEditorProps {
   initialContent?: string;
   initialImages?: string[];
-  placeholder?: string;
   minHeight?: string;
   onSubmit: (data: { html: string; images: string[] }) => Promise<void>;
   submitLabel?: string;
@@ -47,7 +46,6 @@ interface RichTextEditorProps {
 export function RichTextEditor({
   initialContent = "",
   initialImages,
-  placeholder = "Commence a ecrire ici...",
   minHeight = "150px",
   onSubmit,
   submitLabel = "Publier",

@@ -6,7 +6,8 @@ import type { IGetTodayMoodOutputDto } from "@/application/dto/mood/get-today-mo
 export async function getTodayMood(
   userId: string,
 ): Promise<IGetTodayMoodOutputDto> {
-  return getMoodByDate(userId, new Date().toISOString().split("T")[0]!);
+  const today = new Date().toISOString().split("T")[0] ?? "";
+  return getMoodByDate(userId, today);
 }
 
 export async function getMoodByDate(

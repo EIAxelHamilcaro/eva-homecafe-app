@@ -55,6 +55,7 @@ export function JournalWidgetClient({
           <div className="rounded-xl bg-muted/50 p-3">
             <div
               className="prose prose-sm max-w-none text-sm line-clamp-3"
+              // biome-ignore lint/security/noDangerouslySetInnerHtml: sanitized HTML from rich text editor
               dangerouslySetInnerHTML={{ __html: existingContent }}
             />
             <p className="mt-2 text-xs font-medium text-homecafe-pink">
