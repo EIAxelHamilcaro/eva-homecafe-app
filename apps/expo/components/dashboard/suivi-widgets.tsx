@@ -1,6 +1,8 @@
 import { Pressable, Text, View } from "react-native";
 
 import { useMoodTrends, useMoodWeek } from "@/lib/api/hooks/use-mood";
+import { MonthlyMoodChart } from "./monthly-mood-chart";
+import { WeeklyMoodChart } from "./weekly-mood-chart";
 
 const DAYS_ORDER = [
   "lundi",
@@ -11,53 +13,84 @@ const DAYS_ORDER = [
   "samedi",
   "dimanche",
 ];
-const DAY_LABELS = ["L", "M", "M", "J", "V", "S", "D"];
+
+const DAY_EN_TO_FR: Record<string, string> = {
+  Monday: "lundi",
+  Tuesday: "mardi",
+  Wednesday: "mercredi",
+  Thursday: "jeudi",
+  Friday: "vendredi",
+  Saturday: "samedi",
+  Sunday: "dimanche",
+};
+
+const MONTH_LABELS: Record<string, string> = {
+  "01": "janvier",
+  "02": "février",
+  "03": "mars",
+  "04": "avril",
+  "05": "mai",
+  "06": "juin",
+  "07": "juillet",
+  "08": "août",
+  "09": "septembre",
+  "10": "octobre",
+  "11": "novembre",
+  "12": "décembre",
+};
+
 const SKELETON_MONTHS = ["s-jan", "s-fev", "s-mar", "s-avr", "s-mai", "s-jun"];
 const SKELETON_HEIGHTS = [20, 37, 54, 31, 48, 25];
 
-export function SuiviWidgets() {
+function computeMonthTrend(
+  months: { month: string; averageIntensity: number }[],
+): string {
+  const now = new Date();
+  const currentMonthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+  const prevDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  const prevMonthStr = `${prevDate.getFullYear()}-${String(prevDate.getMonth() + 1).padStart(2, "0")}`;
+
+  const currentMonth = months.find((m) => m.month === currentMonthStr);
+  const prevMonth = months.find((m) => m.month === prevMonthStr);
+
+  if (!currentMonth || !prevMonth || prevMonth.averageIntensity === 0) {
+    return "Pas assez de données";
+  }
+
+  const pct =
+    ((currentMonth.averageIntensity - prevMonth.averageIntensity) /
+      prevMonth.averageIntensity) *
+    100;
+  const sign = pct >= 0 ? "hausse" : "baisse";
+  return `En ${sign} de ${Math.abs(pct).toFixed(1)}% vs mois dernier`;
+}
+
+export function SuiviMonthlyWidget() {
   const {
     data: trends,
     isLoading: isLoadingTrends,
     isError: isErrorTrends,
     refetch: refetchTrends,
   } = useMoodTrends();
-  const {
-    data: weekData,
-    isLoading: isLoadingWeek,
-    isError: isErrorWeek,
-    refetch: refetchWeek,
-  } = useMoodWeek();
 
-  const monthlyData =
-    trends?.months.map((m) => {
-      const [year, monthNum] = m.month.split("-");
-      return {
-        month: new Date(Number(year), Number(monthNum) - 1).toLocaleDateString(
-          "fr-FR",
-          { month: "short" },
-        ),
-        value: Math.round(m.averageIntensity * 10),
-      };
-    }) ?? [];
+  const months = trends?.months ?? [];
 
-  const maxMonthlyValue = Math.max(...monthlyData.map((d) => d.value), 1);
-
-  const weeklyData = DAYS_ORDER.map((day, i) => {
-    const entry = weekData?.entries.find((e) => e.dayOfWeek === day);
-    return { day: DAY_LABELS[i], value: entry?.intensity ?? 0 };
+  const chartData = months.map((m) => {
+    const monthNum = m.month.split("-")[1] ?? "01";
+    return {
+      month: MONTH_LABELS[monthNum] ?? monthNum,
+      average: m.averageIntensity,
+    };
   });
 
-  const maxWeeklyValue = Math.max(...weeklyData.map((d) => d.value), 1);
+  const trend = computeMonthTrend(months);
 
   return (
-    <View className="mb-4">
-      <Text className="mb-3 text-lg font-semibold text-foreground">Suivi</Text>
-
-      {/* Monthly bar chart */}
-      <View className="mb-3 rounded-2xl bg-card p-4">
-        <Text className="mb-3 text-sm font-medium text-muted-foreground">
-          Mensuel
+    <View>
+      <View className="rounded-2xl bg-card p-4">
+        <Text className="text-lg font-semibold text-foreground">Suivi</Text>
+        <Text className="mb-3 text-sm text-muted-foreground">
+          Moodboard janvier → juin {new Date().getFullYear()}
         </Text>
         {isLoadingTrends ? (
           <View className="h-24 flex-row items-end justify-between">
@@ -80,36 +113,70 @@ export function SuiviWidgets() {
               <Text className="mt-1 text-sm text-primary">Réessayer</Text>
             </Pressable>
           </View>
-        ) : monthlyData.length === 0 ? (
+        ) : chartData.length === 0 ? (
           <View className="h-24 items-center justify-center">
             <Text className="text-sm text-muted-foreground">
               Pas encore de données
             </Text>
           </View>
         ) : (
-          <View className="h-24 flex-row items-end justify-between">
-            {monthlyData.map((item) => (
-              <View key={item.month} className="items-center">
-                <View
-                  className="w-6 rounded-t-md bg-primary"
-                  style={{ height: (item.value / maxMonthlyValue) * 80 }}
-                />
-                <Text className="mt-1 text-xs text-muted-foreground">
-                  {item.month}
-                </Text>
-              </View>
-            ))}
-          </View>
+          <>
+            <MonthlyMoodChart data={chartData} />
+            <Text className="mt-2 text-xs text-muted-foreground">
+              {trend} ↗
+            </Text>
+          </>
         )}
       </View>
+    </View>
+  );
+}
 
-      {/* Weekly line graph (simplified as dots) */}
+function computeWeekTrend(entries: { intensity: number }[]): string {
+  if (entries.length < 2) return "Pas assez de données";
+  const avg = entries.reduce((sum, e) => sum + e.intensity, 0) / entries.length;
+  return `Moyenne : ${avg.toFixed(1)}/10 cette semaine`;
+}
+
+export function SuiviWeeklyWidget() {
+  const {
+    data: weekData,
+    isLoading: isLoadingWeek,
+    isError: isErrorWeek,
+    refetch: refetchWeek,
+  } = useMoodWeek();
+
+  const entries = weekData?.entries ?? [];
+
+  const normalizedEntries = entries.map((e) => ({
+    ...e,
+    dayFr: DAY_EN_TO_FR[e.dayOfWeek] ?? e.dayOfWeek.toLowerCase(),
+  }));
+
+  const chartData = DAYS_ORDER.map((day) => {
+    const entry = normalizedEntries.find((e) => e.dayFr === day);
+    return { day, average: entry?.intensity ?? 0 };
+  }).filter((d) => d.average > 0);
+
+  const now = new Date();
+  const dayOfWeek = now.getDay();
+  const monday = new Date(now);
+  monday.setDate(now.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
+  const sunday = new Date(monday);
+  sunday.setDate(monday.getDate() + 6);
+  const weekLabel = `du ${monday.getDate()} au ${sunday.getDate()} ${sunday.toLocaleDateString("fr-FR", { month: "long" })}`;
+
+  const trend = computeWeekTrend(entries);
+
+  return (
+    <View>
       <View className="rounded-2xl bg-card p-4">
-        <Text className="mb-3 text-sm font-medium text-muted-foreground">
-          Hebdomadaire
+        <Text className="text-lg font-semibold text-foreground">Suivi</Text>
+        <Text className="mb-3 text-sm text-muted-foreground">
+          Humeurs de la semaine ({weekLabel})
         </Text>
         {isLoadingWeek ? (
-          <View className="h-16 flex-row items-end justify-between">
+          <View className="h-24 flex-row items-end justify-between">
             {DAYS_ORDER.map((day) => (
               <View key={`skeleton-${day}`} className="items-center">
                 <View className="h-3 w-3 rounded-full bg-muted" />
@@ -118,7 +185,7 @@ export function SuiviWidgets() {
             ))}
           </View>
         ) : isErrorWeek ? (
-          <View className="h-16 items-center justify-center">
+          <View className="h-24 items-center justify-center">
             <Text className="text-sm text-muted-foreground">
               Impossible de charger les données
             </Text>
@@ -126,28 +193,19 @@ export function SuiviWidgets() {
               <Text className="mt-1 text-sm text-primary">Réessayer</Text>
             </Pressable>
           </View>
-        ) : weeklyData.every((d) => d.value === 0) ? (
-          <View className="h-16 items-center justify-center">
+        ) : chartData.length === 0 ? (
+          <View className="h-24 items-center justify-center">
             <Text className="text-sm text-muted-foreground">
-              Pas encore de données
+              Pas encore de données cette semaine
             </Text>
           </View>
         ) : (
-          <View className="h-16 flex-row items-end justify-between">
-            {weeklyData.map((item, index) => (
-              <View key={DAYS_ORDER[index]} className="items-center">
-                <View
-                  className="h-3 w-3 rounded-full bg-primary"
-                  style={{
-                    marginBottom: (item.value / maxWeeklyValue) * 40,
-                  }}
-                />
-                <Text className="mt-2 text-xs text-muted-foreground">
-                  {item.day}
-                </Text>
-              </View>
-            ))}
-          </View>
+          <>
+            <WeeklyMoodChart data={chartData} />
+            <Text className="mt-2 text-xs text-muted-foreground">
+              {trend} ↗
+            </Text>
+          </>
         )}
       </View>
     </View>

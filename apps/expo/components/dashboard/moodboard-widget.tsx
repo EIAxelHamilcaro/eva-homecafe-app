@@ -1,5 +1,5 @@
 import { type Href, useRouter } from "expo-router";
-import { ChevronRight, Plus } from "lucide-react-native";
+import { Plus } from "lucide-react-native";
 import { ActivityIndicator, Image, Pressable, Text, View } from "react-native";
 
 import { useMoodboards } from "@/lib/api/hooks/use-moodboards";
@@ -41,13 +41,12 @@ export function MoodboardWidget() {
   return (
     <Pressable
       onPress={() => router.push("/(protected)/inspirations" as Href)}
-      className="mb-4 rounded-2xl bg-card p-4 active:opacity-90"
+      className="rounded-2xl bg-card p-4 active:opacity-90"
     >
       <View className="mb-3 flex-row items-center justify-between">
         <Text className="text-lg font-semibold text-foreground">Moodboard</Text>
-        <View className="flex-row items-center">
-          <Text className="mr-1 text-sm text-primary">Voir plus</Text>
-          <ChevronRight size={16} color={colors.primary} />
+        <View className="rounded-full bg-homecafe-green px-4 py-1.5">
+          <Text className="text-sm font-medium text-white">Voir plus</Text>
         </View>
       </View>
 

@@ -1,6 +1,6 @@
 import { db } from "@packages/drizzle";
 import { moodEntry } from "@packages/drizzle/schema";
-import { and, asc, eq, gte, lte, sql } from "drizzle-orm";
+import { and, asc, eq, gte, lt, lte, sql } from "drizzle-orm";
 import type { IGetMoodWeekOutputDto } from "@/application/dto/mood/get-mood-week.dto";
 
 const DAYS_OF_WEEK = [
@@ -46,4 +46,27 @@ export async function getMoodWeek(
   });
 
   return { entries };
+}
+
+export async function getMoodPreviousWeekAverage(
+  userId: string,
+): Promise<number | null> {
+  const records = await db
+    .select({
+      moodIntensity: moodEntry.moodIntensity,
+    })
+    .from(moodEntry)
+    .where(
+      and(
+        eq(moodEntry.userId, userId),
+        gte(
+          moodEntry.moodDate,
+          sql`(date_trunc('week', CURRENT_DATE) - interval '7 days')::date`,
+        ),
+        lt(moodEntry.moodDate, sql`date_trunc('week', CURRENT_DATE)::date`),
+      ),
+    );
+
+  if (records.length === 0) return null;
+  return records.reduce((sum, r) => sum + r.moodIntensity, 0) / records.length;
 }

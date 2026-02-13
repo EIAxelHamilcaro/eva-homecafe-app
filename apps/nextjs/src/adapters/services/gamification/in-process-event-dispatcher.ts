@@ -1,4 +1,5 @@
 import type { DomainEvent } from "@packages/ddd-kit";
+import type { EmailNotificationHandler } from "@/application/event-handlers/email-notification.handler";
 import type { GamificationHandler } from "@/application/event-handlers/gamification.handler";
 import type { PushNotificationHandler } from "@/application/event-handlers/push-notification.handler";
 import type { IEventDispatcher } from "@/application/ports/event-dispatcher.port";
@@ -7,6 +8,7 @@ export class InProcessEventDispatcher implements IEventDispatcher {
   constructor(
     private readonly gamificationHandler: GamificationHandler,
     private readonly pushNotificationHandler?: PushNotificationHandler,
+    private readonly emailNotificationHandler?: EmailNotificationHandler,
   ) {}
 
   async dispatch(event: DomainEvent): Promise<void> {
@@ -24,6 +26,18 @@ export class InProcessEventDispatcher implements IEventDispatcher {
         // biome-ignore lint/suspicious/noConsole: intentional server-side error logging for event handler failures
         console.error(
           "[EventDispatcher] PushNotificationHandler error:",
+          error,
+        );
+      }
+    }
+
+    if (this.emailNotificationHandler) {
+      try {
+        await this.emailNotificationHandler.handle(event);
+      } catch (error) {
+        // biome-ignore lint/suspicious/noConsole: intentional server-side error logging for event handler failures
+        console.error(
+          "[EventDispatcher] EmailNotificationHandler error:",
           error,
         );
       }

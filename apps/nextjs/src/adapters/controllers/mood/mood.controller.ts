@@ -3,7 +3,10 @@ import { NextResponse } from "next/server";
 import { getMoodStats } from "@/adapters/queries/mood-stats.query";
 import { getMoodTrends } from "@/adapters/queries/mood-trends.query";
 import { getMoodWeek } from "@/adapters/queries/mood-week.query";
-import { getTodayMood } from "@/adapters/queries/today-mood.query";
+import {
+  getMoodByDate,
+  getTodayMood,
+} from "@/adapters/queries/today-mood.query";
 import type { IGetSessionOutputDto } from "@/application/dto/get-session.dto";
 import type { IGetMoodStatsOutputDto } from "@/application/dto/mood/get-mood-stats.dto";
 import { getMoodStatsInputDtoSchema } from "@/application/dto/mood/get-mood-stats.dto";
@@ -71,6 +74,8 @@ export async function recordMoodController(
   return NextResponse.json(output, { status: output.isUpdate ? 200 : 201 });
 }
 
+const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
+
 export async function getTodayMoodController(
   request: Request,
 ): Promise<NextResponse<IGetTodayMoodOutputDto | { error: string }>> {
@@ -80,7 +85,12 @@ export async function getTodayMoodController(
   }
 
   try {
-    const result = await getTodayMood(session.user.id);
+    const url = new URL(request.url);
+    const dateParam = url.searchParams.get("date");
+    const result =
+      dateParam && DATE_REGEX.test(dateParam)
+        ? await getMoodByDate(session.user.id, dateParam)
+        : await getTodayMood(session.user.id);
     return NextResponse.json(result);
   } catch {
     return NextResponse.json(

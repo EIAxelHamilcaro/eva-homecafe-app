@@ -27,6 +27,7 @@ export function moodEntryToDomain(record: MoodEntryRecord): Result<MoodEntry> {
       userId: record.userId,
       category: categoryResult.getValue(),
       intensity: intensityResult.getValue(),
+      moodDate: record.moodDate,
       createdAt: record.createdAt,
       updatedAt: Option.fromNullable(record.updatedAt),
     },
@@ -34,13 +35,6 @@ export function moodEntryToDomain(record: MoodEntryRecord): Result<MoodEntry> {
   );
 
   return Result.ok(entry);
-}
-
-function toDateString(d: Date): string {
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
 }
 
 export function moodEntryToPersistence(entry: MoodEntry): MoodEntryPersistence {
@@ -51,7 +45,7 @@ export function moodEntryToPersistence(entry: MoodEntry): MoodEntryPersistence {
     userId: entry.get("userId"),
     moodCategory: entry.get("category").value,
     moodIntensity: entry.get("intensity").value,
-    moodDate: toDateString(createdAt),
+    moodDate: entry.get("moodDate"),
     createdAt,
     updatedAt: updatedAt.isSome() ? updatedAt.unwrap() : null,
   };

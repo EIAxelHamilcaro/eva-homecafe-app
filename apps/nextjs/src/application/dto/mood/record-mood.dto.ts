@@ -9,6 +9,10 @@ export const recordMoodInputDtoSchema = z.object({
     .int("Intensity must be an integer")
     .min(1, "Intensity must be at least 1")
     .max(10, "Intensity must be at most 10"),
+  moodDate: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be YYYY-MM-DD")
+    .optional(),
 });
 
 export type IRecordMoodInputDto = z.infer<typeof recordMoodInputDtoSchema>;

@@ -4,9 +4,7 @@ import { Button } from "@packages/ui/components/ui/button";
 import { useCallback, useEffect, useState } from "react";
 import { AboutSection } from "./about-section";
 import { AccountActionsSection } from "./account-actions-section";
-import { CustomizationSection } from "./customization-section";
 import { NotificationPreferencesSection } from "./notification-preferences-section";
-import { PrivacySection } from "./privacy-section";
 
 interface SettingsState {
   emailNotifications: boolean;
@@ -15,11 +13,6 @@ interface SettingsState {
   notifyFriendActivity: boolean;
   notifyBadgesEarned: boolean;
   notifyJournalReminder: boolean;
-  profileVisibility: boolean;
-  rewardsVisibility: "everyone" | "friends" | "nobody";
-  themeMode: "light" | "dark" | "system";
-  language: "fr" | "en";
-  timeFormat: "12h" | "24h";
 }
 
 const defaultSettings: SettingsState = {
@@ -29,11 +22,6 @@ const defaultSettings: SettingsState = {
   notifyFriendActivity: true,
   notifyBadgesEarned: true,
   notifyJournalReminder: true,
-  profileVisibility: true,
-  rewardsVisibility: "friends",
-  themeMode: "system",
-  language: "fr",
-  timeFormat: "24h",
 };
 
 export function SettingsForm() {
@@ -58,11 +46,6 @@ export function SettingsForm() {
         notifyFriendActivity: data.notifyFriendActivity,
         notifyBadgesEarned: data.notifyBadgesEarned,
         notifyJournalReminder: data.notifyJournalReminder,
-        profileVisibility: data.profileVisibility,
-        rewardsVisibility: data.rewardsVisibility,
-        themeMode: data.themeMode,
-        language: data.language,
-        timeFormat: data.timeFormat,
       });
     } catch {
       setError("Impossible de charger les paramètres");
@@ -129,19 +112,6 @@ export function SettingsForm() {
         notifyFriendActivity={settings.notifyFriendActivity}
         notifyBadgesEarned={settings.notifyBadgesEarned}
         notifyJournalReminder={settings.notifyJournalReminder}
-        onChange={handleChange}
-      />
-
-      <PrivacySection
-        profileVisibility={settings.profileVisibility}
-        rewardsVisibility={settings.rewardsVisibility}
-        onChange={handleChange}
-      />
-
-      <CustomizationSection
-        themeMode={settings.themeMode}
-        language={settings.language}
-        timeFormat={settings.timeFormat}
         onChange={handleChange}
       />
 

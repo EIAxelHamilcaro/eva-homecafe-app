@@ -87,6 +87,7 @@ export const galleryKeys = {
 export const moodKeys = {
   all: ["mood"] as const,
   today: () => [...moodKeys.all, "today"] as const,
+  byDate: (date: string) => [...moodKeys.all, "byDate", date] as const,
   week: () => [...moodKeys.all, "week"] as const,
   stats: (period: string) => [...moodKeys.all, "stats", { period }] as const,
   trends: () => [...moodKeys.all, "trends"] as const,

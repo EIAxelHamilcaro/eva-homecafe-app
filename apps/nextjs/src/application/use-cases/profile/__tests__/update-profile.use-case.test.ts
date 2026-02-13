@@ -30,6 +30,10 @@ describe("UpdateProfileUseCase", () => {
         displayName: displayNameVO,
         bio: bioOption,
         avatarUrl: avatarOption,
+        phone: Option.none(),
+        birthday: Option.none(),
+        profession: Option.none(),
+        address: Option.none(),
         createdAt: new Date("2024-01-01"),
         updatedAt: new Date("2024-01-01"),
       },
@@ -203,6 +207,145 @@ describe("UpdateProfileUseCase", () => {
       expect(output.bio).toBe("New bio");
       expect(output.avatarUrl).toBe("https://example.com/new-avatar.jpg");
     });
+
+    it("should update phone", async () => {
+      const input: IUpdateProfileInputDto = {
+        userId: "user-123",
+        phone: "+33 6 12 34 56 78",
+      };
+
+      const mockProfile = createMockProfile("user-123", "John Doe");
+
+      vi.mocked(mockProfileRepo.findByUserId).mockResolvedValue(
+        Result.ok(Option.some(mockProfile)),
+      );
+      vi.mocked(mockProfileRepo.update).mockResolvedValue(
+        Result.ok(mockProfile),
+      );
+
+      const result = await useCase.execute(input);
+
+      expect(result.isSuccess).toBe(true);
+      const output = result.getValue();
+      expect(output.phone).toBe("+33 6 12 34 56 78");
+    });
+
+    it("should clear phone when set to null", async () => {
+      const input: IUpdateProfileInputDto = {
+        userId: "user-123",
+        phone: null,
+      };
+
+      const mockProfile = createMockProfile("user-123", "John Doe");
+
+      vi.mocked(mockProfileRepo.findByUserId).mockResolvedValue(
+        Result.ok(Option.some(mockProfile)),
+      );
+      vi.mocked(mockProfileRepo.update).mockResolvedValue(
+        Result.ok(mockProfile),
+      );
+
+      const result = await useCase.execute(input);
+
+      expect(result.isSuccess).toBe(true);
+      const output = result.getValue();
+      expect(output.phone).toBeNull();
+    });
+
+    it("should update birthday", async () => {
+      const input: IUpdateProfileInputDto = {
+        userId: "user-123",
+        birthday: "1997-08-26",
+      };
+
+      const mockProfile = createMockProfile("user-123", "John Doe");
+
+      vi.mocked(mockProfileRepo.findByUserId).mockResolvedValue(
+        Result.ok(Option.some(mockProfile)),
+      );
+      vi.mocked(mockProfileRepo.update).mockResolvedValue(
+        Result.ok(mockProfile),
+      );
+
+      const result = await useCase.execute(input);
+
+      expect(result.isSuccess).toBe(true);
+      expect(result.getValue().birthday).toBeDefined();
+    });
+
+    it("should update profession", async () => {
+      const input: IUpdateProfileInputDto = {
+        userId: "user-123",
+        profession: "Graphiste",
+      };
+
+      const mockProfile = createMockProfile("user-123", "John Doe");
+
+      vi.mocked(mockProfileRepo.findByUserId).mockResolvedValue(
+        Result.ok(Option.some(mockProfile)),
+      );
+      vi.mocked(mockProfileRepo.update).mockResolvedValue(
+        Result.ok(mockProfile),
+      );
+
+      const result = await useCase.execute(input);
+
+      expect(result.isSuccess).toBe(true);
+      expect(result.getValue().profession).toBe("Graphiste");
+    });
+
+    it("should update address", async () => {
+      const input: IUpdateProfileInputDto = {
+        userId: "user-123",
+        address: {
+          street: "2 Villa du Bourg l'Evesque",
+          zipCode: "35000",
+          city: "Rennes",
+          country: "France",
+        },
+      };
+
+      const mockProfile = createMockProfile("user-123", "John Doe");
+
+      vi.mocked(mockProfileRepo.findByUserId).mockResolvedValue(
+        Result.ok(Option.some(mockProfile)),
+      );
+      vi.mocked(mockProfileRepo.update).mockResolvedValue(
+        Result.ok(mockProfile),
+      );
+
+      const result = await useCase.execute(input);
+
+      expect(result.isSuccess).toBe(true);
+      const output = result.getValue();
+      expect(output.address).toEqual({
+        street: "2 Villa du Bourg l'Evesque",
+        zipCode: "35000",
+        city: "Rennes",
+        country: "France",
+      });
+    });
+
+    it("should clear address when set to null", async () => {
+      const input: IUpdateProfileInputDto = {
+        userId: "user-123",
+        address: null,
+      };
+
+      const mockProfile = createMockProfile("user-123", "John Doe");
+
+      vi.mocked(mockProfileRepo.findByUserId).mockResolvedValue(
+        Result.ok(Option.some(mockProfile)),
+      );
+      vi.mocked(mockProfileRepo.update).mockResolvedValue(
+        Result.ok(mockProfile),
+      );
+
+      const result = await useCase.execute(input);
+
+      expect(result.isSuccess).toBe(true);
+      expect(result.getValue().address).toBeNull();
+    });
   });
 
   describe("validation errors", () => {
@@ -258,6 +401,40 @@ describe("UpdateProfileUseCase", () => {
 
       expect(result.isFailure).toBe(true);
       expect(result.getError()).toContain("500");
+    });
+
+    it("should fail when phone exceeds 20 characters", async () => {
+      const input: IUpdateProfileInputDto = {
+        userId: "user-123",
+        phone: "+33 6 12 34 56 78 90 12 34",
+      };
+
+      const mockProfile = createMockProfile("user-123", "John Doe");
+
+      vi.mocked(mockProfileRepo.findByUserId).mockResolvedValue(
+        Result.ok(Option.some(mockProfile)),
+      );
+
+      const result = await useCase.execute(input);
+
+      expect(result.isFailure).toBe(true);
+    });
+
+    it("should fail when profession exceeds 100 characters", async () => {
+      const input: IUpdateProfileInputDto = {
+        userId: "user-123",
+        profession: "a".repeat(101),
+      };
+
+      const mockProfile = createMockProfile("user-123", "John Doe");
+
+      vi.mocked(mockProfileRepo.findByUserId).mockResolvedValue(
+        Result.ok(Option.some(mockProfile)),
+      );
+
+      const result = await useCase.execute(input);
+
+      expect(result.isFailure).toBe(true);
     });
   });
 

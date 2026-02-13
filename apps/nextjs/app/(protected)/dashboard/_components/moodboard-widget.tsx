@@ -1,80 +1,140 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@packages/ui/components/ui/card";
-import Image from "next/image";
-import Link from "next/link";
-import { getUserMoodboards } from "@/adapters/queries/moodboard.query";
-import { WidgetEmptyState } from "./widget-empty-state";
+"use client";
+
+import { Card, CardContent } from "@packages/ui/components/ui/card";
+import { useState } from "react";
 
 interface MoodboardWidgetProps {
-  userId: string;
+  selectedDate: string;
+  existingIntensity: number | null;
+  existingCategory: string | null;
 }
 
-export async function MoodboardWidget({ userId }: MoodboardWidgetProps) {
-  let result: Awaited<ReturnType<typeof getUserMoodboards>>;
-  try {
-    result = await getUserMoodboards(userId, 1, 1);
-  } catch {
-    return <WidgetEmptyState type="moodboard" />;
-  }
+const CATEGORY_LABELS: Record<string, string> = {
+  tristesse: "Tristesse",
+  anxiete: "Anxiete",
+  calme: "Calme",
+  excitation: "Excitation",
+  bonheur: "Bonheur",
+  enervement: "Enervement",
+  ennui: "Ennui",
+  nervosite: "Nervosite",
+  productivite: "Productivite",
+};
 
-  if (result.moodboards.length === 0) {
-    return <WidgetEmptyState type="moodboard" />;
-  }
+function intensityToSlider(intensity: number): number {
+  return Math.round(intensity * 10);
+}
 
-  const board = result.moodboards[0];
-  if (!board) {
-    return <WidgetEmptyState type="moodboard" />;
+function getCategory(val: number): string {
+  if (val <= 20) return "tristesse";
+  if (val <= 40) return "anxiete";
+  if (val <= 60) return "calme";
+  if (val <= 80) return "excitation";
+  return "bonheur";
+}
+
+function getIntensity(val: number): number {
+  return Math.max(1, Math.min(10, Math.round(val / 10)));
+}
+
+export function MoodboardWidget({
+  selectedDate,
+  existingIntensity,
+  existingCategory,
+}: MoodboardWidgetProps) {
+  const defaultSlider =
+    existingIntensity !== null ? intensityToSlider(existingIntensity) : 50;
+  const [value, setValue] = useState(defaultSlider);
+  const [submitting, setSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  const dateLabel = new Date(`${selectedDate}T12:00:00`).toLocaleDateString(
+    "fr-FR",
+    { weekday: "long", day: "numeric", month: "long" },
+  );
+
+  async function handleValidate() {
+    if (submitting) return;
+    setSubmitting(true);
+    setSuccess(false);
+    try {
+      const res = await fetch("/api/v1/mood", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          category: getCategory(value),
+          intensity: getIntensity(value),
+          moodDate: selectedDate,
+        }),
+      });
+      if (res.ok) {
+        setSuccess(true);
+        setTimeout(() => setSuccess(false), 3000);
+      }
+    } catch {
+      /* empty */
+    } finally {
+      setSubmitting(false);
+    }
   }
-  const additionalBoards = result.pagination.total - 1;
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>
-          <Link href="/moodboard" className="hover:underline">
-            Moodboard
-          </Link>
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Link href="/moodboard" className="block">
-          <p className="font-medium text-sm">{board.title}</p>
-          {board.previewPins.length > 0 ? (
-            <div className="mt-2 grid grid-cols-2 gap-1">
-              {board.previewPins.map((pin) => (
-                <div
-                  key={pin.id}
-                  className="relative aspect-square rounded-md overflow-hidden"
-                  style={pin.color ? { backgroundColor: pin.color } : undefined}
-                >
-                  {pin.imageUrl && (
-                    <Image
-                      src={pin.imageUrl}
-                      alt=""
-                      fill
-                      className="object-cover"
-                      sizes="100px"
-                    />
-                  )}
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="mt-2 text-xs text-muted-foreground">
-              {board.pinCount} {board.pinCount === 1 ? "pin" : "pins"}
-            </p>
-          )}
-          {additionalBoards > 0 && (
-            <p className="mt-2 text-center text-xs text-muted-foreground hover:underline">
-              +{additionalBoards} more{" "}
-              {additionalBoards === 1 ? "board" : "boards"}
-            </p>
-          )}
-        </Link>
+    <Card className="border-0">
+      <CardContent className="pt-6">
+        <h3 className="text-lg font-semibold">Moodboard</h3>
+        <p className="text-sm capitalize text-muted-foreground">{dateLabel}</p>
+        {existingCategory && (
+          <p className="mt-1 text-xs text-muted-foreground">
+            Humeur enregistree :{" "}
+            <span className="font-medium">
+              {CATEGORY_LABELS[existingCategory] ?? existingCategory}
+            </span>{" "}
+            ({existingIntensity}/10)
+          </p>
+        )}
+        <p className="mt-2 text-sm text-muted-foreground">
+          {existingCategory
+            ? "Modifier ton humeur :"
+            : "Quelle est ton humeur du jour ?"}
+        </p>
+        <div className="relative mt-6 mb-2 py-3">
+          <div
+            className="h-2 rounded-full"
+            style={{
+              background:
+                "linear-gradient(to right, #ef4444, #eab308, #22c55e)",
+            }}
+          />
+          <input
+            type="range"
+            min={0}
+            max={100}
+            value={value}
+            onChange={(e) => setValue(Number(e.target.value))}
+            className="absolute inset-0 w-full cursor-pointer opacity-0"
+            aria-label="Humeur du jour"
+          />
+          <div
+            className="pointer-events-none absolute top-1/2 h-5 w-5 -translate-y-1/2 rounded-full border-2 border-white bg-gray-800 shadow-md"
+            style={{ left: `calc(${value}% - 10px)` }}
+          />
+        </div>
+        <div className="mt-4">
+          <button
+            type="button"
+            onClick={handleValidate}
+            disabled={submitting}
+            className="rounded-full bg-homecafe-pink px-6 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50"
+          >
+            {submitting
+              ? "..."
+              : success
+                ? "Valide !"
+                : existingCategory
+                  ? "Modifier"
+                  : "Valider"}
+          </button>
+        </div>
       </CardContent>
     </Card>
   );

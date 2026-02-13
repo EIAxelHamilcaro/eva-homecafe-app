@@ -30,6 +30,7 @@ export interface CreatePostInput {
   content: string;
   isPrivate: boolean;
   images?: string[];
+  createdAt?: string;
 }
 
 export interface UpdatePostInput {

@@ -9,6 +9,10 @@ export const createPostInputDtoSchema = z.object({
     .optional()
     .default([]),
   userId: z.string().min(1, "User ID is required"),
+  createdAt: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be YYYY-MM-DD")
+    .optional(),
 });
 
 export type ICreatePostInputDto = z.infer<typeof createPostInputDtoSchema>;

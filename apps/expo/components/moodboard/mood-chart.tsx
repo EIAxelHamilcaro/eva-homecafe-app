@@ -1,6 +1,5 @@
-import { Circle } from "@shopify/react-native-skia";
 import { Text, View, type ViewProps } from "react-native";
-import { Bar, CartesianChart, Line } from "victory-native";
+import { BarChart, LineChart } from "react-native-gifted-charts";
 
 import { cn } from "@/src/libs/utils";
 import type { MoodType } from "./mood-legend";
@@ -50,8 +49,9 @@ function MoodLineChart({
   ...props
 }: MoodLineChartProps) {
   const chartData = data.map((d) => ({
-    ...d,
-    color: d.mood ? MOOD_HEX_COLORS[d.mood] : "#F691C3",
+    value: d.value,
+    label: `${d.day}`,
+    dataPointColor: d.mood ? MOOD_HEX_COLORS[d.mood] : "#F691C3",
   }));
 
   const content = (
@@ -62,39 +62,24 @@ function MoodLineChart({
           <Text className="text-muted-foreground text-sm">{subtitle}</Text>
         )}
       </View>
-      <View style={{ height }}>
-        <CartesianChart
+      <View style={{ alignItems: "center" }}>
+        <LineChart
           data={chartData}
-          xKey="day"
-          yKeys={["value"]}
-          padding={{ left: 0, right: 0, top: 10, bottom: 10 }}
-          domainPadding={{ left: 20, right: 20, top: 20, bottom: 10 }}
-          domain={{ y: [0, 100] }}
-        >
-          {({ points }) => (
-            <>
-              <Line
-                points={points.value}
-                color="#F691C3"
-                strokeWidth={2}
-                curveType="natural"
-              />
-              {points.value.map((point, index) => {
-                const dataPoint = chartData[index];
-                if (!point.x || !point.y) return null;
-                return (
-                  <Circle
-                    key={`point-${point.x}-${point.y}`}
-                    cx={point.x}
-                    cy={point.y}
-                    r={6}
-                    color={dataPoint?.color || "#F691C3"}
-                  />
-                );
-              })}
-            </>
-          )}
-        </CartesianChart>
+          curved
+          curvature={0.3}
+          color="#F691C3"
+          thickness={2}
+          dataPointsRadius={6}
+          height={height - 40}
+          spacing={40}
+          hideYAxisText
+          hideRules
+          yAxisThickness={0}
+          xAxisThickness={0}
+          maxValue={100}
+          noOfSections={5}
+          xAxisLabelTextStyle={{ fontSize: 10, color: "#888" }}
+        />
       </View>
       {trendText && (
         <View className="mt-2 flex-row items-center justify-between">
@@ -148,9 +133,12 @@ function MoodBarChart({
   className,
   ...props
 }: MoodBarChartProps) {
-  const chartData = data.map((d) => ({
-    ...d,
-    color: d.mood ? MOOD_HEX_COLORS[d.mood] : "#4ADE80",
+  const chartData = data.map((d, index) => ({
+    value: d.value,
+    label: MONTH_LABELS[index] || `M${d.month}`,
+    frontColor: d.mood ? MOOD_HEX_COLORS[d.mood] : "#4ADE80",
+    barBorderTopLeftRadius: 4,
+    barBorderTopRightRadius: 4,
   }));
 
   const content = (
@@ -161,49 +149,20 @@ function MoodBarChart({
           <Text className="text-muted-foreground text-sm">{subtitle}</Text>
         )}
       </View>
-      <View style={{ height }}>
-        <CartesianChart
+      <View style={{ alignItems: "center" }}>
+        <BarChart
           data={chartData}
-          xKey="month"
-          yKeys={["value"]}
-          padding={{ left: 0, right: 0, top: 10, bottom: 30 }}
-          domainPadding={{ left: 30, right: 30, top: 20, bottom: 0 }}
-          domain={{ y: [0, 100] }}
-        >
-          {({ points, chartBounds }) => (
-            <>
-              {points.value.map((point, index) => {
-                const dataPoint = chartData[index];
-                if (!point.x || point.y === undefined || point.y === null)
-                  return null;
-
-                return (
-                  <Bar
-                    key={`bar-${point.x}`}
-                    points={[point]}
-                    chartBounds={chartBounds}
-                    color={dataPoint?.color || "#4ADE80"}
-                    roundedCorners={{ topLeft: 4, topRight: 4 }}
-                    barWidth={30}
-                  />
-                );
-              })}
-            </>
-          )}
-        </CartesianChart>
-      </View>
-      <View className="flex-row justify-around px-2">
-        {data.map((d, index) => (
-          <Text
-            key={`label-${d.month}`}
-            className="text-muted-foreground text-xs"
-            style={{
-              color: d.mood ? MOOD_HEX_COLORS[d.mood] : "#8D7E7E",
-            }}
-          >
-            {MONTH_LABELS[index] || `M${d.month}`}
-          </Text>
-        ))}
+          barWidth={30}
+          height={height - 60}
+          spacing={20}
+          hideYAxisText
+          hideRules
+          yAxisThickness={0}
+          xAxisThickness={0}
+          maxValue={100}
+          noOfSections={5}
+          xAxisLabelTextStyle={{ fontSize: 10, color: "#888" }}
+        />
       </View>
       {trendText && (
         <View className="mt-2 flex-row items-center justify-between">

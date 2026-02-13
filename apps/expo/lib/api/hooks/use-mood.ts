@@ -20,6 +20,15 @@ export function useTodayMood() {
   });
 }
 
+export function useMoodByDate(date: string) {
+  return useQuery({
+    queryKey: moodKeys.byDate(date),
+    queryFn: () =>
+      api.get<TodayMoodResponse | null>(`/api/v1/mood?date=${date}`),
+    staleTime: 1000 * 60,
+  });
+}
+
 export function useMoodWeek() {
   return useQuery({
     queryKey: moodKeys.week(),

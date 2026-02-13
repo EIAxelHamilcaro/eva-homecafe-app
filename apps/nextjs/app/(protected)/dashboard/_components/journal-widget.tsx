@@ -1,84 +1,56 @@
-"use client";
+import { Card, CardContent } from "@packages/ui/components/ui/card";
+import { Lock } from "lucide-react";
+import { getJournalEntries } from "@/adapters/queries/journal.query";
+import { JournalWidgetClient } from "./journal-widget-client";
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@packages/ui/components/ui/card";
-import { useState } from "react";
+interface JournalWidgetProps {
+  userId: string;
+  userName: string;
+  userImage: string | null;
+  selectedDate: string;
+}
 
-export function JournalWidget() {
-  const [content, setContent] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+export async function JournalWidget({
+  userId,
+  userName,
+  userImage,
+  selectedDate,
+}: JournalWidgetProps) {
+  const dateLabel = new Date(`${selectedDate}T12:00:00`).toLocaleDateString(
+    "fr-FR",
+    { weekday: "long", day: "numeric", month: "long" },
+  );
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!content.trim() || submitting) return;
-
-    setSubmitting(true);
-    setSuccess(false);
-    setError(null);
-
-    try {
-      const res = await fetch("/api/v1/posts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content: content.trim(), isPrivate: true }),
-      });
-
-      if (res.ok) {
-        setContent("");
-        setSuccess(true);
-        setTimeout(() => setSuccess(false), 3000);
-      } else {
-        const data = await res.json().catch(() => null);
-        setError(
-          (data as { error?: string } | null)?.error ?? "Failed to save entry",
-        );
-      }
-    } catch {
-      setError("Network error — please try again");
-    } finally {
-      setSubmitting(false);
+  let existingContent: string | null = null;
+  try {
+    const result = await getJournalEntries(userId, selectedDate, 1, 1);
+    const firstPost = result.groups[0]?.posts[0];
+    if (firstPost) {
+      existingContent = firstPost.content;
     }
+  } catch {
+    /* empty */
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Quick Journal</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit}>
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="What's on your mind today?"
-            rows={3}
-            className="w-full resize-none rounded-md border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-          />
-          <div className="mt-2 flex items-center justify-between">
-            <p
-              className={`text-xs ${error ? "text-destructive" : "text-muted-foreground"}`}
-            >
-              {error
-                ? error
-                : success
-                  ? "Saved as journal entry!"
-                  : "Saved as private journal entry"}
+    <Card className="border-none">
+      <CardContent className="pt-6">
+        <div className="flex items-start justify-between">
+          <div>
+            <h3 className="text-lg font-semibold">Journal</h3>
+            <p className="text-sm capitalize text-muted-foreground">
+              {dateLabel}
             </p>
-            <button
-              type="submit"
-              disabled={!content.trim() || submitting}
-              className="rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
-            >
-              {submitting ? "Saving..." : "Save"}
-            </button>
           </div>
-        </form>
+          <Lock className="h-5 w-5 text-muted-foreground" />
+        </div>
+        <JournalWidgetClient
+          selectedDate={selectedDate}
+          dateLabel={dateLabel}
+          userName={userName}
+          userImage={userImage}
+          existingContent={existingContent}
+        />
       </CardContent>
     </Card>
   );

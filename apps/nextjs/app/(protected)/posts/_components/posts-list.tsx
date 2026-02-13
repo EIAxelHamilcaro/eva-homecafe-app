@@ -1,10 +1,28 @@
 "use client";
 
+import { Heart, Lock, MessageCircleMore, Unlock } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import type { IGetUserPostsOutputDto } from "@/application/dto/post/get-user-posts.dto";
 import { stripHtml, truncate } from "@/common/utils/text";
+
+function formatDateHeading(isoString: string): string {
+  const date = new Date(isoString);
+  return date.toLocaleDateString("fr-FR", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
+
+function formatTime(isoString: string): string {
+  const date = new Date(isoString);
+  const hours = date.getHours();
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  return `${hours}h${minutes}`;
+}
 
 export function PostsList() {
   const [data, setData] = useState<IGetUserPostsOutputDto | null>(null);
@@ -16,7 +34,7 @@ export function PostsList() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/v1/posts?page=${currentPage}&limit=20`);
+      const res = await fetch(`/api/v1/posts?page=${currentPage}&limit=10`);
       if (!res.ok) {
         const err = await res.json();
         setError(err.error ?? "Failed to load posts");
@@ -35,11 +53,32 @@ export function PostsList() {
     fetchPosts(page);
   }, [page, fetchPosts]);
 
+  async function togglePrivacy(
+    e: React.MouseEvent,
+    postId: string,
+    currentIsPrivate: boolean,
+  ) {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      const res = await fetch(`/api/v1/posts/${postId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isPrivate: !currentIsPrivate }),
+      });
+      if (res.ok) {
+        fetchPosts(page);
+      }
+    } catch {
+      /* empty */
+    }
+  }
+
   if (loading) {
     return (
       <div className="space-y-4">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="h-32 animate-pulse rounded-lg bg-muted" />
+          <div key={i} className="h-48 animate-pulse rounded-lg bg-muted" />
         ))}
       </div>
     );
@@ -55,18 +94,15 @@ export function PostsList() {
 
   if (!data || data.posts.length === 0) {
     return (
-      <div className="rounded-lg border border-dashed p-8 text-center">
+      <div className="rounded-xl border-12 border-homecafe-green/20 p-8 text-center">
         <p className="mb-2 text-lg font-medium text-muted-foreground">
-          No posts yet
-        </p>
-        <p className="mb-4 text-sm text-muted-foreground">
-          Create your first post to start your journal or share with friends.
+          Aucun post pour le moment
         </p>
         <Link
           href="/posts/new"
-          className="inline-flex rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+          className="mt-4 inline-flex rounded-full bg-homecafe-pink px-6 py-2 text-sm font-medium text-white"
         >
-          Create your first post
+          Créer ton premier post
         </Link>
       </div>
     );
@@ -78,47 +114,72 @@ export function PostsList() {
         <Link
           key={post.id}
           href={`/posts/${post.id}`}
-          className="block rounded-lg border p-4 transition-colors hover:bg-accent"
+          className="relative block overflow-hidden rounded-lg border border-border bg-white transition-all duration-200 hover:shadow-md"
         >
-          <div className="mb-2 flex items-center justify-between">
-            <span
-              className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
+          <div className="relative p-6 pb-0">
+            <div className="pr-10">
+              <h3 className="text-xl font-bold capitalize">
+                {formatDateHeading(post.createdAt)}
+              </h3>
+              <time className="mt-0.5 block text-sm text-muted-foreground">
+                {formatTime(post.createdAt)}
+              </time>
+            </div>
+
+            <button
+              type="button"
+              onClick={(e) => togglePrivacy(e, post.id, post.isPrivate)}
+              title={
                 post.isPrivate
-                  ? "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200"
-                  : "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-              }`}
+                  ? "Privé — cliquer pour rendre public"
+                  : "Public — cliquer pour rendre privé"
+              }
+              className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-homecafe-blue text-white transition-opacity hover:opacity-80"
             >
-              {post.isPrivate ? "Private" : "Public"}
-            </span>
-            <time className="text-xs text-muted-foreground">
-              {new Date(post.createdAt).toLocaleDateString()}
-            </time>
+              {post.isPrivate ? (
+                <Lock className="h-4 w-4" />
+              ) : (
+                <Unlock className="h-4 w-4" />
+              )}
+            </button>
           </div>
 
-          <p className="mb-2 text-sm text-foreground">
-            {truncate(stripHtml(post.content), 150)}
-          </p>
+          <div className="px-6 pb-6 pt-3">
+            <p className="text-base text-foreground">
+              {truncate(stripHtml(post.content), 200)}
+            </p>
 
-          {post.images.length > 0 && (
-            <div className="flex gap-2">
-              {post.images.slice(0, 3).map((img) => (
-                <Image
-                  key={img}
-                  src={img}
-                  alt=""
-                  width={64}
-                  height={64}
-                  className="h-16 w-16 rounded object-cover"
-                  unoptimized
-                />
-              ))}
-              {post.images.length > 3 && (
-                <span className="flex h-16 w-16 items-center justify-center rounded bg-muted text-sm text-muted-foreground">
-                  +{post.images.length - 3}
-                </span>
-              )}
+            {post.images.length > 0 && (
+              <div className="mt-4 grid grid-cols-3 gap-2">
+                {post.images.slice(0, 3).map((img, index) => (
+                  <div key={img} className="relative">
+                    <Image
+                      src={img}
+                      alt=""
+                      width={200}
+                      height={200}
+                      className="aspect-square w-full rounded-lg object-cover"
+                      unoptimized
+                    />
+                    {index === 2 && post.images.length > 3 && (
+                      <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/40 text-lg font-semibold text-white">
+                        +{post.images.length - 3}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div>
+            <div className="flex items-center justify-around rounded-b-lg bg-[#b77fff]/15 px-6 py-3">
+              <span className="flex items-center gap-1.5">
+                <Heart className="h-5 w-5 text-red-500" />
+              </span>
+              <MessageCircleMore className="h-5 w-5 text-muted-foreground" />
             </div>
-          )}
+          </div>
         </Link>
       ))}
 
@@ -130,10 +191,10 @@ export function PostsList() {
             onClick={() => setPage((p) => p - 1)}
             className="rounded-md border px-3 py-1 text-sm disabled:opacity-50"
           >
-            Previous
+            Précédent
           </button>
           <span className="text-sm text-muted-foreground">
-            Page {data.pagination.page} of {data.pagination.totalPages}
+            Page {data.pagination.page} / {data.pagination.totalPages}
           </span>
           <button
             type="button"
@@ -141,7 +202,7 @@ export function PostsList() {
             onClick={() => setPage((p) => p + 1)}
             className="rounded-md border px-3 py-1 text-sm disabled:opacity-50"
           >
-            Next
+            Suivant
           </button>
         </div>
       )}

@@ -82,6 +82,10 @@ export async function createProfileController(
     displayName: json.displayName,
     bio: json.bio,
     avatarUrl: json.avatarUrl,
+    phone: json.phone,
+    birthday: json.birthday,
+    profession: json.profession,
+    address: json.address,
   });
 
   if (!parsed.success) {
@@ -119,6 +123,10 @@ export async function updateProfileController(
     displayName: json.displayName,
     bio: json.bio,
     avatarUrl: json.avatarUrl,
+    phone: json.phone,
+    birthday: json.birthday,
+    profession: json.profession,
+    address: json.address,
   });
 
   if (!parsed.success) {

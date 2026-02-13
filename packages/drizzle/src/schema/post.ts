@@ -27,6 +27,27 @@ export const post = pgTable(
   ],
 );
 
+export const postComment = pgTable(
+  "post_comment",
+  {
+    id: text("id").primaryKey(),
+    postId: text("post_id")
+      .notNull()
+      .references(() => post.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    content: text("content").notNull(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => [
+    index("post_comment_post_id_created_at_idx").on(
+      table.postId,
+      table.createdAt,
+    ),
+  ],
+);
+
 export const postReaction = pgTable(
   "post_reaction",
   {

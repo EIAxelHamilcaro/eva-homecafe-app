@@ -13,7 +13,7 @@ export default async function ProtectedLayout({
   return (
     <div className="min-h-screen bg-background">
       <Navbar user={session.user} />
-      <main className="pt-[72px]">{children}</main>
+      <main className="pt-18">{children}</main>
       <Footer />
     </div>
   );

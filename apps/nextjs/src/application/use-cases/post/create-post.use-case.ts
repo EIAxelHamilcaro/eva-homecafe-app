@@ -29,6 +29,17 @@ export class CreatePostUseCase
       content: contentResult.getValue(),
       isPrivate: input.isPrivate,
       images: input.images,
+      createdAt: input.createdAt
+        ? (() => {
+            const now = new Date();
+            const parts = input.createdAt.split("-").map(Number);
+            const y = parts[0] ?? 0;
+            const m = parts[1] ?? 1;
+            const d = parts[2] ?? 1;
+            now.setFullYear(y, m - 1, d);
+            return now;
+          })()
+        : undefined,
     });
     if (postResult.isFailure) {
       return Result.fail(postResult.getError());

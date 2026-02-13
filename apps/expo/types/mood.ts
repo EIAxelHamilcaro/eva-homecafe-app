@@ -54,6 +54,7 @@ export interface MoodTrendsResponse {
 export interface RecordMoodInput {
   category: MoodCategory;
   intensity: number;
+  moodDate?: string;
 }
 
 export interface RecordMoodResponse {

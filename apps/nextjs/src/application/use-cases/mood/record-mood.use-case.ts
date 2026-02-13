@@ -30,7 +30,12 @@ export class RecordMoodUseCase
       return Result.fail(intensityResult.getError());
     }
 
-    const existingResult = await this.moodRepo.findTodayByUserId(input.userId);
+    const targetDate = input.moodDate ?? this.getTodayDateStr();
+
+    const existingResult = await this.moodRepo.findByUserIdAndDate(
+      input.userId,
+      targetDate,
+    );
     if (existingResult.isFailure) {
       return Result.fail(existingResult.getError());
     }
@@ -56,6 +61,7 @@ export class RecordMoodUseCase
       userId: input.userId,
       category: categoryResult.getValue(),
       intensity: intensityResult.getValue(),
+      moodDate: targetDate,
     });
     if (entryResult.isFailure) {
       return Result.fail(entryResult.getError());
@@ -72,6 +78,11 @@ export class RecordMoodUseCase
     entry.clearEvents();
 
     return Result.ok(this.toOutputDto(entry, false));
+  }
+
+  private getTodayDateStr(): string {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
   }
 
   private toOutputDto(

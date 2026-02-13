@@ -6,6 +6,17 @@ export const createProfileInputDtoSchema = z.object({
   displayName: z.string().min(1).max(50),
   bio: z.string().max(500).optional(),
   avatarUrl: z.string().url().optional(),
+  phone: z.string().max(20).optional(),
+  birthday: z.string().optional(),
+  profession: z.string().max(100).optional(),
+  address: z
+    .object({
+      street: z.string().min(1).max(200),
+      zipCode: z.string().min(1).max(20),
+      city: z.string().min(1).max(100),
+      country: z.string().min(1).max(100),
+    })
+    .optional(),
 });
 
 export const createProfileOutputDtoSchema = profileDtoSchema;

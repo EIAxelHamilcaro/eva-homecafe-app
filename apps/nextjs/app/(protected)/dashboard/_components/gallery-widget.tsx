@@ -21,18 +21,15 @@ export async function GalleryWidget({ userId }: GalleryWidgetProps) {
     return <WidgetEmptyState type="gallery" />;
   }
 
-  if (result.photos.length === 0) {
-    return <WidgetEmptyState type="gallery" />;
-  }
+  if (result.photos.length === 0) return <WidgetEmptyState type="gallery" />;
 
   return (
-    <Card>
+    <Card className="border-0">
       <CardHeader>
-        <CardTitle>
-          <Link href="/gallery" className="hover:underline">
-            Gallery
-          </Link>
-        </CardTitle>
+        <CardTitle>Galerie</CardTitle>
+        <p className="text-sm text-muted-foreground">
+          Tes plus belles photos, c'est ici !
+        </p>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-2 gap-2">
@@ -51,14 +48,12 @@ export async function GalleryWidget({ userId }: GalleryWidgetProps) {
             </div>
           ))}
         </div>
-        {result.pagination.total > 4 && (
-          <Link
-            href="/gallery"
-            className="mt-3 block text-center text-xs text-muted-foreground hover:underline"
-          >
-            View all {result.pagination.total} photos
-          </Link>
-        )}
+        <Link
+          href="/gallery"
+          className="mt-4 inline-block rounded-full bg-homecafe-pink px-4 py-1.5 text-sm font-medium text-white hover:opacity-90"
+        >
+          Voir plus
+        </Link>
       </CardContent>
     </Card>
   );

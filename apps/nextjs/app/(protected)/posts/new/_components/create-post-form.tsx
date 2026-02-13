@@ -34,9 +34,9 @@ export function CreatePostForm() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          fileName: file.name,
-          fileType: file.type,
-          fileSize: file.size,
+          filename: file.name,
+          mimeType: file.type,
+          size: file.size,
           context: "post",
         }),
       });

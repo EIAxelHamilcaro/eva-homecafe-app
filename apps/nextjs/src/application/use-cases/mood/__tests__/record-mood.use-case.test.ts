@@ -41,6 +41,7 @@ describe("RecordMoodUseCase", () => {
       exists: vi.fn(),
       count: vi.fn(),
       findTodayByUserId: vi.fn().mockResolvedValue(Result.ok(Option.none())),
+      findByUserIdAndDate: vi.fn().mockResolvedValue(Result.ok(Option.none())),
     } as unknown as IMoodRepository;
     mockEventDispatcher = {
       dispatch: vi.fn(),
@@ -67,7 +68,10 @@ describe("RecordMoodUseCase", () => {
       await useCase.execute(validInput);
 
       expect(mockMoodRepo.create).toHaveBeenCalledOnce();
-      expect(mockMoodRepo.findTodayByUserId).toHaveBeenCalledWith("user-123");
+      expect(mockMoodRepo.findByUserIdAndDate).toHaveBeenCalledWith(
+        "user-123",
+        expect.any(String),
+      );
     });
 
     it("should add MoodRecordedEvent with correct payload", async () => {
@@ -99,7 +103,7 @@ describe("RecordMoodUseCase", () => {
       ] as const;
 
       for (const category of categories) {
-        vi.mocked(mockMoodRepo.findTodayByUserId).mockResolvedValue(
+        vi.mocked(mockMoodRepo.findByUserIdAndDate).mockResolvedValue(
           Result.ok(Option.none()),
         );
         const result = await useCase.execute({
@@ -119,7 +123,7 @@ describe("RecordMoodUseCase", () => {
       expect(resultMin.isSuccess).toBe(true);
       expect(resultMin.getValue().intensity).toBe(1);
 
-      vi.mocked(mockMoodRepo.findTodayByUserId).mockResolvedValue(
+      vi.mocked(mockMoodRepo.findByUserIdAndDate).mockResolvedValue(
         Result.ok(Option.none()),
       );
 
@@ -142,7 +146,7 @@ describe("RecordMoodUseCase", () => {
         intensity: existingIntensity.getValue(),
       }).getValue();
 
-      vi.mocked(mockMoodRepo.findTodayByUserId).mockResolvedValue(
+      vi.mocked(mockMoodRepo.findByUserIdAndDate).mockResolvedValue(
         Result.ok(Option.some(existingEntry)),
       );
 
@@ -164,7 +168,7 @@ describe("RecordMoodUseCase", () => {
         intensity: existingIntensity.getValue(),
       }).getValue();
 
-      vi.mocked(mockMoodRepo.findTodayByUserId).mockResolvedValue(
+      vi.mocked(mockMoodRepo.findByUserIdAndDate).mockResolvedValue(
         Result.ok(Option.some(existingEntry)),
       );
 
@@ -184,7 +188,7 @@ describe("RecordMoodUseCase", () => {
       }).getValue();
       existingEntry.clearEvents();
 
-      vi.mocked(mockMoodRepo.findTodayByUserId).mockResolvedValue(
+      vi.mocked(mockMoodRepo.findByUserIdAndDate).mockResolvedValue(
         Result.ok(Option.some(existingEntry)),
       );
 
@@ -254,8 +258,8 @@ describe("RecordMoodUseCase", () => {
   });
 
   describe("error handling", () => {
-    it("should fail when findTodayByUserId returns error", async () => {
-      vi.mocked(mockMoodRepo.findTodayByUserId).mockResolvedValue(
+    it("should fail when findByUserIdAndDate returns error", async () => {
+      vi.mocked(mockMoodRepo.findByUserIdAndDate).mockResolvedValue(
         Result.fail("Database error"),
       );
 
@@ -285,7 +289,7 @@ describe("RecordMoodUseCase", () => {
         intensity: existingIntensity.getValue(),
       }).getValue();
 
-      vi.mocked(mockMoodRepo.findTodayByUserId).mockResolvedValue(
+      vi.mocked(mockMoodRepo.findByUserIdAndDate).mockResolvedValue(
         Result.ok(Option.some(existingEntry)),
       );
       vi.mocked(mockMoodRepo.update).mockResolvedValue(

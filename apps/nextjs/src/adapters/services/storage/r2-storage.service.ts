@@ -22,30 +22,32 @@ export class R2StorageService implements IStorageProvider {
   private readonly publicUrl: string;
 
   constructor() {
+    const s3Endpoint = process.env.S3_ENDPOINT;
+    const accessKeyId =
+      process.env.S3_ACCESS_KEY_ID ?? process.env.R2_ACCESS_KEY_ID;
+    const secretAccessKey =
+      process.env.S3_SECRET_ACCESS_KEY ?? process.env.R2_SECRET_ACCESS_KEY;
+    const bucketName = process.env.S3_BUCKET_NAME ?? process.env.R2_BUCKET_NAME;
+    const publicUrl = process.env.S3_PUBLIC_URL ?? process.env.R2_PUBLIC_URL;
     const accountId = process.env.R2_ACCOUNT_ID;
-    const accessKeyId = process.env.R2_ACCESS_KEY_ID;
-    const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY;
-    const bucketName = process.env.R2_BUCKET_NAME;
-    const publicUrl = process.env.R2_PUBLIC_URL;
 
-    if (
-      !accountId ||
-      !accessKeyId ||
-      !secretAccessKey ||
-      !bucketName ||
-      !publicUrl
-    ) {
+    if (!accessKeyId || !secretAccessKey || !bucketName || !publicUrl) {
       throw new Error(
-        "R2 storage configuration incomplete. Required env vars: R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET_NAME, R2_PUBLIC_URL",
+        "Storage configuration incomplete. Set S3_ENDPOINT + S3_ACCESS_KEY_ID + S3_SECRET_ACCESS_KEY + S3_BUCKET_NAME + S3_PUBLIC_URL (or R2_* equivalents)",
       );
+    }
+
+    if (!s3Endpoint && !accountId) {
+      throw new Error("Either S3_ENDPOINT or R2_ACCOUNT_ID must be set");
     }
 
     this.bucketName = bucketName;
     this.publicUrl = publicUrl;
 
     this.client = new S3Client({
-      region: "auto",
-      endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
+      region: s3Endpoint ? "us-east-1" : "auto",
+      endpoint: s3Endpoint ?? `https://${accountId}.r2.cloudflarestorage.com`,
+      forcePathStyle: !!s3Endpoint,
       credentials: {
         accessKeyId,
         secretAccessKey,

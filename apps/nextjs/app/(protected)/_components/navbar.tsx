@@ -69,7 +69,7 @@ export function Navbar({ user }: { user: IUserDto }) {
         </div>
 
         <Link
-          href="/settings"
+          href="/profile"
           className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full bg-homecafe-pink-light transition-opacity hover:opacity-80"
         >
           {user.image ? (

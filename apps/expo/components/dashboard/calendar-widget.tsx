@@ -1,53 +1,80 @@
-import { useRouter } from "expo-router";
-import { Calendar, ChevronRight } from "lucide-react-native";
-import { Pressable, Text, View } from "react-native";
+import { useMemo, useState } from "react";
+import { View } from "react-native";
 
+import {
+  Calendar,
+  createDot,
+  type MarkedDate,
+} from "@/components/organisation/calendar";
 import { useChronology } from "@/lib/api/hooks/use-boards";
-import { colors } from "@/src/config/colors";
 
-export function CalendarWidget() {
-  const router = useRouter();
-  const { data: chronology, isLoading, isError, refetch } = useChronology();
+interface CalendarWidgetProps {
+  selectedDate: string;
+  onSelectDate: (date: string) => void;
+}
 
-  const today = new Date();
-  const dayName = today.toLocaleDateString("fr-FR", { weekday: "long" });
-  const dayNumber = today.getDate();
-  const monthName = today.toLocaleDateString("fr-FR", { month: "long" });
-  const todayKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
-  const todayEvents = chronology?.eventDates?.[todayKey]?.count ?? 0;
+export function CalendarWidget({
+  selectedDate,
+  onSelectDate,
+}: CalendarWidgetProps) {
+  const [currentMonth, setCurrentMonth] = useState(() => {
+    const parts = selectedDate.split("-");
+    return `${parts[0]}-${parts[1]}`;
+  });
+  const { data: chronology } = useChronology(currentMonth);
+
+  const markedDates = useMemo(() => {
+    if (!chronology?.cards) return {};
+    const dateInfo: Record<string, { hasTodo: boolean; hasKanban: boolean }> =
+      {};
+    for (const card of chronology.cards) {
+      const existing = dateInfo[card.dueDate];
+      if (existing) {
+        if (card.boardType === "todo") existing.hasTodo = true;
+        if (card.boardType === "kanban") existing.hasKanban = true;
+      } else {
+        dateInfo[card.dueDate] = {
+          hasTodo: card.boardType === "todo",
+          hasKanban: card.boardType === "kanban",
+        };
+      }
+    }
+    const marks: Record<string, MarkedDate> = {};
+    for (const [dateKey, info] of Object.entries(dateInfo)) {
+      if (info.hasTodo && info.hasKanban) {
+        marks[dateKey] = {
+          dots: [createDot("pink", `both-${dateKey}`)],
+          marked: true,
+        };
+      } else if (info.hasTodo) {
+        marks[dateKey] = {
+          dots: [createDot("blue", `todo-${dateKey}`)],
+          marked: true,
+        };
+      } else if (info.hasKanban) {
+        marks[dateKey] = {
+          dots: [createDot("purple", `kanban-${dateKey}`)],
+          marked: true,
+        };
+      }
+    }
+    return marks;
+  }, [chronology]);
 
   return (
-    <Pressable
-      onPress={() => router.push("/organisation" as `/organisation`)}
-      className="mb-4 rounded-2xl bg-card p-4 active:opacity-90"
-    >
-      <View className="flex-row items-center justify-between">
-        <View className="flex-row items-center gap-3">
-          <View className="h-14 w-14 items-center justify-center rounded-xl bg-primary/10">
-            <Calendar size={28} color={colors.primary} />
-          </View>
-          <View>
-            <Text className="text-lg font-semibold capitalize text-foreground">
-              {dayName}
-            </Text>
-            <Text className="text-sm text-muted-foreground">
-              {dayNumber} {monthName}
-            </Text>
-            {isLoading ? (
-              <View className="mt-1 h-3 w-28 rounded bg-muted" />
-            ) : isError ? (
-              <Text className="text-xs text-primary" onPress={() => refetch()}>
-                Réessayer
-              </Text>
-            ) : todayEvents > 0 ? (
-              <Text className="text-xs text-primary">
-                {todayEvents} évènement{todayEvents > 1 ? "s" : ""} aujourd'hui
-              </Text>
-            ) : null}
-          </View>
-        </View>
-        <ChevronRight size={20} color={colors.icon.muted} />
-      </View>
-    </Pressable>
+    <View className="rounded-2xl bg-card p-4">
+      <Calendar
+        selectedDate={selectedDate}
+        markedDates={markedDates}
+        onDayPress={(date) => {
+          onSelectDate(date.dateString);
+        }}
+        onMonthChange={(date) => {
+          setCurrentMonth(
+            `${date.year}-${String(date.month).padStart(2, "0")}`,
+          );
+        }}
+      />
+    </View>
   );
 }

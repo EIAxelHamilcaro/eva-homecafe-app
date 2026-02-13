@@ -1,7 +1,7 @@
 import { useRouter } from "expo-router";
-import { ChevronRight, Plus } from "lucide-react-native";
 import { ActivityIndicator, Image, Pressable, Text, View } from "react-native";
 
+import { WidgetEmptyState } from "@/components/dashboard/widget-empty-state";
 import { useGallery } from "@/lib/api/hooks/use-gallery";
 import { colors } from "@/src/config/colors";
 
@@ -12,18 +12,14 @@ export function GalleryWidget() {
   const photos = data?.data ?? [];
   const isEmpty = !isLoading && photos.length === 0;
 
+  if (isEmpty) return <WidgetEmptyState type="gallery" />;
+
   return (
-    <Pressable
-      onPress={() => router.push("/(protected)/galerie")}
-      className="mb-4 rounded-2xl bg-card p-4 active:opacity-90"
-    >
-      <View className="mb-3 flex-row items-center justify-between">
-        <Text className="text-lg font-semibold text-foreground">Galerie</Text>
-        <View className="flex-row items-center">
-          <Text className="mr-1 text-sm text-primary">Voir plus</Text>
-          <ChevronRight size={16} color={colors.primary} />
-        </View>
-      </View>
+    <View className="rounded-2xl bg-card p-4">
+      <Text className="text-lg font-semibold text-foreground">Galerie</Text>
+      <Text className="mb-3 text-sm text-muted-foreground">
+        Tes plus belles photos, c'est ici !
+      </Text>
 
       {isLoading && (
         <View className="h-20 items-center justify-center">
@@ -31,24 +27,13 @@ export function GalleryWidget() {
         </View>
       )}
 
-      {isEmpty && (
-        <Pressable
-          onPress={() => router.push("/(protected)/galerie")}
-          className="flex-row items-center justify-center gap-2 rounded-xl bg-muted/50 py-6"
-        >
-          <Plus size={18} color="#B8A898" strokeWidth={2} />
-          <Text className="text-sm text-muted-foreground">
-            Ajoute ta première photo
-          </Text>
-        </Pressable>
-      )}
-
       {!isLoading && photos.length > 0 && (
-        <View className="flex-row gap-2">
+        <View className="flex-row flex-wrap gap-2">
           {photos.map((photo) => (
             <View
               key={photo.id}
-              className="flex-1 aspect-square overflow-hidden rounded-xl"
+              className="aspect-square overflow-hidden rounded-md bg-muted"
+              style={{ width: "48%" }}
             >
               <Image
                 source={{ uri: photo.url }}
@@ -59,6 +44,13 @@ export function GalleryWidget() {
           ))}
         </View>
       )}
-    </Pressable>
+
+      <Pressable
+        onPress={() => router.push("/(protected)/galerie")}
+        className="mt-4 self-start rounded-full bg-homecafe-pink px-4 py-1.5 active:opacity-90"
+      >
+        <Text className="text-sm font-medium text-white">Voir plus</Text>
+      </Pressable>
+    </View>
   );
 }

@@ -8,6 +8,7 @@ export interface IMoodEntryProps {
   userId: string;
   category: MoodCategory;
   intensity: MoodIntensity;
+  moodDate: string;
   createdAt: Date;
   updatedAt: Option<Date>;
 }
@@ -16,6 +17,7 @@ export interface ICreateMoodEntryProps {
   userId: string;
   category: MoodCategory;
   intensity: MoodIntensity;
+  moodDate?: string;
 }
 
 export class MoodEntry extends Aggregate<IMoodEntryProps> {
@@ -33,12 +35,16 @@ export class MoodEntry extends Aggregate<IMoodEntryProps> {
   ): Result<MoodEntry> {
     const newId = id ?? new UUID<string>();
     const now = new Date();
+    const dateStr =
+      props.moodDate ??
+      `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
 
     const entry = new MoodEntry(
       {
         userId: props.userId,
         category: props.category,
         intensity: props.intensity,
+        moodDate: dateStr,
         createdAt: now,
         updatedAt: Option.none(),
       },

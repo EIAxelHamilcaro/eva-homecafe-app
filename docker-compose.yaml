@@ -19,9 +19,48 @@ services:
     networks:
       - app-network
 
+  minio:
+    image: minio/minio:latest
+    container_name: homecafe-minio
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  minio-setup:
+    image: minio/mc:latest
+    container_name: homecafe-minio-setup
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 minioadmin minioadmin;
+      mc mb local/homecafe-uploads --ignore-existing;
+      mc anonymous set download local/homecafe-uploads;
+      exit 0;
+      "
+    networks:
+      - app-network
+
 volumes:
   homecafe_data:
     name: homecafe_data
+  minio_data:
+    name: homecafe_minio_data
 
 networks:
   app-network:

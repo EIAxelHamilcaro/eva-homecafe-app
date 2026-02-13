@@ -105,14 +105,24 @@ export class DrizzleMoodRepository implements IMoodRepository {
   }
 
   async findTodayByUserId(userId: string): Promise<Result<Option<MoodEntry>>> {
+    return this.findByUserIdAndDate(userId, "CURRENT_DATE");
+  }
+
+  async findByUserIdAndDate(
+    userId: string,
+    date: string,
+  ): Promise<Result<Option<MoodEntry>>> {
     try {
+      const dateExpr =
+        date === "CURRENT_DATE" ? sql`CURRENT_DATE` : sql`${date}`;
+
       const result = await db
         .select()
         .from(moodEntryTable)
         .where(
           and(
             eq(moodEntryTable.userId, userId),
-            eq(moodEntryTable.moodDate, sql`CURRENT_DATE`),
+            eq(moodEntryTable.moodDate, dateExpr),
           ),
         )
         .orderBy(desc(moodEntryTable.createdAt))
@@ -130,7 +140,7 @@ export class DrizzleMoodRepository implements IMoodRepository {
 
       return Result.ok(Option.some(entryResult.getValue()));
     } catch (error) {
-      return Result.fail(`Failed to find today's mood entry: ${error}`);
+      return Result.fail(`Failed to find mood entry by date: ${error}`);
     }
   }
 

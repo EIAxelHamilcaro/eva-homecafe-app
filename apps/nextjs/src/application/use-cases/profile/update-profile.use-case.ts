@@ -5,8 +5,11 @@ import type {
 } from "@/application/dto/profile/update-profile.dto";
 import type { IProfileRepository } from "@/application/ports/profile-repository.port";
 import type { Profile } from "@/domain/profile/profile.aggregate";
+import { Address } from "@/domain/profile/value-objects/address.vo";
 import { Bio } from "@/domain/profile/value-objects/bio.vo";
 import { DisplayName } from "@/domain/profile/value-objects/display-name.vo";
+import { Phone } from "@/domain/profile/value-objects/phone.vo";
+import { Profession } from "@/domain/profile/value-objects/profession.vo";
 
 export class UpdateProfileUseCase
   implements UseCase<IUpdateProfileInputDto, IUpdateProfileOutputDto>
@@ -94,6 +97,57 @@ export class UpdateProfileUseCase
       }
     }
 
+    if (input.phone !== undefined) {
+      if (input.phone === null) {
+        const updateResult = profile.updatePhone(Option.none());
+        if (updateResult.isFailure) return Result.fail(updateResult.getError());
+      } else {
+        const phoneResult = Phone.create(input.phone);
+        if (phoneResult.isFailure) return Result.fail(phoneResult.getError());
+        const updateResult = profile.updatePhone(
+          Option.some(phoneResult.getValue()),
+        );
+        if (updateResult.isFailure) return Result.fail(updateResult.getError());
+      }
+    }
+
+    if (input.birthday !== undefined) {
+      const updateResult = profile.updateBirthday(
+        Option.fromNullable(input.birthday ? new Date(input.birthday) : null),
+      );
+      if (updateResult.isFailure) return Result.fail(updateResult.getError());
+    }
+
+    if (input.profession !== undefined) {
+      if (input.profession === null) {
+        const updateResult = profile.updateProfession(Option.none());
+        if (updateResult.isFailure) return Result.fail(updateResult.getError());
+      } else {
+        const professionResult = Profession.create(input.profession);
+        if (professionResult.isFailure)
+          return Result.fail(professionResult.getError());
+        const updateResult = profile.updateProfession(
+          Option.some(professionResult.getValue()),
+        );
+        if (updateResult.isFailure) return Result.fail(updateResult.getError());
+      }
+    }
+
+    if (input.address !== undefined) {
+      if (input.address === null) {
+        const updateResult = profile.updateAddress(Option.none());
+        if (updateResult.isFailure) return Result.fail(updateResult.getError());
+      } else {
+        const addressResult = Address.create(input.address);
+        if (addressResult.isFailure)
+          return Result.fail(addressResult.getError());
+        const updateResult = profile.updateAddress(
+          Option.some(addressResult.getValue()),
+        );
+        if (updateResult.isFailure) return Result.fail(updateResult.getError());
+      }
+    }
+
     return Result.ok();
   }
 
@@ -104,6 +158,10 @@ export class UpdateProfileUseCase
       displayName: profile.get("displayName").value,
       bio: profile.get("bio").toNull()?.value ?? null,
       avatarUrl: profile.get("avatarUrl").toNull(),
+      phone: profile.get("phone").toNull()?.value ?? null,
+      birthday: profile.get("birthday").toNull()?.toISOString() ?? null,
+      profession: profile.get("profession").toNull()?.value ?? null,
+      address: profile.get("address").toNull()?.value ?? null,
       createdAt: profile.get("createdAt").toISOString(),
       updatedAt: profile.get("updatedAt").toISOString(),
     };

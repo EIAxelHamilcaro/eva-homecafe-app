@@ -9,9 +9,5 @@ export default async function PostDetailPage({
   const session = await requireAuth();
   const { postId } = await params;
 
-  return (
-    <div className="mx-auto max-w-2xl p-4">
-      <PostDetail postId={postId} currentUserId={session.user.id} />
-    </div>
-  );
+  return <PostDetail postId={postId} currentUserId={session.user.id} />;
 }

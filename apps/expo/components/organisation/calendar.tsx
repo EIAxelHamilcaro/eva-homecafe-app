@@ -102,6 +102,36 @@ const THEME = {
   textDayFontSize: 14,
   textMonthFontSize: 16,
   textDayHeaderFontSize: 12,
+  "stylesheet.day.basic": {
+    base: {
+      width: 32,
+      height: 32,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+    },
+    text: {
+      marginTop: 0,
+      fontSize: 14,
+      fontFamily: "System",
+      fontWeight: "400" as const,
+      color: "#3D2E2E",
+      backgroundColor: "rgba(0,0,0,0)",
+    },
+    selected: {
+      backgroundColor: "#F5A5B8",
+      borderRadius: 16,
+    },
+    selectedText: {
+      color: "#FFFFFF",
+    },
+    todayText: {
+      color: "#F5A5B8",
+      fontWeight: "600" as const,
+    },
+    disabledText: {
+      color: "#D1D5DB",
+    },
+  },
 };
 
 function Calendar({
@@ -126,6 +156,13 @@ function Calendar({
     };
   }
 
+  const calendarTheme = disabled
+    ? {
+        ...THEME,
+        todayTextColor: THEME.dayTextColor,
+      }
+    : THEME;
+
   return (
     <View className={cn("rounded-xl bg-white p-2", className)} {...props}>
       <RNCalendar
@@ -138,7 +175,7 @@ function Calendar({
         maxDate={maxDate}
         hideArrows={hideArrows}
         disableMonthChange={hideArrows}
-        theme={THEME}
+        theme={calendarTheme}
         enableSwipeMonths={!disabled}
         firstDay={1}
       />

@@ -36,7 +36,7 @@ export async function getJournalEntries(
 ): Promise<IGetJournalEntriesOutputDto> {
   const offset = (page - 1) * limit;
 
-  const conditions = [eq(post.userId, userId), eq(post.isPrivate, true)];
+  const conditions = [eq(post.userId, userId)];
 
   if (date) {
     conditions.push(

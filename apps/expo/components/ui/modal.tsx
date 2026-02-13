@@ -9,6 +9,7 @@ import {
   type ViewProps,
   type ViewStyle,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { cn } from "@/src/libs/utils";
 
@@ -34,6 +35,7 @@ function Modal({
   style,
 }: ModalProps) {
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     if (open) {
@@ -61,11 +63,20 @@ function Modal({
     >
       <View className={cn("flex-1 bg-black/50", className)} style={style}>
         <Animated.View
-          style={{ opacity: fadeAnim }}
+          style={[
+            {
+              opacity: fadeAnim,
+              paddingTop: insets.top,
+              paddingBottom: insets.bottom,
+            },
+          ]}
           className={cn("flex-1 bg-background", contentClassName)}
         >
           {showCloseButton && (
-            <View className="absolute right-4 top-4 z-10">
+            <View
+              className="absolute right-4 z-10"
+              style={{ top: insets.top + 16 }}
+            >
               <ModalCloseButton onPress={onClose} />
             </View>
           )}
@@ -105,7 +116,7 @@ function ModalHeader({ className, ...props }: ModalHeaderProps) {
   return (
     <View
       className={cn(
-        "flex-row items-center justify-between p-4 pt-16",
+        "flex-row items-center justify-between p-4 pt-6",
         className,
       )}
       {...props}

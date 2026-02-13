@@ -24,6 +24,7 @@ export interface ICreatePostProps {
   content: PostContent;
   isPrivate: boolean;
   images: string[];
+  createdAt?: Date;
 }
 
 export class Post extends Aggregate<IPostProps> {
@@ -40,7 +41,6 @@ export class Post extends Aggregate<IPostProps> {
     id?: UUID<string | number>,
   ): Result<Post> {
     const newId = id ?? new UUID<string>();
-    const now = new Date();
 
     const post = new Post(
       {
@@ -49,7 +49,7 @@ export class Post extends Aggregate<IPostProps> {
         isPrivate: props.isPrivate,
         images: props.images,
         reactions: PostReactionsList.create([]),
-        createdAt: now,
+        createdAt: props.createdAt ?? new Date(),
         updatedAt: Option.none(),
       },
       newId,

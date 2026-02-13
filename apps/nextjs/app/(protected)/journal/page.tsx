@@ -1,24 +1,45 @@
-import Link from "next/link";
+import { Suspense } from "react";
 import { requireAuth } from "@/adapters/guards/auth.guard";
+import { JournalBadges } from "./_components/journal-badges";
 import { JournalEntries } from "./_components/journal-entries";
-import { StreakCounter } from "./_components/streak-counter";
+import { JournalGallery } from "./_components/journal-gallery";
+import { JournalHeader } from "./_components/journal-header";
+
+function WidgetSkeleton() {
+  return <div className="h-48 animate-pulse rounded-xl bg-muted" />;
+}
 
 export default async function JournalPage() {
-  await requireAuth();
+  const session = await requireAuth();
+  const userId = session.user.id;
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, "0");
+  const d = String(now.getDate()).padStart(2, "0");
+  const today = `${y}-${m}-${d}`;
 
   return (
-    <div className="mx-auto max-w-2xl p-4">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold">My Journal</h1>
-        <Link
-          href="/posts/new"
-          className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-        >
-          New Entry
-        </Link>
+    <div className="container mx-auto max-w-7xl px-4 py-4">
+      <JournalHeader
+        userName={session.user.name}
+        userImage={session.user.image}
+        today={today}
+      />
+
+      <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <div>
+          <JournalEntries />
+        </div>
+
+        <div className="flex flex-col gap-4">
+          <Suspense fallback={<WidgetSkeleton />}>
+            <JournalGallery userId={userId} />
+          </Suspense>
+          <Suspense fallback={<WidgetSkeleton />}>
+            <JournalBadges userId={userId} />
+          </Suspense>
+        </div>
       </div>
-      <StreakCounter />
-      <JournalEntries />
     </div>
   );
 }

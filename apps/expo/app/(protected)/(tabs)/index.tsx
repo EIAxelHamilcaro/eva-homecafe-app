@@ -1,19 +1,28 @@
-import { ScrollView, Text, View } from "react-native";
+import { useState } from "react";
+import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CalendarWidget } from "@/components/dashboard/calendar-widget";
 import { GalleryWidget } from "@/components/dashboard/gallery-widget";
 import { InviteFriendsButton } from "@/components/dashboard/invite-friends-button";
 import { JournalWidget } from "@/components/dashboard/journal-widget";
 import { MessagerieWidget } from "@/components/dashboard/messagerie-widget";
-import { MoodWidget } from "@/components/dashboard/mood-widget";
-import { MoodboardWidget } from "@/components/dashboard/moodboard-widget";
-import { RewardsWidget } from "@/components/dashboard/rewards-widget";
-import { SuiviWidgets } from "@/components/dashboard/suivi-widgets";
+import { MoodSliderWidget } from "@/components/dashboard/mood-slider-widget";
+import {
+  SuiviMonthlyWidget,
+  SuiviWeeklyWidget,
+} from "@/components/dashboard/suivi-widgets";
 import { TodoWidget } from "@/components/dashboard/todo-widget";
-import { useAuth } from "@/src/providers/auth-provider";
+
+function getLocalDateString(): string {
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, "0");
+  const d = String(now.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
 
 export default function HomeScreen() {
-  const { user } = useAuth();
+  const [selectedDate, setSelectedDate] = useState(getLocalDateString);
 
   return (
     <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
@@ -22,45 +31,29 @@ export default function HomeScreen() {
         contentContainerStyle={{ paddingBottom: 24 }}
         showsVerticalScrollIndicator={false}
       >
-        {/* Header */}
-        <View className="mb-6 pt-2">
-          <Text className="text-2xl font-bold text-foreground">
-            Bonjour {user?.name?.split(" ")[0] ?? ""}
-          </Text>
-          <Text className="text-base text-muted-foreground">
-            Bienvenue dans votre café
-          </Text>
+        <View className="gap-4">
+          <View className="rounded-2xl bg-homecafe-green/10 p-4 gap-4">
+            <GalleryWidget />
+            <MessagerieWidget />
+            <SuiviMonthlyWidget />
+          </View>
+
+          <View className="rounded-2xl bg-homecafe-pink/10 p-4 gap-4">
+            <CalendarWidget
+              selectedDate={selectedDate}
+              onSelectDate={setSelectedDate}
+            />
+            <TodoWidget />
+          </View>
+
+          <View className="rounded-2xl bg-homecafe-orange/10 p-4 gap-4">
+            <JournalWidget selectedDate={selectedDate} />
+            <MoodSliderWidget selectedDate={selectedDate} />
+            <SuiviWeeklyWidget />
+          </View>
+
+          <InviteFriendsButton />
         </View>
-
-        {/* Gallery widget */}
-        <GalleryWidget />
-
-        {/* Messagerie widget */}
-        <MessagerieWidget />
-
-        {/* Suivi widgets */}
-        <SuiviWidgets />
-
-        {/* Calendar widget */}
-        <CalendarWidget />
-
-        {/* Todo widget */}
-        <TodoWidget />
-
-        {/* Journal widget */}
-        <JournalWidget />
-
-        {/* Moodboard widget */}
-        <MoodboardWidget />
-
-        {/* Mood widget */}
-        <MoodWidget />
-
-        {/* Rewards widget */}
-        <RewardsWidget />
-
-        {/* CTA button */}
-        <InviteFriendsButton />
       </ScrollView>
     </SafeAreaView>
   );

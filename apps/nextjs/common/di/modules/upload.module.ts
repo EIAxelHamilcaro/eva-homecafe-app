@@ -8,7 +8,8 @@ import { DI_SYMBOLS } from "../types";
 export const createUploadModule = () => {
   const uploadModule = createModule();
 
-  if (process.env.STORAGE_PROVIDER === "r2") {
+  const provider = process.env.STORAGE_PROVIDER;
+  if (provider === "r2" || provider === "s3") {
     uploadModule
       .bind(DI_SYMBOLS.IStorageProvider)
       .toClass(R2StorageService as new () => IStorageProvider);

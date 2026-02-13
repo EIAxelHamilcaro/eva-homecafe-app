@@ -4,6 +4,7 @@ import {
   CalendarDays,
   House,
   MessageCircle,
+  User,
   Users,
 } from "lucide-react-native";
 import { View } from "react-native";
@@ -93,6 +94,20 @@ export default function TabLayout() {
           tabBarIcon: ({ color, focused }) => (
             <View>
               <MessageCircle
+                size={24}
+                color={color}
+                fill={focused ? color : "transparent"}
+              />
+            </View>
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          tabBarIcon: ({ color, focused }) => (
+            <View>
+              <User
                 size={24}
                 color={color}
                 fill={focused ? color : "transparent"}

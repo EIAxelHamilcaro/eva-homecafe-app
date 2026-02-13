@@ -1,14 +1,9 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@packages/ui/components/ui/card";
+import { Card, CardContent } from "@packages/ui/components/ui/card";
+import { Eye } from "lucide-react";
 import Link from "next/link";
 import { getProfileNames } from "@/adapters/queries/profile-names.query";
+import type { IConversationDto } from "@/application/dto/chat/get-conversations.dto";
 import { getInjection } from "@/common/di/container";
-import { formatRelativeTime } from "./format-relative-time";
-import { WidgetEmptyState } from "./widget-empty-state";
 
 interface MessagesWidgetProps {
   userId: string;
@@ -16,27 +11,51 @@ interface MessagesWidgetProps {
 
 export async function MessagesWidget({ userId }: MessagesWidgetProps) {
   const useCase = getInjection("GetConversationsUseCase");
-  let result: Awaited<ReturnType<typeof useCase.execute>>;
+  let conversations: IConversationDto[] = [];
+
   try {
-    result = await useCase.execute({
+    const result = await useCase.execute({
       userId,
-      pagination: { page: 1, limit: 3 },
+      pagination: { page: 1, limit: 10 },
     });
+    if (result.isSuccess) {
+      conversations = result
+        .getValue()
+        .conversations.filter((c) => c.unreadCount > 0);
+    }
   } catch {
-    return <WidgetEmptyState type="messages" />;
+    /* empty */
   }
 
-  if (result.isFailure) {
-    return <WidgetEmptyState type="messages" />;
+  if (conversations.length === 0) {
+    return (
+      <Card className="border-0 relative">
+        <Eye className="absolute top-3 right-3 h-5 w-5 text-homecafe-blue" />
+
+        <CardContent className="relative">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-semibold">Messagerie</h3>
+              <p className="text-sm text-muted-foreground">
+                Ceci est un affichage restreint
+              </p>
+            </div>
+          </div>
+          <p className="mt-4 text-sm text-muted-foreground">
+            Aucun message non lu
+          </p>
+          <Link
+            href="/messages"
+            className="mt-4 inline-block rounded-full bg-homecafe-pink px-4 py-1.5 text-sm font-medium text-white hover:opacity-90"
+          >
+            Voir plus
+          </Link>
+        </CardContent>
+      </Card>
+    );
   }
 
-  const data = result.getValue();
-
-  if (data.conversations.length === 0) {
-    return <WidgetEmptyState type="messages" />;
-  }
-
-  const otherParticipantIds = data.conversations
+  const otherParticipantIds = conversations
     .flatMap((c) => c.participants.filter((p) => p.userId !== userId))
     .map((p) => p.userId);
 
@@ -48,23 +67,25 @@ export async function MessagesWidget({ userId }: MessagesWidgetProps) {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>
-          <Link href="/messages" className="hover:underline">
-            Messages
-          </Link>
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <ul className="space-y-3">
-          {data.conversations.map((convo) => {
+    <Card className="border-0">
+      <CardContent className="pt-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-lg font-semibold">Messagerie</h3>
+            <p className="text-sm text-muted-foreground">
+              Ceci est un affichage restreint
+            </p>
+          </div>
+          <Eye className="h-5 w-5 text-muted-foreground" />
+        </div>
+        <ul className="mt-4 space-y-3">
+          {conversations.map((convo) => {
             const otherUser = convo.participants.find(
               (p) => p.userId !== userId,
             );
             const displayName = otherUser
-              ? (nameMap.get(otherUser.userId) ?? "Unknown")
-              : "Unknown";
+              ? (nameMap.get(otherUser.userId) ?? "Inconnu")
+              : "Inconnu";
 
             return (
               <li key={convo.id}>
@@ -72,37 +93,28 @@ export async function MessagesWidget({ userId }: MessagesWidgetProps) {
                   href="/messages"
                   className="flex items-center gap-3 rounded-md p-2 hover:bg-muted/50"
                 >
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between gap-2">
-                      <p className="truncate text-sm font-medium">
-                        {displayName}
-                      </p>
-                      {convo.lastMessage && (
-                        <span className="shrink-0 text-xs text-muted-foreground">
-                          {formatRelativeTime(convo.lastMessage.sentAt)}
-                        </span>
-                      )}
-                    </div>
-                    {convo.lastMessage ? (
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium">{displayName}</p>
+                    {convo.lastMessage && (
                       <p className="mt-0.5 truncate text-xs text-muted-foreground">
                         {convo.lastMessage.content}
                       </p>
-                    ) : (
-                      <p className="mt-0.5 text-xs text-muted-foreground">
-                        No messages yet
-                      </p>
                     )}
                   </div>
-                  {convo.unreadCount > 0 && (
-                    <span className="shrink-0 rounded-full bg-primary px-2 py-0.5 text-xs font-medium text-primary-foreground">
-                      {convo.unreadCount}
-                    </span>
-                  )}
+                  <span className="shrink-0 rounded-full bg-primary px-2 py-0.5 text-xs font-medium text-primary-foreground">
+                    {convo.unreadCount}
+                  </span>
                 </Link>
               </li>
             );
           })}
         </ul>
+        <Link
+          href="/messages"
+          className="mt-4 inline-block rounded-full bg-homecafe-green px-4 py-1.5 text-sm font-medium text-white hover:opacity-90"
+        >
+          Voir plus
+        </Link>
       </CardContent>
     </Card>
   );

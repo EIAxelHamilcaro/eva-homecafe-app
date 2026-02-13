@@ -1,6 +1,6 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { ImageIcon, Lock, X } from "lucide-react-native";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Image,
@@ -9,19 +9,21 @@ import {
   Text,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import {
-  type FormattingOption,
-  PostEditor,
-} from "@/components/journal/post-editor";
+import { PostEditor } from "@/components/journal/post-editor";
 import { Avatar, Button } from "@/components/ui";
 import { usePost, useUpdatePost } from "@/lib/api/hooks/use-posts";
 import { usePostImages } from "@/lib/hooks/use-image-picker";
 import { useToast } from "@/lib/toast/toast-context";
 import { useAuth } from "@/src/providers/auth-provider";
 
+function isContentEmpty(html: string): boolean {
+  return html.replace(/<[^>]*>/g, "").trim().length === 0;
+}
+
 export default function EditPostScreen() {
+  const insets = useSafeAreaInsets();
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { user } = useAuth();
@@ -37,16 +39,13 @@ export default function EditPostScreen() {
     canAddMore,
   } = usePostImages();
 
-  const [postContent, setPostContent] = useState("");
+  const [htmlContent, setHtmlContent] = useState("");
   const [isPrivate, setIsPrivate] = useState(true);
-  const [activeFormatting, setActiveFormatting] = useState<FormattingOption[]>(
-    [],
-  );
   const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
     if (post && !initialized) {
-      setPostContent(post.content);
+      setHtmlContent(post.content);
       setIsPrivate(post.isPrivate);
       resetImages(post.images);
       setInitialized(true);
@@ -64,12 +63,12 @@ export default function EditPostScreen() {
   };
 
   const handleSave = () => {
-    if (!postContent.trim() || !id) return;
+    if (isContentEmpty(htmlContent) || !id) return;
 
     updatePost.mutate(
       {
         postId: id,
-        content: postContent,
+        content: htmlContent,
         isPrivate,
         images,
       },
@@ -85,15 +84,9 @@ export default function EditPostScreen() {
     );
   };
 
-  const handleFormatPress = (format: FormattingOption) => {
-    setActiveFormatting((prev) =>
-      prev.includes(format)
-        ? prev.filter((f) => f !== format)
-        : [...prev, format],
-    );
-  };
-
-  const handleMentionPress = () => {};
+  const handleChangeHTML = useCallback((html: string) => {
+    setHtmlContent(html);
+  }, []);
 
   const togglePrivacy = () => {
     setIsPrivate((prev) => !prev);
@@ -101,31 +94,31 @@ export default function EditPostScreen() {
 
   if (isLoadingPost) {
     return (
-      <SafeAreaView className="flex-1 bg-background">
-        <View className="items-end px-4 py-2">
+      <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
+        <View className="flex-row justify-end px-4 py-4">
           <Pressable
             onPress={handleClose}
-            className="h-10 w-10 items-center justify-center rounded-full border-2 border-primary"
+            className="h-10 w-10 items-center justify-center rounded-full border border-homecafe-pink bg-background active:bg-muted"
           >
-            <X size={20} color="#F691C3" />
+            <X size={20} color="#3D2E2E" strokeWidth={2} />
           </Pressable>
         </View>
         <View className="flex-1 items-center justify-center">
           <ActivityIndicator size="large" color="#F691C3" />
         </View>
-      </SafeAreaView>
+      </View>
     );
   }
 
   if (!post) {
     return (
-      <SafeAreaView className="flex-1 bg-background">
-        <View className="items-end px-4 py-2">
+      <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
+        <View className="flex-row justify-end px-4 py-4">
           <Pressable
             onPress={handleClose}
-            className="h-10 w-10 items-center justify-center rounded-full border-2 border-primary"
+            className="h-10 w-10 items-center justify-center rounded-full border border-homecafe-pink bg-background active:bg-muted"
           >
-            <X size={20} color="#F691C3" />
+            <X size={20} color="#3D2E2E" strokeWidth={2} />
           </Pressable>
         </View>
         <View className="flex-1 items-center justify-center px-4">
@@ -133,34 +126,30 @@ export default function EditPostScreen() {
             Post introuvable
           </Text>
         </View>
-      </SafeAreaView>
+      </View>
     );
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-background">
-      <View className="flex-1 px-4">
-        <View className="absolute right-4 top-4 z-10">
-          <Pressable
-            onPress={handleClose}
-            className="h-10 w-10 items-center justify-center rounded-full border border-homecafe-pink bg-background active:bg-muted"
-            accessibilityRole="button"
-            accessibilityLabel="Fermer"
-          >
-            <X size={20} color="#3D2E2E" strokeWidth={2} />
-          </Pressable>
-        </View>
-
-        <View className="flex-row items-center justify-between pt-12 pb-4">
-          <View className="flex-row items-center gap-3">
+    <View
+      className="flex-1 bg-background"
+      style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}
+    >
+      <ScrollView
+        className="flex-1 px-4"
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        <View className="flex-row items-center py-4">
+          <View className="flex-row items-center gap-3 flex-1">
             <Avatar
-              size="xl"
+              size="lg"
               src={undefined}
               alt={user?.name ?? "Utilisateur"}
-              className="border-4 border-primary"
+              className="border-2 border-primary"
             />
             <View>
-              <Text className="text-lg font-bold text-foreground">
+              <Text className="text-base font-semibold text-foreground">
                 {user?.name ?? "Utilisateur"}
               </Text>
               <Text className="text-sm text-muted-foreground">
@@ -171,31 +160,32 @@ export default function EditPostScreen() {
 
           <Pressable
             onPress={togglePrivacy}
-            className="h-12 w-12 items-center justify-center rounded-xl"
+            className="h-10 w-10 items-center justify-center rounded-full"
             style={{
-              backgroundColor: isPrivate ? "#3B82F6" : "#E5E7EB",
+              backgroundColor: isPrivate ? "#3B82F6" : "#10B981",
             }}
             accessibilityRole="button"
             accessibilityLabel={isPrivate ? "Post privé" : "Post public"}
           >
-            <Lock
-              size={24}
-              color={isPrivate ? "#FFFFFF" : "#6B7280"}
-              strokeWidth={2}
-            />
+            <Lock size={16} color="#FFFFFF" strokeWidth={2} />
+          </Pressable>
+
+          <Pressable
+            onPress={handleClose}
+            className="ml-3 h-10 w-10 items-center justify-center rounded-full border border-homecafe-pink bg-background active:bg-muted"
+            accessibilityRole="button"
+            accessibilityLabel="Fermer"
+          >
+            <X size={20} color="#3D2E2E" strokeWidth={2} />
           </Pressable>
         </View>
 
         <PostEditor
-          value={postContent}
-          onChangeText={setPostContent}
-          activeFormatting={activeFormatting}
-          onFormatPress={handleFormatPress}
+          initialContent={initialized ? htmlContent : ""}
+          onChangeHTML={handleChangeHTML}
           onImagePress={pickImages}
-          onMentionPress={handleMentionPress}
-          minHeight={200}
+          minHeight={300}
           editable={!isSubmitting}
-          className="flex-1"
         />
 
         {images.length > 0 && (
@@ -238,23 +228,23 @@ export default function EditPostScreen() {
             </Text>
           </View>
         )}
+      </ScrollView>
 
-        <View className="items-end py-4">
-          <Button
-            onPress={handleSave}
-            disabled={!postContent.trim() || isSubmitting}
-            className="px-8"
-          >
-            {updatePost.isPending ? (
-              <ActivityIndicator size="small" color="#FFFFFF" />
-            ) : (
-              <Text className="text-white font-semibold text-base">
-                Enregistrer
-              </Text>
-            )}
-          </Button>
-        </View>
+      <View className="px-4 pt-3" style={{ paddingBottom: 12 }}>
+        <Button
+          onPress={handleSave}
+          disabled={isContentEmpty(htmlContent) || isSubmitting}
+          className="w-full"
+        >
+          {updatePost.isPending ? (
+            <ActivityIndicator size="small" color="#FFFFFF" />
+          ) : (
+            <Text className="text-white font-semibold text-base">
+              Enregistrer
+            </Text>
+          )}
+        </Button>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
