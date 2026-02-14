@@ -17,13 +17,13 @@ export class ResendService implements IEmailProvider {
   }
 
   async send(payload: EmailPayload): Promise<Result<void>> {
-    if (this.isDev) {
-      this.logEmail(payload);
-      return Result.ok();
-    }
-
     const client = this.getClient();
+
     if (!client) {
+      if (this.isDev) {
+        this.logEmail(payload);
+        return Result.ok();
+      }
       return Result.fail("RESEND_API_KEY environment variable is required");
     }
 
