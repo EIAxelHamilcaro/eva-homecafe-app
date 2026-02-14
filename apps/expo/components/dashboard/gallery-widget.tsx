@@ -9,7 +9,7 @@ export function GalleryWidget() {
   const router = useRouter();
   const { data, isLoading } = useGallery(1, 4);
 
-  const photos = data?.data ?? [];
+  const photos = data?.photos ?? [];
   const isEmpty = !isLoading && photos.length === 0;
 
   if (isEmpty) return <WidgetEmptyState type="gallery" />;

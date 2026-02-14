@@ -10,7 +10,7 @@ export interface PhotoDto {
 }
 
 export interface GalleryResponse {
-  data: PhotoDto[];
+  photos: PhotoDto[];
   pagination: {
     page: number;
     limit: number;

@@ -141,7 +141,7 @@ export default function GalerieModal() {
     }
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  const photos = data?.pages.flatMap((page) => page.data) ?? [];
+  const photos = data?.pages.flatMap((page) => page.photos) ?? [];
   const isEmpty = !isLoading && photos.length === 0;
 
   return (

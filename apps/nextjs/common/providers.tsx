@@ -6,12 +6,18 @@ import { NextIntlClientProvider } from "next-intl";
 import type { ReactNode } from "react";
 import { getQueryClient } from "./query-client";
 
-export default function Providers({ children }: { children: ReactNode }) {
+export default function Providers({
+  children,
+  locale,
+}: {
+  children: ReactNode;
+  locale: string;
+}) {
   const queryClient = getQueryClient();
 
   return (
     <QueryClientProvider client={queryClient}>
-      <NextIntlClientProvider>
+      <NextIntlClientProvider locale={locale}>
         <ThemeProvider
           attribute="class"
           defaultTheme={

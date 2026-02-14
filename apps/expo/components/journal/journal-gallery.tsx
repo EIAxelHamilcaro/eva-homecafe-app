@@ -51,7 +51,7 @@ export function JournalGallery() {
   const router = useRouter();
   const { data, isLoading } = useGallery(1, 4);
 
-  const photos = data?.data ?? [];
+  const photos = data?.photos ?? [];
 
   if (isLoading) {
     return (
