@@ -8,13 +8,14 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@packages/ui/components/ui/sheet";
-import { AlignJustify, Search, User } from "lucide-react";
+import { AlignJustify, Bell, Search, User } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 import type { IUserDto } from "@/application/dto/common.dto";
+import { useUnreadCountQuery } from "../_hooks/use-notifications";
 
 const navItems = [
   { label: "Home", href: "/dashboard" },
@@ -34,6 +35,8 @@ function isActive(pathname: string, href: string): boolean {
 export function Navbar({ user }: { user: IUserDto }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const { data: unreadData } = useUnreadCountQuery();
+  const unreadCount = unreadData?.count ?? 0;
 
   return (
     <header className="fixed top-0 left-0 z-50 w-full border-b border-border bg-white">
@@ -78,23 +81,38 @@ export function Navbar({ user }: { user: IUserDto }) {
           })}
         </div>
 
-        <Link
-          href="/profile"
-          className="relative hidden h-9 w-9 shrink-0 overflow-hidden rounded-full bg-homecafe-pink-light transition-opacity hover:opacity-80 lg:block"
-        >
-          {user.image ? (
-            <Image
-              src={user.image}
-              alt={user.name}
-              fill
-              className="object-cover"
-            />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center">
-              <User size={18} className="text-homecafe-pink" />
-            </div>
-          )}
-        </Link>
+        <div className="hidden items-center gap-2 lg:flex">
+          <Link
+            href="/notifications"
+            className="relative rounded-full p-2 transition-colors hover:bg-muted"
+            aria-label="Notifications"
+          >
+            <Bell size={20} className="text-foreground" />
+            {unreadCount > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-homecafe-pink px-1 text-[10px] font-bold text-white">
+                {unreadCount > 99 ? "99+" : unreadCount}
+              </span>
+            )}
+          </Link>
+
+          <Link
+            href="/profile"
+            className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full bg-homecafe-pink-light transition-opacity hover:opacity-80"
+          >
+            {user.image ? (
+              <Image
+                src={user.image}
+                alt={user.name}
+                fill
+                className="object-cover"
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center">
+                <User size={18} className="text-homecafe-pink" />
+              </div>
+            )}
+          </Link>
+        </div>
 
         <Button
           variant="ghost"
@@ -136,6 +154,27 @@ export function Navbar({ user }: { user: IUserDto }) {
                   </SheetClose>
                 );
               })}
+
+              <SheetClose asChild>
+                <Link
+                  href="/notifications"
+                  className={`flex items-center justify-between rounded-lg px-3 py-2.5 text-base font-medium transition-colors ${
+                    isActive(pathname, "/notifications")
+                      ? "bg-homecafe-cream text-homecafe-yellow"
+                      : "text-foreground hover:bg-muted"
+                  }`}
+                >
+                  <span className="flex items-center gap-2">
+                    <Bell size={18} />
+                    Notifications
+                  </span>
+                  {unreadCount > 0 && (
+                    <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-homecafe-pink px-1.5 text-xs font-bold text-white">
+                      {unreadCount > 99 ? "99+" : unreadCount}
+                    </span>
+                  )}
+                </Link>
+              </SheetClose>
             </div>
 
             <div className="mt-auto border-t border-border px-4 pt-4 pb-6">
