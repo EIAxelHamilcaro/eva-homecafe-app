@@ -65,6 +65,14 @@ export const feedKeys = {
   all: ["feed"] as const,
   list: (page?: number, limit?: number) =>
     [...feedKeys.all, "list", { page, limit }] as const,
+  unified: (page?: number, limit?: number) =>
+    [...feedKeys.all, "unified", { page, limit }] as const,
+};
+
+export const feedGalleryKeys = {
+  all: ["feed-gallery"] as const,
+  list: (page?: number, limit?: number) =>
+    [...feedGalleryKeys.all, "list", { page, limit }] as const,
 };
 
 export const boardKeys = {

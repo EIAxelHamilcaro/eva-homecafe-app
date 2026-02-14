@@ -42,3 +42,22 @@ export interface PresignedUploadResponse {
   key: string;
   expiresAt: string;
 }
+
+export interface FeedGalleryPhotoDto {
+  photoId: string | null;
+  postId: string | null;
+  url: string;
+  authorId: string;
+  authorName: string;
+  authorAvatar: string | null;
+  createdAt: string;
+}
+
+export interface FeedGalleryResponse {
+  photos: FeedGalleryPhotoDto[];
+  pagination: {
+    page: number;
+    limit: number;
+    hasNextPage: boolean;
+  };
+}
