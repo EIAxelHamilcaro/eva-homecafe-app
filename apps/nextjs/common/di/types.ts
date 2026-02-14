@@ -50,6 +50,7 @@ import type { GetInviteLinkUseCase } from "@/application/use-cases/friend/get-in
 import type { GetPendingRequestsUseCase } from "@/application/use-cases/friend/get-pending-requests.use-case";
 import type { RespondFriendRequestUseCase } from "@/application/use-cases/friend/respond-friend-request.use-case";
 import type { SendFriendRequestUseCase } from "@/application/use-cases/friend/send-friend-request.use-case";
+import type { SendInviteEmailUseCase } from "@/application/use-cases/friend/send-invite-email.use-case";
 import type { AddPhotoUseCase } from "@/application/use-cases/gallery/add-photo.use-case";
 import type { DeletePhotoUseCase } from "@/application/use-cases/gallery/delete-photo.use-case";
 import type { RecordMoodUseCase } from "@/application/use-cases/mood/record-mood.use-case";
@@ -109,6 +110,7 @@ export const DI_SYMBOLS = {
   IInviteTokenRepository: Symbol.for("IInviteTokenRepository"),
   INotificationRepository: Symbol.for("INotificationRepository"),
   SendFriendRequestUseCase: Symbol.for("SendFriendRequestUseCase"),
+  SendInviteEmailUseCase: Symbol.for("SendInviteEmailUseCase"),
   RespondFriendRequestUseCase: Symbol.for("RespondFriendRequestUseCase"),
   GetFriendsUseCase: Symbol.for("GetFriendsUseCase"),
   GetPendingRequestsUseCase: Symbol.for("GetPendingRequestsUseCase"),
@@ -188,6 +190,7 @@ export interface DI_RETURN_TYPES {
   IInviteTokenRepository: IInviteTokenRepository;
   INotificationRepository: INotificationRepository;
   SendFriendRequestUseCase: SendFriendRequestUseCase;
+  SendInviteEmailUseCase: SendInviteEmailUseCase;
   RespondFriendRequestUseCase: RespondFriendRequestUseCase;
   GetFriendsUseCase: GetFriendsUseCase;
   GetPendingRequestsUseCase: GetPendingRequestsUseCase;

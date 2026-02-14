@@ -13,6 +13,10 @@ import {
   type ISendFriendRequestOutputDto,
   sendFriendRequestInputDtoSchema,
 } from "@/application/dto/friend/send-friend-request.dto";
+import {
+  type ISendInviteEmailOutputDto,
+  sendInviteEmailInputDtoSchema,
+} from "@/application/dto/friend/send-invite-email.dto";
 import type { IGetSessionOutputDto } from "@/application/dto/get-session.dto";
 import { getInjection } from "@/common/di/container";
 
@@ -248,6 +252,43 @@ export async function acceptInvite(
       return NextResponse.json({ error }, { status: 409 });
     }
     return NextResponse.json({ error }, { status: 500 });
+  }
+
+  return NextResponse.json(result.getValue(), { status: 201 });
+}
+
+export async function sendInviteEmail(
+  request: Request,
+): Promise<NextResponse<ISendInviteEmailOutputDto | { error: string }>> {
+  const session = await getAuthenticatedUser(request);
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
+
+  const parseResult = sendInviteEmailInputDtoSchema.safeParse(body);
+  if (!parseResult.success) {
+    return NextResponse.json(
+      { error: parseResult.error.issues[0]?.message ?? "Invalid input" },
+      { status: 400 },
+    );
+  }
+
+  const useCase = getInjection("SendInviteEmailUseCase");
+  const result = await useCase.execute({
+    ...parseResult.data,
+    userId: session.user.id,
+    senderName: session.user.name,
+  });
+
+  if (result.isFailure) {
+    return NextResponse.json({ error: result.getError() }, { status: 500 });
   }
 
   return NextResponse.json(result.getValue(), { status: 201 });

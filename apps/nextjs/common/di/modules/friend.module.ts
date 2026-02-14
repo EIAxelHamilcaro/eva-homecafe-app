@@ -13,6 +13,7 @@ import { GetInviteLinkUseCase } from "@/application/use-cases/friend/get-invite-
 import { GetPendingRequestsUseCase } from "@/application/use-cases/friend/get-pending-requests.use-case";
 import { RespondFriendRequestUseCase } from "@/application/use-cases/friend/respond-friend-request.use-case";
 import { SendFriendRequestUseCase } from "@/application/use-cases/friend/send-friend-request.use-case";
+import { SendInviteEmailUseCase } from "@/application/use-cases/friend/send-invite-email.use-case";
 import { DI_SYMBOLS } from "../types";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
@@ -100,6 +101,21 @@ export const createFriendModule = () => {
       DI_SYMBOLS.IProfileRepository,
       DI_SYMBOLS.INotificationRepository,
     ]);
+
+  friendModule
+    .bind(DI_SYMBOLS.SendInviteEmailUseCase)
+    .toHigherOrderFunction(
+      (
+        inviteTokenRepo: IInviteTokenRepository,
+        emailProvider: IEmailProvider,
+      ) =>
+        new SendInviteEmailUseCase(
+          inviteTokenRepo,
+          emailProvider,
+          MOBILE_APP_SCHEME,
+        ),
+      [DI_SYMBOLS.IInviteTokenRepository, DI_SYMBOLS.IEmailProvider],
+    );
 
   return friendModule;
 };
