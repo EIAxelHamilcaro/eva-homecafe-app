@@ -89,7 +89,7 @@ export default function PublicGalleryScreen() {
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <View
                 key={i}
-                className="animate-pulse rounded-xl bg-muted"
+                className="rounded-xl bg-muted opacity-50"
                 style={{
                   width: columnWidth,
                   height: isTall(i - 1)

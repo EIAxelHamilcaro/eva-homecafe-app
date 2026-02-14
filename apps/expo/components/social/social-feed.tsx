@@ -76,10 +76,7 @@ export function SocialFeed() {
         {isLoading && (
           <View className="gap-4">
             {[1, 2, 3].map((i) => (
-              <View
-                key={i}
-                className="h-32 animate-pulse rounded-xl bg-muted"
-              />
+              <View key={i} className="h-32 rounded-xl bg-muted opacity-50" />
             ))}
           </View>
         )}
