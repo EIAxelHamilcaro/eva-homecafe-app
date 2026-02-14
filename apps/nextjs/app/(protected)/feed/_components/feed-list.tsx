@@ -146,7 +146,14 @@ export function FeedList({ currentUserId }: FeedListProps) {
                   </span>
                 )}
               </span>
-              <MessageCircleMore className="h-5 w-5 text-muted-foreground" />
+              <span className="flex items-center gap-1.5">
+                <MessageCircleMore className="h-5 w-5 text-muted-foreground" />
+                {feedPost.commentCount > 0 && (
+                  <span className="text-sm text-muted-foreground">
+                    {feedPost.commentCount}
+                  </span>
+                )}
+              </span>
             </div>
           </Link>
         );

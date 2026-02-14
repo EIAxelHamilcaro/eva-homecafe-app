@@ -56,9 +56,12 @@ export const journalKeys = {
 
 export const postKeys = {
   all: ["posts"] as const,
+  list: (page?: number, limit?: number) =>
+    [...postKeys.all, "list", { page, limit }] as const,
   detail: (id: string) => [...postKeys.all, "detail", id] as const,
   reactions: (postId: string) =>
     [...postKeys.all, "reactions", postId] as const,
+  comments: (postId: string) => [...postKeys.all, "comments", postId] as const,
 };
 
 export const feedKeys = {

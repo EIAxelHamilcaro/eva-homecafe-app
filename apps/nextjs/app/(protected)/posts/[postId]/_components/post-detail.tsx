@@ -3,12 +3,12 @@
 import { Button } from "@packages/ui/components/ui/button";
 import {
   Check,
+  Globe,
   Heart,
   Lock,
   MessageCircleMore,
   Pencil,
   Trash2,
-  Unlock,
   X,
 } from "lucide-react";
 import Image from "next/image";
@@ -152,7 +152,7 @@ export function PostDetail({ postId, currentUserId }: PostDetailProps) {
       <div className="mx-auto max-w-2xl space-y-4 px-4 py-8">
         <Button
           variant="ghost"
-          onClick={() => router.back()}
+          onClick={() => router.push("/posts")}
           className="flex h-10 w-10 items-center justify-center rounded-full border border-homecafe-pink text-homecafe-pink transition-colors hover:bg-homecafe-pink hover:text-white"
         >
           <X className="h-5 w-5" />
@@ -181,7 +181,7 @@ export function PostDetail({ postId, currentUserId }: PostDetailProps) {
     <div className="mx-auto max-w-2xl space-y-6 px-4 py-8">
       <Button
         variant="ghost"
-        onClick={() => router.back()}
+        onClick={() => router.push("/posts")}
         className="flex h-10 w-10 items-center justify-center rounded-full border border-homecafe-pink text-homecafe-pink transition-colors hover:bg-homecafe-pink hover:text-white"
       >
         <X className="h-5 w-5" />
@@ -198,11 +198,15 @@ export function PostDetail({ postId, currentUserId }: PostDetailProps) {
             </p>
           </div>
 
-          <div className="absolute right-6 top-6 flex h-9 w-9 items-center justify-center rounded-full bg-homecafe-blue text-white">
+          <div
+            className={`absolute right-6 top-6 flex h-9 w-9 items-center justify-center rounded-full text-white ${
+              data.isPrivate ? "bg-homecafe-blue" : "bg-emerald-500"
+            }`}
+          >
             {data.isPrivate ? (
               <Lock className="h-4 w-4" />
             ) : (
-              <Unlock className="h-4 w-4" />
+              <Globe className="h-4 w-4" />
             )}
           </div>
         </div>

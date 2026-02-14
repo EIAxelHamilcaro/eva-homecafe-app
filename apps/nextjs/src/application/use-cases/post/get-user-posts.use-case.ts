@@ -47,6 +47,9 @@ export class GetUserPostsUseCase
         Some: (date) => date.toISOString(),
         None: () => null,
       }),
+      reactionCount: 0,
+      hasReacted: false,
+      commentCount: 0,
     };
   }
 }

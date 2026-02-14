@@ -16,6 +16,9 @@ export const postDtoSchema = z.object({
   userId: z.string(),
   createdAt: z.string(),
   updatedAt: z.string().nullable(),
+  reactionCount: z.number().int().nonnegative().default(0),
+  hasReacted: z.boolean().default(false),
+  commentCount: z.number().int().nonnegative().default(0),
 });
 
 export type IPostDto = z.infer<typeof postDtoSchema>;

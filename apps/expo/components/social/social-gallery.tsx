@@ -1,27 +1,22 @@
 import { type Href, useRouter } from "expo-router";
 import { Globe, Mountain } from "lucide-react-native";
 import { useState } from "react";
-import { Dimensions, Image, Pressable, Text, View } from "react-native";
+import { Image, Pressable, Text, View } from "react-native";
+import { Card, CardContent } from "@/components/ui/card";
 import { useFeedGallery } from "@/lib/api/hooks/use-feed-gallery";
 import { useTogglePhotoPrivacy } from "@/lib/api/hooks/use-toggle-photo-privacy";
 import { useTogglePostPrivacy } from "@/lib/api/hooks/use-toggle-post-privacy";
 import { colors } from "@/src/config/colors";
 import { useAuth } from "@/src/providers/auth-provider";
 
-const COLUMN_GAP = 8;
-const PADDING = 16;
-const screenWidth = Dimensions.get("window").width;
-const columnWidth = (screenWidth - PADDING * 2 - COLUMN_GAP) / 2;
+const GAP = 8;
 
-function PlaceholderCell() {
-  return (
-    <View
-      className="items-center justify-center rounded-md bg-homecafe-beige"
-      style={{ width: columnWidth, height: columnWidth * 0.75 }}
-    >
-      <Mountain size={24} color={colors.mutedForeground} />
-    </View>
-  );
+function chunk<T>(arr: T[], size: number): T[][] {
+  const rows: T[][] = [];
+  for (let i = 0; i < arr.length; i += size) {
+    rows.push(arr.slice(i, i + size));
+  }
+  return rows;
 }
 
 export function SocialGallery() {
@@ -55,88 +50,105 @@ export function SocialGallery() {
   }
 
   return (
-    <View className="rounded-lg border border-border/60 bg-card">
-      {/* Header */}
-      <View className="p-4 pb-2">
-        <Text className="text-xl font-semibold text-foreground">Galerie</Text>
-        <Text className="text-sm text-muted-foreground">
+    <Card>
+      <CardContent className="p-6">
+        <Text className="text-lg font-semibold text-foreground">Galerie</Text>
+        <Text className="mb-3 text-sm text-muted-foreground">
           Les photos publiques de toi et tes amis
         </Text>
-      </View>
 
-      {/* Content */}
-      <View className="px-4 pb-4">
         {(isLoading || photos.length === 0) && (
-          <View className="flex-row flex-wrap" style={{ gap: COLUMN_GAP }}>
-            <PlaceholderCell />
-            <PlaceholderCell />
-            <PlaceholderCell />
-            <PlaceholderCell />
+          <View style={{ gap: GAP }}>
+            {[0, 1].map((row) => (
+              <View key={row} className="flex-row" style={{ gap: GAP }}>
+                <View
+                  className="flex-1 items-center justify-center rounded-md bg-homecafe-beige"
+                  style={{ aspectRatio: 4 / 3 }}
+                >
+                  <Mountain size={24} color={colors.mutedForeground} />
+                </View>
+                <View
+                  className="flex-1 items-center justify-center rounded-md bg-homecafe-beige"
+                  style={{ aspectRatio: 4 / 3 }}
+                >
+                  <Mountain size={24} color={colors.mutedForeground} />
+                </View>
+              </View>
+            ))}
           </View>
         )}
 
         {!isLoading && photos.length > 0 && (
-          <View className="flex-row flex-wrap" style={{ gap: COLUMN_GAP }}>
-            {photos.map((photo, index) => {
-              const isOwn = photo.authorId === user?.id;
-              const bounceKey = photo.postId ?? photo.photoId ?? "";
-              const isBouncing = bouncingIds.has(bounceKey);
+          <View style={{ gap: GAP }}>
+            {chunk(photos, 2).map((row) => (
+              <View
+                key={row[0]?.postId ?? row[0]?.photoId ?? row[0]?.url}
+                className="flex-row"
+                style={{ gap: GAP }}
+              >
+                {row.map((photo) => {
+                  const isOwn = photo.authorId === user?.id;
+                  const bounceKey = photo.postId ?? photo.photoId ?? "";
+                  const isBouncing = bouncingIds.has(bounceKey);
 
-              return (
-                <Pressable
-                  key={`${photo.postId ?? photo.photoId ?? index}-${photo.url}`}
-                  onPress={() => {
-                    if (photo.postId) {
-                      router.push(
-                        `/(protected)/(tabs)/journal/post/${photo.postId}` as Href,
-                      );
-                    }
-                  }}
-                  style={{ width: columnWidth }}
-                  className="relative overflow-hidden rounded-md bg-muted"
-                >
-                  <Image
-                    source={{ uri: photo.url }}
-                    style={{ width: columnWidth, height: columnWidth * 0.75 }}
-                    resizeMode="cover"
-                  />
-                  {isOwn && (
+                  return (
                     <Pressable
+                      key={`${photo.postId ?? photo.photoId}-${photo.url}`}
                       onPress={() => {
                         if (photo.postId) {
-                          handleTogglePostPrivacy(photo.postId);
-                        } else if (photo.photoId) {
-                          handleTogglePhotoPrivacy(photo.photoId);
+                          router.push(
+                            `/(protected)/(tabs)/journal/post/${photo.postId}` as Href,
+                          );
                         }
                       }}
-                      className="absolute top-1.5 right-1.5 h-8 w-8 items-center justify-center rounded-full bg-emerald-500"
-                      style={
-                        isBouncing
-                          ? { transform: [{ scale: 1.25 }] }
-                          : undefined
-                      }
+                      className="relative flex-1 overflow-hidden rounded-md bg-muted"
+                      style={{ aspectRatio: 4 / 3 }}
                     >
-                      <Globe size={16} color="#fff" />
+                      <Image
+                        source={{ uri: photo.url }}
+                        className="absolute inset-0"
+                        style={{ width: "100%", height: "100%" }}
+                        resizeMode="cover"
+                      />
+                      {isOwn && (
+                        <Pressable
+                          onPress={() => {
+                            if (photo.postId) {
+                              handleTogglePostPrivacy(photo.postId);
+                            } else if (photo.photoId) {
+                              handleTogglePhotoPrivacy(photo.photoId);
+                            }
+                          }}
+                          className="absolute right-1.5 top-1.5 h-8 w-8 items-center justify-center rounded-full bg-emerald-500"
+                          style={
+                            isBouncing
+                              ? { transform: [{ scale: 1.25 }] }
+                              : undefined
+                          }
+                        >
+                          <Globe size={16} color="#fff" />
+                        </Pressable>
+                      )}
                     </Pressable>
-                  )}
-                </Pressable>
-              );
-            })}
+                  );
+                })}
+                {row.length === 1 && <View className="flex-1" />}
+              </View>
+            ))}
           </View>
         )}
 
-        {/* "Voir plus" link */}
         {!isLoading && photos.length > 0 && (
           <Pressable
             onPress={() =>
               router.push("/(protected)/(tabs)/social/gallery" as Href)
             }
-            className="mt-4 self-start rounded-full bg-homecafe-pink px-4 py-1.5"
+            className="mt-4 self-start rounded-full bg-homecafe-pink px-4 py-1.5 active:opacity-90"
           >
             <Text className="text-sm font-medium text-white">Voir plus</Text>
           </Pressable>
         )}
-      </View>
-    </View>
+      </CardContent>
+    </Card>
   );
 }

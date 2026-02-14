@@ -1,14 +1,7 @@
 import { type Href, useRouter } from "expo-router";
 import { ArrowLeft, Globe, Mountain, User } from "lucide-react-native";
 import { useState } from "react";
-import {
-  Dimensions,
-  Image,
-  Pressable,
-  ScrollView,
-  Text,
-  View,
-} from "react-native";
+import { Image, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useFeedGallery } from "@/lib/api/hooks/use-feed-gallery";
 import { useTogglePhotoPrivacy } from "@/lib/api/hooks/use-toggle-photo-privacy";
@@ -16,15 +9,15 @@ import { useTogglePostPrivacy } from "@/lib/api/hooks/use-toggle-post-privacy";
 import { colors } from "@/src/config/colors";
 import { useAuth } from "@/src/providers/auth-provider";
 
-const COLUMN_GAP = 12;
+const GAP = 12;
 const PADDING = 16;
-const screenWidth = Dimensions.get("window").width;
-const columnWidth = (screenWidth - PADDING * 2 - COLUMN_GAP) / 2;
-const ROW_HEIGHT = 128;
 
-const TALL_POSITIONS = new Set([0, 5]);
-function isTall(index: number): boolean {
-  return TALL_POSITIONS.has(index % 6);
+function chunk<T>(arr: T[], size: number): T[][] {
+  const rows: T[][] = [];
+  for (let i = 0; i < arr.length; i += size) {
+    rows.push(arr.slice(i, i + size));
+  }
+  return rows;
 }
 
 export default function PublicGalleryScreen() {
@@ -85,18 +78,18 @@ export default function PublicGalleryScreen() {
 
         {/* Loading */}
         {isLoading && !data && (
-          <View className="flex-row flex-wrap" style={{ gap: COLUMN_GAP }}>
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <View
-                key={i}
-                className="rounded-xl bg-muted opacity-50"
-                style={{
-                  width: columnWidth,
-                  height: isTall(i - 1)
-                    ? ROW_HEIGHT * 2 + COLUMN_GAP
-                    : ROW_HEIGHT,
-                }}
-              />
+          <View style={{ gap: GAP }}>
+            {[0, 1, 2].map((row) => (
+              <View key={row} className="flex-row" style={{ gap: GAP }}>
+                <View
+                  className="flex-1 rounded-xl bg-muted opacity-50"
+                  style={{ aspectRatio: 4 / 3 }}
+                />
+                <View
+                  className="flex-1 rounded-xl bg-muted opacity-50"
+                  style={{ aspectRatio: 4 / 3 }}
+                />
+              </View>
             ))}
           </View>
         )}
@@ -127,75 +120,81 @@ export default function PublicGalleryScreen() {
 
         {/* Gallery Grid */}
         {!isLoading && photos.length > 0 && (
-          <View className="flex-row flex-wrap" style={{ gap: COLUMN_GAP }}>
-            {photos.map((photo, index) => {
-              const isOwn = photo.authorId === user?.id;
-              const bounceKey = photo.postId ?? photo.photoId ?? "";
-              const isBouncing = bouncingIds.has(bounceKey);
-              const tall = isTall(index);
+          <View style={{ gap: GAP }}>
+            {chunk(photos, 2).map((row) => (
+              <View
+                key={row[0]?.postId ?? row[0]?.photoId ?? row[0]?.url}
+                className="flex-row"
+                style={{ gap: GAP }}
+              >
+                {row.map((photo) => {
+                  const isOwn = photo.authorId === user?.id;
+                  const bounceKey = photo.postId ?? photo.photoId ?? "";
+                  const isBouncing = bouncingIds.has(bounceKey);
 
-              return (
-                <Pressable
-                  key={`${photo.postId ?? photo.photoId ?? index}-${photo.url}`}
-                  onPress={() => {
-                    if (photo.postId) {
-                      router.push(
-                        `/(protected)/(tabs)/journal/post/${photo.postId}` as Href,
-                      );
-                    }
-                  }}
-                  style={{
-                    width: columnWidth,
-                    height: tall ? ROW_HEIGHT * 2 + COLUMN_GAP : ROW_HEIGHT,
-                  }}
-                  className="relative overflow-hidden rounded-xl bg-muted"
-                >
-                  <Image
-                    source={{ uri: photo.url }}
-                    style={{ width: "100%", height: "100%" }}
-                    resizeMode="cover"
-                  />
-
-                  {/* Author overlay */}
-                  <View className="absolute inset-x-0 bottom-0 flex-row items-center gap-1.5 bg-black/40 p-2">
-                    {photo.authorAvatar ? (
-                      <Image
-                        source={{ uri: photo.authorAvatar }}
-                        className="h-[18px] w-[18px] rounded-full"
-                      />
-                    ) : (
-                      <View className="h-[18px] w-[18px] items-center justify-center rounded-full bg-white/30">
-                        <User size={10} color="#fff" />
-                      </View>
-                    )}
-                    <Text className="text-xs font-medium text-white">
-                      {photo.authorName}
-                    </Text>
-                  </View>
-
-                  {/* Privacy toggle */}
-                  {isOwn && (
+                  return (
                     <Pressable
+                      key={`${photo.postId ?? photo.photoId}-${photo.url}`}
                       onPress={() => {
                         if (photo.postId) {
-                          handleTogglePostPrivacy(photo.postId);
-                        } else if (photo.photoId) {
-                          handleTogglePhotoPrivacy(photo.photoId);
+                          router.push(
+                            `/(protected)/(tabs)/journal/post/${photo.postId}` as Href,
+                          );
                         }
                       }}
-                      className="absolute top-2 right-2 h-8 w-8 items-center justify-center rounded-full bg-emerald-500"
-                      style={
-                        isBouncing
-                          ? { transform: [{ scale: 1.25 }] }
-                          : undefined
-                      }
+                      className="relative flex-1 overflow-hidden rounded-xl bg-muted"
+                      style={{ aspectRatio: 4 / 3 }}
                     >
-                      <Globe size={16} color="#fff" />
+                      <Image
+                        source={{ uri: photo.url }}
+                        className="absolute inset-0"
+                        style={{ width: "100%", height: "100%" }}
+                        resizeMode="cover"
+                      />
+
+                      {/* Author overlay */}
+                      <View className="absolute inset-x-0 bottom-0 flex-row items-center gap-1.5 bg-black/40 p-2">
+                        {photo.authorAvatar ? (
+                          <Image
+                            source={{ uri: photo.authorAvatar }}
+                            className="h-[18px] w-[18px] rounded-full"
+                          />
+                        ) : (
+                          <View className="h-[18px] w-[18px] items-center justify-center rounded-full bg-white/30">
+                            <User size={10} color="#fff" />
+                          </View>
+                        )}
+                        <Text className="text-xs font-medium text-white">
+                          {photo.authorName}
+                        </Text>
+                      </View>
+
+                      {/* Privacy toggle */}
+                      {isOwn && (
+                        <Pressable
+                          onPress={() => {
+                            if (photo.postId) {
+                              handleTogglePostPrivacy(photo.postId);
+                            } else if (photo.photoId) {
+                              handleTogglePhotoPrivacy(photo.photoId);
+                            }
+                          }}
+                          className="absolute top-2 right-2 h-8 w-8 items-center justify-center rounded-full bg-emerald-500"
+                          style={
+                            isBouncing
+                              ? { transform: [{ scale: 1.25 }] }
+                              : undefined
+                          }
+                        >
+                          <Globe size={16} color="#fff" />
+                        </Pressable>
+                      )}
                     </Pressable>
-                  )}
-                </Pressable>
-              );
-            })}
+                  );
+                })}
+                {row.length === 1 && <View className="flex-1" />}
+              </View>
+            ))}
           </View>
         )}
 

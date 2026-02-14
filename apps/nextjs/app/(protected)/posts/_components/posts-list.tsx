@@ -1,14 +1,16 @@
 "use client";
 
 import { Button } from "@packages/ui/components/ui/button";
-import { Heart, Lock, MessageCircleMore, Unlock } from "lucide-react";
+import { Globe, Heart, Lock, MessageCircleMore } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { startTransition, useOptimistic, useState } from "react";
 import {
   usePostsQuery,
   useTogglePrivacyMutation,
+  useToggleReactionMutation,
 } from "@/app/(protected)/_hooks/use-posts";
+import type { IPostDto } from "@/application/dto/post/get-user-posts.dto";
 import { stripHtml, truncate } from "@/common/utils/text";
 
 function formatDateHeading(isoString: string): string {
@@ -28,20 +30,154 @@ function formatTime(isoString: string): string {
   return `${hours}h${minutes}`;
 }
 
+function PostCard({ post }: { post: IPostDto }) {
+  const togglePrivacy = useTogglePrivacyMutation();
+  const toggleReaction = useToggleReactionMutation(post.id);
+  const [reactionCount, setReactionCount] = useState(post.reactionCount);
+  const [hasReacted, setHasReacted] = useState(post.hasReacted);
+  const [optimisticPrivate, setOptimisticPrivate] = useOptimistic(
+    post.isPrivate,
+    (_current, next: boolean) => next,
+  );
+  const [isBouncing, setIsBouncing] = useState(false);
+
+  function handleTogglePrivacy(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    const newValue = !optimisticPrivate;
+    startTransition(() => {
+      setOptimisticPrivate(newValue);
+    });
+    setIsBouncing(true);
+    setTimeout(() => setIsBouncing(false), 400);
+    togglePrivacy.mutate({ postId: post.id, isPrivate: newValue });
+  }
+
+  function handleReaction(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (toggleReaction.isPending) return;
+
+    const prevCount = reactionCount;
+    const prevReacted = hasReacted;
+
+    setHasReacted(!hasReacted);
+    setReactionCount(hasReacted ? reactionCount - 1 : reactionCount + 1);
+
+    toggleReaction.mutate(
+      { emoji: "❤️" },
+      {
+        onSuccess: (data) => {
+          setHasReacted(data.action === "added");
+          setReactionCount(
+            data.action === "added"
+              ? prevCount + (prevReacted ? 0 : 1)
+              : prevCount - (prevReacted ? 1 : 0),
+          );
+        },
+        onError: () => {
+          setReactionCount(prevCount);
+          setHasReacted(prevReacted);
+        },
+      },
+    );
+  }
+
+  return (
+    <Link
+      href={`/posts/${post.id}`}
+      className="relative block overflow-hidden rounded-lg border border-border bg-white transition-all duration-200 hover:shadow-md"
+    >
+      <div className="relative p-6 pb-0">
+        <div className="pr-10">
+          <h3 className="text-xl font-bold capitalize">
+            {formatDateHeading(post.createdAt)}
+          </h3>
+          <time className="mt-0.5 block text-sm text-muted-foreground">
+            {formatTime(post.createdAt)}
+          </time>
+        </div>
+
+        <Button
+          onClick={handleTogglePrivacy}
+          title={
+            optimisticPrivate
+              ? "Privé — cliquer pour rendre public"
+              : "Public — cliquer pour rendre privé"
+          }
+          className={`absolute right-4 top-4 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-white transition-all duration-300 hover:opacity-80 ${
+            optimisticPrivate ? "bg-homecafe-blue" : "bg-emerald-500"
+          } ${isBouncing ? "scale-125" : "scale-100"}`}
+        >
+          <span
+            className={`transition-transform duration-300 ${isBouncing ? "rotate-[360deg]" : ""}`}
+          >
+            {optimisticPrivate ? (
+              <Lock className="h-4 w-4" />
+            ) : (
+              <Globe className="h-4 w-4" />
+            )}
+          </span>
+        </Button>
+      </div>
+
+      <div className="px-6 pb-6 pt-3">
+        <p className="text-base text-foreground">
+          {truncate(stripHtml(post.content), 200)}
+        </p>
+
+        {post.images.length > 0 && (
+          <div className="mt-4 grid grid-cols-3 gap-2">
+            {post.images.slice(0, 3).map((img, index) => (
+              <div key={img} className="relative">
+                <Image
+                  src={img}
+                  alt=""
+                  width={200}
+                  height={200}
+                  className="aspect-square w-full rounded-lg object-cover"
+                  unoptimized
+                />
+                {index === 2 && post.images.length > 3 && (
+                  <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/40 text-lg font-semibold text-white">
+                    +{post.images.length - 3}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="flex items-center justify-around rounded-b-lg bg-[#b77fff]/15 px-6 py-3">
+        <Button
+          variant="ghost"
+          onClick={handleReaction}
+          disabled={toggleReaction.isPending}
+          className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm transition-colors ${
+            hasReacted
+              ? "bg-red-50 text-red-500 hover:bg-red-100"
+              : "text-muted-foreground hover:bg-white/50"
+          }`}
+        >
+          <Heart
+            className={`h-5 w-5 ${hasReacted ? "fill-red-500 text-red-500" : ""}`}
+          />
+          <span>{reactionCount}</span>
+        </Button>
+
+        <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+          <MessageCircleMore className="h-5 w-5" />
+          <span>{post.commentCount}</span>
+        </span>
+      </div>
+    </Link>
+  );
+}
+
 export function PostsList() {
   const [page, setPage] = useState(1);
   const { data, isLoading, error } = usePostsQuery(page);
-  const togglePrivacy = useTogglePrivacyMutation();
-
-  function handleTogglePrivacy(
-    e: React.MouseEvent,
-    postId: string,
-    currentIsPrivate: boolean,
-  ) {
-    e.preventDefault();
-    e.stopPropagation();
-    togglePrivacy.mutate({ postId, isPrivate: !currentIsPrivate });
-  }
 
   if (isLoading) {
     return (
@@ -80,75 +216,7 @@ export function PostsList() {
   return (
     <div className="space-y-4">
       {data.posts.map((post) => (
-        <Link
-          key={post.id}
-          href={`/posts/${post.id}`}
-          className="relative block overflow-hidden rounded-lg border border-border bg-white transition-all duration-200 hover:shadow-md"
-        >
-          <div className="relative p-6 pb-0">
-            <div className="pr-10">
-              <h3 className="text-xl font-bold capitalize">
-                {formatDateHeading(post.createdAt)}
-              </h3>
-              <time className="mt-0.5 block text-sm text-muted-foreground">
-                {formatTime(post.createdAt)}
-              </time>
-            </div>
-
-            <Button
-              onClick={(e) => handleTogglePrivacy(e, post.id, post.isPrivate)}
-              title={
-                post.isPrivate
-                  ? "Privé — cliquer pour rendre public"
-                  : "Public — cliquer pour rendre privé"
-              }
-              className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-homecafe-blue text-white transition-opacity hover:opacity-80"
-            >
-              {post.isPrivate ? (
-                <Lock className="h-4 w-4" />
-              ) : (
-                <Unlock className="h-4 w-4" />
-              )}
-            </Button>
-          </div>
-
-          <div className="px-6 pb-6 pt-3">
-            <p className="text-base text-foreground">
-              {truncate(stripHtml(post.content), 200)}
-            </p>
-
-            {post.images.length > 0 && (
-              <div className="mt-4 grid grid-cols-3 gap-2">
-                {post.images.slice(0, 3).map((img, index) => (
-                  <div key={img} className="relative">
-                    <Image
-                      src={img}
-                      alt=""
-                      width={200}
-                      height={200}
-                      className="aspect-square w-full rounded-lg object-cover"
-                      unoptimized
-                    />
-                    {index === 2 && post.images.length > 3 && (
-                      <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/40 text-lg font-semibold text-white">
-                        +{post.images.length - 3}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div>
-            <div className="flex items-center justify-around rounded-b-lg bg-[#b77fff]/15 px-6 py-3">
-              <span className="flex items-center gap-1.5">
-                <Heart className="h-5 w-5 text-red-500" />
-              </span>
-              <MessageCircleMore className="h-5 w-5 text-muted-foreground" />
-            </div>
-          </div>
-        </Link>
+        <PostCard key={post.id} post={post} />
       ))}
 
       {data.pagination.totalPages > 1 && (

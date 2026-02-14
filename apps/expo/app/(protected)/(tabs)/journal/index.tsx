@@ -73,7 +73,9 @@ export default function JournalScreen() {
               </Text>
             </View>
             <Pressable
-              onPress={() => router.push("/(protected)/(tabs)/journal" as Href)}
+              onPress={() =>
+                router.push("/(protected)/(tabs)/journal/posts" as Href)
+              }
               className="h-8 w-8 items-center justify-center rounded-full active:bg-muted"
               hitSlop={8}
             >

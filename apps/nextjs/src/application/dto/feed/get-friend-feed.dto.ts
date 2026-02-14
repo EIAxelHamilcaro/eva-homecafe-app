@@ -19,6 +19,7 @@ export const feedPostDtoSchema = z.object({
   isPrivate: z.boolean(),
   reactionCount: z.number().int().nonnegative(),
   hasReacted: z.boolean(),
+  commentCount: z.number().int().nonnegative(),
 });
 
 export type IFeedPostDto = z.infer<typeof feedPostDtoSchema>;

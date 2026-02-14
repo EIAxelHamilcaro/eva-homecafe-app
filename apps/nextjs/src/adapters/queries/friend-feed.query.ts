@@ -2,6 +2,7 @@ import {
   db,
   friendRequest,
   post,
+  postComment,
   postReaction,
   profile,
   user,
@@ -89,7 +90,7 @@ export async function getFriendFeed(
 
   const postIds = records.map((r) => r.id);
 
-  const [reactionCounts, userReactions] =
+  const [reactionCounts, userReactions, commentCounts] =
     postIds.length > 0
       ? await Promise.all([
           db
@@ -109,13 +110,24 @@ export async function getFriendFeed(
                 eq(postReaction.userId, userId),
               ),
             ),
+          db
+            .select({
+              postId: postComment.postId,
+              count: count(),
+            })
+            .from(postComment)
+            .where(inArray(postComment.postId, postIds))
+            .groupBy(postComment.postId),
         ])
-      : [[], []];
+      : [[], [], []];
 
   const reactionCountMap = new Map(
     reactionCounts.map((r) => [r.postId, r.count]),
   );
   const userReactionSet = new Set(userReactions.map((r) => r.postId));
+  const commentCountMap = new Map(
+    commentCounts.map((r) => [r.postId, r.count]),
+  );
 
   const total = countResult[0]?.total ?? 0;
   const totalPages = Math.ceil(total / limit);
@@ -135,6 +147,7 @@ export async function getFriendFeed(
     },
     reactionCount: reactionCountMap.get(r.id) ?? 0,
     hasReacted: userReactionSet.has(r.id),
+    commentCount: commentCountMap.get(r.id) ?? 0,
   }));
 
   return {

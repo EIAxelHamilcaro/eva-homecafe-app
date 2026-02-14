@@ -8,6 +8,9 @@ export interface Post {
   userId: string;
   createdAt: string;
   updatedAt: string | null;
+  reactionCount: number;
+  hasReacted: boolean;
+  commentCount: number;
 }
 
 export interface PostGroup {
@@ -59,6 +62,20 @@ export interface ToggleReactionResponse {
   action: "added" | "removed";
 }
 
+export interface PostComment {
+  id: string;
+  content: string;
+  userId: string;
+  userName: string;
+  displayName: string | null;
+  avatarUrl: string | null;
+  createdAt: string;
+}
+
+export interface PostCommentsResponse {
+  comments: PostComment[];
+}
+
 export interface FeedPostAuthor {
   id: string;
   name: string;
@@ -75,6 +92,7 @@ export interface FeedPost {
   author: FeedPostAuthor;
   reactionCount: number;
   hasReacted: boolean;
+  commentCount: number;
 }
 
 export interface FeedResponse {

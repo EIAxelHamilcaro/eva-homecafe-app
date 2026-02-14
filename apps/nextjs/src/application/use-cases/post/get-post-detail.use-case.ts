@@ -41,6 +41,9 @@ export class GetPostDetailUseCase
             Some: (date) => date.toISOString(),
             None: () => null,
           }),
+          reactionCount: 0,
+          hasReacted: false,
+          commentCount: 0,
         });
       },
       None: () => Result.fail("Post not found"),

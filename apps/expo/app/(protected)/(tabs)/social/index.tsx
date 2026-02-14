@@ -2,6 +2,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { RefreshControl, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { InviteFriendsButton } from "@/components/dashboard/invite-friends-button";
 import { SocialFeed } from "@/components/social/social-feed";
 import { SocialGallery } from "@/components/social/social-gallery";
 import { feedGalleryKeys, feedKeys } from "@/lib/api/hooks/query-keys";
@@ -21,24 +22,30 @@ export default function SocialScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
-      <View className="flex-1 px-4">
+      <ScrollView
+        className="flex-1 px-4"
+        contentContainerStyle={{ paddingBottom: 24 }}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor="#F691C3"
+            colors={["#F691C3"]}
+          />
+        }
+      >
         <Text className="mb-4 text-2xl font-bold text-foreground">Social</Text>
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 24, gap: 16 }}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              tintColor="#F691C3"
-              colors={["#F691C3"]}
-            />
-          }
-        >
+
+        <View className="mt-4">
           <SocialFeed />
+        </View>
+
+        <View className="mt-4 gap-4">
           <SocialGallery />
-        </ScrollView>
-      </View>
+          <InviteFriendsButton />
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }

@@ -18,6 +18,9 @@ export function toPostDto(record: typeof post.$inferSelect): IPostDto {
     userId: record.userId,
     createdAt: record.createdAt.toISOString(),
     updatedAt: record.updatedAt ? record.updatedAt.toISOString() : null,
+    reactionCount: 0,
+    hasReacted: false,
+    commentCount: 0,
   };
 }
 

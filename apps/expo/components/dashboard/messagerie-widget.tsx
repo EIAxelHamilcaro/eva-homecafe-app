@@ -1,14 +1,22 @@
 import { useRouter } from "expo-router";
 import { Eye } from "lucide-react-native";
+import { useMemo } from "react";
 import { Pressable, Text, View } from "react-native";
 
-import { useUnreadCount } from "@/lib/api/hooks/use-notifications";
+import { useConversations } from "@/lib/api/hooks/use-conversations";
 import { colors } from "@/src/config/colors";
 
 export function MessagerieWidget() {
   const router = useRouter();
-  const { data, isLoading, isError, refetch } = useUnreadCount();
-  const unreadCount = data?.unreadCount ?? 0;
+  const { data, isLoading, isError, refetch } = useConversations({
+    page: 1,
+    limit: 10,
+  });
+
+  const unreadCount = useMemo(() => {
+    if (!data?.conversations) return 0;
+    return data.conversations.reduce((sum, c) => sum + c.unreadCount, 0);
+  }, [data?.conversations]);
 
   return (
     <View className="relative rounded-2xl bg-card p-4">
@@ -43,7 +51,7 @@ export function MessagerieWidget() {
 
       <Pressable
         onPress={() => router.push("/(protected)/(tabs)/messages")}
-        className={`mt-4 self-start rounded-full px-4 py-1.5 active:opacity-90 ${unreadCount > 0 ? "bg-homecafe-green" : "bg-homecafe-pink"}`}
+        className="mt-4 self-start rounded-full bg-homecafe-pink px-4 py-1.5 active:opacity-90"
       >
         <Text className="text-sm font-medium text-white">Voir plus</Text>
       </Pressable>

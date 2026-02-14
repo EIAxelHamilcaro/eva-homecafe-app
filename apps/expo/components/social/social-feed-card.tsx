@@ -1,4 +1,4 @@
-import { Globe, Heart, User } from "lucide-react-native";
+import { Globe, Heart, MessageCircle, User } from "lucide-react-native";
 import { Image, Pressable, Text, View } from "react-native";
 import { cn } from "@/src/libs/utils";
 
@@ -10,6 +10,7 @@ interface SocialFeedCardProps {
   content: string;
   thumbnailUrl: string | null;
   reactionCount: number;
+  commentCount: number;
   hasReacted: boolean;
   isOwn: boolean;
   isBouncing: boolean;
@@ -26,6 +27,7 @@ export function SocialFeedCard({
   content,
   thumbnailUrl,
   reactionCount,
+  commentCount,
   hasReacted,
   isOwn,
   isBouncing,
@@ -36,11 +38,14 @@ export function SocialFeedCard({
   return (
     <Pressable
       onPress={onPress}
-      className="rounded-xl border-4 border-homecafe-green/20 bg-card p-4"
+      className="rounded-xl p-4 active:opacity-90"
+      style={{
+        borderWidth: 12,
+        borderColor: "rgba(4, 160, 86, 0.2)",
+      }}
     >
-      {/* Date heading + actions row */}
       <View className="mb-1 flex-row items-center justify-between">
-        <Text className="flex-1 text-base font-semibold capitalize text-foreground">
+        <Text className="flex-1 text-sm font-medium capitalize text-foreground">
           {dateHeading}
         </Text>
         <View className="flex-row items-center gap-1.5">
@@ -75,7 +80,6 @@ export function SocialFeedCard({
         </View>
       </View>
 
-      {/* Author info line */}
       <View className="mb-2 flex-row items-center gap-2">
         {authorAvatar ? (
           <Image
@@ -88,29 +92,34 @@ export function SocialFeedCard({
           </View>
         )}
         <Text className="text-xs text-muted-foreground">{authorName}</Text>
-        <Text className="text-xs text-muted-foreground">·</Text>
         <Text className="text-xs text-muted-foreground">{time}</Text>
         {reactionCount > 0 && (
-          <>
-            <Text className="text-xs text-muted-foreground">·</Text>
+          <Text className="text-xs text-muted-foreground">
+            {reactionCount} {"\u2764\uFE0F"}
+          </Text>
+        )}
+        {commentCount > 0 && (
+          <View className="flex-row items-center gap-0.5">
+            <MessageCircle size={12} color="#9CA3AF" />
             <Text className="text-xs text-muted-foreground">
-              {reactionCount} ❤️
+              {commentCount}
             </Text>
-          </>
+          </View>
         )}
       </View>
 
-      {/* Content + thumbnail */}
       <View className="flex-row gap-3">
-        <Text className="flex-1 text-sm leading-6 text-foreground">
+        <Text className="flex-1 text-sm leading-5 text-foreground">
           {content}
         </Text>
         {thumbnailUrl && (
-          <Image
-            source={{ uri: thumbnailUrl }}
-            className="h-16 w-16 rounded-lg bg-muted"
-            resizeMode="cover"
-          />
+          <View className="h-16 w-16 shrink-0 overflow-hidden rounded-lg">
+            <Image
+              source={{ uri: thumbnailUrl }}
+              className="h-full w-full"
+              resizeMode="cover"
+            />
+          </View>
         )}
       </View>
     </Pressable>

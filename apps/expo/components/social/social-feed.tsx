@@ -1,4 +1,5 @@
 import { type Href, useRouter } from "expo-router";
+import { Maximize2 } from "lucide-react-native";
 import { useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { useTogglePostReaction } from "@/lib/api/hooks/use-posts";
@@ -10,6 +11,7 @@ import {
   stripHtml,
   truncate,
 } from "@/lib/utils/post-format";
+import { colors } from "@/src/config/colors";
 import { useAuth } from "@/src/providers/auth-provider";
 import { SocialFeedCard } from "./social-feed-card";
 
@@ -50,7 +52,7 @@ export function SocialFeed() {
       ...prev,
       [postId]: currentlyReacted ? currentCount - 1 : currentCount + 1,
     }));
-    toggleReaction.mutate({ postId, emoji: "heart" });
+    toggleReaction.mutate({ postId, emoji: "\u2764\uFE0F" });
   }
 
   const isLiked = (postId: string, serverReacted: boolean) =>
@@ -60,123 +62,130 @@ export function SocialFeed() {
     localCounts[postId] ?? serverCount;
 
   return (
-    <View className="rounded-lg border border-border/60 bg-card">
-      {/* Header */}
-      <View className="p-4 pb-2">
-        <Text className="text-xl font-semibold text-foreground">
-          Derniers posts publics
-        </Text>
-        <Text className="text-sm text-muted-foreground">
-          Tes posts et ceux de tes amis
-        </Text>
+    <View>
+      <View className="mb-3 flex-row items-start justify-between">
+        <View>
+          <Text className="text-lg font-semibold text-foreground">
+            Derniers posts publics
+          </Text>
+          <Text className="text-sm text-muted-foreground">
+            Tes posts et ceux de tes amis
+          </Text>
+        </View>
+        <Pressable
+          onPress={() => router.push("/(protected)/(tabs)/social/feed" as Href)}
+          className="h-8 w-8 items-center justify-center rounded-full active:bg-muted"
+          hitSlop={8}
+        >
+          <Maximize2 size={16} color={colors.mutedForeground} />
+        </Pressable>
       </View>
 
-      {/* Content */}
-      <View className="px-4 pb-4">
-        {isLoading && (
-          <View className="gap-4">
-            {[1, 2, 3].map((i) => (
-              <View key={i} className="h-32 rounded-xl bg-muted opacity-50" />
-            ))}
-          </View>
-        )}
+      {isLoading && (
+        <View className="gap-4">
+          {[1, 2, 3].map((i) => (
+            <View key={i} className="h-32 rounded-xl bg-muted" />
+          ))}
+        </View>
+      )}
 
-        {error && (
-          <View className="rounded-xl border border-destructive/50 bg-destructive/10 p-4">
-            <Text className="text-center text-destructive">
-              {error.message}
-            </Text>
-          </View>
-        )}
+      {error && (
+        <View className="rounded-xl border border-destructive/50 bg-destructive/10 p-4">
+          <Text className="text-center text-destructive">{error.message}</Text>
+        </View>
+      )}
 
-        {!isLoading && !error && data && data.data.length === 0 && (
-          <View className="rounded-xl border-4 border-homecafe-green/20 p-8">
-            <Text className="text-center text-sm text-muted-foreground">
-              {data.hasFriends
-                ? "Aucun post public pour le moment"
-                : "Ajoute des amis pour voir leurs posts ici !"}
-            </Text>
-            {!data.hasFriends && (
-              <Pressable
-                onPress={() =>
-                  router.push("/(protected)/(tabs)/profile" as Href)
+      {!isLoading && !error && data && data.data.length === 0 && (
+        <View
+          className="rounded-xl p-8"
+          style={{
+            borderWidth: 12,
+            borderColor: "rgba(4, 160, 86, 0.2)",
+          }}
+        >
+          <Text className="text-center text-sm text-muted-foreground">
+            {data.hasFriends
+              ? "Aucun post public pour le moment"
+              : "Ajoute des amis pour voir leurs posts ici !"}
+          </Text>
+          {!data.hasFriends && (
+            <Pressable
+              onPress={() => router.push("/(protected)/(tabs)/profile" as Href)}
+              className="mt-3 self-center rounded-full bg-homecafe-pink px-4 py-1.5"
+            >
+              <Text className="text-sm font-medium text-white">Mon profil</Text>
+            </Pressable>
+          )}
+        </View>
+      )}
+
+      {!isLoading && !error && data && data.data.length > 0 && (
+        <View>
+          {data.data.map((post) => {
+            const reacted = isLiked(post.id, post.hasReacted);
+            const count = likesCount(post.id, post.reactionCount);
+            return (
+              <SocialFeedCard
+                key={post.id}
+                dateHeading={formatPostDate(post.createdAt)}
+                authorName={post.author.displayName ?? post.author.name}
+                authorAvatar={post.author.avatarUrl}
+                time={formatPostTime(post.createdAt)}
+                content={truncate(stripHtml(post.content), 150)}
+                thumbnailUrl={
+                  post.images.length > 0 ? (post.images[0] as string) : null
                 }
-                className="mt-3 self-center rounded-full bg-homecafe-pink px-4 py-1.5"
+                reactionCount={count}
+                commentCount={post.commentCount ?? 0}
+                hasReacted={reacted}
+                isOwn={post.author.id === user?.id}
+                isBouncing={bouncingIds.has(post.id)}
+                onPress={() =>
+                  router.push(
+                    `/(protected)/(tabs)/journal/post/${post.id}` as Href,
+                  )
+                }
+                onTogglePrivacy={() => handleTogglePrivacy(post.id)}
+                onToggleReaction={() =>
+                  handleToggleReaction(post.id, reacted, count)
+                }
+              />
+            );
+          })}
+
+          {data.pagination.totalPages > 1 && (
+            <View className="flex-row items-center justify-center gap-4 pt-4">
+              <Pressable
+                onPress={() => setPage((p) => p - 1)}
+                disabled={!data.pagination.hasPreviousPage}
+                className="rounded-lg border border-border px-3 py-1.5"
+                style={
+                  !data.pagination.hasPreviousPage
+                    ? { opacity: 0.4 }
+                    : undefined
+                }
               >
-                <Text className="text-sm font-medium text-white">
-                  Mon profil
+                <Text className="text-sm text-foreground">
+                  Pr{"\u00E9"}c{"\u00E9"}dent
                 </Text>
               </Pressable>
-            )}
-          </View>
-        )}
-
-        {!isLoading && !error && data && data.data.length > 0 && (
-          <View className="gap-3">
-            {data.data.map((post) => {
-              const reacted = isLiked(post.id, post.hasReacted);
-              const count = likesCount(post.id, post.reactionCount);
-              return (
-                <SocialFeedCard
-                  key={post.id}
-                  dateHeading={formatPostDate(post.createdAt)}
-                  authorName={post.author.displayName ?? post.author.name}
-                  authorAvatar={post.author.avatarUrl}
-                  time={formatPostTime(post.createdAt)}
-                  content={truncate(stripHtml(post.content), 150)}
-                  thumbnailUrl={
-                    post.images.length > 0 ? (post.images[0] as string) : null
-                  }
-                  reactionCount={count}
-                  hasReacted={reacted}
-                  isOwn={post.author.id === user?.id}
-                  isBouncing={bouncingIds.has(post.id)}
-                  onPress={() =>
-                    router.push(
-                      `/(protected)/(tabs)/journal/post/${post.id}` as Href,
-                    )
-                  }
-                  onTogglePrivacy={() => handleTogglePrivacy(post.id)}
-                  onToggleReaction={() =>
-                    handleToggleReaction(post.id, reacted, count)
-                  }
-                />
-              );
-            })}
-
-            {/* Pagination */}
-            {data.pagination.totalPages > 1 && (
-              <View className="flex-row items-center justify-center gap-4 pt-4">
-                <Pressable
-                  onPress={() => setPage((p) => p - 1)}
-                  disabled={!data.pagination.hasPreviousPage}
-                  className="rounded-lg border border-border px-3 py-1.5"
-                  style={
-                    !data.pagination.hasPreviousPage
-                      ? { opacity: 0.4 }
-                      : undefined
-                  }
-                >
-                  <Text className="text-sm text-foreground">Précédent</Text>
-                </Pressable>
-                <Text className="text-sm text-muted-foreground">
-                  {data.pagination.page} / {data.pagination.totalPages}
-                </Text>
-                <Pressable
-                  onPress={() => setPage((p) => p + 1)}
-                  disabled={!data.pagination.hasNextPage}
-                  className="rounded-lg border border-border px-3 py-1.5"
-                  style={
-                    !data.pagination.hasNextPage ? { opacity: 0.4 } : undefined
-                  }
-                >
-                  <Text className="text-sm text-foreground">Suivant</Text>
-                </Pressable>
-              </View>
-            )}
-          </View>
-        )}
-      </View>
+              <Text className="text-sm text-muted-foreground">
+                {data.pagination.page} / {data.pagination.totalPages}
+              </Text>
+              <Pressable
+                onPress={() => setPage((p) => p + 1)}
+                disabled={!data.pagination.hasNextPage}
+                className="rounded-lg border border-border px-3 py-1.5"
+                style={
+                  !data.pagination.hasNextPage ? { opacity: 0.4 } : undefined
+                }
+              >
+                <Text className="text-sm text-foreground">Suivant</Text>
+              </Pressable>
+            </View>
+          )}
+        </View>
+      )}
     </View>
   );
 }

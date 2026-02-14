@@ -1,4 +1,6 @@
 import { match } from "@packages/ddd-kit";
+import { db, postComment, postReaction } from "@packages/drizzle";
+import { and, count, eq, inArray } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import sanitizeHtml from "sanitize-html";
 import { getFriendFeed } from "@/adapters/queries/friend-feed.query";
@@ -129,7 +131,48 @@ export async function getUserPostsController(
     return NextResponse.json({ error: result.getError() }, { status: 500 });
   }
 
-  return NextResponse.json(result.getValue());
+  const output = result.getValue();
+  const postIds = output.posts.map((p) => p.id);
+
+  if (postIds.length > 0) {
+    const [reactionCounts, userReactions, commentCounts] = await Promise.all([
+      db
+        .select({ postId: postReaction.postId, count: count() })
+        .from(postReaction)
+        .where(inArray(postReaction.postId, postIds))
+        .groupBy(postReaction.postId),
+      db
+        .select({ postId: postReaction.postId })
+        .from(postReaction)
+        .where(
+          and(
+            inArray(postReaction.postId, postIds),
+            eq(postReaction.userId, session.user.id),
+          ),
+        ),
+      db
+        .select({ postId: postComment.postId, count: count() })
+        .from(postComment)
+        .where(inArray(postComment.postId, postIds))
+        .groupBy(postComment.postId),
+    ]);
+
+    const reactionCountMap = new Map(
+      reactionCounts.map((r) => [r.postId, r.count]),
+    );
+    const userReactionSet = new Set(userReactions.map((r) => r.postId));
+    const commentCountMap = new Map(
+      commentCounts.map((c) => [c.postId, c.count]),
+    );
+
+    for (const p of output.posts) {
+      p.reactionCount = reactionCountMap.get(p.id) ?? 0;
+      p.hasReacted = userReactionSet.has(p.id);
+      p.commentCount = commentCountMap.get(p.id) ?? 0;
+    }
+  }
+
+  return NextResponse.json(output);
 }
 
 export async function getPostDetailController(
