@@ -17,6 +17,7 @@ function createMockPhoto(overrides?: Partial<{ userId: string }>) {
     mimeType: "image/jpeg",
     size: 1024,
     caption: Option.none(),
+    isPrivate: true,
   }).getValue();
 }
 
@@ -141,6 +142,7 @@ describe("DeletePhotoUseCase", () => {
         mimeType: "image/jpeg",
         size: 1024,
         caption: Option.none(),
+        isPrivate: true,
       }).getValue();
 
       vi.mocked(mockGalleryRepo.findById).mockResolvedValue(

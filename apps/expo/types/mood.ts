@@ -25,6 +25,7 @@ export interface MoodWeekEntry {
 
 export interface MoodWeekResponse {
   entries: MoodWeekEntry[];
+  weeklyTrend: string;
 }
 
 export interface MoodCategoryDistribution {
@@ -49,6 +50,7 @@ export interface MoodTrendsMonth {
 
 export interface MoodTrendsResponse {
   months: MoodTrendsMonth[];
+  monthlyTrend: string;
 }
 
 export interface RecordMoodInput {

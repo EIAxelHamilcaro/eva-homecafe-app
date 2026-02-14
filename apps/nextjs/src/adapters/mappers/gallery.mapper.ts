@@ -29,6 +29,7 @@ export function photoToDomain(record: PhotoRecord): Result<Photo> {
       mimeType: record.mimeType,
       size: record.size,
       caption,
+      isPrivate: record.isPrivate,
       createdAt: record.createdAt,
     },
     PhotoId.create(new UUID(record.id)),
@@ -48,6 +49,7 @@ export function photoToPersistence(photo: Photo): PhotoPersistence {
     mimeType: photo.get("mimeType"),
     size: photo.get("size"),
     caption: caption.isSome() ? caption.unwrap().value : null,
+    isPrivate: photo.get("isPrivate"),
     createdAt: photo.get("createdAt"),
   };
 }

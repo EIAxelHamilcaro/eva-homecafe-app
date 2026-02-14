@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@packages/ui/components/ui/button";
 import {
   Card,
   CardContent,
@@ -19,29 +20,29 @@ export function AboutSection() {
           Version de l'application 1.0.0
         </p>
 
-        <button
-          type="button"
+        <Button
+          variant="ghost"
           className="flex w-full items-center justify-between py-1 text-sm hover:opacity-70"
         >
           <span>Mentions légales</span>
           <ChevronRight className="size-4 text-muted-foreground" />
-        </button>
+        </Button>
 
-        <button
-          type="button"
+        <Button
+          variant="ghost"
           className="flex w-full items-center justify-between py-1 text-sm hover:opacity-70"
         >
           <span>Politique de confidentialité</span>
           <ChevronRight className="size-4 text-muted-foreground" />
-        </button>
+        </Button>
 
-        <button
-          type="button"
+        <Button
+          variant="ghost"
           className="flex w-full items-center justify-between py-1 text-sm hover:opacity-70"
         >
           <span>Centre d'aide</span>
           <ChevronRight className="size-4 text-muted-foreground" />
-        </button>
+        </Button>
       </CardContent>
     </Card>
   );

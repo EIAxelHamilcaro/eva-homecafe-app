@@ -42,29 +42,6 @@ const MONTH_LABELS: Record<string, string> = {
 const SKELETON_MONTHS = ["s-jan", "s-fev", "s-mar", "s-avr", "s-mai", "s-jun"];
 const SKELETON_HEIGHTS = [20, 37, 54, 31, 48, 25];
 
-function computeMonthTrend(
-  months: { month: string; averageIntensity: number }[],
-): string {
-  const now = new Date();
-  const currentMonthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
-  const prevDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-  const prevMonthStr = `${prevDate.getFullYear()}-${String(prevDate.getMonth() + 1).padStart(2, "0")}`;
-
-  const currentMonth = months.find((m) => m.month === currentMonthStr);
-  const prevMonth = months.find((m) => m.month === prevMonthStr);
-
-  if (!currentMonth || !prevMonth || prevMonth.averageIntensity === 0) {
-    return "Pas assez de données";
-  }
-
-  const pct =
-    ((currentMonth.averageIntensity - prevMonth.averageIntensity) /
-      prevMonth.averageIntensity) *
-    100;
-  const sign = pct >= 0 ? "hausse" : "baisse";
-  return `En ${sign} de ${Math.abs(pct).toFixed(1)}% vs mois dernier`;
-}
-
 export function SuiviMonthlyWidget() {
   const {
     data: trends,
@@ -74,6 +51,7 @@ export function SuiviMonthlyWidget() {
   } = useMoodTrends();
 
   const months = trends?.months ?? [];
+  const monthlyTrend = trends?.monthlyTrend ?? "Pas assez de données";
 
   const chartData = months.map((m) => {
     const monthNum = m.month.split("-")[1] ?? "01";
@@ -82,8 +60,6 @@ export function SuiviMonthlyWidget() {
       average: m.averageIntensity,
     };
   });
-
-  const trend = computeMonthTrend(months);
 
   return (
     <View>
@@ -123,19 +99,13 @@ export function SuiviMonthlyWidget() {
           <>
             <MonthlyMoodChart data={chartData} />
             <Text className="mt-2 text-xs text-muted-foreground">
-              {trend} ↗
+              {monthlyTrend} ↗
             </Text>
           </>
         )}
       </View>
     </View>
   );
-}
-
-function computeWeekTrend(entries: { intensity: number }[]): string {
-  if (entries.length < 2) return "Pas assez de données";
-  const avg = entries.reduce((sum, e) => sum + e.intensity, 0) / entries.length;
-  return `Moyenne : ${avg.toFixed(1)}/10 cette semaine`;
 }
 
 export function SuiviWeeklyWidget() {
@@ -147,6 +117,7 @@ export function SuiviWeeklyWidget() {
   } = useMoodWeek();
 
   const entries = weekData?.entries ?? [];
+  const weeklyTrend = weekData?.weeklyTrend ?? "Pas assez de données";
 
   const normalizedEntries = entries.map((e) => ({
     ...e,
@@ -165,8 +136,6 @@ export function SuiviWeeklyWidget() {
   const sunday = new Date(monday);
   sunday.setDate(monday.getDate() + 6);
   const weekLabel = `du ${monday.getDate()} au ${sunday.getDate()} ${sunday.toLocaleDateString("fr-FR", { month: "long" })}`;
-
-  const trend = computeWeekTrend(entries);
 
   return (
     <View>
@@ -203,7 +172,7 @@ export function SuiviWeeklyWidget() {
           <>
             <WeeklyMoodChart data={chartData} />
             <Text className="mt-2 text-xs text-muted-foreground">
-              {trend} ↗
+              {weeklyTrend} ↗
             </Text>
           </>
         )}

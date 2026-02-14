@@ -1,12 +1,23 @@
-import { Text } from "react-native";
+import { Dimensions, Text, View } from "react-native";
 import { BarChart } from "react-native-gifted-charts";
 
 interface MonthlyMoodChartProps {
   data: { month: string; average: number }[];
 }
 
+const CHART_H_PADDING = 64;
+
 export function MonthlyMoodChart({ data }: MonthlyMoodChartProps) {
   if (data.length === 0) return null;
+
+  const screenWidth = Dimensions.get("window").width;
+  const chartWidth = screenWidth - CHART_H_PADDING;
+
+  const count = data.length;
+  const barWidth = Math.min(32, Math.floor((chartWidth * 0.5) / count));
+  const spacing = Math.floor(
+    (chartWidth - barWidth * count) / Math.max(count + 1, 1),
+  );
 
   const chartData = data.map((d) => {
     const centered = d.average - 5;
@@ -21,7 +32,7 @@ export function MonthlyMoodChart({ data }: MonthlyMoodChartProps) {
       topLabelComponent: () => (
         <Text
           style={{
-            fontSize: 11,
+            fontSize: 10,
             color: centered >= 0 ? "#04A056" : "#F21622",
             textTransform: "capitalize",
             textAlign: "center",
@@ -35,22 +46,27 @@ export function MonthlyMoodChart({ data }: MonthlyMoodChartProps) {
   });
 
   return (
-    <BarChart
-      data={chartData}
-      barWidth={28}
-      height={100}
-      spacing={24}
-      mostNegativeValue={-5}
-      maxValue={5}
-      noOfSections={2}
-      noOfSectionsBelowXAxis={2}
-      hideYAxisText
-      yAxisThickness={0}
-      xAxisThickness={1}
-      xAxisColor="#01012E20"
-      rulesType="solid"
-      rulesColor="#01012E14"
-      hideOrigin
-    />
+    <View style={{ overflow: "hidden" }}>
+      <BarChart
+        data={chartData}
+        barWidth={barWidth}
+        height={100}
+        width={chartWidth}
+        spacing={spacing}
+        initialSpacing={spacing}
+        disableScroll
+        mostNegativeValue={-5}
+        maxValue={5}
+        noOfSections={2}
+        noOfSectionsBelowXAxis={2}
+        hideYAxisText
+        yAxisThickness={0}
+        xAxisThickness={1}
+        xAxisColor="#01012E20"
+        rulesType="solid"
+        rulesColor="#01012E14"
+        hideOrigin
+      />
+    </View>
   );
 }

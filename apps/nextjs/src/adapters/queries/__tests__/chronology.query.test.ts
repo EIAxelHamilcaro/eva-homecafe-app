@@ -41,10 +41,8 @@ vi.mock("drizzle-orm", () => ({
   eq: (a: unknown, b: unknown) => [a, b],
   asc: (a: unknown) => a,
   isNotNull: (a: unknown) => a,
-  sql: (strings: TemplateStringsArray, ...values: unknown[]) => ({
-    strings,
-    values,
-  }),
+  gte: (a: unknown, b: unknown) => ["gte", a, b],
+  lte: (a: unknown, b: unknown) => ["lte", a, b],
 }));
 
 import { getChronology } from "../chronology.query";
@@ -296,7 +294,7 @@ describe("getChronology", () => {
 
   it("should call where with userId filter, isNotNull, and date range", async () => {
     const { db } = await import("@packages/drizzle");
-    const { eq, isNotNull } = await import("drizzle-orm");
+    const { eq, isNotNull, gte, lte } = await import("drizzle-orm");
     const { board, card } = await import("@packages/drizzle");
 
     const mockChain = {
@@ -315,6 +313,8 @@ describe("getChronology", () => {
     expect(whereArgs).toHaveLength(4);
     expect(whereArgs[0]).toEqual(eq(board.userId, "user-456"));
     expect(whereArgs[1]).toEqual(isNotNull(card.dueDate));
+    expect(whereArgs[2]).toEqual(gte(card.dueDate, "2026-03-01"));
+    expect(whereArgs[3]).toEqual(lte(card.dueDate, "2026-03-31"));
   });
 
   it("should call innerJoin for boardColumn and board tables", async () => {

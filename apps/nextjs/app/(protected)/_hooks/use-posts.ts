@@ -12,14 +12,9 @@ import type { IGetUserPostsOutputDto } from "@/application/dto/post/get-user-pos
 import type { ITogglePostReactionOutputDto } from "@/application/dto/post/toggle-post-reaction.dto";
 import type { IUpdatePostOutputDto } from "@/application/dto/post/update-post.dto";
 import { apiFetch } from "@/common/api";
+import { journalKeys, postKeys } from "./query-keys";
 
-export const postKeys = {
-  all: ["posts"] as const,
-  list: (page: number) => ["posts", "list", page] as const,
-  detail: (id: string) => ["posts", "detail", id] as const,
-  reactions: (id: string) => ["posts", "reactions", id] as const,
-  comments: (id: string) => ["posts", "comments", id] as const,
-};
+export { postKeys };
 
 export function usePostsQuery(page: number) {
   return useQuery<IGetUserPostsOutputDto>({
@@ -69,12 +64,15 @@ export function useTogglePrivacyMutation() {
   >({
     mutationFn: ({ postId, isPrivate }) =>
       apiFetch<IUpdatePostOutputDto>(`/api/v1/posts/${postId}`, {
-        method: "PUT",
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ isPrivate }),
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: postKeys.all });
+      queryClient.invalidateQueries({ queryKey: journalKeys.all });
+      queryClient.invalidateQueries({ queryKey: ["feed-gallery"] });
+      queryClient.invalidateQueries({ queryKey: ["feed"] });
     },
   });
 }
@@ -94,6 +92,9 @@ export function useToggleReactionMutation(postId: string) {
       ),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: postKeys.reactions(postId) });
+      queryClient.invalidateQueries({ queryKey: postKeys.detail(postId) });
+      queryClient.invalidateQueries({ queryKey: postKeys.all });
+      queryClient.invalidateQueries({ queryKey: ["feed"] });
     },
   });
 }
@@ -161,6 +162,9 @@ export function useDeletePostMutation() {
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: postKeys.all });
+      queryClient.invalidateQueries({ queryKey: journalKeys.all });
+      queryClient.invalidateQueries({ queryKey: ["feed"] });
+      queryClient.invalidateQueries({ queryKey: ["feed-gallery"] });
     },
   });
 }

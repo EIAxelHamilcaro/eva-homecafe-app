@@ -4,6 +4,7 @@ import {
   CalendarDays,
   House,
   MessageCircle,
+  Palette,
   User,
   Users,
 } from "lucide-react-native";
@@ -52,6 +53,20 @@ export default function TabLayout() {
           tabBarIcon: ({ color, focused }) => (
             <View>
               <BookOpen
+                size={24}
+                color={color}
+                fill={focused ? color : "transparent"}
+              />
+            </View>
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="moodboard"
+        options={{
+          tabBarIcon: ({ color, focused }) => (
+            <View>
+              <Palette
                 size={24}
                 color={color}
                 fill={focused ? color : "transparent"}

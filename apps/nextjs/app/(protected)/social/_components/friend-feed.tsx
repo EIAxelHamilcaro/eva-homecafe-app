@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@packages/ui/components/ui/button";
 import Link from "next/link";
 import { useState } from "react";
 import { useFriendFeedQuery } from "@/app/(protected)/_hooks/use-feed";
@@ -66,25 +67,25 @@ export function FriendFeed() {
 
           {data.pagination.totalPages > 1 && (
             <div className="flex items-center justify-center gap-4 pt-4">
-              <button
-                type="button"
+              <Button
+                variant="outline"
                 disabled={!data.pagination.hasPreviousPage}
                 onClick={() => setPage((p) => p - 1)}
                 className="rounded-md border px-3 py-1 text-sm disabled:opacity-50"
               >
                 Previous
-              </button>
+              </Button>
               <span className="text-sm text-muted-foreground">
                 Page {data.pagination.page} of {data.pagination.totalPages}
               </span>
-              <button
-                type="button"
+              <Button
+                variant="outline"
                 disabled={!data.pagination.hasNextPage}
                 onClick={() => setPage((p) => p + 1)}
                 className="rounded-md border px-3 py-1 text-sm disabled:opacity-50"
               >
                 Next
-              </button>
+              </Button>
             </div>
           )}
         </div>

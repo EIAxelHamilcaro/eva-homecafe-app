@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@packages/ui/components/ui/button";
 import { Plus } from "lucide-react";
 import { useCallback, useRef, useState } from "react";
 import { GalleryGrid } from "./gallery-grid";
@@ -22,14 +23,13 @@ export function GalleryClient() {
             Tes plus belles photos, c&apos;est ici !
           </p>
         </div>
-        <button
-          type="button"
+        <Button
           onClick={() => uploadRef.current?.trigger()}
           className="flex items-center gap-1.5 rounded-full bg-homecafe-pink px-4 py-1.5 text-sm font-medium text-white hover:opacity-90"
         >
           <Plus size={16} />
           Ajouter une photo
-        </button>
+        </Button>
       </div>
 
       <GalleryUpload ref={uploadRef} onPhotoUploaded={handleRefresh} />

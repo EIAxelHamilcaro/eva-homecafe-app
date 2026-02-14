@@ -1,8 +1,5 @@
 import { Card, CardContent } from "@packages/ui/components/ui/card";
-import {
-  getMoodPreviousWeekAverage,
-  getMoodWeek,
-} from "@/adapters/queries/mood-week.query";
+import { getMoodWeek } from "@/adapters/queries/mood-week.query";
 import { WeeklyMoodChart } from "./weekly-mood-chart";
 
 interface SuiviWeeklyWidgetProps {
@@ -20,31 +17,16 @@ const DAY_LABELS: Record<string, string> = {
   Sunday: "dimanche",
 };
 
-function computeWeekTrend(
-  thisWeekAvg: number | null,
-  prevWeekAvg: number | null,
-): string {
-  if (thisWeekAvg === null || prevWeekAvg === null || prevWeekAvg === 0) {
-    return "Pas assez de donnees";
-  }
-  const pct = ((thisWeekAvg - prevWeekAvg) / prevWeekAvg) * 100;
-  const sign = pct >= 0 ? "hausse" : "baisse";
-  return `En ${sign} de ${Math.abs(pct).toFixed(1)}% vs semaine derniere`;
-}
-
 export async function SuiviWeeklyWidget({
   userId,
   compact,
 }: SuiviWeeklyWidgetProps) {
   let entries: Awaited<ReturnType<typeof getMoodWeek>>["entries"] = [];
-  let prevWeekAvg: number | null = null;
+  let weeklyTrend = "Pas assez de donnees";
   try {
-    const [data, prevAvg] = await Promise.all([
-      getMoodWeek(userId),
-      getMoodPreviousWeekAverage(userId),
-    ]);
+    const data = await getMoodWeek(userId);
     entries = data.entries;
-    prevWeekAvg = prevAvg;
+    weeklyTrend = data.weeklyTrend;
   } catch {
     /* empty */
   }
@@ -61,12 +43,6 @@ export async function SuiviWeeklyWidget({
     day: DAY_LABELS[e.dayOfWeek] ?? e.dayOfWeek,
     average: e.intensity,
   }));
-
-  const thisWeekAvg =
-    entries.length > 0
-      ? entries.reduce((sum, e) => sum + e.intensity, 0) / entries.length
-      : null;
-  const trend = computeWeekTrend(thisWeekAvg, prevWeekAvg);
 
   return (
     <Card className="border-0">
@@ -101,7 +77,9 @@ export async function SuiviWeeklyWidget({
             </div>
           )}
         </div>
-        <p className="mt-1 text-xs text-muted-foreground">{trend} &#8599;</p>
+        <p className="mt-1 text-xs text-muted-foreground">
+          {weeklyTrend} &#8599;
+        </p>
       </CardContent>
     </Card>
   );

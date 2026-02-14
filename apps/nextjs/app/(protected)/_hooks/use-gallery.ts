@@ -37,11 +37,40 @@ export function useDeletePhotoMutation() {
   });
 }
 
+export function useTogglePhotoPrivacyMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    { id: string; isPrivate: boolean },
+    Error,
+    { photoId: string; isPrivate: boolean }
+  >({
+    mutationFn: ({ photoId, isPrivate }) =>
+      apiFetch<{ id: string; isPrivate: boolean }>(
+        `/api/v1/gallery/${photoId}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ isPrivate }),
+        },
+      ),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: galleryKeys.all });
+      queryClient.invalidateQueries({ queryKey: ["feed-gallery"] });
+    },
+  });
+}
+
+interface UploadPhotoInput {
+  file: File;
+  isPrivate: boolean;
+}
+
 export function useUploadPhotoMutation() {
   const queryClient = useQueryClient();
 
-  return useMutation<IAddPhotoOutputDto, Error, File>({
-    mutationFn: async (file: File) => {
+  return useMutation<IAddPhotoOutputDto, Error, UploadPhotoInput>({
+    mutationFn: async ({ file, isPrivate }: UploadPhotoInput) => {
       const presign = await apiFetch<IGenerateUploadUrlOutputDto>(
         "/api/v1/upload",
         {
@@ -70,6 +99,7 @@ export function useUploadPhotoMutation() {
           filename: file.name,
           mimeType: file.type,
           size: file.size,
+          isPrivate,
         }),
       });
     },

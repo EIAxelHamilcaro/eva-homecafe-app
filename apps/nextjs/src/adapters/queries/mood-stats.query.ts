@@ -1,13 +1,24 @@
 import { db } from "@packages/drizzle";
 import { moodEntry } from "@packages/drizzle/schema";
-import { and, avg, count, eq, gte, sql } from "drizzle-orm";
+import { and, avg, count, desc, eq, gte } from "drizzle-orm";
 import type { IGetMoodStatsOutputDto } from "@/application/dto/mood/get-mood-stats.dto";
 
-function getStartDate(period: "week" | "6months"): ReturnType<typeof sql> {
+function formatDate(d: Date): string {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+function getStartDate(period: "week" | "6months"): string {
+  const now = new Date();
   if (period === "week") {
-    return sql`date_trunc('week', CURRENT_DATE)::date`;
+    const day = now.getDay();
+    const diffToMonday = day === 0 ? 6 : day - 1;
+    const monday = new Date(now);
+    monday.setDate(now.getDate() - diffToMonday);
+    return formatDate(monday);
   }
-  return sql`(CURRENT_DATE - interval '6 months')::date`;
+  const sixMonthsAgo = new Date(now);
+  sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+  return formatDate(sixMonthsAgo);
 }
 
 export async function getMoodStats(
@@ -27,7 +38,7 @@ export async function getMoodStats(
         and(eq(moodEntry.userId, userId), gte(moodEntry.moodDate, startDate)),
       )
       .groupBy(moodEntry.moodCategory)
-      .orderBy(sql`count(*) DESC`),
+      .orderBy(desc(count())),
     db
       .select({
         totalEntries: count().as("total_entries"),

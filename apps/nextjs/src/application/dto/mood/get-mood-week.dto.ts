@@ -9,6 +9,7 @@ export const getMoodWeekOutputDtoSchema = z.object({
       intensity: z.number(),
     }),
   ),
+  weeklyTrend: z.string(),
 });
 
 export type IGetMoodWeekOutputDto = z.infer<typeof getMoodWeekOutputDtoSchema>;

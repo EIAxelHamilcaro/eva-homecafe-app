@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@packages/ui/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -46,8 +47,8 @@ export function JournalWidgetClient({
 
   return (
     <>
-      <button
-        type="button"
+      <Button
+        variant="ghost"
         onClick={() => setOpen(true)}
         className="mt-4 w-full text-left"
       >
@@ -72,7 +73,7 @@ export function JournalWidgetClient({
             </p>
           </div>
         )}
-      </button>
+      </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-2xl">
@@ -98,8 +99,7 @@ export function JournalWidgetClient({
                 {dateLabel}
               </p>
             </div>
-            <button
-              type="button"
+            <Button
               onClick={() => setIsPrivate((v) => !v)}
               title={
                 isPrivate
@@ -117,7 +117,7 @@ export function JournalWidgetClient({
               ) : (
                 <Globe className="h-4 w-4" />
               )}
-            </button>
+            </Button>
           </div>
           <RichTextEditor
             initialContent={existingContent ?? ""}

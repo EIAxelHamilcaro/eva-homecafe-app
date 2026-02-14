@@ -18,13 +18,24 @@ vi.mock("drizzle-orm", () => ({
   gte: (a: unknown, b: unknown) => ["gte", a, b],
   lte: (a: unknown, b: unknown) => ["lte", a, b],
   asc: (a: unknown) => a,
-  sql: (strings: TemplateStringsArray, ...values: unknown[]) => ({
-    strings,
-    values,
-  }),
 }));
 
 import { getMoodWeek } from "../mood-week.query";
+
+function createMockSelectChain(records: unknown[]) {
+  return {
+    from: vi.fn().mockReturnThis(),
+    where: vi.fn().mockReturnThis(),
+    orderBy: vi.fn().mockResolvedValue(records),
+  };
+}
+
+function createMockPrevWeekChain(records: unknown[]) {
+  return {
+    from: vi.fn().mockReturnThis(),
+    where: vi.fn().mockResolvedValue(records),
+  };
+}
 
 describe("getMoodWeek", () => {
   beforeEach(() => {
@@ -33,12 +44,12 @@ describe("getMoodWeek", () => {
 
   it("should return empty entries when no mood records exist for the week", async () => {
     const { db } = await import("@packages/drizzle");
-    const mockChain = {
-      from: vi.fn().mockReturnThis(),
-      where: vi.fn().mockReturnThis(),
-      orderBy: vi.fn().mockResolvedValue([]),
-    };
-    vi.spyOn(db, "select").mockReturnValue(mockChain as never);
+    let callCount = 0;
+    vi.spyOn(db, "select").mockImplementation(() => {
+      callCount++;
+      if (callCount === 1) return createMockSelectChain([]) as never;
+      return createMockPrevWeekChain([]) as never;
+    });
 
     const result = await getMoodWeek("user-123");
 
@@ -51,12 +62,12 @@ describe("getMoodWeek", () => {
       { moodDate: "2026-02-02", moodCategory: "bonheur", moodIntensity: 7 },
       { moodDate: "2026-02-03", moodCategory: "calme", moodIntensity: 5 },
     ];
-    const mockChain = {
-      from: vi.fn().mockReturnThis(),
-      where: vi.fn().mockReturnThis(),
-      orderBy: vi.fn().mockResolvedValue(mockRecords),
-    };
-    vi.spyOn(db, "select").mockReturnValue(mockChain as never);
+    let callCount = 0;
+    vi.spyOn(db, "select").mockImplementation(() => {
+      callCount++;
+      if (callCount === 1) return createMockSelectChain(mockRecords) as never;
+      return createMockPrevWeekChain([]) as never;
+    });
 
     const result = await getMoodWeek("user-123");
 
@@ -80,12 +91,12 @@ describe("getMoodWeek", () => {
     const mockRecords = [
       { moodDate: "2026-02-08", moodCategory: "ennui", moodIntensity: 3 },
     ];
-    const mockChain = {
-      from: vi.fn().mockReturnThis(),
-      where: vi.fn().mockReturnThis(),
-      orderBy: vi.fn().mockResolvedValue(mockRecords),
-    };
-    vi.spyOn(db, "select").mockReturnValue(mockChain as never);
+    let callCount = 0;
+    vi.spyOn(db, "select").mockImplementation(() => {
+      callCount++;
+      if (callCount === 1) return createMockSelectChain(mockRecords) as never;
+      return createMockPrevWeekChain([]) as never;
+    });
 
     const result = await getMoodWeek("user-123");
 
@@ -97,12 +108,12 @@ describe("getMoodWeek", () => {
     const mockRecords = [
       { moodDate: "2026-02-04", moodCategory: "anxiete", moodIntensity: 8 },
     ];
-    const mockChain = {
-      from: vi.fn().mockReturnThis(),
-      where: vi.fn().mockReturnThis(),
-      orderBy: vi.fn().mockResolvedValue(mockRecords),
-    };
-    vi.spyOn(db, "select").mockReturnValue(mockChain as never);
+    let callCount = 0;
+    vi.spyOn(db, "select").mockImplementation(() => {
+      callCount++;
+      if (callCount === 1) return createMockSelectChain(mockRecords) as never;
+      return createMockPrevWeekChain([]) as never;
+    });
 
     const result = await getMoodWeek("user-123");
 

@@ -17,6 +17,7 @@ describe("AddPhotoUseCase", () => {
     filename: "vacation.jpg",
     mimeType: "image/jpeg",
     size: 2048000,
+    isPrivate: true,
     userId: "user-123",
   };
 

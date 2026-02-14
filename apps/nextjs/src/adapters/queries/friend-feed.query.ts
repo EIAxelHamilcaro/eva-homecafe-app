@@ -1,5 +1,12 @@
-import { db, friendRequest, post, profile, user } from "@packages/drizzle";
-import { and, desc, eq, inArray, or, sql } from "drizzle-orm";
+import {
+  db,
+  friendRequest,
+  post,
+  postReaction,
+  profile,
+  user,
+} from "@packages/drizzle";
+import { and, count, desc, eq, inArray, or } from "drizzle-orm";
 import type {
   IFeedPostDto,
   IGetFriendFeedOutputDto,
@@ -55,15 +62,13 @@ export async function getFriendFeed(
     eq(post.isPrivate, false),
   );
 
-  const reactionCountSubquery = sql<number>`(SELECT count(*)::int FROM post_reaction WHERE post_reaction.post_id = ${post.id})`;
-  const hasReactedSubquery = sql<boolean>`(SELECT count(*) > 0 FROM post_reaction WHERE post_reaction.post_id = ${post.id} AND post_reaction.user_id = ${userId})`;
-
   const [records, countResult] = await Promise.all([
     db
       .select({
         id: post.id,
         content: post.content,
         images: post.images,
+        isPrivate: post.isPrivate,
         createdAt: post.createdAt,
         updatedAt: post.updatedAt,
         authorId: user.id,
@@ -71,8 +76,6 @@ export async function getFriendFeed(
         authorImage: user.image,
         displayName: profile.displayName,
         avatarUrl: profile.avatarUrl,
-        reactionCount: reactionCountSubquery.as("reactionCount"),
-        hasReacted: hasReactedSubquery.as("hasReacted"),
       })
       .from(post)
       .innerJoin(user, eq(post.userId, user.id))
@@ -81,19 +84,47 @@ export async function getFriendFeed(
       .orderBy(desc(post.createdAt))
       .limit(limit)
       .offset(offset),
-    db
-      .select({ count: sql<number>`count(*)::int` })
-      .from(post)
-      .where(whereClause),
+    db.select({ total: count() }).from(post).where(whereClause),
   ]);
 
-  const total = countResult[0]?.count ?? 0;
+  const postIds = records.map((r) => r.id);
+
+  const [reactionCounts, userReactions] =
+    postIds.length > 0
+      ? await Promise.all([
+          db
+            .select({
+              postId: postReaction.postId,
+              count: count(),
+            })
+            .from(postReaction)
+            .where(inArray(postReaction.postId, postIds))
+            .groupBy(postReaction.postId),
+          db
+            .select({ postId: postReaction.postId })
+            .from(postReaction)
+            .where(
+              and(
+                inArray(postReaction.postId, postIds),
+                eq(postReaction.userId, userId),
+              ),
+            ),
+        ])
+      : [[], []];
+
+  const reactionCountMap = new Map(
+    reactionCounts.map((r) => [r.postId, r.count]),
+  );
+  const userReactionSet = new Set(userReactions.map((r) => r.postId));
+
+  const total = countResult[0]?.total ?? 0;
   const totalPages = Math.ceil(total / limit);
 
   const data: IFeedPostDto[] = records.map((r) => ({
     id: r.id,
     content: r.content,
     images: (r.images as string[]) ?? [],
+    isPrivate: r.isPrivate,
     createdAt: r.createdAt.toISOString(),
     updatedAt: r.updatedAt ? r.updatedAt.toISOString() : null,
     author: {
@@ -102,8 +133,8 @@ export async function getFriendFeed(
       displayName: r.displayName ?? null,
       avatarUrl: r.avatarUrl ?? r.authorImage ?? null,
     },
-    reactionCount: r.reactionCount ?? 0,
-    hasReacted: r.hasReacted ?? false,
+    reactionCount: reactionCountMap.get(r.id) ?? 0,
+    hasReacted: userReactionSet.has(r.id),
   }));
 
   return {

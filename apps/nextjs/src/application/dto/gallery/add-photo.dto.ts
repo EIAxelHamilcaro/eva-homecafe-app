@@ -9,6 +9,7 @@ export const addPhotoInputDtoSchema = z.object({
     .string()
     .max(500, "Caption must be 500 characters or fewer")
     .optional(),
+  isPrivate: z.boolean().default(true),
   userId: z.string().min(1, "User ID is required"),
 });
 
@@ -21,6 +22,7 @@ export const addPhotoOutputDtoSchema = z.object({
   mimeType: z.string(),
   size: z.number(),
   caption: z.string().nullable(),
+  isPrivate: z.boolean(),
   userId: z.string(),
   createdAt: z.string(),
 });

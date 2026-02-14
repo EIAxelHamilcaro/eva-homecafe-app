@@ -134,6 +134,13 @@
       "when": 1771073633816,
       "tag": "0018_outgoing_blockbuster",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1771096963689,
+      "tag": "0019_abandoned_prima",
+      "breakpoints": true
     }
   ]
 }

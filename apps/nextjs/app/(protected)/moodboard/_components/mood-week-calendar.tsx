@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@packages/ui/components/ui/button";
 import { useCallback, useState } from "react";
 import type { EmotionYearEntry } from "@/adapters/queries/emotion-year-calendar.query";
 import { getMoodColor } from "@/app/(protected)/mood/_components/mood-config";
@@ -65,8 +66,8 @@ export function MoodWeekCalendar({ initialData }: MoodWeekCalendarProps) {
             date={dateStr}
             onMoodSelected={handleMoodSelected}
           >
-            <button
-              type="button"
+            <Button
+              variant="ghost"
               className={`flex aspect-square w-full items-center justify-center rounded-[4px] transition-colors hover:opacity-80 ${!category ? "bg-muted/50" : ""}`}
               style={bgColor ? { backgroundColor: bgColor } : {}}
             >
@@ -75,7 +76,7 @@ export function MoodWeekCalendar({ initialData }: MoodWeekCalendarProps) {
                   &#8744;
                 </span>
               )}
-            </button>
+            </Button>
           </MoodCellPopover>
         );
       })}

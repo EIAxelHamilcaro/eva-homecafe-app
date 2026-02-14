@@ -1,6 +1,6 @@
 import { db } from "@packages/drizzle";
 import { photo } from "@packages/drizzle/schema";
-import { desc, eq, sql } from "drizzle-orm";
+import { count, desc, eq } from "drizzle-orm";
 
 const DEFAULT_PAGE = 1;
 const DEFAULT_LIMIT = 20;
@@ -12,6 +12,7 @@ export interface GalleryPhotoDto {
   mimeType: string;
   size: number;
   caption: string | null;
+  isPrivate: boolean;
   createdAt: string;
 }
 
@@ -42,13 +43,10 @@ export async function getUserGallery(
       .orderBy(desc(photo.createdAt))
       .limit(limit)
       .offset(offset),
-    db
-      .select({ count: sql<number>`count(*)::int` })
-      .from(photo)
-      .where(eq(photo.userId, userId)),
+    db.select({ total: count() }).from(photo).where(eq(photo.userId, userId)),
   ]);
 
-  const total = countResult[0]?.count ?? 0;
+  const total = countResult[0]?.total ?? 0;
   const totalPages = Math.ceil(total / limit);
 
   return {
@@ -59,6 +57,7 @@ export async function getUserGallery(
       mimeType: record.mimeType,
       size: record.size,
       caption: record.caption,
+      isPrivate: record.isPrivate,
       createdAt: record.createdAt.toISOString(),
     })),
     pagination: {

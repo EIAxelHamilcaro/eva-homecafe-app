@@ -9,6 +9,7 @@ export const getMoodTrendsOutputDtoSchema = z.object({
       entryCount: z.number(),
     }),
   ),
+  monthlyTrend: z.string(),
 });
 
 export type IGetMoodTrendsOutputDto = z.infer<

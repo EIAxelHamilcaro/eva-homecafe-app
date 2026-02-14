@@ -1,4 +1,6 @@
 import { match } from "@packages/ddd-kit";
+import { db, eq } from "@packages/drizzle";
+import { photo as photoTable } from "@packages/drizzle/schema";
 import { NextResponse } from "next/server";
 import {
   type GetUserGalleryOutputDto,
@@ -122,4 +124,62 @@ export async function deletePhotoController(
   }
 
   return NextResponse.json(result.getValue());
+}
+
+export async function togglePhotoPrivacyController(
+  request: Request,
+  photoId: string,
+): Promise<
+  NextResponse<{ id: string; isPrivate: boolean } | { error: string }>
+> {
+  const session = await getAuthenticatedUser(request);
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  let json: unknown;
+  try {
+    json = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
+
+  const body = json as Record<string, unknown>;
+  if (typeof body.isPrivate !== "boolean") {
+    return NextResponse.json(
+      { error: "isPrivate must be a boolean" },
+      { status: 400 },
+    );
+  }
+
+  try {
+    const [existing] = await db
+      .select({ id: photoTable.id, userId: photoTable.userId })
+      .from(photoTable)
+      .where(eq(photoTable.id, photoId))
+      .limit(1);
+
+    if (!existing) {
+      return NextResponse.json({ error: "Photo not found" }, { status: 404 });
+    }
+
+    if (existing.userId !== session.user.id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    await db
+      .update(photoTable)
+      .set({ isPrivate: body.isPrivate as boolean })
+      .where(eq(photoTable.id, photoId));
+
+    return NextResponse.json({
+      id: photoId,
+      isPrivate: body.isPrivate as boolean,
+    });
+  } catch {
+    return NextResponse.json(
+      { error: "Failed to update photo" },
+      { status: 500 },
+    );
+  }
 }

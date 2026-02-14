@@ -1,8 +1,10 @@
 "use client";
 
+import { Button } from "@packages/ui/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { useToggleReactionMutation } from "@/app/(protected)/_hooks/use-posts";
 import type { IFeedPostDto } from "@/application/dto/feed/get-friend-feed.dto";
 import { stripHtml, truncate } from "@/common/utils/text";
 
@@ -45,45 +47,36 @@ export function FeedPostCard({ post }: FeedPostCardProps) {
   const displayName = post.author.displayName ?? post.author.name;
   const [reactionCount, setReactionCount] = useState(post.reactionCount);
   const [hasReacted, setHasReacted] = useState(post.hasReacted);
-  const [isToggling, setIsToggling] = useState(false);
+  const toggleReaction = useToggleReactionMutation(post.id);
 
-  async function handleReaction(e: React.MouseEvent) {
+  function handleReaction(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
-    if (isToggling) return;
+    if (toggleReaction.isPending) return;
 
-    setIsToggling(true);
-    const previousCount = reactionCount;
-    const previousHasReacted = hasReacted;
+    const prevCount = reactionCount;
+    const prevReacted = hasReacted;
 
     setHasReacted(!hasReacted);
     setReactionCount(hasReacted ? reactionCount - 1 : reactionCount + 1);
 
-    try {
-      const res = await fetch(`/api/v1/posts/${post.id}/reactions`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ emoji: "❤️" }),
-      });
-
-      if (!res.ok) {
-        setReactionCount(previousCount);
-        setHasReacted(previousHasReacted);
-      } else {
-        const data = (await res.json()) as { action: "added" | "removed" };
-        setHasReacted(data.action === "added");
-        if (data.action === "added" && previousHasReacted) {
-          setReactionCount(previousCount + 1);
-        } else if (data.action === "removed" && !previousHasReacted) {
-          setReactionCount(previousCount - 1);
-        }
-      }
-    } catch {
-      setReactionCount(previousCount);
-      setHasReacted(previousHasReacted);
-    } finally {
-      setIsToggling(false);
-    }
+    toggleReaction.mutate(
+      { emoji: "❤️" },
+      {
+        onSuccess: (data) => {
+          setHasReacted(data.action === "added");
+          setReactionCount(
+            data.action === "added"
+              ? prevCount + (prevReacted ? 0 : 1)
+              : prevCount - (prevReacted ? 1 : 0),
+          );
+        },
+        onError: () => {
+          setReactionCount(prevCount);
+          setHasReacted(prevReacted);
+        },
+      },
+    );
   }
 
   return (
@@ -140,17 +133,17 @@ export function FeedPostCard({ post }: FeedPostCardProps) {
       )}
 
       <div className="flex items-center gap-2 text-xs text-muted-foreground">
-        <button
-          type="button"
+        <Button
+          variant="ghost"
           onClick={handleReaction}
-          disabled={isToggling}
+          disabled={toggleReaction.isPending}
           className={`flex items-center gap-1 rounded-full px-2 py-1 transition-colors ${
             hasReacted ? "bg-red-50 text-red-500" : "hover:bg-muted"
           }`}
         >
           <span>{hasReacted ? "❤️" : "🤍"}</span>
           <span>{reactionCount}</span>
-        </button>
+        </Button>
       </div>
     </Link>
   );

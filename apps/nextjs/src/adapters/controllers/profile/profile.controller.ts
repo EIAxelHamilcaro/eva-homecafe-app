@@ -10,6 +10,7 @@ import {
   type IUpdateProfileOutputDto,
   updateProfileInputDtoSchema,
 } from "@/application/dto/profile/update-profile.dto";
+import { auth } from "@/common/auth";
 import { getInjection } from "@/common/di/container";
 
 async function getAuthenticatedUser(
@@ -145,6 +146,17 @@ export async function updateProfileController(
       return NextResponse.json({ error }, { status: 404 });
     }
     return NextResponse.json({ error }, { status: 400 });
+  }
+
+  if (json.avatarUrl !== undefined) {
+    try {
+      await auth.api.updateUser({
+        headers: request.headers,
+        body: { image: json.avatarUrl },
+      });
+    } catch {
+      // non-blocking: profile updated even if auth sync fails
+    }
   }
 
   return NextResponse.json(result.getValue());

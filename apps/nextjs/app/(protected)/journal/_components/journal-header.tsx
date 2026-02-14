@@ -118,8 +118,7 @@ export function JournalHeader({
                 {formatDateLabel(today)}
               </p>
             </div>
-            <button
-              type="button"
+            <Button
               onClick={() => setIsPrivate((v) => !v)}
               title={
                 isPrivate
@@ -137,7 +136,7 @@ export function JournalHeader({
               ) : (
                 <Globe className="h-4 w-4" />
               )}
-            </button>
+            </Button>
           </div>
           <RichTextEditor initialContent="" onSubmit={handleSubmit} />
         </DialogContent>

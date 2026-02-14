@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@packages/ui/components/ui/button";
 import { Calendar } from "@packages/ui/components/ui/calendar";
 import { useCallback, useMemo } from "react";
 import type {
@@ -76,8 +77,8 @@ export function ChronologyCalendar({
             const isToday = todayKey === dateKey;
 
             return (
-              <button
-                type="button"
+              <Button
+                variant="ghost"
                 {...props}
                 className={`relative flex aspect-square w-full min-w-8 flex-col items-center justify-center gap-0.5 rounded-md text-sm ${
                   selectedDate === dateKey
@@ -100,7 +101,7 @@ export function ChronologyCalendar({
                     ))}
                   </div>
                 )}
-              </button>
+              </Button>
             );
           },
         }}

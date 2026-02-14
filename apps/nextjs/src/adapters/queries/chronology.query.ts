@@ -1,5 +1,5 @@
 import { board, boardColumn, card, db } from "@packages/drizzle";
-import { and, asc, eq, isNotNull, sql } from "drizzle-orm";
+import { and, asc, eq, gte, isNotNull, lte } from "drizzle-orm";
 import type {
   IChronologyCardDto,
   IGetChronologyOutputDto,
@@ -41,8 +41,8 @@ export async function getChronology(
       and(
         eq(board.userId, userId),
         isNotNull(card.dueDate),
-        sql`${card.dueDate} >= ${start}`,
-        sql`${card.dueDate} <= ${end}`,
+        gte(card.dueDate, start),
+        lte(card.dueDate, end),
       ),
     )
     .orderBy(asc(card.dueDate));

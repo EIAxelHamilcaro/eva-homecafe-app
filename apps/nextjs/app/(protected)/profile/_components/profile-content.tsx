@@ -219,6 +219,7 @@ export function ProfileContent({
       });
 
       setAvatarUrl(fileUrl);
+      router.refresh();
     } catch {
       // silent
     } finally {
@@ -297,8 +298,8 @@ export function ProfileContent({
       <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[1fr_1fr]">
         <div className="flex flex-col items-center gap-5 sm:flex-row sm:items-start">
           {/* Avatar */}
-          <button
-            type="button"
+          <Button
+            variant="ghost"
             onClick={() => fileInputRef.current?.click()}
             className="group relative h-24 w-24 shrink-0 overflow-hidden rounded-full bg-homecafe-pink-light"
             disabled={uploadingAvatar}
@@ -323,7 +324,7 @@ export function ProfileContent({
                 <Loader2 size={20} className="animate-spin text-white" />
               </div>
             )}
-          </button>
+          </Button>
           <input
             ref={fileInputRef}
             type="file"
@@ -427,13 +428,12 @@ export function ProfileContent({
                 </div>
               )}
             </div>
-            <button
-              type="button"
+            <Button
               onClick={() => setShowRewardsDialog(true)}
               className="mt-4 inline-block rounded-full bg-homecafe-pink px-6 py-1.5 text-sm font-medium text-white hover:opacity-90"
             >
               Voir tout
-            </button>
+            </Button>
           </CardContent>
         </Card>
       </div>
@@ -820,36 +820,36 @@ export function ProfileContent({
       {/* Paramètres */}
       <Card>
         <CardContent className="px-6 py-4">
-          <button
-            type="button"
+          <Button
+            variant="ghost"
             onClick={() => router.push("/settings")}
             className="flex w-full items-center justify-between text-sm hover:opacity-70"
           >
             <span className="font-medium">Paramètres</span>
             <ChevronRight className="size-4 text-muted-foreground" />
-          </button>
+          </Button>
         </CardContent>
       </Card>
 
       {/* Actions compte */}
       <div className="space-y-2 px-2 pb-4">
-        <button
-          type="button"
+        <Button
+          variant="ghost"
           onClick={handleLogout}
           disabled={loggingOut}
           className="flex items-center gap-2.5 py-1.5 text-sm hover:opacity-70 disabled:opacity-50"
         >
           <LogOut className="size-4" />
           <span>{loggingOut ? "Déconnexion..." : "Se déconnecter"}</span>
-        </button>
-        <button
-          type="button"
+        </Button>
+        <Button
+          variant="ghost"
           onClick={handleDeleteAccount}
           className="flex items-center gap-2.5 py-1.5 text-sm text-destructive hover:opacity-70"
         >
           <Trash2 className="size-4" />
           <span>Supprimer le compte</span>
-        </button>
+        </Button>
       </div>
     </div>
   );

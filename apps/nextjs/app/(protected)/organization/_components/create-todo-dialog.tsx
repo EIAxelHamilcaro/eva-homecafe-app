@@ -140,25 +140,25 @@ export function CreateTodoDialog({
                     maxLength={200}
                   />
                   {items.length > 1 && (
-                    <button
-                      type="button"
+                    <Button
+                      variant="ghost"
                       onClick={() => handleRemoveItem(index)}
                       className="rounded-md px-2 text-sm text-muted-foreground hover:text-destructive"
                       aria-label="Remove item"
                     >
                       x
-                    </button>
+                    </Button>
                   )}
                 </div>
               ))}
             </div>
-            <button
-              type="button"
+            <Button
+              variant="ghost"
               onClick={handleAddItem}
               className="mt-2 text-sm text-primary hover:underline"
             >
               + Add item
-            </button>
+            </Button>
           </fieldset>
 
           {error && <p className="text-sm text-destructive">{error}</p>}

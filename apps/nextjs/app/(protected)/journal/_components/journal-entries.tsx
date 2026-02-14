@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@packages/ui/components/ui/button";
 import {
   Card,
   CardContent,
@@ -45,7 +46,15 @@ function formatTime(isoString: string): string {
   return `${hours}h${minutes}`;
 }
 
-export function JournalEntries() {
+interface JournalEntriesProps {
+  title?: string;
+  subtitle?: string;
+}
+
+export function JournalEntries({
+  title = "Derniers posts",
+  subtitle = "Tes posts sont classés de manière chronologique",
+}: JournalEntriesProps) {
   const { data, isLoading, error } = useJournalEntriesQuery(1);
   const togglePrivacy = useTogglePrivacyMutation();
   const editEntry = useEditJournalEntryMutation();
@@ -108,12 +117,8 @@ export function JournalEntries() {
     <Card className="border-0 h-full">
       <CardHeader className="flex flex-row items-start justify-between">
         <div>
-          <CardTitle className="text-lg font-semibold">
-            Derniers posts
-          </CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Tes posts sont classés de manière chronologique
-          </p>
+          <CardTitle className="text-lg font-semibold">{title}</CardTitle>
+          <p className="text-sm text-muted-foreground">{subtitle}</p>
         </div>
         <Link
           href="/posts"
@@ -161,21 +166,20 @@ export function JournalEntries() {
                       {formatDateHeading(group.date)}
                     </span>
                     <div className="flex items-center gap-1.5">
-                      <button
-                        type="button"
+                      <Button
+                        variant="ghost"
                         onClick={(e) => openEdit(e, post)}
                         title="Modifier"
                         className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                       >
                         <Pencil className="h-3.5 w-3.5" />
-                      </button>
+                      </Button>
                       {(() => {
                         const isPrivate =
                           optimisticToggles[post.id] ?? post.isPrivate;
                         const isBouncing = bouncingIds.has(post.id);
                         return (
-                          <button
-                            type="button"
+                          <Button
                             onClick={(e) =>
                               handleTogglePrivacy(e, post.id, isPrivate)
                             }
@@ -197,7 +201,7 @@ export function JournalEntries() {
                                 <Globe className="h-4 w-4" />
                               )}
                             </span>
-                          </button>
+                          </Button>
                         );
                       })()}
                     </div>

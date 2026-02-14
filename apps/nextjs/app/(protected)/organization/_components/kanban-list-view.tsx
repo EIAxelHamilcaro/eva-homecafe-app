@@ -81,9 +81,9 @@ export function KanbanListView() {
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {boards.map((board) => (
-              <button
+              <Button
                 key={board.id}
-                type="button"
+                variant="ghost"
                 onClick={() => setSelectedBoardId(board.id)}
                 className="rounded-lg border p-4 text-left transition-colors hover:bg-accent"
               >
@@ -97,7 +97,7 @@ export function KanbanListView() {
                   )}{" "}
                   cards
                 </p>
-              </button>
+              </Button>
             ))}
           </div>
         </>

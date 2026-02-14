@@ -1,6 +1,7 @@
 "use client";
 
-import { Heart, Lock, MessageCircleMore } from "lucide-react";
+import { Button } from "@packages/ui/components/ui/button";
+import { Globe, Heart, MessageCircleMore } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -100,8 +101,8 @@ export function FeedList({ currentUserId }: FeedListProps) {
                 </p>
               </div>
               {isOwn && (
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-homecafe-blue text-white">
-                  <Lock className="h-3.5 w-3.5" />
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500 text-white">
+                  <Globe className="h-3.5 w-3.5" />
                 </div>
               )}
             </div>
@@ -153,25 +154,25 @@ export function FeedList({ currentUserId }: FeedListProps) {
 
       {data.pagination.totalPages > 1 && (
         <div className="flex items-center justify-center gap-4 pt-4">
-          <button
-            type="button"
+          <Button
+            variant="outline"
             disabled={!data.pagination.hasPreviousPage}
             onClick={() => setPage((p) => p - 1)}
             className="rounded-md border px-3 py-1 text-sm disabled:opacity-50"
           >
             Précédent
-          </button>
+          </Button>
           <span className="text-sm text-muted-foreground">
             Page {data.pagination.page} / {data.pagination.totalPages}
           </span>
-          <button
-            type="button"
+          <Button
+            variant="outline"
             disabled={!data.pagination.hasNextPage}
             onClick={() => setPage((p) => p + 1)}
             className="rounded-md border px-3 py-1 text-sm disabled:opacity-50"
           >
             Suivant
-          </button>
+          </Button>
         </div>
       )}
     </div>

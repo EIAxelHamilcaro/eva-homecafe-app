@@ -1,6 +1,6 @@
 import { db } from "@packages/drizzle";
 import { moodEntry } from "@packages/drizzle/schema";
-import { and, asc, eq, gte, lt, lte, sql } from "drizzle-orm";
+import { and, asc, eq, gte, lte } from "drizzle-orm";
 import type { IGetMoodWeekOutputDto } from "@/application/dto/mood/get-mood-week.dto";
 
 const DAYS_OF_WEEK = [
@@ -13,9 +13,26 @@ const DAYS_OF_WEEK = [
   "Saturday",
 ] as const;
 
+function formatDate(d: Date): string {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+function getISOWeekBounds(offset = 0): { start: string; end: string } {
+  const now = new Date();
+  const day = now.getDay();
+  const diffToMonday = day === 0 ? 6 : day - 1;
+  const monday = new Date(now);
+  monday.setDate(now.getDate() - diffToMonday + offset * 7);
+  const sunday = new Date(monday);
+  sunday.setDate(monday.getDate() + 6);
+  return { start: formatDate(monday), end: formatDate(sunday) };
+}
+
 export async function getMoodWeek(
   userId: string,
 ): Promise<IGetMoodWeekOutputDto> {
+  const thisWeek = getISOWeekBounds(0);
+
   const records = await db
     .select({
       moodDate: moodEntry.moodDate,
@@ -26,11 +43,8 @@ export async function getMoodWeek(
     .where(
       and(
         eq(moodEntry.userId, userId),
-        gte(moodEntry.moodDate, sql`date_trunc('week', CURRENT_DATE)::date`),
-        lte(
-          moodEntry.moodDate,
-          sql`(date_trunc('week', CURRENT_DATE) + interval '6 days')::date`,
-        ),
+        gte(moodEntry.moodDate, thisWeek.start),
+        lte(moodEntry.moodDate, thisWeek.end),
       ),
     )
     .orderBy(asc(moodEntry.moodDate));
@@ -45,12 +59,27 @@ export async function getMoodWeek(
     };
   });
 
-  return { entries };
+  const prevWeekAvg = await getMoodPreviousWeekAverage(userId);
+  const thisWeekAvg =
+    entries.length > 0
+      ? entries.reduce((sum, e) => sum + e.intensity, 0) / entries.length
+      : null;
+
+  let weeklyTrend = "Pas assez de donnees";
+  if (thisWeekAvg !== null && prevWeekAvg !== null && prevWeekAvg !== 0) {
+    const pct = ((thisWeekAvg - prevWeekAvg) / prevWeekAvg) * 100;
+    const sign = pct >= 0 ? "hausse" : "baisse";
+    weeklyTrend = `En ${sign} de ${Math.abs(pct).toFixed(1)}% vs semaine derniere`;
+  }
+
+  return { entries, weeklyTrend };
 }
 
 export async function getMoodPreviousWeekAverage(
   userId: string,
 ): Promise<number | null> {
+  const prevWeek = getISOWeekBounds(-1);
+
   const records = await db
     .select({
       moodIntensity: moodEntry.moodIntensity,
@@ -59,11 +88,8 @@ export async function getMoodPreviousWeekAverage(
     .where(
       and(
         eq(moodEntry.userId, userId),
-        gte(
-          moodEntry.moodDate,
-          sql`(date_trunc('week', CURRENT_DATE) - interval '7 days')::date`,
-        ),
-        lt(moodEntry.moodDate, sql`date_trunc('week', CURRENT_DATE)::date`),
+        gte(moodEntry.moodDate, prevWeek.start),
+        lte(moodEntry.moodDate, prevWeek.end),
       ),
     );
 

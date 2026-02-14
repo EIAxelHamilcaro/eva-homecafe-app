@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@10play/tentap-editor": "^1.0.1",
+    "@expo-google-fonts/sora": "^0.4.2",
     "@expo/metro-runtime": "^6.1.2",
     "@hookform/resolvers": "^5.2.2",
     "@react-native-community/slider": "5.0.1",
@@ -30,6 +31,7 @@
     "expo-camera": "^17.0.10",
     "expo-constants": "~18.0.13",
     "expo-device": "~8.0.10",
+    "expo-font": "^14.0.11",
     "expo-image-picker": "^17.0.10",
     "expo-linear-gradient": "~15.0.8",
     "expo-linking": "~8.0.11",
@@ -37,6 +39,7 @@
     "expo-router": "~6.0.23",
     "expo-secure-store": "~15.0.8",
     "expo-sharing": "^14.0.8",
+    "expo-splash-screen": "^31.0.13",
     "expo-status-bar": "~3.0.9",
     "expo-updates": "~29.0.16",
     "lucide-react-native": "^0.562.0",

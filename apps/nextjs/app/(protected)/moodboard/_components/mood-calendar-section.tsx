@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@packages/ui/components/ui/button";
 import { useState } from "react";
 import type { EmotionYearEntry } from "@/adapters/queries/emotion-year-calendar.query";
 import { MoodWeekCalendar } from "./mood-week-calendar";
@@ -35,13 +36,13 @@ export function MoodCalendarSection({
           <MoodWeekCalendar initialData={initialData} />
         )}
         <div className="mt-4 flex items-center justify-center gap-3">
-          <button
-            type="button"
+          <Button
+            variant="outline"
             onClick={() => setShowFull(!showFull)}
             className="rounded-full border border-foreground/15 px-5 py-2 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-muted"
           >
             {showFull ? "Voir la semaine" : "Voir le graphique entier"}
-          </button>
+          </Button>
         </div>
       </div>
     </>

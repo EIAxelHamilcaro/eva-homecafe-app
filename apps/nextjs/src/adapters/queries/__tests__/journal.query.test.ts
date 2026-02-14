@@ -30,10 +30,9 @@ vi.mock("drizzle-orm", () => ({
   and: (...args: unknown[]) => args,
   eq: (a: unknown, b: unknown) => [a, b],
   desc: (a: unknown) => a,
-  sql: (strings: TemplateStringsArray, ..._values: unknown[]) => ({
-    strings,
-    values: _values,
-  }),
+  count: () => "count",
+  gte: (a: unknown, b: unknown) => ["gte", a, b],
+  lt: (a: unknown, b: unknown) => ["lt", a, b],
 }));
 
 import { getJournalEntries } from "../journal.query";
@@ -54,7 +53,7 @@ describe("getJournalEntries", () => {
     };
     const mockCountChain = {
       from: vi.fn().mockReturnThis(),
-      where: vi.fn().mockResolvedValue([{ count: 0 }]),
+      where: vi.fn().mockResolvedValue([{ total: 0 }]),
     };
 
     let callCount = 0;
@@ -115,7 +114,7 @@ describe("getJournalEntries", () => {
     };
     const mockCountChain = {
       from: vi.fn().mockReturnThis(),
-      where: vi.fn().mockResolvedValue([{ count: 3 }]),
+      where: vi.fn().mockResolvedValue([{ total: 3 }]),
     };
 
     let callCount = 0;
@@ -146,7 +145,7 @@ describe("getJournalEntries", () => {
     };
     const mockCountChain = {
       from: vi.fn().mockReturnThis(),
-      where: vi.fn().mockResolvedValue([{ count: 0 }]),
+      where: vi.fn().mockResolvedValue([{ total: 0 }]),
     };
 
     let callCount = 0;
@@ -173,7 +172,7 @@ describe("getJournalEntries", () => {
     };
     const mockCountChain = {
       from: vi.fn().mockReturnThis(),
-      where: vi.fn().mockResolvedValue([{ count: 45 }]),
+      where: vi.fn().mockResolvedValue([{ total: 45 }]),
     };
 
     let callCount = 0;
@@ -215,7 +214,7 @@ describe("getJournalEntries", () => {
     };
     const mockCountChain = {
       from: vi.fn().mockReturnThis(),
-      where: vi.fn().mockResolvedValue([{ count: 1 }]),
+      where: vi.fn().mockResolvedValue([{ total: 1 }]),
     };
 
     let callCount = 0;

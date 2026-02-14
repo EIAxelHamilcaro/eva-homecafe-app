@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@packages/ui/components/ui/button";
 import Underline from "@tiptap/extension-underline";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
@@ -126,26 +127,26 @@ export function CreatePostForm() {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <div className="flex gap-1 rounded-t-md border border-gray-300 bg-gray-50 p-1">
-          <button
-            type="button"
+          <Button
+            variant="ghost"
             onClick={() => editor?.chain().focus().toggleBold().run()}
             className={`rounded px-2 py-1 text-sm font-bold ${
               editor?.isActive("bold") ? "bg-gray-200" : "hover:bg-gray-100"
             }`}
           >
             B
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="ghost"
             onClick={() => editor?.chain().focus().toggleItalic().run()}
             className={`rounded px-2 py-1 text-sm italic ${
               editor?.isActive("italic") ? "bg-gray-200" : "hover:bg-gray-100"
             }`}
           >
             I
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="ghost"
             onClick={() => editor?.chain().focus().toggleUnderline().run()}
             className={`rounded px-2 py-1 text-sm underline ${
               editor?.isActive("underline")
@@ -154,7 +155,7 @@ export function CreatePostForm() {
             }`}
           >
             U
-          </button>
+          </Button>
         </div>
         <EditorContent editor={editor} />
       </div>
@@ -171,13 +172,12 @@ export function CreatePostForm() {
                 className="h-20 w-20 rounded-md object-cover"
                 unoptimized
               />
-              <button
-                type="button"
+              <Button
                 onClick={() => removeImage(index)}
                 className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white"
               >
                 x
-              </button>
+              </Button>
             </div>
           ))}
         </div>
@@ -191,14 +191,14 @@ export function CreatePostForm() {
           onChange={handleFileChange}
           className="hidden"
         />
-        <button
-          type="button"
+        <Button
+          variant="outline"
           onClick={() => fileInputRef.current?.click()}
           disabled={isUploading}
           className="rounded-md border border-gray-300 px-3 py-1.5 text-sm hover:bg-gray-50 disabled:opacity-50"
         >
           {isUploading ? "Uploading..." : "Add Image"}
-        </button>
+        </Button>
 
         <label className="flex items-center gap-2 text-sm">
           <input
@@ -217,13 +217,13 @@ export function CreatePostForm() {
 
       {error && <p className="text-sm text-red-600">{error}</p>}
 
-      <button
+      <Button
         type="submit"
         disabled={isSubmitting || isUploading}
         className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
       >
         {isSubmitting ? "Creating..." : "Create Post"}
-      </button>
+      </Button>
     </form>
   );
 }

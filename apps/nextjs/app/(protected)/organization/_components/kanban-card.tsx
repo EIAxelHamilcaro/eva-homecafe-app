@@ -2,6 +2,7 @@
 
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { Button } from "@packages/ui/components/ui/button";
 import { Progress } from "@packages/ui/components/ui/progress";
 import type { ICardDto } from "@/application/dto/board/common-board.dto";
 
@@ -40,8 +41,8 @@ export function KanbanCard({ card, onClick, isOverlay }: KanbanCardProps) {
         isOverlay ? "rotate-2 shadow-lg" : ""
       }`}
     >
-      <button
-        type="button"
+      <Button
+        variant="ghost"
         onClick={onClick}
         className="w-full text-left"
         tabIndex={-1}
@@ -69,7 +70,7 @@ export function KanbanCard({ card, onClick, isOverlay }: KanbanCardProps) {
             </span>
           )}
         </div>
-      </button>
+      </Button>
     </div>
   );
 }

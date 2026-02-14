@@ -1,5 +1,5 @@
 import { db, post } from "@packages/drizzle";
-import { and, desc, eq, sql } from "drizzle-orm";
+import { and, count, desc, eq, gte, lt } from "drizzle-orm";
 import type {
   IGetJournalEntriesOutputDto,
   IJournalEntryGroupDto,
@@ -39,9 +39,11 @@ export async function getJournalEntries(
   const conditions = [eq(post.userId, userId)];
 
   if (date) {
-    conditions.push(
-      sql`DATE(${post.createdAt}) = ${date}` as ReturnType<typeof eq>,
-    );
+    const dayStart = new Date(`${date}T00:00:00`);
+    const dayEnd = new Date(dayStart);
+    dayEnd.setDate(dayEnd.getDate() + 1);
+    conditions.push(gte(post.createdAt, dayStart));
+    conditions.push(lt(post.createdAt, dayEnd));
   }
 
   const whereClause = and(...conditions);
@@ -54,13 +56,10 @@ export async function getJournalEntries(
       .orderBy(desc(post.createdAt))
       .limit(limit)
       .offset(offset),
-    db
-      .select({ count: sql<number>`count(*)::int` })
-      .from(post)
-      .where(whereClause),
+    db.select({ total: count() }).from(post).where(whereClause),
   ]);
 
-  const total = countResult[0]?.count ?? 0;
+  const total = countResult[0]?.total ?? 0;
   const totalPages = Math.ceil(total / limit);
 
   const groupMap = new Map<string, IPostDto[]>();

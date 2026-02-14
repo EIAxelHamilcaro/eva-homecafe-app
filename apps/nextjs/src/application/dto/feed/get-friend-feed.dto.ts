@@ -16,6 +16,7 @@ export const feedPostDtoSchema = z.object({
   createdAt: z.string(),
   updatedAt: z.string().nullable(),
   author: feedPostAuthorDtoSchema,
+  isPrivate: z.boolean(),
   reactionCount: z.number().int().nonnegative(),
   hasReacted: z.boolean(),
 });

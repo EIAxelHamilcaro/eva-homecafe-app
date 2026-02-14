@@ -41,25 +41,25 @@ export function AccountActionsSection() {
 
   return (
     <div className="space-y-3 px-2">
-      <button
-        type="button"
+      <Button
+        variant="ghost"
         onClick={handleLogout}
         disabled={loggingOut}
         className="flex items-center gap-3 py-2 text-sm hover:opacity-70 disabled:opacity-50"
       >
         <LogOut className="size-4" />
         <span>{loggingOut ? "Déconnexion..." : "Se déconnecter"}</span>
-      </button>
+      </Button>
 
-      <button
-        type="button"
+      <Button
+        variant="ghost"
         onClick={handleDeleteAccount}
         disabled={deleting}
         className="flex items-center gap-3 py-2 text-sm text-destructive hover:opacity-70 disabled:opacity-50"
       >
         <Trash2 className="size-4" />
         <span>{deleting ? "Suppression..." : "Supprimer le compte"}</span>
-      </button>
+      </Button>
 
       <div className="pt-4 text-center">
         <Button variant="outline" size="sm" onClick={handleInviteFriends}>

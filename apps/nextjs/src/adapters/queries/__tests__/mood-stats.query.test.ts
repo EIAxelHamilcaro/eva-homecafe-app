@@ -18,10 +18,7 @@ vi.mock("drizzle-orm", () => ({
   gte: (a: unknown, b: unknown) => ["gte", a, b],
   avg: (a: unknown) => ({ as: () => a }),
   count: () => ({ as: () => "count" }),
-  sql: (strings: TemplateStringsArray, ...values: unknown[]) => ({
-    strings,
-    values,
-  }),
+  desc: (a: unknown) => a,
 }));
 
 import { getMoodStats } from "../mood-stats.query";

@@ -34,6 +34,7 @@ export class AddPhotoUseCase
       mimeType: input.mimeType,
       size: input.size,
       caption,
+      isPrivate: input.isPrivate,
     });
 
     if (photoResult.isFailure) {
@@ -59,6 +60,7 @@ export class AddPhotoUseCase
       caption: photo.get("caption").isSome()
         ? photo.get("caption").unwrap().value
         : null,
+      isPrivate: photo.get("isPrivate"),
       userId: photo.get("userId"),
       createdAt: photo.get("createdAt").toISOString(),
     });

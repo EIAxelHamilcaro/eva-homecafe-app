@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { requireAuth } from "@/adapters/guards/auth.guard";
+import { getProfileAvatarUrl } from "@/adapters/queries/profile-avatar.query";
 import { CalendarWidget } from "./_components/calendar-widget";
 import { GalleryWidget } from "./_components/gallery-widget";
 import { JournalWidget } from "./_components/journal-widget";
@@ -27,11 +28,14 @@ export default async function DashboardPage({
 }) {
   const session = await requireAuth();
   const userId = session.user.id;
+  const profileAvatar = await getProfileAvatarUrl(userId);
 
   const params = await searchParams;
   const today = getLocalToday();
   const selectedDate =
     params.date && DATE_REGEX.test(params.date) ? params.date : today;
+
+  const userImage = profileAvatar ?? session.user.image;
 
   return (
     <div className="container mx-auto max-w-7xl px-4 py-8">
@@ -63,7 +67,7 @@ export default async function DashboardPage({
             <JournalWidget
               userId={userId}
               userName={session.user.name}
-              userImage={session.user.image}
+              userImage={userImage}
               selectedDate={selectedDate}
             />
           </Suspense>

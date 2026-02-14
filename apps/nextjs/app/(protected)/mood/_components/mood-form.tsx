@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@packages/ui/components/ui/button";
 import { useState } from "react";
 import {
   useRecordMoodMutation,
@@ -83,9 +84,9 @@ export function MoodForm() {
         </h2>
         <div className="grid grid-cols-3 gap-2">
           {MOOD_OPTIONS.map((mood) => (
-            <button
+            <Button
               key={mood.value}
-              type="button"
+              variant="outline"
               onClick={() => {
                 setSelectedCategory(mood.value);
                 setError(null);
@@ -98,7 +99,7 @@ export function MoodForm() {
               }`}
             >
               {mood.label}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -139,8 +140,7 @@ export function MoodForm() {
         </div>
       )}
 
-      <button
-        type="button"
+      <Button
         onClick={handleSubmit}
         disabled={recordMood.isPending || !effectiveCategory}
         className="w-full rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
@@ -150,7 +150,7 @@ export function MoodForm() {
           : todayMood
             ? "Update Mood"
             : "Record Mood"}
-      </button>
+      </Button>
     </div>
   );
 }

@@ -18,6 +18,11 @@ vi.mock("@packages/drizzle", () => ({
     createdAt: "created_at",
     updatedAt: "updated_at",
   },
+  postReaction: {
+    postId: "post_id",
+    userId: "user_id",
+    emoji: "emoji",
+  },
   user: {
     id: "user_id",
     name: "name",
@@ -36,11 +41,7 @@ vi.mock("drizzle-orm", () => ({
   eq: (a: unknown, b: unknown) => [a, b],
   desc: (a: unknown) => a,
   inArray: (a: unknown, b: unknown) => [a, b],
-  sql: (strings: TemplateStringsArray, ...values: unknown[]) => ({
-    strings,
-    values,
-    as: (alias: string) => alias,
-  }),
+  count: () => "count",
 }));
 
 import { getFriendFeed } from "../friend-feed.query";
@@ -66,10 +67,27 @@ function createMockPostsChain(records: unknown[]) {
   };
 }
 
-function createMockCountChain(count: number) {
+function createMockCountChain(total: number) {
   return {
     from: vi.fn().mockReturnThis(),
-    where: vi.fn().mockResolvedValue([{ count }]),
+    where: vi.fn().mockResolvedValue([{ total }]),
+  };
+}
+
+function createMockReactionCountChain(
+  data: { postId: string; count: number }[],
+) {
+  return {
+    from: vi.fn().mockReturnThis(),
+    where: vi.fn().mockReturnThis(),
+    groupBy: vi.fn().mockResolvedValue(data),
+  };
+}
+
+function createMockUserReactionChain(data: { postId: string }[]) {
+  return {
+    from: vi.fn().mockReturnThis(),
+    where: vi.fn().mockResolvedValue(data),
   };
 }
 
@@ -104,9 +122,7 @@ describe("getFriendFeed", () => {
           { senderId: "user-123", receiverId: "friend-1" },
         ]) as never;
       }
-      if (callCount === 2) {
-        return createMockPostsChain([]) as never;
-      }
+      if (callCount === 2) return createMockPostsChain([]) as never;
       return createMockCountChain(0) as never;
     });
 
@@ -132,8 +148,6 @@ describe("getFriendFeed", () => {
         authorImage: null,
         displayName: "Alice D.",
         avatarUrl: "https://example.com/avatar.jpg",
-        reactionCount: 0,
-        hasReacted: false,
       },
     ];
 
@@ -145,10 +159,15 @@ describe("getFriendFeed", () => {
           { senderId: "user-123", receiverId: "friend-1" },
         ]) as never;
       }
-      if (callCount === 2) {
+      if (callCount === 2)
         return createMockPostsChain(mockPostRecords) as never;
+      if (callCount === 3) return createMockCountChain(1) as never;
+      if (callCount === 4) {
+        return createMockReactionCountChain([
+          { postId: "post-1", count: 0 },
+        ]) as never;
       }
-      return createMockCountChain(1) as never;
+      return createMockUserReactionChain([]) as never;
     });
 
     const result = await getFriendFeed("user-123");
@@ -181,9 +200,7 @@ describe("getFriendFeed", () => {
           { senderId: "friend-2", receiverId: "user-123" },
         ]) as never;
       }
-      if (callCount === 2) {
-        return createMockPostsChain([]) as never;
-      }
+      if (callCount === 2) return createMockPostsChain([]) as never;
       return createMockCountChain(0) as never;
     });
 
@@ -208,8 +225,6 @@ describe("getFriendFeed", () => {
         authorImage: "https://example.com/user-image.jpg",
         displayName: null,
         avatarUrl: null,
-        reactionCount: 0,
-        hasReacted: false,
       },
     ];
 
@@ -221,10 +236,11 @@ describe("getFriendFeed", () => {
           { senderId: "user-123", receiverId: "friend-1" },
         ]) as never;
       }
-      if (callCount === 2) {
+      if (callCount === 2)
         return createMockPostsChain(mockPostRecords) as never;
-      }
-      return createMockCountChain(1) as never;
+      if (callCount === 3) return createMockCountChain(1) as never;
+      if (callCount === 4) return createMockReactionCountChain([]) as never;
+      return createMockUserReactionChain([]) as never;
     });
 
     const result = await getFriendFeed("user-123");
@@ -257,9 +273,7 @@ describe("getFriendFeed", () => {
           { senderId: "user-123", receiverId: "friend-1" },
         ]) as never;
       }
-      if (callCount === 2) {
-        return createMockPostsChain([]) as never;
-      }
+      if (callCount === 2) return createMockPostsChain([]) as never;
       return createMockCountChain(45) as never;
     });
 
@@ -287,8 +301,6 @@ describe("getFriendFeed", () => {
         authorImage: null,
         displayName: "Charlie C.",
         avatarUrl: null,
-        reactionCount: 0,
-        hasReacted: false,
       },
     ];
 
@@ -300,10 +312,11 @@ describe("getFriendFeed", () => {
           { senderId: "user-123", receiverId: "friend-1" },
         ]) as never;
       }
-      if (callCount === 2) {
+      if (callCount === 2)
         return createMockPostsChain(mockPostRecords) as never;
-      }
-      return createMockCountChain(1) as never;
+      if (callCount === 3) return createMockCountChain(1) as never;
+      if (callCount === 4) return createMockReactionCountChain([]) as never;
+      return createMockUserReactionChain([]) as never;
     });
 
     const result = await getFriendFeed("user-123");

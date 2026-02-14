@@ -1,3 +1,4 @@
+import { Dimensions, View } from "react-native";
 import { LineChart } from "react-native-gifted-charts";
 
 interface WeeklyMoodChartProps {
@@ -45,6 +46,8 @@ function rgbToHex(r: number, g: number, b: number): string {
     .join("")}`;
 }
 
+const CHART_H_PADDING = 64;
+
 export function WeeklyMoodChart({ data }: WeeklyMoodChartProps) {
   if (data.length === 0) return null;
 
@@ -63,28 +66,38 @@ export function WeeklyMoodChart({ data }: WeeklyMoodChartProps) {
     };
   });
 
+  const screenWidth = Dimensions.get("window").width;
+  const chartWidth = screenWidth - CHART_H_PADDING;
+  const spacing = Math.floor((chartWidth - 40) / Math.max(chartData.length, 1));
+
   return (
-    <LineChart
-      data={chartData}
-      lineSegments={lineSegments}
-      curved
-      curvature={0.3}
-      thickness={2.5}
-      dataPointsRadius={6}
-      height={130}
-      spacing={40}
-      hideYAxisText
-      yAxisThickness={0}
-      xAxisThickness={0}
-      rulesType="solid"
-      rulesColor="#01012E14"
-      noOfSections={5}
-      maxValue={10}
-      xAxisLabelTextStyle={{
-        fontSize: 11,
-        color: "#888",
-        textTransform: "uppercase",
-      }}
-    />
+    <View style={{ overflow: "hidden" }}>
+      <LineChart
+        data={chartData}
+        lineSegments={lineSegments}
+        curved
+        curvature={0.3}
+        thickness={2.5}
+        dataPointsRadius={5}
+        height={130}
+        width={chartWidth}
+        spacing={spacing}
+        initialSpacing={16}
+        endSpacing={8}
+        disableScroll
+        hideYAxisText
+        yAxisThickness={0}
+        xAxisThickness={0}
+        rulesType="solid"
+        rulesColor="#01012E14"
+        noOfSections={5}
+        maxValue={10}
+        xAxisLabelTextStyle={{
+          fontSize: 11,
+          color: "#888",
+          textTransform: "uppercase",
+        }}
+      />
+    </View>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
-import { Mountain } from "lucide-react";
+import { Button } from "@packages/ui/components/ui/button";
+import { Globe, Lock, Mountain } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import type { GalleryPhotoDto } from "@/adapters/queries/gallery.query";
@@ -50,13 +51,12 @@ export function GalleryGrid() {
     return (
       <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-center text-red-700 text-sm">
         <p>{error.message}</p>
-        <button
-          type="button"
+        <Button
           onClick={() => setPage(page)}
           className="mt-3 rounded-full bg-red-600 px-4 py-1.5 text-white text-xs hover:bg-red-700"
         >
           Réessayer
-        </button>
+        </Button>
       </div>
     );
   }
@@ -83,10 +83,10 @@ export function GalleryGrid() {
       >
         {data.photos.map((photo, index) => (
           <button
-            key={photo.id}
             type="button"
+            key={photo.id}
             onClick={() => setSelectedPhoto(photo)}
-            className={`group relative overflow-hidden rounded-xl bg-muted transition-transform hover:scale-[1.02] ${
+            className={`group relative cursor-pointer overflow-hidden rounded-xl bg-muted transition-transform hover:scale-[1.02] ${
               isTall(index) ? "row-span-2" : ""
             }`}
           >
@@ -97,31 +97,42 @@ export function GalleryGrid() {
               className="object-cover transition-opacity group-hover:opacity-90"
               sizes="(max-width: 640px) 50vw, 33vw"
             />
+            <div
+              className={`absolute top-1.5 right-1.5 flex h-6 w-6 items-center justify-center rounded-full text-white ${
+                photo.isPrivate ? "bg-muted-foreground/60" : "bg-emerald-500"
+              }`}
+            >
+              {photo.isPrivate ? (
+                <Lock className="h-3 w-3" />
+              ) : (
+                <Globe className="h-3 w-3" />
+              )}
+            </div>
           </button>
         ))}
       </div>
 
       {data.pagination.totalPages > 1 && (
         <div className="flex items-center justify-center gap-4">
-          <button
-            type="button"
+          <Button
+            variant="outline"
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={!data.pagination.hasPreviousPage || isLoading}
             className="rounded-full border px-4 py-1.5 text-sm disabled:cursor-not-allowed disabled:opacity-50"
           >
             Précédent
-          </button>
+          </Button>
           <span className="text-sm text-muted-foreground">
             {data.pagination.page} / {data.pagination.totalPages}
           </span>
-          <button
-            type="button"
+          <Button
+            variant="outline"
             onClick={() => setPage((p) => p + 1)}
             disabled={!data.pagination.hasNextPage || isLoading}
             className="rounded-full border px-4 py-1.5 text-sm disabled:cursor-not-allowed disabled:opacity-50"
           >
             Suivant
-          </button>
+          </Button>
         </div>
       )}
 

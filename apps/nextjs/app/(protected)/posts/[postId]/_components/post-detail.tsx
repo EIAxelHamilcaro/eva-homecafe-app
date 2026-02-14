@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@packages/ui/components/ui/button";
 import {
   Check,
   Heart,
@@ -149,13 +150,13 @@ export function PostDetail({ postId, currentUserId }: PostDetailProps) {
   if (error && !data) {
     return (
       <div className="mx-auto max-w-2xl space-y-4 px-4 py-8">
-        <button
-          type="button"
+        <Button
+          variant="ghost"
           onClick={() => router.back()}
           className="flex h-10 w-10 items-center justify-center rounded-full border border-homecafe-pink text-homecafe-pink transition-colors hover:bg-homecafe-pink hover:text-white"
         >
           <X className="h-5 w-5" />
-        </button>
+        </Button>
         <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-center text-destructive">
           {error}
         </div>
@@ -178,13 +179,13 @@ export function PostDetail({ postId, currentUserId }: PostDetailProps) {
 
   return (
     <div className="mx-auto max-w-2xl space-y-6 px-4 py-8">
-      <button
-        type="button"
+      <Button
+        variant="ghost"
         onClick={() => router.back()}
         className="flex h-10 w-10 items-center justify-center rounded-full border border-homecafe-pink text-homecafe-pink transition-colors hover:bg-homecafe-pink hover:text-white"
       >
         <X className="h-5 w-5" />
-      </button>
+      </Button>
 
       <div className="overflow-hidden rounded-lg border border-border bg-white dark:bg-card">
         <div className="relative p-6">
@@ -230,8 +231,8 @@ export function PostDetail({ postId, currentUserId }: PostDetailProps) {
         )}
 
         <div className="flex items-center justify-around rounded-b-lg bg-[#b77fff]/15 px-4 py-3">
-          <button
-            type="button"
+          <Button
+            variant="ghost"
             onClick={() => handleToggleReaction("\u2764\uFE0F")}
             disabled={toggleReaction.isPending}
             className="flex items-center gap-1.5 p-2 transition-colors disabled:opacity-50"
@@ -242,9 +243,9 @@ export function PostDetail({ postId, currentUserId }: PostDetailProps) {
             {likeCount > 0 && (
               <span className="text-sm text-muted-foreground">{likeCount}</span>
             )}
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="ghost"
             onClick={() => commentInputRef.current?.focus()}
             className="flex items-center gap-1.5 p-2 text-muted-foreground transition-colors hover:text-foreground"
           >
@@ -254,7 +255,7 @@ export function PostDetail({ postId, currentUserId }: PostDetailProps) {
                 {commentList.length}
               </span>
             )}
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -276,14 +277,13 @@ export function PostDetail({ postId, currentUserId }: PostDetailProps) {
             className="w-full resize-none rounded-md border border-border bg-transparent px-4 py-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-homecafe-pink/40"
           />
           <div className="flex justify-end">
-            <button
-              type="button"
+            <Button
               onClick={handleSubmitComment}
               disabled={!commentText.trim() || addComment.isPending}
               className="rounded-full bg-homecafe-pink px-6 py-2 text-sm font-medium text-white transition-colors hover:bg-homecafe-pink-dark disabled:opacity-50"
             >
               {addComment.isPending ? "Envoi..." : "Envoyer"}
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -335,20 +335,20 @@ export function PostDetail({ postId, currentUserId }: PostDetailProps) {
                           }}
                           className="flex-1 rounded-md border border-border bg-transparent px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-homecafe-pink/40"
                         />
-                        <button
-                          type="button"
+                        <Button
+                          variant="ghost"
                           onClick={() => handleUpdateComment(comment.id)}
                           className="shrink-0 p-1 text-emerald-500 transition-colors hover:text-emerald-600"
                         >
                           <Check className="h-4 w-4" />
-                        </button>
-                        <button
-                          type="button"
+                        </Button>
+                        <Button
+                          variant="ghost"
                           onClick={() => setEditingCommentId(null)}
                           className="shrink-0 p-1 text-muted-foreground transition-colors hover:text-foreground"
                         >
                           <X className="h-4 w-4" />
-                        </button>
+                        </Button>
                       </div>
                     ) : (
                       <p className="mt-0.5 text-sm text-foreground">
@@ -359,8 +359,8 @@ export function PostDetail({ postId, currentUserId }: PostDetailProps) {
                   {comment.userId === currentUserId &&
                     editingCommentId !== comment.id && (
                       <div className="flex shrink-0 gap-1 self-start">
-                        <button
-                          type="button"
+                        <Button
+                          variant="ghost"
                           onClick={() => {
                             setEditingCommentId(comment.id);
                             setEditingCommentText(comment.content);
@@ -369,16 +369,16 @@ export function PostDetail({ postId, currentUserId }: PostDetailProps) {
                           className="p-1 text-muted-foreground transition-colors hover:text-foreground"
                         >
                           <Pencil className="h-3.5 w-3.5" />
-                        </button>
-                        <button
-                          type="button"
+                        </Button>
+                        <Button
+                          variant="ghost"
                           onClick={() => handleDeleteComment(comment.id)}
                           disabled={deleteComment.isPending}
                           title="Supprimer"
                           className="p-1 text-muted-foreground transition-colors hover:text-destructive disabled:opacity-50"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
-                        </button>
+                        </Button>
                       </div>
                     )}
                 </div>
@@ -397,14 +397,14 @@ export function PostDetail({ postId, currentUserId }: PostDetailProps) {
             <Pencil className="h-4 w-4" />
             Modifier
           </Link>
-          <button
-            type="button"
+          <Button
+            variant="ghost"
             onClick={() => setShowDeleteConfirm(true)}
             className="flex items-center gap-1.5 text-sm text-destructive transition-colors hover:text-destructive/80"
           >
             <Trash2 className="h-4 w-4" />
             Supprimer
-          </button>
+          </Button>
         </div>
       )}
 
@@ -421,22 +421,21 @@ export function PostDetail({ postId, currentUserId }: PostDetailProps) {
             irr&eacute;versible.
           </p>
           <div className="flex gap-3">
-            <button
-              type="button"
+            <Button
               onClick={handleDelete}
               disabled={deletePost.isPending}
               className="rounded-full bg-destructive px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-destructive/90 disabled:opacity-50"
             >
               {deletePost.isPending ? "Suppression..." : "Confirmer"}
-            </button>
-            <button
-              type="button"
+            </Button>
+            <Button
+              variant="outline"
               onClick={() => setShowDeleteConfirm(false)}
               disabled={deletePost.isPending}
               className="rounded-full border border-border px-5 py-2 text-sm transition-colors hover:bg-muted disabled:opacity-50"
             >
               Annuler
-            </button>
+            </Button>
           </div>
         </div>
       )}

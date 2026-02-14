@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@packages/ui/components/ui/button";
 import { Card, CardContent } from "@packages/ui/components/ui/card";
 import { useState } from "react";
 
@@ -120,8 +121,7 @@ export function MoodboardWidget({
           />
         </div>
         <div className="mt-4">
-          <button
-            type="button"
+          <Button
             onClick={handleValidate}
             disabled={submitting}
             className="rounded-full bg-homecafe-pink px-6 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50"
@@ -133,7 +133,7 @@ export function MoodboardWidget({
                 : existingCategory
                   ? "Modifier"
                   : "Valider"}
-          </button>
+          </Button>
         </div>
       </CardContent>
     </Card>

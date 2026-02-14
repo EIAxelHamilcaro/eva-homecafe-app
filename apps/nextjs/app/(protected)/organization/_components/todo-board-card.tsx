@@ -10,6 +10,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@packages/ui/components/ui/alert-dialog";
+import { Button } from "@packages/ui/components/ui/button";
 import { Checkbox } from "@packages/ui/components/ui/checkbox";
 import { Input } from "@packages/ui/components/ui/input";
 import { useCallback, useState } from "react";
@@ -168,25 +169,25 @@ export function TodoBoardCard({ board, onUpdate }: TodoBoardCardProps) {
             autoFocus
           />
         ) : (
-          <button
-            type="button"
+          <Button
+            variant="ghost"
             onClick={() => setEditingTitle(true)}
             className="text-sm font-semibold hover:underline"
           >
             {board.title}
-          </button>
+          </Button>
         )}
         <div className="flex items-center gap-2">
           <span className="text-xs text-muted-foreground">
             {completedCount}/{cards.length}
           </span>
-          <button
-            type="button"
+          <Button
+            variant="ghost"
             onClick={() => setDeleteDialogOpen(true)}
             className="text-xs text-muted-foreground hover:text-destructive"
           >
             Delete
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -204,14 +205,14 @@ export function TodoBoardCard({ board, onUpdate }: TodoBoardCardProps) {
             >
               {card.title}
             </span>
-            <button
-              type="button"
+            <Button
+              variant="ghost"
               onClick={() => handleRemoveItem(card.id)}
               className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-destructive"
               aria-label="Remove item"
             >
               x
-            </button>
+            </Button>
           </div>
         ))}
       </div>

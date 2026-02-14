@@ -1,13 +1,22 @@
 import { requireAuth } from "@/adapters/guards/auth.guard";
-import { FriendFeed } from "./_components/friend-feed";
+import { SocialFeed } from "./_components/social-feed";
+import { SocialGallery } from "./_components/social-gallery";
 
 export default async function SocialPage() {
-  await requireAuth();
+  const session = await requireAuth();
+  const userId = session.user.id;
 
   return (
-    <div className="mx-auto max-w-2xl p-4">
-      <h1 className="mb-6 text-2xl font-bold">Social Feed</h1>
-      <FriendFeed />
+    <div className="container mx-auto max-w-7xl px-4 py-4">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <div>
+          <SocialFeed userId={userId} />
+        </div>
+
+        <div>
+          <SocialGallery userId={userId} />
+        </div>
+      </div>
     </div>
   );
 }

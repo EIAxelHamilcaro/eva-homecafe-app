@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@packages/ui/components/ui/button";
 import { useCallback, useEffect, useState } from "react";
 import type { RewardCollectionItemDto } from "@/adapters/queries/reward-collection.query";
 import { RewardCard } from "./reward-card";
@@ -37,13 +38,12 @@ export function RewardGrid({ type, endpoint }: RewardGridProps) {
     return (
       <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-center text-red-700 text-sm">
         <p>{error}</p>
-        <button
-          type="button"
+        <Button
           onClick={load}
           className="mt-2 rounded bg-red-600 px-3 py-1 text-white text-xs hover:bg-red-700"
         >
           Retry
-        </button>
+        </Button>
       </div>
     );
   }

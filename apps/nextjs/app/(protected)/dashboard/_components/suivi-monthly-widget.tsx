@@ -27,9 +27,11 @@ export async function SuiviMonthlyWidget({
   compact,
 }: SuiviMonthlyWidgetProps) {
   let months: Awaited<ReturnType<typeof getMoodTrends>>["months"] = [];
+  let monthlyTrend = "Pas assez de donnees";
   try {
     const trends = await getMoodTrends(userId);
     months = trends.months;
+    monthlyTrend = trends.monthlyTrend;
   } catch {
     /* empty */
   }
@@ -90,6 +92,9 @@ export async function SuiviMonthlyWidget({
             height={compact ? 80 : undefined}
           />
         </div>
+        <p className="mt-1 text-xs text-muted-foreground">
+          {monthlyTrend} &#8599;
+        </p>
       </CardContent>
     </Card>
   );

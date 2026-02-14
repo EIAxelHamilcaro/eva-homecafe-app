@@ -1,5 +1,7 @@
 "use client";
 
+import { Button } from "@packages/ui/components/ui/button";
+
 export default function ErrorBoundary({
   error,
   reset,
@@ -13,13 +15,12 @@ export default function ErrorBoundary({
       <p className="mb-6 text-muted-foreground">
         {error.message || "Quelque chose s'est mal passe."}
       </p>
-      <button
-        type="button"
+      <Button
         onClick={reset}
-        className="rounded-full bg-homecafe-pink px-6 py-2 text-sm font-medium text-white hover:opacity-90"
+        className="rounded-full bg-homecafe-pink px-6 py-2 text-white hover:opacity-90 hover:bg-homecafe-pink"
       >
         Reessayer
-      </button>
+      </Button>
     </div>
   );
 }

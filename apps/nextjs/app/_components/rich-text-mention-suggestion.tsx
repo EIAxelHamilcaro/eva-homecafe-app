@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@packages/ui/components/ui/button";
 import type { SuggestionOptions, SuggestionProps } from "@tiptap/suggestion";
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import ReactDOM from "react-dom/client";
@@ -58,8 +59,8 @@ const MentionList = forwardRef<MentionListRef, MentionListProps>(
     return (
       <div className="max-h-48 overflow-y-auto rounded-lg border bg-white shadow-lg">
         {items.map((item, index) => (
-          <button
-            type="button"
+          <Button
+            variant="ghost"
             key={item.id}
             onClick={() => command(item)}
             className={`flex w-full items-center gap-2 px-3 py-2 text-left text-sm ${
@@ -77,7 +78,7 @@ const MentionList = forwardRef<MentionListRef, MentionListProps>(
               </div>
             )}
             <span>{item.label}</span>
-          </button>
+          </Button>
         ))}
       </div>
     );

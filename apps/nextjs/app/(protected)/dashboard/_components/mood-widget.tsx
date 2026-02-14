@@ -9,47 +9,26 @@ interface MoodWidgetProps {
 
 const MONTH_LABELS: Record<string, string> = {
   "01": "janvier",
-  "02": "février",
+  "02": "f\u00e9vrier",
   "03": "mars",
   "04": "avril",
   "05": "mai",
   "06": "juin",
   "07": "juillet",
-  "08": "août",
+  "08": "ao\u00fbt",
   "09": "septembre",
   "10": "octobre",
   "11": "novembre",
-  "12": "décembre",
+  "12": "d\u00e9cembre",
 };
-
-function computeMonthTrend(
-  months: { month: string; averageIntensity: number }[],
-): string {
-  const now = new Date();
-  const currentMonthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
-  const prevDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-  const prevMonthStr = `${prevDate.getFullYear()}-${String(prevDate.getMonth() + 1).padStart(2, "0")}`;
-
-  const currentMonth = months.find((m) => m.month === currentMonthStr);
-  const prevMonth = months.find((m) => m.month === prevMonthStr);
-
-  if (!currentMonth || !prevMonth || prevMonth.averageIntensity === 0) {
-    return "Pas assez de donnees";
-  }
-
-  const pct =
-    ((currentMonth.averageIntensity - prevMonth.averageIntensity) /
-      prevMonth.averageIntensity) *
-    100;
-  const sign = pct >= 0 ? "hausse" : "baisse";
-  return `En ${sign} de ${Math.abs(pct).toFixed(1)}% vs mois dernier`;
-}
 
 export async function MoodWidget({ userId }: MoodWidgetProps) {
   let months: Awaited<ReturnType<typeof getMoodTrends>>["months"] = [];
+  let monthlyTrend = "Pas assez de donnees";
   try {
     const trends = await getMoodTrends(userId);
     months = trends.months;
+    monthlyTrend = trends.monthlyTrend;
   } catch {
     /* empty */
   }
@@ -66,8 +45,6 @@ export async function MoodWidget({ userId }: MoodWidgetProps) {
     };
   });
 
-  const trend = computeMonthTrend(months);
-
   return (
     <Card className="border-0">
       <CardContent className="flex flex-col gap-3">
@@ -80,7 +57,9 @@ export async function MoodWidget({ userId }: MoodWidgetProps) {
         <div className="mt-4">
           <MonthlyMoodChart data={chartData} />
         </div>
-        <p className="mt-3 text-xs text-muted-foreground">{trend} &#8599;</p>
+        <p className="mt-3 text-xs text-muted-foreground">
+          {monthlyTrend} &#8599;
+        </p>
       </CardContent>
     </Card>
   );

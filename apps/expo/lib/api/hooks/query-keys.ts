@@ -104,6 +104,12 @@ export const rewardKeys = {
   badges: () => [...rewardKeys.all, "badges"] as const,
 };
 
+export const emotionKeys = {
+  all: ["emotions"] as const,
+  yearCalendar: (year: number) =>
+    [...emotionKeys.all, "yearCalendar", year] as const,
+};
+
 export const moodboardKeys = {
   all: ["moodboards"] as const,
   list: (page?: number, limit?: number) =>

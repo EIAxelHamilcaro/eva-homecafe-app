@@ -32,5 +32,23 @@ export async function getMoodTrends(
     entryCount: Number(row.entry_count),
   }));
 
-  return { months };
+  const now = new Date();
+  const currentMonthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+  const prevDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  const prevMonthStr = `${prevDate.getFullYear()}-${String(prevDate.getMonth() + 1).padStart(2, "0")}`;
+
+  const currentMonth = months.find((m) => m.month === currentMonthStr);
+  const prevMonth = months.find((m) => m.month === prevMonthStr);
+
+  let monthlyTrend = "Pas assez de donnees";
+  if (currentMonth && prevMonth && prevMonth.averageIntensity !== 0) {
+    const pct =
+      ((currentMonth.averageIntensity - prevMonth.averageIntensity) /
+        prevMonth.averageIntensity) *
+      100;
+    const sign = pct >= 0 ? "hausse" : "baisse";
+    monthlyTrend = `En ${sign} de ${Math.abs(pct).toFixed(1)}% vs mois dernier`;
+  }
+
+  return { months, monthlyTrend };
 }

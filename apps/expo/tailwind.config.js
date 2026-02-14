@@ -9,6 +9,13 @@ module.exports = {
   presets: [require("nativewind/preset")],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["Sora_400Regular"],
+        normal: ["Sora_400Regular"],
+        medium: ["Sora_500Medium"],
+        semibold: ["Sora_600SemiBold"],
+        bold: ["Sora_700Bold"],
+      },
       colors: {
         homecafe: {
           pink: "#f691c3",

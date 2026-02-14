@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@packages/ui/components/ui/button";
 import {
   Popover,
   PopoverContent,
@@ -38,9 +39,9 @@ export function MoodCellPopover({
       <PopoverContent className="w-auto p-2" side="right" align="center">
         <div className="grid grid-cols-3 gap-1.5">
           {MOOD_CATEGORIES.map((mood) => (
-            <button
+            <Button
               key={mood.value}
-              type="button"
+              variant="ghost"
               title={mood.label}
               disabled={submitting}
               onClick={() => handleSelect(mood.value)}

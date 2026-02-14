@@ -1,5 +1,7 @@
 "use client";
 
+import { Button } from "@packages/ui/components/ui/button";
+
 export default function GlobalError({
   error,
   reset,
@@ -20,13 +22,12 @@ export default function GlobalError({
               Référence : {error.digest}
             </p>
           )}
-          <button
-            type="button"
+          <Button
             onClick={reset}
-            className="rounded-full bg-[#ffb6c1] px-8 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#e91e63]"
+            className="rounded-full bg-[#ffb6c1] px-8 py-2.5 text-white hover:bg-[#e91e63]"
           >
             Réessayer
-          </button>
+          </Button>
         </div>
       </body>
     </html>

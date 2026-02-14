@@ -5,13 +5,9 @@ import type { IGetJournalEntriesOutputDto } from "@/application/dto/journal/get-
 import type { IGetStreakOutputDto } from "@/application/dto/journal/get-streak.dto";
 import type { IUpdatePostOutputDto } from "@/application/dto/post/update-post.dto";
 import { apiFetch } from "@/common/api";
-import { postKeys } from "./use-posts";
+import { journalKeys, postKeys } from "./query-keys";
 
-export const journalKeys = {
-  all: ["journal"] as const,
-  entries: (page: number) => ["journal", "entries", page] as const,
-  streak: ["journal", "streak"] as const,
-};
+export { journalKeys };
 
 export function useJournalEntriesQuery(page: number) {
   return useQuery<IGetJournalEntriesOutputDto>({

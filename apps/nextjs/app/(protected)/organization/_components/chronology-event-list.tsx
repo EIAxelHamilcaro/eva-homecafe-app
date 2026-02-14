@@ -1,6 +1,7 @@
 "use client";
 
 import { Badge } from "@packages/ui/components/ui/badge";
+import { Button } from "@packages/ui/components/ui/button";
 import { Progress } from "@packages/ui/components/ui/progress";
 import { useState } from "react";
 import type { IChronologyCardDto } from "@/application/dto/board/get-chronology.dto";
@@ -54,9 +55,9 @@ export function ChronologyEventList({
       </h3>
       <div className="space-y-2">
         {cards.map((card) => (
-          <button
+          <Button
             key={card.id}
-            type="button"
+            variant="ghost"
             onClick={() => setDetailCard(card)}
             className="w-full rounded-md border bg-background p-3 text-left shadow-sm transition-colors hover:bg-accent"
           >
@@ -89,7 +90,7 @@ export function ChronologyEventList({
                 </span>
               )}
             </div>
-          </button>
+          </Button>
         ))}
       </div>
       <ChronologyCardDetail

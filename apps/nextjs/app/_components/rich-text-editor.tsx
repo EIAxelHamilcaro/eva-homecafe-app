@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@packages/ui/components/ui/button";
 import Mention from "@tiptap/extension-mention";
 import Underline from "@tiptap/extension-underline";
 import { EditorContent, useEditor } from "@tiptap/react";
@@ -175,8 +176,9 @@ export function RichTextEditor({
     <form onSubmit={handleSubmit}>
       <div className="overflow-hidden rounded-lg border">
         <div className="flex items-center gap-1 bg-homecafe-blue/10 p-1">
-          <button
-            type="button"
+          <Button
+            variant="ghost"
+            size="icon-xs"
             onClick={() => editor?.chain().focus().toggleBold().run()}
             className={`flex h-7 w-7 items-center justify-center rounded text-xs font-bold ${
               editor?.isActive("bold")
@@ -185,9 +187,10 @@ export function RichTextEditor({
             }`}
           >
             B
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon-xs"
             onClick={() => editor?.chain().focus().toggleItalic().run()}
             className={`flex h-7 w-7 items-center justify-center rounded text-sm italic ${
               editor?.isActive("italic")
@@ -196,9 +199,10 @@ export function RichTextEditor({
             }`}
           >
             I
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon-xs"
             onClick={() => editor?.chain().focus().toggleUnderline().run()}
             className={`flex h-7 w-7 items-center justify-center rounded text-sm underline ${
               editor?.isActive("underline")
@@ -207,7 +211,7 @@ export function RichTextEditor({
             }`}
           >
             U
-          </button>
+          </Button>
           <div className="flex-1" />
           <input
             ref={fileInputRef}
@@ -216,21 +220,23 @@ export function RichTextEditor({
             onChange={handleFileChange}
             className="hidden"
           />
-          <button
-            type="button"
+          <Button
+            variant="ghost"
+            size="icon-xs"
             onClick={() => fileInputRef.current?.click()}
             disabled={isUploading}
             className="flex h-7 w-7 items-center justify-center rounded text-homecafe-blue hover:bg-homecafe-blue/20 disabled:opacity-50"
           >
             <ImageIcon className="h-4 w-4" />
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon-xs"
             onClick={insertMention}
             className="flex h-7 w-7 items-center justify-center rounded text-homecafe-blue hover:bg-homecafe-blue/20"
           >
             <UserPlus className="h-4 w-4" />
-          </button>
+          </Button>
         </div>
         <EditorContent editor={editor} />
       </div>
@@ -267,13 +273,13 @@ export function RichTextEditor({
                   }`}
                   unoptimized
                 />
-                <button
-                  type="button"
+                <Button
+                  variant="ghost"
                   onClick={() => removeImage(index)}
                   className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition-opacity hover:bg-black/80 group-hover:opacity-100"
                 >
                   <X className="h-4 w-4" />
-                </button>
+                </Button>
               </div>
             ))}
             {isUploading && (
@@ -282,27 +288,27 @@ export function RichTextEditor({
               </div>
             )}
           </div>
-          <button
-            type="button"
+          <Button
+            variant="ghost"
             onClick={() => fileInputRef.current?.click()}
             disabled={isUploading || images.length >= 10}
             className="flex w-full items-center justify-center gap-2 border-t px-3 py-2 text-xs text-muted-foreground transition-colors hover:bg-muted/50 disabled:opacity-50"
           >
             <Plus className="h-3.5 w-3.5" />
             Ajouter des photos
-          </button>
+          </Button>
         </div>
       )}
 
       {error && <p className="mt-2 text-xs text-destructive">{error}</p>}
       <div className="mt-3 flex justify-end">
-        <button
+        <Button
           type="submit"
           disabled={submitting || isUploading}
           className="rounded-full bg-homecafe-pink px-6 py-2 text-sm font-semibold text-white hover:bg-homecafe-pink/90 disabled:opacity-50"
         >
           {submitting ? submittingLabel : submitLabel}
-        </button>
+        </Button>
       </div>
     </form>
   );

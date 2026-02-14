@@ -11,6 +11,7 @@ export interface IPhotoProps {
   mimeType: string;
   size: number;
   caption: Option<PhotoCaption>;
+  isPrivate: boolean;
   createdAt: Date;
 }
 
@@ -21,6 +22,7 @@ export interface ICreatePhotoProps {
   mimeType: string;
   size: number;
   caption: Option<PhotoCaption>;
+  isPrivate: boolean;
 }
 
 export class Photo extends Aggregate<IPhotoProps> {
@@ -47,6 +49,7 @@ export class Photo extends Aggregate<IPhotoProps> {
         mimeType: props.mimeType,
         size: props.size,
         caption: props.caption,
+        isPrivate: props.isPrivate,
         createdAt: now,
       },
       newId,

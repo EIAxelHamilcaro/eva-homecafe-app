@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { requireAuth } from "@/adapters/guards/auth.guard";
+import { getProfileAvatarUrl } from "@/adapters/queries/profile-avatar.query";
 import { JournalBadges } from "./_components/journal-badges";
 import { JournalEntries } from "./_components/journal-entries";
 import { JournalGallery } from "./_components/journal-gallery";
@@ -12,6 +13,7 @@ function WidgetSkeleton() {
 export default async function JournalPage() {
   const session = await requireAuth();
   const userId = session.user.id;
+  const profileAvatar = await getProfileAvatarUrl(userId);
   const now = new Date();
   const y = now.getFullYear();
   const m = String(now.getMonth() + 1).padStart(2, "0");
@@ -22,7 +24,7 @@ export default async function JournalPage() {
     <div className="container mx-auto max-w-7xl px-4 py-4">
       <JournalHeader
         userName={session.user.name}
-        userImage={session.user.image}
+        userImage={profileAvatar ?? session.user.image}
         today={today}
       />
 
