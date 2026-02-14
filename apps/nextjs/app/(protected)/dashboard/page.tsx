@@ -4,6 +4,7 @@ import { getProfileAvatarUrl } from "@/adapters/queries/profile-avatar.query";
 import { FriendsCardServer } from "../_components/friends-card-server";
 import { CalendarWidget } from "./_components/calendar-widget";
 import { GalleryWidget } from "./_components/gallery-widget";
+import { InviteTokenAccepter } from "./_components/invite-token-accepter";
 import { JournalWidget } from "./_components/journal-widget";
 import { MessagesWidget } from "./_components/messages-widget";
 import { MoodWidget } from "./_components/mood-widget";
@@ -25,7 +26,7 @@ const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 export default async function DashboardPage({
   searchParams,
 }: {
-  searchParams: Promise<{ date?: string }>;
+  searchParams: Promise<{ date?: string; invite_token?: string }>;
 }) {
   const session = await requireAuth();
   const userId = session.user.id;
@@ -40,6 +41,7 @@ export default async function DashboardPage({
 
   return (
     <div className="container mx-auto max-w-7xl px-4 py-8">
+      <InviteTokenAccepter />
       <div className="flex flex-col gap-4 lg:flex-row">
         <div className="flex flex-1 flex-col gap-4 h-fit bg-homecafe-green/10 p-4 rounded-xl">
           <Suspense fallback={<WidgetSkeleton />}>

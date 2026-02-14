@@ -2,7 +2,10 @@ import { Option, Result, UUID } from "@packages/ddd-kit";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { ITogglePostReactionInputDto } from "@/application/dto/post/toggle-post-reaction.dto";
 import type { IEventDispatcher } from "@/application/ports/event-dispatcher.port";
+import type { INotificationRepository } from "@/application/ports/notification-repository.port";
 import type { IPostRepository } from "@/application/ports/post-repository.port";
+import type { IProfileRepository } from "@/application/ports/profile-repository.port";
+import type { Notification } from "@/domain/notification/notification.aggregate";
 import { Post } from "@/domain/post/post.aggregate";
 import { PostId } from "@/domain/post/post-id";
 import { PostContent } from "@/domain/post/value-objects/post-content.vo";
@@ -32,6 +35,8 @@ describe("TogglePostReactionUseCase", () => {
   let useCase: TogglePostReactionUseCase;
   let mockPostRepo: IPostRepository;
   let mockEventDispatcher: IEventDispatcher;
+  let mockNotificationRepo: INotificationRepository;
+  let mockProfileRepo: IProfileRepository;
 
   const postId = "post-123";
   const userId = "user-456";
@@ -61,7 +66,18 @@ describe("TogglePostReactionUseCase", () => {
       dispatch: vi.fn(),
       dispatchAll: vi.fn(),
     };
-    useCase = new TogglePostReactionUseCase(mockPostRepo, mockEventDispatcher);
+    mockNotificationRepo = {
+      create: vi.fn().mockResolvedValue(Result.ok({} as Notification)),
+    } as unknown as INotificationRepository;
+    mockProfileRepo = {
+      findByUserId: vi.fn().mockResolvedValue(Result.ok(Option.none())),
+    } as unknown as IProfileRepository;
+    useCase = new TogglePostReactionUseCase(
+      mockPostRepo,
+      mockEventDispatcher,
+      mockNotificationRepo,
+      mockProfileRepo,
+    );
   });
 
   describe("adding a reaction", () => {

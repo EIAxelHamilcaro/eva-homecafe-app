@@ -40,6 +40,8 @@ export const createPostModule = () => {
     .toClass(TogglePostReactionUseCase, [
       DI_SYMBOLS.IPostRepository,
       DI_SYMBOLS.IEventDispatcher,
+      DI_SYMBOLS.INotificationRepository,
+      DI_SYMBOLS.IProfileRepository,
     ]);
 
   postModule

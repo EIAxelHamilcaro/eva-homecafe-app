@@ -2,6 +2,7 @@
 
 import { Button } from "@packages/ui/components/ui/button";
 import { Award, Check, X } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useRespondRequestMutation } from "@/app/(protected)/_hooks/use-friends";
 import { useMarkNotificationReadMutation } from "@/app/(protected)/_hooks/use-notifications";
@@ -139,6 +140,18 @@ function getNotificationDetails(notification: INotificationDto): {
           : notification.body,
         isReward: false,
       };
+    case "post_reaction":
+      return {
+        title: "Nouvelle réaction",
+        description: notification.body,
+        isReward: false,
+      };
+    case "post_comment":
+      return {
+        title: "Nouveau commentaire",
+        description: notification.body,
+        isReward: false,
+      };
     case "reward_earned": {
       const reward = getRewardInfo(notification);
       return {
@@ -163,6 +176,7 @@ interface NotificationItemProps {
 export function NotificationItem({ notification }: NotificationItemProps) {
   const markAsRead = useMarkNotificationReadMutation();
   const respondRequest = useRespondRequestMutation();
+  const router = useRouter();
   const [responded, setResponded] = useState(false);
 
   const isUnread = notification.readAt === null;
@@ -172,6 +186,14 @@ export function NotificationItem({ notification }: NotificationItemProps) {
   function handleClick() {
     if (isUnread) {
       markAsRead.mutate({ id: notification.id });
+    }
+    const postId = notification.data.postId as string | undefined;
+    if (
+      postId &&
+      (notification.type === "post_reaction" ||
+        notification.type === "post_comment")
+    ) {
+      router.push(`/posts/${postId}`);
     }
   }
 
@@ -218,7 +240,11 @@ export function NotificationItem({ notification }: NotificationItemProps) {
             ? "bg-green-500"
             : notification.type === "new_message"
               ? "bg-purple-500"
-              : "bg-gray-500"
+              : notification.type === "post_reaction"
+                ? "bg-pink-500"
+                : notification.type === "post_comment"
+                  ? "bg-blue-500"
+                  : "bg-gray-500"
       }`}
     >
       {sender.initial}
@@ -229,7 +255,7 @@ export function NotificationItem({ notification }: NotificationItemProps) {
     <button
       type="button"
       onClick={handleClick}
-      className={`flex w-full items-start gap-3 rounded-xl p-4 text-left transition-all ${
+      className={`flex w-full cursor-pointer items-start gap-3 rounded-xl p-4 text-left transition-all ${
         isUnread
           ? "bg-homecafe-pink/5 shadow-sm ring-1 ring-homecafe-pink/20 hover:bg-homecafe-pink/10"
           : "bg-white hover:bg-muted/50"

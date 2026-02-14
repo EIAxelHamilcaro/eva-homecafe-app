@@ -5,6 +5,8 @@ export const notificationTypeSchema = z.enum([
   "friend_accepted",
   "new_message",
   "reward_earned",
+  "post_reaction",
+  "post_comment",
 ]);
 
 export const notificationDtoSchema = z.object({

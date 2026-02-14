@@ -1,5 +1,5 @@
 import { match } from "@packages/ddd-kit";
-import { db, postComment } from "@packages/drizzle";
+import { db, post, postComment } from "@packages/drizzle";
 import { and, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -8,6 +8,8 @@ import type { IGetPostCommentsOutputDto } from "@/adapters/queries/post-comments
 import { getPostComments } from "@/adapters/queries/post-comments.query";
 import type { IGetSessionOutputDto } from "@/application/dto/get-session.dto";
 import { getInjection } from "@/common/di/container";
+import { Notification } from "@/domain/notification/notification.aggregate";
+import { NotificationType } from "@/domain/notification/value-objects/notification-type.vo";
 
 const createCommentSchema = z.object({
   content: z.string().min(1, "Le commentaire ne peut pas être vide").max(2000),
@@ -68,6 +70,35 @@ export async function createPostCommentController(
     userId: session.user.id,
     content: parsed.data.content,
   });
+
+  const [postRow] = await db
+    .select({ userId: post.userId })
+    .from(post)
+    .where(eq(post.id, postId))
+    .limit(1);
+
+  if (postRow && postRow.userId !== session.user.id) {
+    const typeResult = NotificationType.createPostComment();
+    if (typeResult.isSuccess) {
+      const notifResult = Notification.create({
+        userId: postRow.userId,
+        type: typeResult.getValue(),
+        title: "Nouveau commentaire",
+        body: `${session.user.name} a commenté votre publication`,
+        data: { postId, commentId: id, commenterId: session.user.id },
+      });
+      if (notifResult.isSuccess) {
+        const notification = notifResult.getValue();
+        const notificationRepo = getInjection("INotificationRepository");
+        const saveResult = await notificationRepo.create(notification);
+        if (saveResult.isSuccess) {
+          const eventDispatcher = getInjection("IEventDispatcher");
+          await eventDispatcher.dispatchAll(notification.domainEvents);
+          notification.clearEvents();
+        }
+      }
+    }
+  }
 
   return NextResponse.json({ id }, { status: 201 });
 }

@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { IEmailProvider } from "@/application/ports/email.provider.port";
 import type { IEventDispatcher } from "@/application/ports/event-dispatcher.port";
 import type { IFriendRequestRepository } from "@/application/ports/friend-request-repository.port";
+import type { IInviteTokenRepository } from "@/application/ports/invite-token-repository.port";
 import type { INotificationRepository } from "@/application/ports/notification-repository.port";
 import type { IUserRepository } from "@/application/ports/user.repository.port";
 import type { FriendRequest } from "@/domain/friend/friend-request.aggregate";
@@ -19,6 +20,7 @@ describe("SendFriendRequestUseCase", () => {
   let mockNotificationRepo: INotificationRepository;
   let mockEmailProvider: IEmailProvider;
   let mockEventDispatcher: IEventDispatcher;
+  let mockInviteTokenRepo: IInviteTokenRepository;
   const appUrl = "http://localhost:3000";
 
   beforeEach(() => {
@@ -72,6 +74,12 @@ describe("SendFriendRequestUseCase", () => {
       dispatch: vi.fn(),
       dispatchAll: vi.fn(),
     } as unknown as IEventDispatcher;
+    mockInviteTokenRepo = {
+      create: vi.fn().mockResolvedValue(Result.ok({ token: "mock-token" })),
+      findByToken: vi.fn(),
+      markAsUsed: vi.fn(),
+      deleteExpired: vi.fn(),
+    } as unknown as IInviteTokenRepository;
 
     useCase = new SendFriendRequestUseCase(
       mockUserRepo,
@@ -79,6 +87,7 @@ describe("SendFriendRequestUseCase", () => {
       mockNotificationRepo,
       mockEmailProvider,
       mockEventDispatcher,
+      mockInviteTokenRepo,
       appUrl,
     );
   });

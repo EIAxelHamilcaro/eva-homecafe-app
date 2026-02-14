@@ -96,3 +96,28 @@
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes steam {
+  0% {
+    transform: translateY(0) scaleX(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(-6px) scaleX(1.1);
+    opacity: 0.2;
+  }
+  100% {
+    transform: translateY(0) scaleX(1);
+    opacity: 0.4;
+  }
+}
+
+.animate-steam-1 {
+  animation: steam 3s ease-in-out infinite;
+}
+.animate-steam-2 {
+  animation: steam 3s ease-in-out 1s infinite;
+}
+.animate-steam-3 {
+  animation: steam 3s ease-in-out 2s infinite;
+}

@@ -50,7 +50,7 @@ export function JournalWidgetClient({
       <Button
         variant="ghost"
         onClick={() => setOpen(true)}
-        className="mt-4 w-full text-left"
+        className="mt-4 w-full text-left hover:bg-transparent hover:text-inherit"
       >
         {existingContent ? (
           <div className="rounded-xl bg-muted/50 p-3">

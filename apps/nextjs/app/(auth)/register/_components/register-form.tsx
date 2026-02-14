@@ -5,7 +5,7 @@ import { Input } from "@packages/ui/components/ui/input";
 import { Label } from "@packages/ui/components/ui/label";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { registerSchema } from "../../_lib/schemas";
 
@@ -25,6 +25,8 @@ interface FormErrors {
 
 export function RegisterForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const inviteToken = searchParams.get("invite_token");
   const [form, setForm] = useState<FormState>({
     name: "",
     email: "",
@@ -82,7 +84,11 @@ export function RegisterForm() {
         return;
       }
 
-      router.push("/dashboard");
+      if (inviteToken) {
+        router.push(`/dashboard?invite_token=${inviteToken}`);
+      } else {
+        router.push("/dashboard");
+      }
     } catch {
       setServerError(
         "Impossible de créer le compte. Vérifiez votre connexion.",

@@ -45,6 +45,7 @@ export const createFriendModule = () => {
         notificationRepo: INotificationRepository,
         emailProvider: IEmailProvider,
         eventDispatcher: IEventDispatcher,
+        inviteTokenRepo: IInviteTokenRepository,
       ) =>
         new SendFriendRequestUseCase(
           userRepo,
@@ -52,6 +53,7 @@ export const createFriendModule = () => {
           notificationRepo,
           emailProvider,
           eventDispatcher,
+          inviteTokenRepo,
           APP_URL,
         ),
       [
@@ -60,6 +62,7 @@ export const createFriendModule = () => {
         DI_SYMBOLS.INotificationRepository,
         DI_SYMBOLS.IEmailProvider,
         DI_SYMBOLS.IEventDispatcher,
+        DI_SYMBOLS.IInviteTokenRepository,
       ],
     );
 

@@ -1,4 +1,4 @@
-import { match, Result, type UseCase } from "@packages/ddd-kit";
+import { match, Result, type UseCase, UUID } from "@packages/ddd-kit";
 import type {
   ISendFriendRequestInputDto,
   ISendFriendRequestOutputDto,
@@ -6,6 +6,7 @@ import type {
 import type { IEmailProvider } from "@/application/ports/email.provider.port";
 import type { IEventDispatcher } from "@/application/ports/event-dispatcher.port";
 import type { IFriendRequestRepository } from "@/application/ports/friend-request-repository.port";
+import type { IInviteTokenRepository } from "@/application/ports/invite-token-repository.port";
 import type { INotificationRepository } from "@/application/ports/notification-repository.port";
 import type { IUserRepository } from "@/application/ports/user.repository.port";
 import { EmailTemplates } from "@/application/services/email/templates";
@@ -13,6 +14,8 @@ import { FriendRequest } from "@/domain/friend/friend-request.aggregate";
 import { Notification } from "@/domain/notification/notification.aggregate";
 import { NotificationType } from "@/domain/notification/value-objects/notification-type.vo";
 import type { User } from "@/domain/user/user.aggregate";
+
+const INVITE_EXPIRY_HOURS = 24;
 
 export class SendFriendRequestUseCase
   implements UseCase<ISendFriendRequestInputDto, ISendFriendRequestOutputDto>
@@ -23,6 +26,7 @@ export class SendFriendRequestUseCase
     private readonly notificationRepo: INotificationRepository,
     private readonly emailProvider: IEmailProvider,
     private readonly eventDispatcher: IEventDispatcher,
+    private readonly inviteTokenRepo: IInviteTokenRepository,
     private readonly appUrl: string,
   ) {}
 
@@ -41,7 +45,11 @@ export class SendFriendRequestUseCase
       Some: (receiver) =>
         this.handleExistingUser(input.senderId, input.senderName, receiver),
       None: () =>
-        this.handleNonExistingUser(input.receiverEmail, input.senderName),
+        this.handleNonExistingUser(
+          input.senderId,
+          input.receiverEmail,
+          input.senderName,
+        ),
     });
   }
 
@@ -124,10 +132,24 @@ export class SendFriendRequestUseCase
   }
 
   private async handleNonExistingUser(
+    senderId: string,
     receiverEmail: string,
     senderName: string,
   ): Promise<Result<ISendFriendRequestOutputDto>> {
-    const signupUrl = `${this.appUrl}/signup?invited_by=${encodeURIComponent(senderName)}`;
+    const token = new UUID<string>().value.toString();
+    const expiresAt = new Date();
+    expiresAt.setHours(expiresAt.getHours() + INVITE_EXPIRY_HOURS);
+
+    const createResult = await this.inviteTokenRepo.create(
+      senderId,
+      token,
+      expiresAt,
+    );
+    if (createResult.isFailure) {
+      return Result.fail(createResult.getError());
+    }
+
+    const signupUrl = `${this.appUrl}/register?invite_token=${token}`;
 
     const template = EmailTemplates.friendInvite(senderName, signupUrl);
     const emailResult = await this.emailProvider.send({

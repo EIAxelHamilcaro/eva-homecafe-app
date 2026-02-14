@@ -212,6 +212,11 @@ export const EmailTemplates = {
         emoji: "\uD83C\uDFC6",
         heading: "Nouveau badge obtenu\u00a0!",
       },
+      post_reaction: {
+        emoji: "\u2764\uFE0F",
+        heading: "Nouvelle r\u00e9action",
+      },
+      post_comment: { emoji: "\uD83D\uDCDD", heading: "Nouveau commentaire" },
     };
     const { emoji, heading } = config[data.type] ?? {
       emoji: "\uD83D\uDD14",

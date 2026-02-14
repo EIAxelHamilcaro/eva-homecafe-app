@@ -6,6 +6,8 @@ export const NotificationTypeEnum = {
   FRIEND_ACCEPTED: "friend_accepted",
   NEW_MESSAGE: "new_message",
   REWARD_EARNED: "reward_earned",
+  POST_REACTION: "post_reaction",
+  POST_COMMENT: "post_comment",
 } as const;
 
 export type NotificationTypeValue =
@@ -16,6 +18,8 @@ const schema = z.enum([
   "friend_accepted",
   "new_message",
   "reward_earned",
+  "post_reaction",
+  "post_comment",
 ]);
 
 export class NotificationType extends ValueObject<NotificationTypeValue> {
@@ -67,6 +71,18 @@ export class NotificationType extends ValueObject<NotificationTypeValue> {
   static createRewardEarned(): Result<NotificationType> {
     return NotificationType.create(
       NotificationTypeEnum.REWARD_EARNED as NotificationTypeValue,
+    ) as Result<NotificationType>;
+  }
+
+  static createPostReaction(): Result<NotificationType> {
+    return NotificationType.create(
+      NotificationTypeEnum.POST_REACTION as NotificationTypeValue,
+    ) as Result<NotificationType>;
+  }
+
+  static createPostComment(): Result<NotificationType> {
+    return NotificationType.create(
+      NotificationTypeEnum.POST_COMMENT as NotificationTypeValue,
     ) as Result<NotificationType>;
   }
 }
