@@ -51,9 +51,6 @@ export default async function DashboardPage({
           <Suspense fallback={<WidgetSkeleton />}>
             <MoodWidget userId={userId} />
           </Suspense>
-          <Suspense fallback={<WidgetSkeleton />}>
-            <FriendsCardServer userId={userId} />
-          </Suspense>
         </div>
 
         <div className="flex flex-1 flex-col gap-4 h-fit bg-homecafe-pink/10 p-4 rounded-xl">
@@ -67,6 +64,9 @@ export default async function DashboardPage({
 
         {/* Column 3 */}
         <div className="flex flex-1 flex-col gap-4 h-fit bg-homecafe-orange/10 p-4 rounded-xl">
+          <Suspense fallback={<WidgetSkeleton />}>
+            <FriendsCardServer userId={userId} />
+          </Suspense>
           <Suspense fallback={<WidgetSkeleton />}>
             <JournalWidget
               userId={userId}

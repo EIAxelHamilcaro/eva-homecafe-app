@@ -144,7 +144,7 @@ export class EvaluateAchievementUseCase
       const notificationResult = Notification.create({
         userId,
         type: typeResult.getValue() as NotificationType,
-        title: `New ${definition.type}: ${definition.name}!`,
+        title: `Nouvelle récompense : ${definition.name}`,
         body: definition.description,
         data: {
           achievementId: definition.id,

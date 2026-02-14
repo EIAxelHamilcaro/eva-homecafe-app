@@ -198,8 +198,8 @@ export class AcceptInviteLinkUseCase
     const notificationForInviterResult = Notification.create({
       userId: inviterId,
       type: friendAcceptedTypeResult.getValue(),
-      title: "New Friend",
-      body: `${acceptorName} accepted your invite link`,
+      title: "Nouvel ami",
+      body: `${acceptorName} a accepté votre lien d'invitation`,
       data: {
         acceptorId,
         acceptorName,
@@ -219,8 +219,8 @@ export class AcceptInviteLinkUseCase
     const notificationForAcceptorResult = Notification.create({
       userId: acceptorId,
       type: friendAcceptedTypeResult.getValue(),
-      title: "New Friend",
-      body: `You are now friends with ${inviterName}`,
+      title: "Nouvel ami",
+      body: `Vous êtes maintenant ami avec ${inviterName}`,
       data: {
         friendId: inviterId,
         friendName: inviterName,

@@ -105,8 +105,8 @@ export class RespondFriendRequestUseCase
     const notificationResult = Notification.create({
       userId: senderId,
       type: notificationTypeResult.getValue(),
-      title: "Friend Request Accepted",
-      body: `${acceptorName} accepted your friend request`,
+      title: "Ami accepté",
+      body: `${acceptorName} a accepté votre demande d'ami`,
       data: {
         acceptorId,
         acceptorName,

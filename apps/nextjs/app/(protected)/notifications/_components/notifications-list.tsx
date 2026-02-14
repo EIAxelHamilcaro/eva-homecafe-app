@@ -1,8 +1,12 @@
 "use client";
 
 import { Badge } from "@packages/ui/components/ui/badge";
-import { Bell } from "lucide-react";
+import { Button } from "@packages/ui/components/ui/button";
+import { Separator } from "@packages/ui/components/ui/separator";
+import { Bell, CheckCheck } from "lucide-react";
+import { useMemo } from "react";
 import {
+  useMarkNotificationReadMutation,
   useNotificationsQuery,
   useUnreadCountQuery,
 } from "@/app/(protected)/_hooks/use-notifications";
@@ -11,8 +15,23 @@ import { NotificationItem } from "./notification-item";
 export function NotificationsList() {
   const { data, isLoading, error } = useNotificationsQuery();
   const { data: unreadData } = useUnreadCountQuery();
+  const markAsRead = useMarkNotificationReadMutation();
 
   const unreadCount = unreadData?.count ?? data?.unreadCount ?? 0;
+
+  const { unread, read } = useMemo(() => {
+    if (!data?.notifications) return { unread: [], read: [] };
+    return {
+      unread: data.notifications.filter((n) => n.readAt === null),
+      read: data.notifications.filter((n) => n.readAt !== null),
+    };
+  }, [data?.notifications]);
+
+  function handleMarkAllAsRead() {
+    for (const notification of unread) {
+      markAsRead.mutate({ id: notification.id });
+    }
+  }
 
   if (isLoading) {
     return (
@@ -61,20 +80,65 @@ export function NotificationsList() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3">
-        <h1 className="text-2xl font-bold">Notifications</h1>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <h1 className="text-2xl font-bold">Notifications</h1>
+          {unreadCount > 0 && (
+            <Badge className="bg-homecafe-pink text-white hover:bg-homecafe-pink/90">
+              {unreadCount} non lue{unreadCount > 1 ? "s" : ""}
+            </Badge>
+          )}
+        </div>
+
         {unreadCount > 0 && (
-          <Badge className="bg-homecafe-pink text-white hover:bg-homecafe-pink/90">
-            {unreadCount}
-          </Badge>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-muted-foreground hover:text-foreground"
+            onClick={handleMarkAllAsRead}
+            disabled={markAsRead.isPending}
+          >
+            <CheckCheck className="mr-1.5 h-4 w-4" />
+            Tout marquer comme lu
+          </Button>
         )}
       </div>
 
-      <div className="space-y-3">
-        {data.notifications.map((notification) => (
-          <NotificationItem key={notification.id} notification={notification} />
-        ))}
-      </div>
+      {unread.length > 0 && (
+        <div className="space-y-2">
+          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Non lues
+          </p>
+          <div className="space-y-2">
+            {unread.map((notification) => (
+              <NotificationItem
+                key={notification.id}
+                notification={notification}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {unread.length > 0 && read.length > 0 && <Separator />}
+
+      {read.length > 0 && (
+        <div className="space-y-2">
+          {unread.length > 0 && (
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Lues
+            </p>
+          )}
+          <div className="space-y-2">
+            {read.map((notification) => (
+              <NotificationItem
+                key={notification.id}
+                notification={notification}
+              />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

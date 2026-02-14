@@ -91,8 +91,8 @@ export class SendFriendRequestUseCase
     const notificationResult = Notification.create({
       userId: receiverId,
       type: notificationTypeResult.getValue(),
-      title: "New Friend Request",
-      body: `${senderName} wants to be your friend`,
+      title: "Demande d'ami",
+      body: `${senderName} souhaite devenir votre ami`,
       data: {
         requestId: friendRequest.id.value.toString(),
         senderId,

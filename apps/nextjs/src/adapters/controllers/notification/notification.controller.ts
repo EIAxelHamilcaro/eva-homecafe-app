@@ -1,14 +1,9 @@
 import { match } from "@packages/ddd-kit";
 import { NextResponse } from "next/server";
-import { z } from "zod";
 import type { IGetSessionOutputDto } from "@/application/dto/get-session.dto";
 import type { IGetNotificationsOutputDto } from "@/application/dto/notification/get-notifications.dto";
 import type { IMarkNotificationReadOutputDto } from "@/application/dto/notification/mark-notification-read.dto";
 import { getInjection } from "@/common/di/container";
-
-const markAsReadRequestSchema = z.object({
-  notificationId: z.string().min(1),
-});
 
 async function getAuthenticatedUser(
   request: Request,
@@ -65,24 +60,21 @@ export async function markAsRead(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  let body: unknown;
-  try {
-    body = await request.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
-  }
+  const url = new URL(request.url);
+  const segments = url.pathname.split("/");
+  const readIndex = segments.indexOf("read");
+  const notificationId = readIndex > 0 ? segments[readIndex - 1] : undefined;
 
-  const parseResult = markAsReadRequestSchema.safeParse(body);
-  if (!parseResult.success) {
+  if (!notificationId) {
     return NextResponse.json(
-      { error: parseResult.error.issues[0]?.message ?? "Invalid input" },
+      { error: "Notification ID is required" },
       { status: 400 },
     );
   }
 
   const useCase = getInjection("MarkNotificationReadUseCase");
   const result = await useCase.execute({
-    notificationId: parseResult.data.notificationId,
+    notificationId,
     userId: session.user.id,
   });
 

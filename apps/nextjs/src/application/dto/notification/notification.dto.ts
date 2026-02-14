@@ -4,6 +4,7 @@ export const notificationTypeSchema = z.enum([
   "friend_request",
   "friend_accepted",
   "new_message",
+  "reward_earned",
 ]);
 
 export const notificationDtoSchema = z.object({
