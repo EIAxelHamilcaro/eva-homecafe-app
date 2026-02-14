@@ -23,6 +23,9 @@ vi.mock("@packages/drizzle", () => ({
     userId: "user_id",
     emoji: "emoji",
   },
+  postComment: {
+    postId: "post_id",
+  },
   user: {
     id: "user_id",
     name: "name",
@@ -88,6 +91,16 @@ function createMockUserReactionChain(data: { postId: string }[]) {
   return {
     from: vi.fn().mockReturnThis(),
     where: vi.fn().mockResolvedValue(data),
+  };
+}
+
+function createMockCommentCountChain(
+  data: { postId: string; count: number }[],
+) {
+  return {
+    from: vi.fn().mockReturnThis(),
+    where: vi.fn().mockReturnThis(),
+    groupBy: vi.fn().mockResolvedValue(data),
   };
 }
 
@@ -167,7 +180,8 @@ describe("getFriendFeed", () => {
           { postId: "post-1", count: 0 },
         ]) as never;
       }
-      return createMockUserReactionChain([]) as never;
+      if (callCount === 5) return createMockUserReactionChain([]) as never;
+      return createMockCommentCountChain([]) as never;
     });
 
     const result = await getFriendFeed("user-123");
@@ -240,7 +254,8 @@ describe("getFriendFeed", () => {
         return createMockPostsChain(mockPostRecords) as never;
       if (callCount === 3) return createMockCountChain(1) as never;
       if (callCount === 4) return createMockReactionCountChain([]) as never;
-      return createMockUserReactionChain([]) as never;
+      if (callCount === 5) return createMockUserReactionChain([]) as never;
+      return createMockCommentCountChain([]) as never;
     });
 
     const result = await getFriendFeed("user-123");
@@ -316,7 +331,8 @@ describe("getFriendFeed", () => {
         return createMockPostsChain(mockPostRecords) as never;
       if (callCount === 3) return createMockCountChain(1) as never;
       if (callCount === 4) return createMockReactionCountChain([]) as never;
-      return createMockUserReactionChain([]) as never;
+      if (callCount === 5) return createMockUserReactionChain([]) as never;
+      return createMockCommentCountChain([]) as never;
     });
 
     const result = await getFriendFeed("user-123");
