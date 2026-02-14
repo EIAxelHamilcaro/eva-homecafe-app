@@ -1,13 +1,14 @@
 "use client";
 
-import { useCallback, useState } from "react";
-import type { MoodYearEntry } from "@/adapters/queries/mood-year-calendar.query";
+import { Fragment, useCallback, useState } from "react";
+import type { EmotionYearEntry } from "@/adapters/queries/emotion-year-calendar.query";
 import { getMoodColor } from "@/app/(protected)/mood/_components/mood-config";
 import { MoodCellPopover } from "./mood-cell-popover";
 
 interface MoodYearCalendarProps {
   year: number;
-  initialData: MoodYearEntry[];
+  initialData: EmotionYearEntry[];
+  cellSize?: string;
 }
 
 const MONTH_KEYS = [
@@ -50,7 +51,11 @@ function formatDate(year: number, month: number, day: number): string {
   return `${year}-${m}-${d}`;
 }
 
-export function MoodYearCalendar({ year, initialData }: MoodYearCalendarProps) {
+export function MoodYearCalendar({
+  year,
+  initialData,
+  cellSize: cellSizeProp,
+}: MoodYearCalendarProps) {
   const [moodMap, setMoodMap] = useState<Map<string, string>>(() => {
     const map = new Map<string, string>();
     for (const entry of initialData) {
@@ -67,33 +72,47 @@ export function MoodYearCalendar({ year, initialData }: MoodYearCalendarProps) {
     });
   }, []);
 
+  const cellSize = cellSizeProp ?? "calc((100vh - 14rem) / 32)";
+
   return (
-    <div className="w-full overflow-x-auto">
+    <div
+      className="inline-grid gap-0"
+      style={{
+        gridTemplateColumns: `1rem repeat(12, ${cellSize})`,
+      }}
+    >
       {/* Month headers */}
-      <div className="grid grid-cols-[2rem_repeat(12,1fr)]">
-        <div />
-        {MONTH_KEYS.map((key) => (
-          <div
-            key={key}
-            className="pb-2 text-center text-sm font-medium text-foreground"
-          >
-            {MONTH_HEADERS[key]}
-          </div>
-        ))}
-      </div>
+      <div />
+      {MONTH_KEYS.map((key) => (
+        <div
+          key={key}
+          className="flex items-end justify-center text-[10px] font-semibold tracking-wider text-foreground"
+          style={{ height: cellSize }}
+        >
+          {MONTH_HEADERS[key]}
+        </div>
+      ))}
 
       {/* Day rows */}
       {Array.from({ length: 31 }, (_, dayIdx) => {
         const day = dayIdx + 1;
         return (
-          <div key={day} className="grid grid-cols-[2rem_repeat(12,1fr)]">
-            <div className="flex aspect-square items-center justify-end pr-1 text-sm font-bold text-foreground">
+          <Fragment key={day}>
+            <div
+              className="flex items-center justify-end pr-0.5 text-[10px] font-bold leading-none text-foreground"
+              style={{ height: cellSize }}
+            >
               {day}
             </div>
             {MONTH_KEYS.map((monthKey, monthIdx) => {
               const maxDays = daysInMonth(monthIdx, year);
               if (day > maxDays) {
-                return <div key={monthKey} />;
+                return (
+                  <div
+                    key={monthKey}
+                    style={{ height: cellSize, width: cellSize }}
+                  />
+                );
               }
 
               const dateStr = formatDate(year, monthIdx, day);
@@ -108,11 +127,15 @@ export function MoodYearCalendar({ year, initialData }: MoodYearCalendarProps) {
                 >
                   <button
                     type="button"
-                    className="flex aspect-square w-full items-center justify-center rounded-md transition-colors hover:opacity-80"
-                    style={bgColor ? { backgroundColor: bgColor } : undefined}
+                    className={`flex items-center justify-center rounded-[3px] transition-colors hover:opacity-80 ${!category ? "bg-muted/50" : ""}`}
+                    style={{
+                      height: cellSize,
+                      width: cellSize,
+                      ...(bgColor ? { backgroundColor: bgColor } : {}),
+                    }}
                   >
                     {!category && (
-                      <span className="text-[10px] text-muted-foreground/40">
+                      <span className="text-[7px] text-muted-foreground/60">
                         &#8744;
                       </span>
                     )}
@@ -120,7 +143,7 @@ export function MoodYearCalendar({ year, initialData }: MoodYearCalendarProps) {
                 </MoodCellPopover>
               );
             })}
-          </div>
+          </Fragment>
         );
       })}
     </div>

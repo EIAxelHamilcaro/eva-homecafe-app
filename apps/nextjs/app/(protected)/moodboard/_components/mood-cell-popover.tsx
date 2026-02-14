@@ -6,7 +6,7 @@ import {
   PopoverTrigger,
 } from "@packages/ui/components/ui/popover";
 import { type ReactNode, useState } from "react";
-import { recordMoodAction } from "@/adapters/actions/mood.actions";
+import { recordEmotionAction } from "@/adapters/actions/emotion.actions";
 import { MOOD_CATEGORIES } from "@/app/(protected)/mood/_components/mood-config";
 
 interface MoodCellPopoverProps {
@@ -28,7 +28,7 @@ export function MoodCellPopover({
     setSubmitting(true);
     onMoodSelected(date, category);
     setOpen(false);
-    await recordMoodAction({ category, intensity: 5, moodDate: date });
+    await recordEmotionAction({ category, emotionDate: date });
     setSubmitting(false);
   }
 

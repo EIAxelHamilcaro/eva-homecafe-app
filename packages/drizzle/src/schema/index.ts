@@ -1,6 +1,7 @@
 export * from "./auth";
 export * from "./board";
 export * from "./chat";
+export * from "./emotion";
 export * from "./friend";
 export * from "./gallery";
 export * from "./mood";

@@ -11,21 +11,12 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { RichTextEditor } from "@/app/_components/rich-text-editor";
+import { DateSticker } from "@/app/(protected)/_components/date-sticker";
 
 interface JournalHeaderProps {
   userName: string;
   userImage: string | null;
   today: string;
-}
-
-function formatMonth(dateStr: string): string {
-  return new Date(`${dateStr}T12:00:00`).toLocaleDateString("fr-FR", {
-    month: "long",
-  });
-}
-
-function formatDay(dateStr: string): number {
-  return new Date(`${dateStr}T12:00:00`).getDate();
 }
 
 function formatDateLabel(dateStr: string): string {
@@ -74,14 +65,7 @@ export function JournalHeader({
   return (
     <>
       <div className="flex items-stretch gap-3 sm:gap-4">
-        <div className="flex shrink-0 items-center justify-between rounded bg-homecafe-green p-2 text-white">
-          <span className="text-xs -rotate-90 sm:text-sm">
-            {formatMonth(today)}
-          </span>
-          <span className="text-5xl font-bold sm:text-7xl">
-            {formatDay(today)}
-          </span>
-        </div>
+        <DateSticker date={today} />
 
         <div className="flex flex-1 items-center justify-center gap-3 rounded bg-homecafe-blue/10 p-2 sm:gap-6">
           {userImage ? (

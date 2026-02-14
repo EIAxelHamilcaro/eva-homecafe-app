@@ -8,6 +8,7 @@ import { CartesianGrid, Line, LineChart, ResponsiveContainer } from "recharts";
 
 interface WeeklyMoodChartProps {
   data: { day: string; average: number }[];
+  height?: number;
 }
 
 const chartConfig = {
@@ -58,13 +59,18 @@ function rgbToHex(r: number, g: number, b: number): string {
     .join("")}`;
 }
 
-export function WeeklyMoodChart({ data }: WeeklyMoodChartProps) {
+export function WeeklyMoodChart({ data, height }: WeeklyMoodChartProps) {
+  const h = height ?? 150;
   return (
-    <ChartContainer config={chartConfig} className="min-h-[120px] w-full">
-      <ResponsiveContainer width="100%" height={150}>
+    <ChartContainer
+      config={chartConfig}
+      className="w-full"
+      style={{ minHeight: h }}
+    >
+      <ResponsiveContainer width="100%" height={h}>
         <LineChart
           data={data}
-          margin={{ top: 20, bottom: 20, left: 10, right: 10 }}
+          margin={{ top: 12, bottom: 12, left: 10, right: 10 }}
         >
           <defs>
             <linearGradient id="moodLineGradient" x1="0" y1="1" x2="0" y2="0">
@@ -80,14 +86,16 @@ export function WeeklyMoodChart({ data }: WeeklyMoodChartProps) {
             stroke="url(#moodLineGradient)"
             strokeWidth={2}
             dot={(props) => {
-              const { cx, cy, payload } = props as {
+              const { cx, cy, payload, index } = props as {
                 cx: number;
                 cy: number;
+                index: number;
                 payload: { average: number };
               };
               const color = getMoodColor(payload.average);
               return (
                 <circle
+                  key={index}
                   cx={cx}
                   cy={cy}
                   r={6}

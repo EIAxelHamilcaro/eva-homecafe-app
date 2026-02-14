@@ -15,6 +15,7 @@ import {
 
 interface MonthlyMoodChartProps {
   data: { month: string; average: number }[];
+  height?: number;
 }
 
 const chartConfig = {
@@ -24,17 +25,22 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function MonthlyMoodChart({ data }: MonthlyMoodChartProps) {
+export function MonthlyMoodChart({ data, height }: MonthlyMoodChartProps) {
+  const h = height ?? 140;
   const centeredData = data.map((d) => ({
     ...d,
     centered: d.average - 5,
   }));
 
   return (
-    <ChartContainer config={chartConfig} className="min-h-35 w-full">
+    <ChartContainer
+      config={chartConfig}
+      className="w-full"
+      style={{ minHeight: h }}
+    >
       <BarChart
         accessibilityLayer
-        margin={{ top: 20, bottom: 20, left: -20, right: 0 }}
+        margin={{ top: 12, bottom: 12, left: -20, right: 0 }}
         data={centeredData}
       >
         <CartesianGrid vertical={false} stroke="#01012E14" />

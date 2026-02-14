@@ -2,6 +2,7 @@ import type { IAuthProvider } from "@/application/ports/auth.service.port";
 import type { IBoardRepository } from "@/application/ports/board-repository.port";
 import type { IConversationRepository } from "@/application/ports/conversation-repository.port";
 import type { IEmailProvider } from "@/application/ports/email.provider.port";
+import type { IEmotionRepository } from "@/application/ports/emotion-repository.port";
 import type { IEventDispatcher } from "@/application/ports/event-dispatcher.port";
 import type { IFriendRequestRepository } from "@/application/ports/friend-request-repository.port";
 import type { IGalleryRepository } from "@/application/ports/gallery-repository.port";
@@ -42,6 +43,7 @@ import type { MarkConversationReadUseCase } from "@/application/use-cases/chat/m
 import type { SendMessageUseCase } from "@/application/use-cases/chat/send-message.use-case";
 import type { UploadMediaUseCase } from "@/application/use-cases/chat/upload-media.use-case";
 import type { SendContactMessageUseCase } from "@/application/use-cases/contact/send-contact-message.use-case";
+import type { RecordEmotionUseCase } from "@/application/use-cases/emotion/record-emotion.use-case";
 import type { AcceptInviteLinkUseCase } from "@/application/use-cases/friend/accept-invite-link.use-case";
 import type { GetFriendsUseCase } from "@/application/use-cases/friend/get-friends.use-case";
 import type { GetInviteLinkUseCase } from "@/application/use-cases/friend/get-invite-link.use-case";
@@ -79,6 +81,7 @@ export const DI_SYMBOLS = {
   IAuthProvider: Symbol.for("IAuthProvider"),
   IBoardRepository: Symbol.for("IBoardRepository"),
   IEmailProvider: Symbol.for("IEmailProvider"),
+  IEmotionRepository: Symbol.for("IEmotionRepository"),
   IConversationRepository: Symbol.for("IConversationRepository"),
   IEventDispatcher: Symbol.for("IEventDispatcher"),
   IMessageRepository: Symbol.for("IMessageRepository"),
@@ -127,6 +130,7 @@ export const DI_SYMBOLS = {
   GenerateUploadUrlUseCase: Symbol.for("GenerateUploadUrlUseCase"),
   IMoodRepository: Symbol.for("IMoodRepository"),
   IMoodboardRepository: Symbol.for("IMoodboardRepository"),
+  RecordEmotionUseCase: Symbol.for("RecordEmotionUseCase"),
   RecordMoodUseCase: Symbol.for("RecordMoodUseCase"),
   AddPinUseCase: Symbol.for("AddPinUseCase"),
   CreateMoodboardUseCase: Symbol.for("CreateMoodboardUseCase"),
@@ -156,6 +160,7 @@ export interface DI_RETURN_TYPES {
   IAuthProvider: IAuthProvider;
   IBoardRepository: IBoardRepository;
   IEmailProvider: IEmailProvider;
+  IEmotionRepository: IEmotionRepository;
   IConversationRepository: IConversationRepository;
   IEventDispatcher: IEventDispatcher;
   IMessageRepository: IMessageRepository;
@@ -204,6 +209,7 @@ export interface DI_RETURN_TYPES {
   GenerateUploadUrlUseCase: GenerateUploadUrlUseCase;
   IMoodRepository: IMoodRepository;
   IMoodboardRepository: IMoodboardRepository;
+  RecordEmotionUseCase: RecordEmotionUseCase;
   RecordMoodUseCase: RecordMoodUseCase;
   AddPinUseCase: AddPinUseCase;
   CreateMoodboardUseCase: CreateMoodboardUseCase;

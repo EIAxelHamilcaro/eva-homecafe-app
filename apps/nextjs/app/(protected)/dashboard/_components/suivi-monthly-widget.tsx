@@ -1,9 +1,10 @@
 import { Card, CardContent } from "@packages/ui/components/ui/card";
 import { getMoodTrends } from "@/adapters/queries/mood-trends.query";
-import { MonthlyMoodChart } from "@/app/(protected)/dashboard/_components/monthly-mood-chart";
+import { MonthlyMoodChart } from "./monthly-mood-chart";
 
-interface SuiviMonthlyCardProps {
+interface SuiviMonthlyWidgetProps {
   userId: string;
+  compact?: boolean;
 }
 
 const MONTH_LABELS: Record<string, string> = {
@@ -21,7 +22,10 @@ const MONTH_LABELS: Record<string, string> = {
   "12": "d\u00e9cembre",
 };
 
-export async function SuiviMonthlyCard({ userId }: SuiviMonthlyCardProps) {
+export async function SuiviMonthlyWidget({
+  userId,
+  compact,
+}: SuiviMonthlyWidgetProps) {
   let months: Awaited<ReturnType<typeof getMoodTrends>>["months"] = [];
   try {
     const trends = await getMoodTrends(userId);
@@ -64,12 +68,27 @@ export async function SuiviMonthlyCard({ userId }: SuiviMonthlyCardProps) {
   return (
     <Card className="border-0">
       <CardContent className="pt-6">
-        <h3 className="text-lg font-semibold">Suivi</h3>
-        <p className="text-sm text-muted-foreground">
+        <h3
+          className={
+            compact ? "text-sm font-semibold" : "text-lg font-semibold"
+          }
+        >
+          Suivi
+        </h3>
+        <p
+          className={
+            compact
+              ? "text-xs text-muted-foreground"
+              : "text-sm text-muted-foreground"
+          }
+        >
           Moodboard {firstLabel} &rarr; {lastLabel} {yearLabel}
         </p>
-        <div className="mt-4">
-          <MonthlyMoodChart data={chartData} />
+        <div className={compact ? "mt-1" : "mt-4"}>
+          <MonthlyMoodChart
+            data={chartData}
+            height={compact ? 80 : undefined}
+          />
         </div>
       </CardContent>
     </Card>

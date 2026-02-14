@@ -7,6 +7,7 @@ import { WeeklyMoodChart } from "./weekly-mood-chart";
 
 interface SuiviWeeklyWidgetProps {
   userId: string;
+  compact?: boolean;
 }
 
 const DAY_LABELS: Record<string, string> = {
@@ -31,7 +32,10 @@ function computeWeekTrend(
   return `En ${sign} de ${Math.abs(pct).toFixed(1)}% vs semaine derniere`;
 }
 
-export async function SuiviWeeklyWidget({ userId }: SuiviWeeklyWidgetProps) {
+export async function SuiviWeeklyWidget({
+  userId,
+  compact,
+}: SuiviWeeklyWidgetProps) {
   let entries: Awaited<ReturnType<typeof getMoodWeek>>["entries"] = [];
   let prevWeekAvg: number | null = null;
   try {
@@ -67,22 +71,37 @@ export async function SuiviWeeklyWidget({ userId }: SuiviWeeklyWidgetProps) {
   return (
     <Card className="border-0">
       <CardContent className="pt-6">
-        <h3 className="text-lg font-semibold">Suivi</h3>
-        <p className="text-sm text-muted-foreground">
+        <h3
+          className={
+            compact ? "text-sm font-semibold" : "text-lg font-semibold"
+          }
+        >
+          Suivi
+        </h3>
+        <p
+          className={
+            compact
+              ? "text-xs text-muted-foreground"
+              : "text-sm text-muted-foreground"
+          }
+        >
           Humeurs de la semaine ({weekLabel})
         </p>
-        <div className="mt-4">
+        <div className={compact ? "mt-1" : "mt-4"}>
           {chartData.length > 0 ? (
-            <WeeklyMoodChart data={chartData} />
+            <WeeklyMoodChart
+              data={chartData}
+              height={compact ? 80 : undefined}
+            />
           ) : (
-            <div className="flex h-32 items-center justify-center">
+            <div className="flex h-20 items-center justify-center">
               <p className="text-sm text-muted-foreground">
                 Pas encore de donnees cette semaine
               </p>
             </div>
           )}
         </div>
-        <p className="mt-3 text-xs text-muted-foreground">{trend} &#8599;</p>
+        <p className="mt-1 text-xs text-muted-foreground">{trend} &#8599;</p>
       </CardContent>
     </Card>
   );
