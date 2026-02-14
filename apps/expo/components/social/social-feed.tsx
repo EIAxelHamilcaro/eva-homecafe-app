@@ -101,7 +101,9 @@ export function SocialFeed() {
             </Text>
             {!data.hasFriends && (
               <Pressable
-                onPress={() => router.push("/(protected)/friends" as Href)}
+                onPress={() =>
+                  router.push("/(protected)/(tabs)/profile" as Href)
+                }
                 className="mt-3 self-center rounded-full bg-homecafe-pink px-4 py-1.5"
               >
                 <Text className="text-sm font-medium text-white">
