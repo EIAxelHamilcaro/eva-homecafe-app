@@ -36,7 +36,7 @@ export function Navbar({ user }: { user: IUserDto }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const { data: unreadData } = useUnreadCountQuery();
-  const unreadCount = unreadData?.count ?? 0;
+  const unreadCount = unreadData?.unreadCount ?? 0;
 
   return (
     <header className="fixed top-0 left-0 z-50 w-full border-b border-border bg-white">
@@ -89,9 +89,7 @@ export function Navbar({ user }: { user: IUserDto }) {
           >
             <Bell size={20} className="text-foreground" />
             {unreadCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-homecafe-pink px-1 text-[10px] font-bold text-white">
-                {unreadCount > 99 ? "99+" : unreadCount}
-              </span>
+              <span className="absolute top-0.5 right-0.5 h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white" />
             )}
           </Link>
 

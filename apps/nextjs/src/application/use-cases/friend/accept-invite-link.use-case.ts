@@ -9,6 +9,7 @@ import type {
   IAcceptInviteInputDto,
   IAcceptInviteOutputDto,
 } from "@/application/dto/friend/accept-invite.dto";
+import type { IEventDispatcher } from "@/application/ports/event-dispatcher.port";
 import type { IFriendRequestRepository } from "@/application/ports/friend-request-repository.port";
 import type { IInviteTokenRepository } from "@/application/ports/invite-token-repository.port";
 import type { INotificationRepository } from "@/application/ports/notification-repository.port";
@@ -29,6 +30,7 @@ export class AcceptInviteLinkUseCase
     private readonly userRepo: IUserRepository,
     private readonly profileRepo: IProfileRepository,
     private readonly notificationRepo: INotificationRepository,
+    private readonly eventDispatcher: IEventDispatcher,
   ) {}
 
   async execute(
@@ -209,12 +211,15 @@ export class AcceptInviteLinkUseCase
       return Result.fail(notificationForInviterResult.getError());
     }
 
-    const saveInviterNotification = await this.notificationRepo.create(
-      notificationForInviterResult.getValue(),
-    );
+    const inviterNotification = notificationForInviterResult.getValue();
+    const saveInviterNotification =
+      await this.notificationRepo.create(inviterNotification);
     if (saveInviterNotification.isFailure) {
       return Result.fail(saveInviterNotification.getError());
     }
+
+    await this.eventDispatcher.dispatchAll(inviterNotification.domainEvents);
+    inviterNotification.clearEvents();
 
     const notificationForAcceptorResult = Notification.create({
       userId: acceptorId,
@@ -230,12 +235,15 @@ export class AcceptInviteLinkUseCase
       return Result.fail(notificationForAcceptorResult.getError());
     }
 
-    const saveAcceptorNotification = await this.notificationRepo.create(
-      notificationForAcceptorResult.getValue(),
-    );
+    const acceptorNotification = notificationForAcceptorResult.getValue();
+    const saveAcceptorNotification =
+      await this.notificationRepo.create(acceptorNotification);
     if (saveAcceptorNotification.isFailure) {
       return Result.fail(saveAcceptorNotification.getError());
     }
+
+    await this.eventDispatcher.dispatchAll(acceptorNotification.domainEvents);
+    acceptorNotification.clearEvents();
 
     return Result.ok();
   }

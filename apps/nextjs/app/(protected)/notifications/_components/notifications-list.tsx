@@ -17,7 +17,7 @@ export function NotificationsList() {
   const { data: unreadData } = useUnreadCountQuery();
   const markAsRead = useMarkNotificationReadMutation();
 
-  const unreadCount = unreadData?.count ?? data?.unreadCount ?? 0;
+  const unreadCount = unreadData?.unreadCount ?? data?.unreadCount ?? 0;
 
   const { unread, read } = useMemo(() => {
     if (!data?.notifications) return { unread: [], read: [] };

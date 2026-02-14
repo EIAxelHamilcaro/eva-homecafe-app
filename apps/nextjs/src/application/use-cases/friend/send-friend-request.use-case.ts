@@ -4,6 +4,7 @@ import type {
   ISendFriendRequestOutputDto,
 } from "@/application/dto/friend/send-friend-request.dto";
 import type { IEmailProvider } from "@/application/ports/email.provider.port";
+import type { IEventDispatcher } from "@/application/ports/event-dispatcher.port";
 import type { IFriendRequestRepository } from "@/application/ports/friend-request-repository.port";
 import type { INotificationRepository } from "@/application/ports/notification-repository.port";
 import type { IUserRepository } from "@/application/ports/user.repository.port";
@@ -20,6 +21,7 @@ export class SendFriendRequestUseCase
     private readonly friendRequestRepo: IFriendRequestRepository,
     private readonly notificationRepo: INotificationRepository,
     private readonly emailProvider: IEmailProvider,
+    private readonly eventDispatcher: IEventDispatcher,
     private readonly appUrl: string,
   ) {}
 
@@ -103,12 +105,15 @@ export class SendFriendRequestUseCase
       return Result.fail(notificationResult.getError());
     }
 
-    const notificationSaveResult = await this.notificationRepo.create(
-      notificationResult.getValue(),
-    );
+    const notification = notificationResult.getValue();
+    const notificationSaveResult =
+      await this.notificationRepo.create(notification);
     if (notificationSaveResult.isFailure) {
       return Result.fail(notificationSaveResult.getError());
     }
+
+    await this.eventDispatcher.dispatchAll(notification.domainEvents);
+    notification.clearEvents();
 
     return Result.ok({
       requestId: friendRequest.id.value.toString(),

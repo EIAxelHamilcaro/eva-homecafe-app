@@ -1,5 +1,6 @@
 import { Option, Result, UUID } from "@packages/ddd-kit";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { IEventDispatcher } from "@/application/ports/event-dispatcher.port";
 import type { IFriendRequestRepository } from "@/application/ports/friend-request-repository.port";
 import type {
   IInviteTokenRepository,
@@ -24,6 +25,7 @@ describe("AcceptInviteLinkUseCase", () => {
   let mockUserRepo: IUserRepository;
   let mockProfileRepo: IProfileRepository;
   let mockNotificationRepo: INotificationRepository;
+  let mockEventDispatcher: IEventDispatcher;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -88,6 +90,10 @@ describe("AcceptInviteLinkUseCase", () => {
       markAsRead: vi.fn(),
       countUnread: vi.fn(),
     } as unknown as INotificationRepository;
+    mockEventDispatcher = {
+      dispatch: vi.fn(),
+      dispatchAll: vi.fn(),
+    } as unknown as IEventDispatcher;
 
     useCase = new AcceptInviteLinkUseCase(
       mockInviteTokenRepo,
@@ -95,6 +101,7 @@ describe("AcceptInviteLinkUseCase", () => {
       mockUserRepo,
       mockProfileRepo,
       mockNotificationRepo,
+      mockEventDispatcher,
     );
   });
 

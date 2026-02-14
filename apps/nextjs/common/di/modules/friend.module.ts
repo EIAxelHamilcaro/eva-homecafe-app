@@ -3,6 +3,7 @@ import { DrizzleFriendRequestRepository } from "@/adapters/repositories/friend-r
 import { DrizzleInviteTokenRepository } from "@/adapters/repositories/invite-token.repository";
 import { DrizzleNotificationRepository } from "@/adapters/repositories/notification.repository";
 import type { IEmailProvider } from "@/application/ports/email.provider.port";
+import type { IEventDispatcher } from "@/application/ports/event-dispatcher.port";
 import type { IFriendRequestRepository } from "@/application/ports/friend-request-repository.port";
 import type { IInviteTokenRepository } from "@/application/ports/invite-token-repository.port";
 import type { INotificationRepository } from "@/application/ports/notification-repository.port";
@@ -43,12 +44,14 @@ export const createFriendModule = () => {
         friendRequestRepo: IFriendRequestRepository,
         notificationRepo: INotificationRepository,
         emailProvider: IEmailProvider,
+        eventDispatcher: IEventDispatcher,
       ) =>
         new SendFriendRequestUseCase(
           userRepo,
           friendRequestRepo,
           notificationRepo,
           emailProvider,
+          eventDispatcher,
           APP_URL,
         ),
       [
@@ -56,6 +59,7 @@ export const createFriendModule = () => {
         DI_SYMBOLS.IFriendRequestRepository,
         DI_SYMBOLS.INotificationRepository,
         DI_SYMBOLS.IEmailProvider,
+        DI_SYMBOLS.IEventDispatcher,
       ],
     );
 
@@ -100,6 +104,7 @@ export const createFriendModule = () => {
       DI_SYMBOLS.IUserRepository,
       DI_SYMBOLS.IProfileRepository,
       DI_SYMBOLS.INotificationRepository,
+      DI_SYMBOLS.IEventDispatcher,
     ]);
 
   friendModule

@@ -116,12 +116,14 @@ export class RespondFriendRequestUseCase
       return Result.fail(notificationResult.getError());
     }
 
-    const saveResult = await this.notificationRepo.create(
-      notificationResult.getValue(),
-    );
+    const notification = notificationResult.getValue();
+    const saveResult = await this.notificationRepo.create(notification);
     if (saveResult.isFailure) {
       return Result.fail(saveResult.getError());
     }
+
+    await this.eventDispatcher.dispatchAll(notification.domainEvents);
+    notification.clearEvents();
 
     return Result.ok();
   }

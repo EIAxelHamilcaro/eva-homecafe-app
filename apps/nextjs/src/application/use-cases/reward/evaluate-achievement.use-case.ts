@@ -154,7 +154,8 @@ export class EvaluateAchievementUseCase
       });
       if (notificationResult.isFailure) return;
 
-      await this.notificationRepo.create(notificationResult.getValue());
+      const notification = notificationResult.getValue();
+      await this.notificationRepo.create(notification);
     } catch {}
   }
 }

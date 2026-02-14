@@ -1,6 +1,7 @@
 import { Option, Result, UUID } from "@packages/ddd-kit";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { IEmailProvider } from "@/application/ports/email.provider.port";
+import type { IEventDispatcher } from "@/application/ports/event-dispatcher.port";
 import type { IFriendRequestRepository } from "@/application/ports/friend-request-repository.port";
 import type { INotificationRepository } from "@/application/ports/notification-repository.port";
 import type { IUserRepository } from "@/application/ports/user.repository.port";
@@ -17,6 +18,7 @@ describe("SendFriendRequestUseCase", () => {
   let mockFriendRequestRepo: IFriendRequestRepository;
   let mockNotificationRepo: INotificationRepository;
   let mockEmailProvider: IEmailProvider;
+  let mockEventDispatcher: IEventDispatcher;
   const appUrl = "http://localhost:3000";
 
   beforeEach(() => {
@@ -66,12 +68,17 @@ describe("SendFriendRequestUseCase", () => {
     mockEmailProvider = {
       send: vi.fn(),
     } as unknown as IEmailProvider;
+    mockEventDispatcher = {
+      dispatch: vi.fn(),
+      dispatchAll: vi.fn(),
+    } as unknown as IEventDispatcher;
 
     useCase = new SendFriendRequestUseCase(
       mockUserRepo,
       mockFriendRequestRepo,
       mockNotificationRepo,
       mockEmailProvider,
+      mockEventDispatcher,
       appUrl,
     );
   });

@@ -21,10 +21,10 @@ export function useNotificationsQuery() {
 }
 
 export function useUnreadCountQuery() {
-  return useQuery<{ count: number }>({
+  return useQuery<{ unreadCount: number }>({
     queryKey: notificationKeys.unreadCount,
     queryFn: () =>
-      apiFetch<{ count: number }>("/api/v1/notifications/unread-count"),
+      apiFetch<{ unreadCount: number }>("/api/v1/notifications/unread-count"),
     refetchInterval: 30_000,
   });
 }
