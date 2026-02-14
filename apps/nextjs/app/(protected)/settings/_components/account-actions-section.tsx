@@ -4,11 +4,13 @@ import { Button } from "@packages/ui/components/ui/button";
 import { LogOut, Trash2, UserPlus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { FriendsModal } from "../../_components/friends-modal";
 
 export function AccountActionsSection() {
   const router = useRouter();
   const [loggingOut, setLoggingOut] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [inviteModalOpen, setInviteModalOpen] = useState(false);
 
   const handleLogout = async () => {
     setLoggingOut(true);
@@ -35,10 +37,6 @@ export function AccountActionsSection() {
     }
   };
 
-  const handleInviteFriends = () => {
-    router.push("/friends");
-  };
-
   return (
     <div className="space-y-3 px-2">
       <Button
@@ -62,11 +60,21 @@ export function AccountActionsSection() {
       </Button>
 
       <div className="pt-4 text-center">
-        <Button variant="outline" size="sm" onClick={handleInviteFriends}>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setInviteModalOpen(true)}
+        >
           <UserPlus className="mr-2 size-4" />
           Inviter des ami·es
         </Button>
       </div>
+
+      <FriendsModal
+        open={inviteModalOpen}
+        onOpenChange={setInviteModalOpen}
+        defaultTab="invite"
+      />
     </div>
   );
 }

@@ -1,13 +1,15 @@
 "use client";
 
 import { Button } from "@packages/ui/components/ui/button";
-import Link from "next/link";
+import { UserPlus } from "lucide-react";
 import { useState } from "react";
+import { FriendsModal } from "@/app/(protected)/_components/friends-modal";
 import { useFriendFeedQuery } from "@/app/(protected)/_hooks/use-feed";
 import { FeedPostCard } from "./feed-post-card";
 
 export function FriendFeed() {
   const [page, setPage] = useState(1);
+  const [inviteModalOpen, setInviteModalOpen] = useState(false);
   const { data, isLoading, error } = useFriendFeedQuery(page);
 
   return (
@@ -29,18 +31,18 @@ export function FriendFeed() {
       {!isLoading && !error && data && !data.hasFriends && (
         <div className="rounded-lg border border-dashed p-8 text-center">
           <p className="mb-2 text-lg font-medium text-muted-foreground">
-            No posts in your feed yet
+            Pas encore de posts dans ton feed
           </p>
           <p className="mb-4 text-sm text-muted-foreground">
-            Add friends to see their posts! Share your friend code to get
-            started.
+            Ajoute des amis pour voir leurs publications !
           </p>
-          <Link
-            href="/profile"
-            className="inline-flex rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+          <Button
+            onClick={() => setInviteModalOpen(true)}
+            className="bg-homecafe-pink text-white hover:bg-homecafe-pink/90"
           >
-            Go to Profile
-          </Link>
+            <UserPlus className="mr-2 h-4 w-4" />
+            Inviter des amis
+          </Button>
         </div>
       )}
 
@@ -51,10 +53,10 @@ export function FriendFeed() {
         data.data.length === 0 && (
           <div className="rounded-lg border border-dashed p-8 text-center">
             <p className="mb-2 text-lg font-medium text-muted-foreground">
-              Your friends haven&apos;t posted anything yet
+              Tes amis n&apos;ont encore rien publié
             </p>
             <p className="text-sm text-muted-foreground">
-              Check back later to see what your friends are sharing!
+              Reviens plus tard pour voir ce que tes amis partagent !
             </p>
           </div>
         )}
@@ -73,10 +75,10 @@ export function FriendFeed() {
                 onClick={() => setPage((p) => p - 1)}
                 className="rounded-md border px-3 py-1 text-sm disabled:opacity-50"
               >
-                Previous
+                Précédent
               </Button>
               <span className="text-sm text-muted-foreground">
-                Page {data.pagination.page} of {data.pagination.totalPages}
+                Page {data.pagination.page} / {data.pagination.totalPages}
               </span>
               <Button
                 variant="outline"
@@ -84,12 +86,18 @@ export function FriendFeed() {
                 onClick={() => setPage((p) => p + 1)}
                 className="rounded-md border px-3 py-1 text-sm disabled:opacity-50"
               >
-                Next
+                Suivant
               </Button>
             </div>
           )}
         </div>
       )}
+
+      <FriendsModal
+        open={inviteModalOpen}
+        onOpenChange={setInviteModalOpen}
+        defaultTab="invite"
+      />
     </div>
   );
 }
