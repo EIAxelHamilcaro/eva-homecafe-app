@@ -38,6 +38,7 @@ export async function recordMoodAction(input: {
 
   revalidatePath("/mood");
   revalidatePath("/dashboard");
+  revalidatePath("/moodboard");
 
   return { success: true, data: result.getValue() };
 }

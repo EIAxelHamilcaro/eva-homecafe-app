@@ -15,18 +15,14 @@ export function JournalHeader({ today }: JournalHeaderProps) {
 
   return (
     <View className="flex-row items-stretch gap-3">
-      <View className="shrink-0 flex-row items-center justify-between rounded bg-homecafe-green p-2">
-        <Text
-          className="text-white"
-          style={{
-            fontSize: 11,
-            transform: [{ rotate: "-90deg" }],
-            width: 16,
-          }}
-        >
+      <View
+        className="shrink-0 flex-row items-center justify-center rounded bg-homecafe-green px-1 py-2"
+        style={{ width: 100 }}
+      >
+        <Text className="text-xs text-white -rotate-90">
           {formatMonth(today)}
         </Text>
-        <Text className="text-5xl font-bold text-white">
+        <Text className="text-5xl font-bold text-white ">
           {formatDay(today)}
         </Text>
       </View>
