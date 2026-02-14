@@ -25,10 +25,12 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import QRCodeLib from "qrcode";
+import { useEffect, useRef, useState } from "react";
 import type { RewardCollectionItemDto } from "@/adapters/queries/reward-collection.query";
 import type { IUserDto } from "@/application/dto/common.dto";
 import type { IProfileDto } from "@/application/dto/profile/profile.dto";
+import { useInviteLinkQuery } from "../../_hooks/use-friends";
 
 interface ProfileContentProps {
   user: IUserDto;
@@ -37,6 +39,115 @@ interface ProfileContentProps {
   totalRewardsCount: number;
   earnedBadges: RewardCollectionItemDto[];
   allRewards: RewardCollectionItemDto[];
+}
+
+function QrCodeSection() {
+  const {
+    data: inviteData,
+    refetch,
+    isLoading,
+    isFetching,
+  } = useInviteLinkQuery();
+  const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+  const [hasRequested, setHasRequested] = useState(false);
+
+  useEffect(() => {
+    if (inviteData?.inviteUrl) {
+      QRCodeLib.toDataURL(inviteData.inviteUrl, {
+        width: 176,
+        margin: 1,
+        color: { dark: "#000000", light: "#ffffff" },
+      }).then(setQrDataUrl);
+    }
+  }, [inviteData?.inviteUrl]);
+
+  function handleGenerate() {
+    setHasRequested(true);
+    refetch();
+  }
+
+  function handleCopyLink() {
+    if (!inviteData?.inviteUrl) return;
+    navigator.clipboard.writeText(inviteData.inviteUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
+
+  return (
+    <Card>
+      <CardContent className="p-6">
+        <h2 className="mb-4 flex items-center gap-2 font-semibold text-lg">
+          <QrCode size={18} />
+          Code amis
+        </h2>
+
+        {!hasRequested && !inviteData ? (
+          <div className="flex flex-col items-center gap-3 py-4">
+            <div className="flex h-44 w-44 items-center justify-center rounded-lg border-2 border-dashed border-muted-foreground/20">
+              <QrCode size={48} className="text-muted-foreground/30" />
+            </div>
+            <Button
+              size="sm"
+              className="rounded-full bg-homecafe-pink px-5 text-white hover:bg-homecafe-pink/90"
+              onClick={handleGenerate}
+              disabled={isLoading || isFetching}
+            >
+              {isFetching ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : null}
+              Générer mon QR code
+            </Button>
+          </div>
+        ) : isFetching && !qrDataUrl ? (
+          <div className="flex items-center justify-center py-4">
+            <div className="h-44 w-44 animate-pulse rounded-lg bg-muted" />
+          </div>
+        ) : qrDataUrl ? (
+          <div className="flex flex-col items-center gap-3 py-4">
+            <Image
+              src={qrDataUrl}
+              alt="QR code d'invitation"
+              width={176}
+              height={176}
+              className="rounded-lg"
+              unoptimized
+            />
+            <p className="text-center text-xs text-muted-foreground">
+              Scannez ce QR code pour m&apos;ajouter en ami
+            </p>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="rounded-full"
+                onClick={handleCopyLink}
+              >
+                {copied ? "Copié !" : "Copier le lien"}
+              </Button>
+              <Button
+                size="sm"
+                className="rounded-full bg-homecafe-pink px-4 text-white hover:bg-homecafe-pink/90"
+                onClick={handleGenerate}
+                disabled={isFetching}
+              >
+                {isFetching ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : null}
+                Nouveau code
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="flex items-center justify-center py-4">
+            <p className="text-sm text-destructive">
+              Erreur lors de la génération du QR code
+            </p>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
 }
 
 function formatBirthday(isoDate: string): string {
@@ -800,21 +911,7 @@ export function ProfileContent({
         </Card>
 
         {/* Code amis */}
-        <Card>
-          <CardContent className="p-6">
-            <h2 className="mb-4 flex items-center gap-2 font-semibold text-lg">
-              <QrCode size={18} />
-              Code amis
-            </h2>
-            <div className="flex items-center justify-center py-4">
-              <div className="flex h-44 w-44 items-center justify-center rounded-lg border-2 border-dashed border-muted-foreground/20">
-                <p className="text-center text-xs text-muted-foreground">
-                  QR code bientôt disponible
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <QrCodeSection />
       </div>
 
       {/* Paramètres */}
