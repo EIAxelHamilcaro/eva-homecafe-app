@@ -67,13 +67,6 @@ export function MoodYearCalendar({ year, initialData }: MoodYearCalendarProps) {
     });
   }, []);
 
-  const today = new Date();
-  const todayStr = formatDate(
-    today.getFullYear(),
-    today.getMonth(),
-    today.getDate(),
-  );
-
   return (
     <div className="w-full overflow-x-auto">
       {/* Month headers */}
@@ -82,7 +75,7 @@ export function MoodYearCalendar({ year, initialData }: MoodYearCalendarProps) {
         {MONTH_KEYS.map((key) => (
           <div
             key={key}
-            className="pb-1 text-center text-xs font-bold text-foreground"
+            className="pb-2 text-center text-sm font-medium text-foreground"
           >
             {MONTH_HEADERS[key]}
           </div>
@@ -94,18 +87,17 @@ export function MoodYearCalendar({ year, initialData }: MoodYearCalendarProps) {
         const day = dayIdx + 1;
         return (
           <div key={day} className="grid grid-cols-[2rem_repeat(12,1fr)]">
-            <div className="flex h-6 items-center justify-end pr-1.5 text-xs font-semibold text-foreground">
+            <div className="flex aspect-square items-center justify-end pr-1 text-sm font-bold text-foreground">
               {day}
             </div>
             {MONTH_KEYS.map((monthKey, monthIdx) => {
               const maxDays = daysInMonth(monthIdx, year);
               if (day > maxDays) {
-                return <div key={monthKey} className="h-6" />;
+                return <div key={monthKey} />;
               }
 
               const dateStr = formatDate(year, monthIdx, day);
               const category = moodMap.get(dateStr);
-              const isFuture = dateStr > todayStr;
               const bgColor = category ? getMoodColor(category) : undefined;
 
               return (
@@ -116,12 +108,12 @@ export function MoodYearCalendar({ year, initialData }: MoodYearCalendarProps) {
                 >
                   <button
                     type="button"
-                    className="flex h-6 w-full items-center justify-center transition-colors hover:opacity-80"
+                    className="flex aspect-square w-full items-center justify-center rounded-md transition-colors hover:opacity-80"
                     style={bgColor ? { backgroundColor: bgColor } : undefined}
                   >
-                    {!category && !isFuture && (
-                      <span className="text-[9px] text-muted-foreground/40">
-                        &rsaquo;
+                    {!category && (
+                      <span className="text-[10px] text-muted-foreground/40">
+                        &#8744;
                       </span>
                     )}
                   </button>
