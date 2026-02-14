@@ -8,6 +8,7 @@ import type { IEventDispatcher } from "@/application/ports/event-dispatcher.port
 import type { IFriendRequestRepository } from "@/application/ports/friend-request-repository.port";
 import type { INotificationRepository } from "@/application/ports/notification-repository.port";
 import type { IUserRepository } from "@/application/ports/user.repository.port";
+import { EmailTemplates } from "@/application/services/email/templates";
 import { FriendRequest } from "@/domain/friend/friend-request.aggregate";
 import { Notification } from "@/domain/notification/notification.aggregate";
 import { NotificationType } from "@/domain/notification/value-objects/notification-type.vo";
@@ -128,17 +129,11 @@ export class SendFriendRequestUseCase
   ): Promise<Result<ISendFriendRequestOutputDto>> {
     const signupUrl = `${this.appUrl}/signup?invited_by=${encodeURIComponent(senderName)}`;
 
+    const template = EmailTemplates.friendInvite(senderName, signupUrl);
     const emailResult = await this.emailProvider.send({
       to: receiverEmail,
-      subject: `${senderName} wants to connect with you on HomeCafe`,
-      html: `
-        <h1>You've been invited to HomeCafe!</h1>
-        <p>${senderName} wants to connect with you.</p>
-        <p>Join HomeCafe to connect with friends and share your favorite home cafe moments.</p>
-        <a href="${signupUrl}" style="display: inline-block; padding: 12px 24px; background-color: #ec4899; color: white; text-decoration: none; border-radius: 8px;">
-          Join HomeCafe
-        </a>
-      `,
+      subject: template.subject,
+      html: template.html,
     });
 
     if (emailResult.isFailure) {

@@ -10,6 +10,7 @@ export class NotificationCreatedEvent implements DomainEvent {
     public readonly userId: string,
     public readonly notificationType: string,
     public readonly title: string,
+    public readonly body: string,
   ) {
     this.aggregateId = notificationId;
     this.dateTimeOccurred = new Date();

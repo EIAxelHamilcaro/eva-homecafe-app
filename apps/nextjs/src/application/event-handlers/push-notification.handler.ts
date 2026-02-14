@@ -55,7 +55,7 @@ export class PushNotificationHandler {
     for (const token of tokens) {
       await this.pushProvider.send(token.get("token"), {
         title,
-        body: "",
+        body: notifEvent.body,
         data: {
           notificationType,
           notificationId: notifEvent.aggregateId,

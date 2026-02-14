@@ -67,6 +67,7 @@ describe("PushNotificationHandler", () => {
         "user-1",
         "friend_request",
         "New Friend Request",
+        "Someone sent you a friend request",
       );
       const prefs = createMockPrefs();
 
@@ -81,7 +82,7 @@ describe("PushNotificationHandler", () => {
         "ExponentPushToken[xxxx]",
         expect.objectContaining({
           title: "New Friend Request",
-          body: "",
+          body: "Someone sent you a friend request",
           data: {
             notificationType: "friend_request",
             notificationId: "notif-1",
@@ -96,6 +97,7 @@ describe("PushNotificationHandler", () => {
         "user-1",
         "new_message",
         "New Message",
+        "You have a new message",
       );
       const prefs = createMockPrefs();
       const token2 = PushToken.create({
@@ -124,6 +126,7 @@ describe("PushNotificationHandler", () => {
         "user-1",
         "friend_request",
         "New Friend Request",
+        "Someone sent you a friend request",
       );
       const prefs = createMockPrefs({ pushNotifications: false });
 
@@ -143,6 +146,7 @@ describe("PushNotificationHandler", () => {
         "user-1",
         "new_message",
         "New Message",
+        "You have a new message",
       );
       const prefs = createMockPrefs({ notifyNewMessages: false });
 
@@ -161,6 +165,7 @@ describe("PushNotificationHandler", () => {
         "user-1",
         "friend_accepted",
         "Friend Accepted",
+        "Your friend request was accepted",
       );
       const prefs = createMockPrefs({ notifyFriendActivity: false });
 
@@ -179,6 +184,7 @@ describe("PushNotificationHandler", () => {
         "user-1",
         "reward_earned",
         "Badge Earned!",
+        "You earned a new badge",
       );
       const prefs = createMockPrefs({ notifyBadgesEarned: false });
 
@@ -197,6 +203,7 @@ describe("PushNotificationHandler", () => {
         "user-1",
         "friend_request",
         "New Friend Request",
+        "Someone sent you a friend request",
       );
 
       mockUserPrefRepo.findByUserId.mockResolvedValue(Result.ok(Option.none()));
@@ -215,6 +222,7 @@ describe("PushNotificationHandler", () => {
         "user-1",
         "friend_request",
         "New Friend Request",
+        "Someone sent you a friend request",
       );
       const prefs = createMockPrefs();
 
@@ -234,6 +242,7 @@ describe("PushNotificationHandler", () => {
         "user-1",
         "friend_request",
         "New Friend Request",
+        "Someone sent you a friend request",
       );
 
       mockUserPrefRepo.findByUserId.mockResolvedValue(
@@ -251,6 +260,7 @@ describe("PushNotificationHandler", () => {
         "user-1",
         "friend_request",
         "New Friend Request",
+        "Someone sent you a friend request",
       );
       const prefs = createMockPrefs();
 

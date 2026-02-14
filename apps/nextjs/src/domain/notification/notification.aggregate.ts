@@ -56,6 +56,7 @@ export class Notification extends Aggregate<INotificationProps> {
         props.userId,
         props.type.value,
         props.title,
+        props.body,
       ),
     );
 
