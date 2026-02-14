@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { requireAuth } from "@/adapters/guards/auth.guard";
 import { getProfileAvatarUrl } from "@/adapters/queries/profile-avatar.query";
+import { FriendsCardServer } from "../_components/friends-card-server";
 import { CalendarWidget } from "./_components/calendar-widget";
 import { GalleryWidget } from "./_components/gallery-widget";
 import { JournalWidget } from "./_components/journal-widget";
@@ -49,6 +50,9 @@ export default async function DashboardPage({
           </Suspense>
           <Suspense fallback={<WidgetSkeleton />}>
             <MoodWidget userId={userId} />
+          </Suspense>
+          <Suspense fallback={<WidgetSkeleton />}>
+            <FriendsCardServer userId={userId} />
           </Suspense>
         </div>
 

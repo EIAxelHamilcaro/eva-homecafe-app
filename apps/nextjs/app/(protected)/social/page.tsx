@@ -1,4 +1,6 @@
+import { Suspense } from "react";
 import { requireAuth } from "@/adapters/guards/auth.guard";
+import { FriendsCardServer } from "../_components/friends-card-server";
 import { SocialFeed } from "./_components/social-feed";
 import { SocialGallery } from "./_components/social-gallery";
 
@@ -14,7 +16,12 @@ export default async function SocialPage() {
         </div>
 
         <div>
-          <SocialGallery userId={userId} />
+          <Suspense fallback={<div className="h-40 rounded-lg bg-muted" />}>
+            <FriendsCardServer userId={userId} />
+          </Suspense>
+          <div className="mt-4">
+            <SocialGallery userId={userId} />
+          </div>
         </div>
       </div>
     </div>
