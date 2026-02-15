@@ -218,10 +218,10 @@ export function TableauBoard({ tableau, onDeleteTableau }: TableauBoardProps) {
       </div>
 
       <div className="flex">
-        <div className="min-w-0 flex-1 overflow-auto rounded-l-lg border border-blue-100">
+        <div className="min-w-0 flex-1 overflow-auto rounded-l-lg bg-white border border-blue-100">
           <Table>
             <TableHeader>
-              <TableRow className="bg-blue-50/60 text-xs text-muted-foreground hover:bg-blue-50/60">
+              <TableRow className="bg-white text-xs text-muted-foreground hover:bg-blue-50/60">
                 <TableHead className="font-medium">
                   <span className="flex items-center gap-1.5">
                     <Calendar className="h-3.5 w-3.5" />

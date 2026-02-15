@@ -74,7 +74,7 @@ export function TableauView() {
       <Button
         variant="outline"
         onClick={() => setDialogOpen(true)}
-        className="w-full shrink-0 gap-2 border-dashed border-blue-200 bg-blue-50 text-blue-600 hover:border-blue-400 hover:bg-blue-100 hover:text-blue-700"
+        className="w-full shrink-0 gap-2 border-dashed border-blue-200"
       >
         <Plus className="h-4 w-4" />
         Ajouter un Nouveau Tableau

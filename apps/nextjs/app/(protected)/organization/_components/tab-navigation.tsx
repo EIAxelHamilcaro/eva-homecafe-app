@@ -1,7 +1,5 @@
 "use client";
 
-import { Button } from "@packages/ui/components/ui/button";
-import { SlidersHorizontal } from "lucide-react";
 import { useState } from "react";
 
 interface TabNavigationProps {
@@ -32,7 +30,7 @@ export function TabNavigation({ activeSection }: TabNavigationProps) {
   }
 
   return (
-    <div className="sticky top-0 z-10 flex items-center justify-center gap-3 overflow-x-auto py-3">
+    <div className="scrollbar-hover sticky top-0 z-10 flex items-center justify-center gap-3 overflow-x-auto py-3">
       <nav className="flex shrink-0 items-center rounded-full border border-orange-200 bg-orange-50/80 p-1 backdrop-blur-sm">
         {TABS.map((tab) => (
           <button
@@ -49,10 +47,6 @@ export function TabNavigation({ activeSection }: TabNavigationProps) {
           </button>
         ))}
       </nav>
-      <Button variant="outline" className="rounded-full" size="sm">
-        <SlidersHorizontal className="mr-1.5 h-4 w-4" />
-        Filtre
-      </Button>
     </div>
   );
 }

@@ -415,7 +415,7 @@ export function KanbanBoardView({
         onDragEnd={handleDragEnd}
         onDragCancel={handleDragCancel}
       >
-        <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+        <div className="scrollbar-hover -mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
           <div className="flex gap-3 pb-4 sm:gap-4">
             {sortedColumns.map((col, index) => (
               <KanbanColumn

@@ -168,7 +168,7 @@ export function CardEditDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[85vh] max-w-lg overflow-y-auto">
+      <DialogContent className="scrollbar-hover max-h-[85vh] max-w-lg overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-lg">Modifier la carte</DialogTitle>
         </DialogHeader>

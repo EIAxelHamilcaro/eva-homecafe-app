@@ -97,6 +97,29 @@
   }
 }
 
+.scrollbar-hover {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+.scrollbar-hover:hover {
+  scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
+}
+.scrollbar-hover::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.scrollbar-hover::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 999px;
+  transition: background 0.2s ease;
+}
+.scrollbar-hover:hover::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+}
+.scrollbar-hover::-webkit-scrollbar-track {
+  background: transparent;
+}
+
 @keyframes steam {
   0% {
     transform: translateY(0) scaleX(1);

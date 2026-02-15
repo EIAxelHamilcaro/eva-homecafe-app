@@ -207,7 +207,7 @@ export function KanbanColumn({
       <SortableContext items={cardIds} strategy={verticalListSortingStrategy}>
         <div
           ref={setNodeRef}
-          className={`flex min-h-8 ${colors.bg} max-h-[40vh] p-2 flex-col gap-2 overflow-y-auto overscroll-y-contain rounded-xl transition-colors ${
+          className={`scrollbar-hover flex min-h-8 ${colors.bg} max-h-[40vh] p-2 flex-col gap-2 overflow-y-auto overscroll-y-contain rounded-xl transition-colors ${
             isOver ? "bg-primary/5 ring-2 ring-primary/10" : ""
           }`}
         >

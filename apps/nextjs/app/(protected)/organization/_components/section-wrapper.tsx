@@ -85,7 +85,9 @@ export function SectionWrapper({
       </div>
 
       {!isCollapsed && (
-        <div className="max-h-[60vh] overflow-y-auto px-4 pb-4">{children}</div>
+        <div className="scrollbar-hover max-h-[60vh] overflow-y-auto px-4 pb-4">
+          {children}
+        </div>
       )}
     </div>
   );

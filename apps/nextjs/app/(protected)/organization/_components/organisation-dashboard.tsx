@@ -41,6 +41,7 @@ const SECTION_TITLES: Record<string, string> = {
 const SECTION_BG: Record<string, string> = {
   todo: "bg-orange-50",
   kanban: "bg-[#DADADA]/20",
+  tableau: "bg-homecafe-blue/20",
 };
 
 const DEFAULT_ORDER = [

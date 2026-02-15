@@ -248,7 +248,7 @@ export function TodoBoardCard({
 
       {error && <p className="mb-2 text-xs text-destructive">{error}</p>}
 
-      <div className="max-h-52 space-y-1 overflow-y-auto overscroll-y-contain">
+      <div className="scrollbar-hover max-h-52 space-y-1 overflow-y-auto overscroll-y-contain">
         {cards.map((card) => (
           <div key={card.id} className="group flex items-center gap-2">
             <Checkbox
