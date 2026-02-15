@@ -148,6 +148,13 @@
       "when": 1771116746840,
       "tag": "0020_ancient_talon",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1771162709488,
+      "tag": "0021_lying_wendell_rand",
+      "breakpoints": true
     }
   ]
 }

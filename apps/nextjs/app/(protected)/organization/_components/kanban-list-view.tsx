@@ -1,6 +1,14 @@
 "use client";
 
 import { Button } from "@packages/ui/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@packages/ui/components/ui/select";
+import { Plus } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import type { IBoardDto } from "@/application/dto/board/common-board.dto";
 import { CreateKanbanDialog } from "./create-kanban-dialog";
@@ -17,18 +25,21 @@ export function KanbanListView() {
     try {
       const response = await fetch("/api/v1/boards?type=kanban");
       if (!response.ok) {
-        setError("Failed to load boards");
+        setError("Impossible de charger les boards");
         return;
       }
       const data = await response.json();
       setBoards(data.boards);
+      if (data.boards.length > 0 && !selectedBoardId) {
+        setSelectedBoardId(data.boards[0].id);
+      }
       setError(null);
     } catch {
-      setError("Failed to load boards");
+      setError("Impossible de charger les boards");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [selectedBoardId]);
 
   useEffect(() => {
     fetchBoards();
@@ -39,7 +50,7 @@ export function KanbanListView() {
   if (loading) {
     return (
       <div className="flex justify-center p-8">
-        <p className="text-sm text-muted-foreground">Loading...</p>
+        <p className="text-sm text-muted-foreground">Chargement...</p>
       </div>
     );
   }
@@ -52,55 +63,65 @@ export function KanbanListView() {
     );
   }
 
-  if (selectedBoard) {
+  if (boards.length === 0) {
     return (
-      <KanbanBoardView
-        board={selectedBoard}
-        onBack={() => setSelectedBoardId(null)}
-        onUpdate={fetchBoards}
-      />
+      <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-orange-200 p-12 text-center">
+        <p className="mb-2 text-lg font-medium">Aucun kanban</p>
+        <p className="mb-6 text-sm text-muted-foreground">
+          Crée ton premier kanban pour organiser tes tâches visuellement.
+        </p>
+        <Button onClick={() => setDialogOpen(true)} className="gap-2">
+          <Plus className="h-4 w-4" />
+          Créer un kanban
+        </Button>
+        <CreateKanbanDialog
+          open={dialogOpen}
+          onOpenChange={setDialogOpen}
+          onCreated={fetchBoards}
+        />
+      </div>
     );
   }
 
   return (
     <div>
-      {boards.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-12 text-center">
-          <p className="mb-2 text-lg font-medium">No kanban boards yet</p>
-          <p className="mb-6 text-sm text-muted-foreground">
-            Create your first kanban board to organize tasks visually.
-          </p>
-          <Button onClick={() => setDialogOpen(true)}>
-            Create your first board
-          </Button>
-        </div>
-      ) : (
-        <>
-          <div className="mb-4 flex justify-end">
-            <Button onClick={() => setDialogOpen(true)}>New Board</Button>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {boards.map((board) => (
-              <Button
-                key={board.id}
-                variant="ghost"
-                onClick={() => setSelectedBoardId(board.id)}
-                className="rounded-lg border p-4 text-left transition-colors hover:bg-accent"
-              >
-                <h3 className="font-semibold">{board.title}</h3>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  {board.columns.length} columns
-                  {" / "}
-                  {board.columns.reduce(
-                    (sum, col) => sum + col.cards.length,
-                    0,
-                  )}{" "}
-                  cards
-                </p>
-              </Button>
-            ))}
-          </div>
-        </>
+      <div className="mb-4 flex items-center justify-between gap-3">
+        {boards.length > 1 ? (
+          <Select
+            value={selectedBoardId ?? undefined}
+            onValueChange={setSelectedBoardId}
+          >
+            <SelectTrigger className="w-[200px]">
+              <SelectValue placeholder="Choisir un board" />
+            </SelectTrigger>
+            <SelectContent>
+              {boards.map((b) => (
+                <SelectItem key={b.id} value={b.id}>
+                  {b.title}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        ) : (
+          <h3 className="text-lg font-semibold">{selectedBoard?.title}</h3>
+        )}
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setDialogOpen(true)}
+          className="gap-1.5"
+        >
+          <Plus className="h-4 w-4" />
+          Nouveau
+        </Button>
+      </div>
+
+      {selectedBoard && (
+        <KanbanBoardView
+          board={selectedBoard}
+          onBack={() => {}}
+          onUpdate={fetchBoards}
+        />
       )}
 
       <CreateKanbanDialog
