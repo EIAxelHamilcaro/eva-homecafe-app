@@ -33,6 +33,7 @@ import type { CreateKanbanBoardUseCase } from "@/application/use-cases/board/cre
 import type { DeleteBoardUseCase } from "@/application/use-cases/board/delete-board.use-case";
 import type { GetUserBoardsUseCase } from "@/application/use-cases/board/get-user-boards.use-case";
 import type { MoveCardUseCase } from "@/application/use-cases/board/move-card.use-case";
+import type { RemoveCardUseCase } from "@/application/use-cases/board/remove-card.use-case";
 import type { UpdateBoardUseCase } from "@/application/use-cases/board/update-board.use-case";
 import type { UpdateCardUseCase } from "@/application/use-cases/board/update-card.use-case";
 import type { AddReactionUseCase } from "@/application/use-cases/chat/add-reaction.use-case";
@@ -131,6 +132,7 @@ export const DI_SYMBOLS = {
   DeleteBoardUseCase: Symbol.for("DeleteBoardUseCase"),
   GetUserBoardsUseCase: Symbol.for("GetUserBoardsUseCase"),
   MoveCardUseCase: Symbol.for("MoveCardUseCase"),
+  RemoveCardUseCase: Symbol.for("RemoveCardUseCase"),
   UpdateBoardUseCase: Symbol.for("UpdateBoardUseCase"),
   UpdateCardUseCase: Symbol.for("UpdateCardUseCase"),
   AddPhotoUseCase: Symbol.for("AddPhotoUseCase"),
@@ -214,6 +216,7 @@ export interface DI_RETURN_TYPES {
   DeleteBoardUseCase: DeleteBoardUseCase;
   GetUserBoardsUseCase: GetUserBoardsUseCase;
   MoveCardUseCase: MoveCardUseCase;
+  RemoveCardUseCase: RemoveCardUseCase;
   UpdateBoardUseCase: UpdateBoardUseCase;
   UpdateCardUseCase: UpdateCardUseCase;
   AddPhotoUseCase: AddPhotoUseCase;

@@ -17,12 +17,18 @@ interface KanbanColumnProps {
   column: IColumnDto;
   onAddCard: (title: string) => void;
   onEditCard: (card: ICardDto) => void;
+  onDeleteCard: (cardId: string) => void;
+  userName: string;
+  userImage: string | null;
 }
 
 export function KanbanColumn({
   column,
   onAddCard,
   onEditCard,
+  onDeleteCard,
+  userName,
+  userImage,
 }: KanbanColumnProps) {
   const [newCardTitle, setNewCardTitle] = useState("");
   const { setNodeRef, isOver } = useDroppable({ id: column.id });
@@ -40,7 +46,7 @@ export function KanbanColumn({
   const cardIds = column.cards.map((c) => c.id);
 
   return (
-    <div className="flex w-72 shrink-0 flex-col rounded-lg bg-muted/50 p-3">
+    <div className="flex w-64 shrink-0 flex-col rounded-lg bg-muted/50 p-2.5 sm:w-72 sm:p-3">
       <div className="mb-3 flex items-center justify-between">
         <h3 className="text-sm font-semibold">{column.title}</h3>
         <span className="text-xs text-muted-foreground">
@@ -60,6 +66,9 @@ export function KanbanColumn({
               key={card.id}
               card={card}
               onClick={() => onEditCard(card)}
+              onDelete={() => onDeleteCard(card.id)}
+              userName={userName}
+              userImage={userImage}
             />
           ))}
         </div>

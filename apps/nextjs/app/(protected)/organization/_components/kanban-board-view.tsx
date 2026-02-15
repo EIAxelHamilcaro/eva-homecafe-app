@@ -30,6 +30,7 @@ import {
   useAddCardMutation,
   useAddColumnMutation,
   useDeleteBoardMutation,
+  useDeleteCardMutation,
   useMoveCardMutation,
 } from "@/app/(protected)/_hooks/use-boards";
 import type {
@@ -44,14 +45,18 @@ import { KanbanColumn } from "./kanban-column";
 
 interface KanbanBoardViewProps {
   board: IBoardDto;
-  onBack: () => void;
+  onBack?: () => void;
   onUpdate: () => void;
+  userName: string;
+  userImage: string | null;
 }
 
 export function KanbanBoardView({
   board,
   onBack,
   onUpdate,
+  userName,
+  userImage,
 }: KanbanBoardViewProps) {
   const [columns, setColumns] = useState<IColumnDto[]>(board.columns);
   const [activeCard, setActiveCard] = useState<ICardDto | null>(null);
@@ -79,6 +84,7 @@ export function KanbanBoardView({
   const moveCardMutation = useMoveCardMutation(board.id);
   const addCardMutation = useAddCardMutation(board.id);
   const addColumnMutation = useAddColumnMutation(board.id);
+  const deleteCardMutation = useDeleteCardMutation(board.id);
   const deleteBoardMutation = useDeleteBoardMutation();
 
   const sensors = useSensors(
@@ -226,8 +232,9 @@ export function KanbanBoardView({
 
   const handleAddCard = useCallback(
     (columnId: string, title: string) => {
+      const today = new Date().toISOString().split("T")[0];
       addCardMutation.mutate(
-        { columnId, title },
+        { columnId, title, dueDate: today },
         {
           onSuccess: (data) => {
             setColumns(data.columns);
@@ -237,6 +244,21 @@ export function KanbanBoardView({
       );
     },
     [addCardMutation, onUpdate],
+  );
+
+  const handleDeleteCard = useCallback(
+    (cardId: string) => {
+      deleteCardMutation.mutate(
+        { cardId },
+        {
+          onSuccess: (data) => {
+            setColumns(data.columns);
+            onUpdate();
+          },
+        },
+      );
+    },
+    [deleteCardMutation, onUpdate],
   );
 
   const handleAddColumn = useCallback(
@@ -261,7 +283,7 @@ export function KanbanBoardView({
       {
         onSuccess: () => {
           onUpdate();
-          onBack();
+          onBack?.();
         },
       },
     );
@@ -269,18 +291,21 @@ export function KanbanBoardView({
 
   return (
     <div>
-      <div className="mb-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Button variant="ghost" size="sm" onClick={onBack}>
-            Retour
-          </Button>
-          <h2 className="text-lg font-semibold">{board.title}</h2>
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          {onBack && (
+            <Button variant="ghost" size="sm" onClick={onBack}>
+              Retour
+            </Button>
+          )}
+          <h3 className="text-sm font-semibold">{board.title}</h3>
         </div>
         <div className="flex gap-2">
           <Button
             variant="outline"
             size="sm"
             onClick={() => setShowAddColumn(true)}
+            className="gap-1 text-xs"
           >
             + Colonne
           </Button>
@@ -288,6 +313,7 @@ export function KanbanBoardView({
             variant="destructive"
             size="sm"
             onClick={() => setDeleteDialogOpen(true)}
+            className="text-xs"
           >
             Supprimer
           </Button>
@@ -302,23 +328,30 @@ export function KanbanBoardView({
         onDragEnd={handleDragEnd}
         onDragCancel={handleDragCancel}
       >
-        <div className="flex gap-4 overflow-x-auto pb-4">
-          {sortedColumns.map((col) => (
-            <KanbanColumn
-              key={col.id}
-              column={col}
-              onAddCard={(title) => handleAddCard(col.id, title)}
-              onEditCard={(card) => setEditingCard({ card, columnId: col.id })}
-            />
-          ))}
-          {showAddColumn && (
-            <div className="w-72 shrink-0">
-              <AddColumnForm
-                onSubmit={handleAddColumn}
-                onCancel={() => setShowAddColumn(false)}
+        <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+          <div className="flex gap-3 pb-4 sm:gap-4">
+            {sortedColumns.map((col) => (
+              <KanbanColumn
+                key={col.id}
+                column={col}
+                onAddCard={(title) => handleAddCard(col.id, title)}
+                onEditCard={(card) =>
+                  setEditingCard({ card, columnId: col.id })
+                }
+                onDeleteCard={handleDeleteCard}
+                userName={userName}
+                userImage={userImage}
               />
-            </div>
-          )}
+            ))}
+            {showAddColumn && (
+              <div className="w-64 shrink-0 sm:w-72">
+                <AddColumnForm
+                  onSubmit={handleAddColumn}
+                  onCancel={() => setShowAddColumn(false)}
+                />
+              </div>
+            )}
+          </div>
         </div>
 
         <DragOverlay
@@ -327,7 +360,14 @@ export function KanbanBoardView({
             easing: "cubic-bezier(0.25, 1, 0.5, 1)",
           }}
         >
-          {activeCard ? <KanbanCard card={activeCard} isOverlay /> : null}
+          {activeCard ? (
+            <KanbanCard
+              card={activeCard}
+              isOverlay
+              userName={userName}
+              userImage={userImage}
+            />
+          ) : null}
         </DragOverlay>
       </DndContext>
 

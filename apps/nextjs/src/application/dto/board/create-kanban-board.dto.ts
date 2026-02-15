@@ -8,9 +8,14 @@ export const createKanbanBoardInputDtoSchema = z.object({
     .array(z.object({ title: z.string().min(1).max(100) }))
     .optional()
     .default([]),
+  description: z.string().max(5000).optional(),
+  priority: z.enum(["low", "medium", "high", "critical"]).optional(),
+  dueDate: z.string().optional(),
+  tags: z.array(z.string().max(50)).optional().default([]),
+  link: z.string().max(2000).optional(),
 });
 
-export type ICreateKanbanBoardInputDto = z.infer<
+export type ICreateKanbanBoardInputDto = z.input<
   typeof createKanbanBoardInputDtoSchema
 >;
 

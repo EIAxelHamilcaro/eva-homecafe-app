@@ -1,25 +1,22 @@
 "use client";
 
 import { Button } from "@packages/ui/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@packages/ui/components/ui/select";
 import { Plus } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import type { IBoardDto } from "@/application/dto/board/common-board.dto";
 import { CreateKanbanDialog } from "./create-kanban-dialog";
 import { KanbanBoardView } from "./kanban-board-view";
 
-export function KanbanListView() {
+interface KanbanListViewProps {
+  userName: string;
+  userImage: string | null;
+}
+
+export function KanbanListView({ userName, userImage }: KanbanListViewProps) {
   const [boards, setBoards] = useState<IBoardDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedBoardId, setSelectedBoardId] = useState<string | null>(null);
 
   const fetchBoards = useCallback(async () => {
     try {
@@ -30,22 +27,17 @@ export function KanbanListView() {
       }
       const data = await response.json();
       setBoards(data.boards);
-      if (data.boards.length > 0 && !selectedBoardId) {
-        setSelectedBoardId(data.boards[0].id);
-      }
       setError(null);
     } catch {
       setError("Impossible de charger les boards");
     } finally {
       setLoading(false);
     }
-  }, [selectedBoardId]);
+  }, []);
 
   useEffect(() => {
     fetchBoards();
   }, [fetchBoards]);
-
-  const selectedBoard = boards.find((b) => b.id === selectedBoardId) ?? null;
 
   if (loading) {
     return (
@@ -84,45 +76,25 @@ export function KanbanListView() {
   }
 
   return (
-    <div>
-      <div className="mb-4 flex items-center justify-between gap-3">
-        {boards.length > 1 ? (
-          <Select
-            value={selectedBoardId ?? undefined}
-            onValueChange={setSelectedBoardId}
-          >
-            <SelectTrigger className="w-full max-w-[200px]">
-              <SelectValue placeholder="Choisir un board" />
-            </SelectTrigger>
-            <SelectContent>
-              {boards.map((b) => (
-                <SelectItem key={b.id} value={b.id}>
-                  {b.title}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        ) : (
-          <h3 className="text-lg font-semibold">{selectedBoard?.title}</h3>
-        )}
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setDialogOpen(true)}
-          className="gap-1.5"
-        >
-          <Plus className="h-4 w-4" />
-          Nouveau
-        </Button>
-      </div>
-
-      {selectedBoard && (
+    <div className="flex flex-col gap-6">
+      {boards.map((board) => (
         <KanbanBoardView
-          board={selectedBoard}
-          onBack={() => {}}
+          key={board.id}
+          board={board}
           onUpdate={fetchBoards}
+          userName={userName}
+          userImage={userImage}
         />
-      )}
+      ))}
+
+      <Button
+        variant="outline"
+        onClick={() => setDialogOpen(true)}
+        className="w-full shrink-0 gap-2 border-dashed border-orange-200 text-muted-foreground hover:border-orange-400 hover:text-foreground"
+      >
+        <Plus className="h-4 w-4" />
+        Nouveau kanban
+      </Button>
 
       <CreateKanbanDialog
         open={dialogOpen}

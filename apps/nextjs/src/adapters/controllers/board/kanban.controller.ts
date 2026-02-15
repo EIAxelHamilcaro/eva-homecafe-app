@@ -8,6 +8,8 @@ import type { ICreateKanbanBoardOutputDto } from "@/application/dto/board/create
 import { createKanbanBoardInputDtoSchema } from "@/application/dto/board/create-kanban-board.dto";
 import type { IMoveCardOutputDto } from "@/application/dto/board/move-card.dto";
 import { moveCardInputDtoSchema } from "@/application/dto/board/move-card.dto";
+import type { IRemoveCardOutputDto } from "@/application/dto/board/remove-card.dto";
+import { removeCardInputDtoSchema } from "@/application/dto/board/remove-card.dto";
 import type { IUpdateCardOutputDto } from "@/application/dto/board/update-card.dto";
 import { updateCardInputDtoSchema } from "@/application/dto/board/update-card.dto";
 import type { IGetSessionOutputDto } from "@/application/dto/get-session.dto";
@@ -204,6 +206,39 @@ export async function updateCardController(
   }
 
   const useCase = getInjection("UpdateCardUseCase");
+  const result = await useCase.execute(parsed.data);
+
+  if (result.isFailure) {
+    return handleUseCaseError(result.getError());
+  }
+
+  return NextResponse.json(result.getValue());
+}
+
+export async function removeCardController(
+  request: Request,
+  boardId: string,
+  cardId: string,
+): Promise<NextResponse<IRemoveCardOutputDto | { error: string }>> {
+  const session = await getAuthenticatedUser(request);
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const parsed = removeCardInputDtoSchema.safeParse({
+    boardId,
+    cardId,
+    userId: session.user.id,
+  });
+
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: parsed.error.issues[0]?.message ?? "Invalid input" },
+      { status: 400 },
+    );
+  }
+
+  const useCase = getInjection("RemoveCardUseCase");
   const result = await useCase.execute(parsed.data);
 
   if (result.isFailure) {

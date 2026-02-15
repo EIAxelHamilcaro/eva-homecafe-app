@@ -53,12 +53,28 @@ export class UpdateCardUseCase
       updates.description = input.description ?? undefined;
     }
 
+    if ("content" in input) {
+      updates.content = input.content ?? undefined;
+    }
+
     if (input.progress !== undefined) {
       const progressResult = CardProgress.create(input.progress);
       if (progressResult.isFailure) {
         return Result.fail(progressResult.getError());
       }
       updates.progress = progressResult.getValue();
+    }
+
+    if ("priority" in input) {
+      updates.priority = input.priority ?? undefined;
+    }
+
+    if (input.tags !== undefined) {
+      updates.tags = input.tags;
+    }
+
+    if ("link" in input) {
+      updates.link = input.link ?? undefined;
     }
 
     if ("dueDate" in input) {

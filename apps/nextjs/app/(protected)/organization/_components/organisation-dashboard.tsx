@@ -15,7 +15,7 @@ import {
   SortableContext,
   sortableKeyboardCoordinates,
 } from "@dnd-kit/sortable";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   useDashboardLayoutQuery,
   useUpdateDashboardLayoutMutation,
@@ -47,19 +47,28 @@ const DEFAULT_ORDER = [
   "badges",
 ];
 
-export function OrganisationDashboard() {
+interface OrganisationDashboardProps {
+  userName: string;
+  userImage: string | null;
+}
+
+export function OrganisationDashboard({
+  userName,
+  userImage,
+}: OrganisationDashboardProps) {
   const { data: layoutConfig } = useDashboardLayoutQuery();
   const updateLayout = useUpdateDashboardLayoutMutation();
 
   const [sectionOrder, setSectionOrder] = useState<string[]>(DEFAULT_ORDER);
   const [collapsedSections, setCollapsedSections] = useState<string[]>([]);
-  const [migrated, setMigrated] = useState(false);
+  const initializedRef = useRef(false);
 
   useEffect(() => {
-    if (!layoutConfig) return;
+    if (!layoutConfig || initializedRef.current) return;
+    initializedRef.current = true;
 
     let order = layoutConfig.sectionOrder;
-    if (!migrated && order.includes("todo-kanban")) {
+    if (order.includes("todo-kanban")) {
       const idx = order.indexOf("todo-kanban");
       order = [
         ...order.slice(0, idx),
@@ -68,11 +77,10 @@ export function OrganisationDashboard() {
         ...order.slice(idx + 1),
       ];
       updateLayout.mutate({ sectionOrder: order });
-      setMigrated(true);
     }
     setSectionOrder(order);
     setCollapsedSections(layoutConfig.collapsedSections);
-  }, [layoutConfig, updateLayout, migrated]);
+  }, [layoutConfig, updateLayout]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
@@ -115,7 +123,7 @@ export function OrganisationDashboard() {
       case "todo":
         return <TodoListView />;
       case "kanban":
-        return <KanbanListView />;
+        return <KanbanListView userName={userName} userImage={userImage} />;
       case "tableau":
         return <TableauView />;
       case "chronologie":

@@ -12,6 +12,11 @@ export interface IBoardProps {
   userId: string;
   title: BoardTitle;
   type: BoardType;
+  description: Option<string>;
+  priority: Option<string>;
+  dueDate: Option<string>;
+  tags: string[];
+  link: Option<string>;
   columns: Column[];
   createdAt: Date;
   updatedAt: Option<Date>;
@@ -22,6 +27,11 @@ export interface ICreateBoardProps {
   title: BoardTitle;
   type: BoardType;
   columns: Column[];
+  description?: string;
+  priority?: string;
+  dueDate?: string;
+  tags?: string[];
+  link?: string;
 }
 
 export class Board extends Aggregate<IBoardProps> {
@@ -45,6 +55,11 @@ export class Board extends Aggregate<IBoardProps> {
         userId: props.userId,
         title: props.title,
         type: props.type,
+        description: Option.fromNullable(props.description ?? null),
+        priority: Option.fromNullable(props.priority ?? null),
+        dueDate: Option.fromNullable(props.dueDate ?? null),
+        tags: props.tags ?? [],
+        link: Option.fromNullable(props.link ?? null),
         columns: props.columns,
         createdAt: now,
         updatedAt: Option.none(),
@@ -219,7 +234,11 @@ export class Board extends Aggregate<IBoardProps> {
     updates: {
       title?: import("./value-objects/card-title.vo").CardTitle;
       description?: string | undefined;
+      content?: string | undefined;
       progress?: CardProgress;
+      priority?: string | undefined;
+      tags?: string[];
+      link?: string | undefined;
       dueDate?: string | undefined;
     },
   ): Result<void> {
@@ -237,8 +256,20 @@ export class Board extends Aggregate<IBoardProps> {
     if ("description" in updates) {
       card.updateDescription(updates.description);
     }
+    if ("content" in updates) {
+      card.updateContent(updates.content);
+    }
     if (updates.progress !== undefined) {
       card.updateProgress(updates.progress);
+    }
+    if ("priority" in updates) {
+      card.updatePriority(updates.priority);
+    }
+    if (updates.tags !== undefined) {
+      card.updateTags(updates.tags);
+    }
+    if ("link" in updates) {
+      card.updateLink(updates.link);
     }
     if ("dueDate" in updates) {
       card.updateDueDate(updates.dueDate);

@@ -34,8 +34,8 @@ export class CreateKanbanBoardUseCase
       return Result.fail(typeResult.getError());
     }
 
-    const columnDefs =
-      input.columns.length > 0 ? input.columns : DEFAULT_COLUMNS;
+    const inputColumns = input.columns ?? [];
+    const columnDefs = inputColumns.length > 0 ? inputColumns : DEFAULT_COLUMNS;
 
     const columns = columnDefs.map((col, index) =>
       Column.create({ title: col.title, position: index }),
@@ -46,6 +46,11 @@ export class CreateKanbanBoardUseCase
       title: titleResult.getValue(),
       type: typeResult.getValue(),
       columns,
+      description: input.description,
+      priority: input.priority,
+      dueDate: input.dueDate,
+      tags: input.tags,
+      link: input.link,
     });
 
     if (boardResult.isFailure) {

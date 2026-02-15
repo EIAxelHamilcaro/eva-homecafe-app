@@ -36,6 +36,8 @@ export function TodoBoardCard({
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [editingCardId, setEditingCardId] = useState<string | null>(null);
+  const [editingCardTitle, setEditingCardTitle] = useState("");
 
   const cards = board.columns[0]?.cards ?? [];
 
@@ -112,6 +114,36 @@ export function TodoBoardCard({
       }
     },
     [board.id, newItemTitle, onUpdate],
+  );
+
+  const handleUpdateCardTitle = useCallback(
+    async (cardId: string, newTitle: string) => {
+      const card = cards.find((c) => c.id === cardId);
+      if (!newTitle.trim() || newTitle.trim() === card?.title) {
+        setEditingCardId(null);
+        return;
+      }
+      try {
+        const response = await fetch(
+          `/api/v1/boards/${board.id}/cards/${cardId}`,
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ title: newTitle.trim() }),
+          },
+        );
+        if (!response.ok) {
+          setError("Impossible de modifier l'élément");
+        } else {
+          setError(null);
+          onUpdate();
+        }
+      } catch {
+        setError("Impossible de modifier l'élément");
+      }
+      setEditingCardId(null);
+    },
+    [board.id, cards, onUpdate],
   );
 
   const handleRemoveItem = useCallback(
@@ -218,20 +250,42 @@ export function TodoBoardCard({
 
       <div className="max-h-52 space-y-1 overflow-y-auto overscroll-y-contain">
         {cards.map((card) => (
-          <div key={card.id} className="flex items-center gap-2 group">
+          <div key={card.id} className="group flex items-center gap-2">
             <Checkbox
               checked={card.isCompleted}
               onCheckedChange={() => handleToggleCard(card.id)}
             />
-            <span
-              className={`flex-1 text-sm ${card.isCompleted ? "line-through text-muted-foreground" : ""}`}
-            >
-              {card.title}
-            </span>
+            {editingCardId === card.id ? (
+              <Input
+                type="text"
+                value={editingCardTitle}
+                onChange={(e) => setEditingCardTitle(e.target.value)}
+                onBlur={() => handleUpdateCardTitle(card.id, editingCardTitle)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter")
+                    handleUpdateCardTitle(card.id, editingCardTitle);
+                  if (e.key === "Escape") setEditingCardId(null);
+                }}
+                className="h-7 flex-1 text-sm"
+                maxLength={200}
+                autoFocus
+              />
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  setEditingCardId(card.id);
+                  setEditingCardTitle(card.title);
+                }}
+                className={`flex-1 cursor-text text-left text-sm ${card.isCompleted ? "text-muted-foreground line-through" : ""}`}
+              >
+                {card.title}
+              </button>
+            )}
             <Button
               variant="ghost"
               onClick={() => handleRemoveItem(card.id)}
-              className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-destructive"
+              className="text-xs text-muted-foreground opacity-0 hover:text-destructive group-hover:opacity-100"
               aria-label="Supprimer l'élément"
             >
               x

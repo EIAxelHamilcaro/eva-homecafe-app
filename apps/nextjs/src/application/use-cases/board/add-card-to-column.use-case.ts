@@ -54,8 +54,12 @@ export class AddCardToColumnUseCase
     const card = Card.create({
       title: cardTitleResult.getValue(),
       description: input.description ?? undefined,
+      content: input.content ?? undefined,
       position: maxPosition + 1,
       progress: input.progress,
+      priority: input.priority,
+      tags: input.tags,
+      link: input.link,
       dueDate: input.dueDate ?? undefined,
     });
 

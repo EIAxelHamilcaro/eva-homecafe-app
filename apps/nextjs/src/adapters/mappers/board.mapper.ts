@@ -56,9 +56,13 @@ export function boardToDomain(
           {
             title: cardTitleResult.getValue(),
             description: Option.fromNullable(cr.description),
+            content: Option.fromNullable(cr.content),
             isCompleted: cr.isCompleted,
             position: cr.position,
             progress: cr.progress ?? 0,
+            priority: Option.fromNullable(cr.priority),
+            tags: (cr.tags as string[]) ?? [],
+            link: Option.fromNullable(cr.link),
             dueDate: Option.fromNullable(cr.dueDate),
             createdAt: cr.createdAt,
             updatedAt: Option.fromNullable(cr.updatedAt),
@@ -86,6 +90,11 @@ export function boardToDomain(
       userId: boardRecord.userId,
       title: titleResult.getValue(),
       type: typeResult.getValue(),
+      description: Option.fromNullable(boardRecord.description),
+      priority: Option.fromNullable(boardRecord.priority),
+      dueDate: Option.fromNullable(boardRecord.dueDate),
+      tags: (boardRecord.tags as string[]) ?? [],
+      link: Option.fromNullable(boardRecord.link),
       columns,
       createdAt: boardRecord.createdAt,
       updatedAt: Option.fromNullable(boardRecord.updatedAt),
@@ -98,12 +107,21 @@ export function boardToDomain(
 
 export function boardToPersistence(board: Board) {
   const updatedAt = board.get("updatedAt");
+  const description = board.get("description");
+  const priority = board.get("priority");
+  const dueDate = board.get("dueDate");
+  const link = board.get("link");
   return {
     board: {
       id: board.id.value.toString(),
       userId: board.get("userId"),
       title: board.get("title").value,
       type: board.get("type").value as "todo" | "kanban",
+      description: description.isSome() ? description.unwrap() : null,
+      priority: priority.isSome() ? priority.unwrap() : null,
+      dueDate: dueDate.isSome() ? dueDate.unwrap() : null,
+      tags: board.get("tags"),
+      link: link.isSome() ? link.unwrap() : null,
       createdAt: board.get("createdAt"),
       updatedAt: updatedAt.isSome() ? updatedAt.unwrap() : null,
     },
@@ -118,6 +136,9 @@ export function boardToPersistence(board: Board) {
       col.get("cards").map((c) => {
         const cardUpdatedAt = c.get("updatedAt");
         const cardDescription = c.get("description");
+        const cardContent = c.get("content");
+        const cardPriority = c.get("priority");
+        const cardLink = c.get("link");
         const cardDueDate = c.get("dueDate");
         return {
           id: c.id.value.toString(),
@@ -126,9 +147,13 @@ export function boardToPersistence(board: Board) {
           description: cardDescription.isSome()
             ? cardDescription.unwrap()
             : null,
+          content: cardContent.isSome() ? cardContent.unwrap() : null,
           isCompleted: c.get("isCompleted"),
           position: c.get("position"),
           progress: c.get("progress"),
+          priority: cardPriority.isSome() ? cardPriority.unwrap() : null,
+          tags: c.get("tags"),
+          link: cardLink.isSome() ? cardLink.unwrap() : null,
           dueDate: cardDueDate.isSome() ? cardDueDate.unwrap() : null,
           createdAt: c.get("createdAt"),
           updatedAt: cardUpdatedAt.isSome() ? cardUpdatedAt.unwrap() : null,

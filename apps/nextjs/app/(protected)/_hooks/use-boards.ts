@@ -7,6 +7,7 @@ import type { IBoardDto } from "@/application/dto/board/common-board.dto";
 import type { IDeleteBoardOutputDto } from "@/application/dto/board/delete-board.dto";
 import type { IGetBoardsOutputDto } from "@/application/dto/board/get-boards.dto";
 import type { IMoveCardOutputDto } from "@/application/dto/board/move-card.dto";
+import type { IRemoveCardOutputDto } from "@/application/dto/board/remove-card.dto";
 import { apiFetch } from "@/common/api";
 
 export const boardKeys = {
@@ -95,6 +96,23 @@ export function useAddColumnMutation(boardId: string) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title }),
       }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: boardKeys.detail(boardId),
+      });
+    },
+  });
+}
+
+export function useDeleteCardMutation(boardId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation<IRemoveCardOutputDto, Error, { cardId: string }>({
+    mutationFn: ({ cardId }) =>
+      apiFetch<IRemoveCardOutputDto>(
+        `/api/v1/boards/${boardId}/cards/${cardId}`,
+        { method: "DELETE" },
+      ),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: boardKeys.detail(boardId),
