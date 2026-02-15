@@ -1,6 +1,7 @@
 import { createContainer } from "@evyweb/ioctopus";
 import { createAuthModule } from "./modules/auth.module";
 import { createBoardModule } from "./modules/board.module";
+import { createCalendarEventModule } from "./modules/calendar-event.module";
 import { createChatModule } from "./modules/chat.module";
 import { createChronologieModule } from "./modules/chronologie.module";
 import { createContactModule } from "./modules/contact.module";
@@ -23,6 +24,10 @@ const ApplicationContainer = createContainer();
 
 ApplicationContainer.load(Symbol("AuthModule"), createAuthModule());
 ApplicationContainer.load(Symbol("BoardModule"), createBoardModule());
+ApplicationContainer.load(
+  Symbol("CalendarEventModule"),
+  createCalendarEventModule(),
+);
 ApplicationContainer.load(Symbol("ChatModule"), createChatModule());
 ApplicationContainer.load(
   Symbol("ChronologieModule"),

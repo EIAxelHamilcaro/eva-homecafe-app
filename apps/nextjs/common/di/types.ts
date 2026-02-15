@@ -1,5 +1,6 @@
 import type { IAuthProvider } from "@/application/ports/auth.service.port";
 import type { IBoardRepository } from "@/application/ports/board-repository.port";
+import type { ICalendarEventRepository } from "@/application/ports/calendar-event-repository.port";
 import type { IChronologieRepository } from "@/application/ports/chronologie-repository.port";
 import type { IConversationRepository } from "@/application/ports/conversation-repository.port";
 import type { IEmailProvider } from "@/application/ports/email.provider.port";
@@ -40,6 +41,10 @@ import type { RemoveColumnUseCase } from "@/application/use-cases/board/remove-c
 import type { UpdateBoardUseCase } from "@/application/use-cases/board/update-board.use-case";
 import type { UpdateCardUseCase } from "@/application/use-cases/board/update-card.use-case";
 import type { UpdateColumnUseCase } from "@/application/use-cases/board/update-column.use-case";
+import type { CreateCalendarEventUseCase } from "@/application/use-cases/calendar-event/create-calendar-event.use-case";
+import type { DeleteCalendarEventUseCase } from "@/application/use-cases/calendar-event/delete-calendar-event.use-case";
+import type { GetUserCalendarEventsUseCase } from "@/application/use-cases/calendar-event/get-user-calendar-events.use-case";
+import type { UpdateCalendarEventUseCase } from "@/application/use-cases/calendar-event/update-calendar-event.use-case";
 import type { AddReactionUseCase } from "@/application/use-cases/chat/add-reaction.use-case";
 import type { CreateConversationUseCase } from "@/application/use-cases/chat/create-conversation.use-case";
 import type { DeleteConversationUseCase } from "@/application/use-cases/chat/delete-conversation.use-case";
@@ -102,6 +107,11 @@ export const DI_SYMBOLS = {
   IUserRepository: Symbol.for("IUserRepository"),
   IAuthProvider: Symbol.for("IAuthProvider"),
   IBoardRepository: Symbol.for("IBoardRepository"),
+  ICalendarEventRepository: Symbol.for("ICalendarEventRepository"),
+  CreateCalendarEventUseCase: Symbol.for("CreateCalendarEventUseCase"),
+  DeleteCalendarEventUseCase: Symbol.for("DeleteCalendarEventUseCase"),
+  GetUserCalendarEventsUseCase: Symbol.for("GetUserCalendarEventsUseCase"),
+  UpdateCalendarEventUseCase: Symbol.for("UpdateCalendarEventUseCase"),
   IEmailProvider: Symbol.for("IEmailProvider"),
   IEmotionRepository: Symbol.for("IEmotionRepository"),
   IConversationRepository: Symbol.for("IConversationRepository"),
@@ -203,6 +213,11 @@ export interface DI_RETURN_TYPES {
   IUserRepository: IUserRepository;
   IAuthProvider: IAuthProvider;
   IBoardRepository: IBoardRepository;
+  ICalendarEventRepository: ICalendarEventRepository;
+  CreateCalendarEventUseCase: CreateCalendarEventUseCase;
+  DeleteCalendarEventUseCase: DeleteCalendarEventUseCase;
+  GetUserCalendarEventsUseCase: GetUserCalendarEventsUseCase;
+  UpdateCalendarEventUseCase: UpdateCalendarEventUseCase;
   IEmailProvider: IEmailProvider;
   IEmotionRepository: IEmotionRepository;
   IConversationRepository: IConversationRepository;
