@@ -69,7 +69,7 @@ export function TodoListView() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="max-h-[60vh] space-y-4 overflow-y-auto pr-1">
+      <div className="space-y-4">
         {boards.map((board) => (
           <TodoBoardCard
             key={board.id}

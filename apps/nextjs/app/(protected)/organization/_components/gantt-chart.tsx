@@ -13,7 +13,7 @@ const BAR_COLORS = [
 ];
 
 const WEEK_COLUMNS = [
-  "Tache",
+  "Tâche",
   "Semaine 1",
   "Semaine 2",
   "Semaine 3",
@@ -21,9 +21,9 @@ const WEEK_COLUMNS = [
 ];
 
 const MONTH_COLUMNS = [
-  "Tache",
+  "Tâche",
   "Janvier",
-  "Fevrier",
+  "Février",
   "Mars",
   "Avril",
   "Mai",
@@ -73,7 +73,7 @@ export function GanttChart({ cards, viewMode }: GanttChartProps) {
     return (
       <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-orange-200 p-12 text-center">
         <p className="text-sm text-muted-foreground">
-          Ajoutez des dates a vos taches pour les voir sur la timeline.
+          Ajoutez des dates à vos tâches pour les voir sur la timeline.
         </p>
       </div>
     );
@@ -82,8 +82,8 @@ export function GanttChart({ cards, viewMode }: GanttChartProps) {
   const gridTemplateColumns = `140px repeat(${dataColumnCount}, 1fr)`;
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-orange-100">
-      <div className="min-w-[600px]">
+    <div className="overflow-auto rounded-lg border border-orange-100">
+      <div className="min-w-[480px] sm:min-w-[600px]">
         <div className="grid bg-orange-50/50" style={{ gridTemplateColumns }}>
           {columns.map((col) => (
             <div

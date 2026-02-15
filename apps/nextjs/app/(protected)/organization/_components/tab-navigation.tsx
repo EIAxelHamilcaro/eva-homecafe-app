@@ -32,8 +32,8 @@ export function TabNavigation({ activeSection }: TabNavigationProps) {
   }
 
   return (
-    <div className="sticky top-0 z-10 flex items-center justify-center gap-3 py-3">
-      <nav className="flex items-center rounded-full border border-orange-200 bg-orange-50/80 p-1 backdrop-blur-sm">
+    <div className="sticky top-0 z-10 flex items-center justify-center gap-3 overflow-x-auto py-3">
+      <nav className="flex shrink-0 items-center rounded-full border border-orange-200 bg-orange-50/80 p-1 backdrop-blur-sm">
         {TABS.map((tab) => (
           <button
             key={tab.id}

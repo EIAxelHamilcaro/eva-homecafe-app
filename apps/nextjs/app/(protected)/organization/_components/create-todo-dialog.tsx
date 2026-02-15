@@ -83,7 +83,7 @@ export function CreateTodoDialog({
 
         if (!response.ok) {
           const data = await response.json();
-          setError(data.error ?? "Failed to create list");
+          setError(data.error ?? "Impossible de créer la liste");
           return;
         }
 
@@ -91,7 +91,7 @@ export function CreateTodoDialog({
         onOpenChange(false);
         onCreated();
       } catch {
-        setError("Failed to create list");
+        setError("Impossible de créer la liste");
       } finally {
         setSubmitting(false);
       }
@@ -103,7 +103,7 @@ export function CreateTodoDialog({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>New To-do List</DialogTitle>
+          <DialogTitle>Nouvelle To-do List</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -111,21 +111,21 @@ export function CreateTodoDialog({
               htmlFor="todo-title"
               className="mb-1 block text-sm font-medium"
             >
-              Title
+              Titre
             </label>
             <Input
               id="todo-title"
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="e.g., Groceries"
+              placeholder="ex. Courses"
               required
               maxLength={100}
             />
           </div>
 
           <fieldset>
-            <legend className="mb-1 block text-sm font-medium">Items</legend>
+            <legend className="mb-1 block text-sm font-medium">Éléments</legend>
             <div className="space-y-2">
               {items.map((item, index) => (
                 <div
@@ -136,7 +136,7 @@ export function CreateTodoDialog({
                     type="text"
                     value={item}
                     onChange={(e) => handleItemChange(index, e.target.value)}
-                    placeholder={`Item ${index + 1}`}
+                    placeholder={`Élément ${index + 1}`}
                     maxLength={200}
                   />
                   {items.length > 1 && (
@@ -145,7 +145,7 @@ export function CreateTodoDialog({
                       variant="ghost"
                       onClick={() => handleRemoveItem(index)}
                       className="rounded-md px-2 text-sm text-muted-foreground hover:text-destructive"
-                      aria-label="Remove item"
+                      aria-label="Supprimer l'élément"
                     >
                       x
                     </Button>
@@ -159,7 +159,7 @@ export function CreateTodoDialog({
               onClick={handleAddItem}
               className="mt-2 text-sm text-primary hover:underline"
             >
-              + Add item
+              + Ajouter un élément
             </Button>
           </fieldset>
 
@@ -171,10 +171,10 @@ export function CreateTodoDialog({
               variant="outline"
               onClick={() => handleOpenChange(false)}
             >
-              Cancel
+              Annuler
             </Button>
             <Button type="submit" disabled={submitting || !title.trim()}>
-              {submitting ? "Creating..." : "Create"}
+              {submitting ? "Création..." : "Créer"}
             </Button>
           </div>
         </form>

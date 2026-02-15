@@ -48,13 +48,13 @@ export function TodoBoardCard({
           body: JSON.stringify({ toggleCardIds: [cardId] }),
         });
         if (!response.ok) {
-          setError("Failed to update item");
+          setError("Impossible de mettre à jour l'élément");
           return;
         }
         setError(null);
         onUpdate();
       } catch {
-        setError("Failed to update item");
+        setError("Impossible de mettre à jour l'élément");
       }
     },
     [board.id, onUpdate],
@@ -74,7 +74,7 @@ export function TodoBoardCard({
         body: JSON.stringify({ title: title.trim() }),
       });
       if (!response.ok) {
-        setError("Failed to update title");
+        setError("Impossible de modifier le titre");
         setTitle(board.title);
       } else {
         setError(null);
@@ -101,14 +101,14 @@ export function TodoBoardCard({
           }),
         });
         if (!response.ok) {
-          setError("Failed to add item");
+          setError("Impossible d'ajouter l'élément");
           return;
         }
         setError(null);
         setNewItemTitle("");
         onUpdate();
       } catch {
-        setError("Failed to add item");
+        setError("Impossible d'ajouter l'élément");
       }
     },
     [board.id, newItemTitle, onUpdate],
@@ -123,13 +123,13 @@ export function TodoBoardCard({
           body: JSON.stringify({ removeCardIds: [cardId] }),
         });
         if (!response.ok) {
-          setError("Failed to remove item");
+          setError("Impossible de supprimer l'élément");
           return;
         }
         setError(null);
         onUpdate();
       } catch {
-        setError("Failed to remove item");
+        setError("Impossible de supprimer l'élément");
       }
     },
     [board.id, onUpdate],
@@ -142,12 +142,12 @@ export function TodoBoardCard({
         method: "DELETE",
       });
       if (!response.ok) {
-        setError("Failed to delete list");
+        setError("Impossible de supprimer la liste");
         return;
       }
       onUpdate();
     } catch {
-      setError("Failed to delete list");
+      setError("Impossible de supprimer la liste");
     } finally {
       setLoading(false);
       setDeleteDialogOpen(false);
@@ -209,14 +209,14 @@ export function TodoBoardCard({
             onClick={() => setDeleteDialogOpen(true)}
             className="text-xs text-muted-foreground hover:text-destructive"
           >
-            Delete
+            Supprimer
           </Button>
         </div>
       </div>
 
       {error && <p className="mb-2 text-xs text-destructive">{error}</p>}
 
-      <div className="space-y-1">
+      <div className="max-h-52 space-y-1 overflow-y-auto overscroll-y-contain">
         {cards.map((card) => (
           <div key={card.id} className="flex items-center gap-2 group">
             <Checkbox
@@ -232,7 +232,7 @@ export function TodoBoardCard({
               variant="ghost"
               onClick={() => handleRemoveItem(card.id)}
               className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-destructive"
-              aria-label="Remove item"
+              aria-label="Supprimer l'élément"
             >
               x
             </Button>
@@ -245,7 +245,7 @@ export function TodoBoardCard({
           type="text"
           value={newItemTitle}
           onChange={(e) => setNewItemTitle(e.target.value)}
-          placeholder="Add item..."
+          placeholder="Ajouter un élément..."
           className="text-sm"
           maxLength={200}
         />
@@ -254,16 +254,16 @@ export function TodoBoardCard({
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete list</AlertDialogTitle>
+            <AlertDialogTitle>Supprimer la liste</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete &quot;{board.title}&quot;? This
-              action cannot be undone.
+              Êtes-vous sûr de vouloir supprimer &quot;{board.title}&quot; ?
+              Cette action est irréversible.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete} disabled={loading}>
-              {loading ? "Deleting..." : "Delete"}
+              {loading ? "Suppression..." : "Supprimer"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

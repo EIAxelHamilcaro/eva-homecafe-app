@@ -91,7 +91,7 @@ export function KanbanListView() {
             value={selectedBoardId ?? undefined}
             onValueChange={setSelectedBoardId}
           >
-            <SelectTrigger className="w-[200px]">
+            <SelectTrigger className="w-full max-w-[200px]">
               <SelectValue placeholder="Choisir un board" />
             </SelectTrigger>
             <SelectContent>

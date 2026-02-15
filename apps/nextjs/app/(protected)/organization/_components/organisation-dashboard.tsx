@@ -11,9 +11,9 @@ import {
 } from "@dnd-kit/core";
 import {
   arrayMove,
+  rectSortingStrategy,
   SortableContext,
   sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { useCallback, useEffect, useState } from "react";
 import {
@@ -137,51 +137,27 @@ export function OrganisationDashboard() {
         collisionDetection={closestCenter}
         onDragEnd={handleDragEnd}
       >
-        <SortableContext
-          items={sectionOrder}
-          strategy={verticalListSortingStrategy}
-        >
-          <div className="space-y-6 pb-8">
+        <SortableContext items={sectionOrder} strategy={rectSortingStrategy}>
+          <div className="grid grid-cols-1 gap-6 pb-8 lg:grid-cols-3">
             {sectionOrder.map((sectionId, index) => {
-              const isTodo = sectionId === "todo";
-              const isKanban = sectionId === "kanban";
               const nextId = sectionOrder[index + 1];
               const prevId = sectionOrder[index - 1];
 
-              if (isTodo && nextId === "kanban") {
-                return (
-                  <div
-                    key="todo-kanban-row"
-                    className="grid gap-6 lg:grid-cols-[1fr_2fr]"
-                  >
-                    <div id="section-todo">
-                      <SectionWrapper
-                        id="todo"
-                        title="To-do list"
-                        isCollapsed={collapsedSections.includes("todo")}
-                        onToggleCollapse={() => toggleCollapse("todo")}
-                      >
-                        <TodoListView />
-                      </SectionWrapper>
-                    </div>
-                    <div id="section-kanban">
-                      <SectionWrapper
-                        id="kanban"
-                        title="Kanban"
-                        isCollapsed={collapsedSections.includes("kanban")}
-                        onToggleCollapse={() => toggleCollapse("kanban")}
-                      >
-                        <KanbanListView />
-                      </SectionWrapper>
-                    </div>
-                  </div>
-                );
-              }
+              const isTodoBeforeKanban =
+                sectionId === "todo" && nextId === "kanban";
+              const isKanbanAfterTodo =
+                sectionId === "kanban" && prevId === "todo";
 
-              if (isKanban && prevId === "todo") return null;
+              let colSpan = "lg:col-span-3";
+              if (isTodoBeforeKanban) colSpan = "lg:col-span-1";
+              if (isKanbanAfterTodo) colSpan = "lg:col-span-2";
 
               return (
-                <div key={sectionId} id={`section-${sectionId}`}>
+                <div
+                  key={sectionId}
+                  id={`section-${sectionId}`}
+                  className={colSpan}
+                >
                   <SectionWrapper
                     id={sectionId}
                     title={SECTION_TITLES[sectionId] ?? sectionId}

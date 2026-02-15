@@ -57,7 +57,7 @@ export function CreateKanbanDialog({
 
         if (!response.ok) {
           const data = await response.json();
-          setError(data.error ?? "Failed to create board");
+          setError(data.error ?? "Impossible de créer le board");
           return;
         }
 
@@ -65,7 +65,7 @@ export function CreateKanbanDialog({
         onOpenChange(false);
         onCreated();
       } catch {
-        setError("Failed to create board");
+        setError("Impossible de créer le board");
       } finally {
         setSubmitting(false);
       }
@@ -77,7 +77,7 @@ export function CreateKanbanDialog({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>New Kanban Board</DialogTitle>
+          <DialogTitle>Nouveau Kanban</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -85,19 +85,19 @@ export function CreateKanbanDialog({
               htmlFor="kanban-title"
               className="mb-1 block text-sm font-medium"
             >
-              Board Title
+              Titre du board
             </label>
             <Input
               id="kanban-title"
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="e.g., Sprint 1"
+              placeholder="ex. Sprint 1"
               required
               maxLength={100}
             />
             <p className="mt-1 text-xs text-muted-foreground">
-              Default columns: To Do, In Progress, Done
+              Colonnes par défaut : À faire, En cours, Terminé
             </p>
           </div>
 
@@ -109,10 +109,10 @@ export function CreateKanbanDialog({
               variant="outline"
               onClick={() => handleOpenChange(false)}
             >
-              Cancel
+              Annuler
             </Button>
             <Button type="submit" disabled={submitting || !title.trim()}>
-              {submitting ? "Creating..." : "Create"}
+              {submitting ? "Création..." : "Créer"}
             </Button>
           </div>
         </form>

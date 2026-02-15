@@ -23,8 +23,14 @@ export function SectionWrapper({
   children,
   onEdit,
 }: SectionWrapperProps) {
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id });
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -35,12 +41,14 @@ export function SectionWrapper({
     <div
       ref={setNodeRef}
       style={style}
-      className="rounded-2xl border border-orange-100 bg-white"
+      className={`rounded-2xl border border-orange-100 bg-white transition-shadow ${
+        isDragging ? "z-10 shadow-lg ring-2 ring-primary/20 opacity-95" : ""
+      }`}
     >
       <div className="flex items-center gap-2 px-4 py-3">
         <button
           type="button"
-          className="cursor-grab text-muted-foreground hover:text-foreground"
+          className="cursor-grab touch-none text-muted-foreground hover:text-foreground active:cursor-grabbing"
           {...attributes}
           {...listeners}
         >
@@ -74,7 +82,9 @@ export function SectionWrapper({
         </Button>
       </div>
 
-      {!isCollapsed && <div className="px-4 pb-4">{children}</div>}
+      {!isCollapsed && (
+        <div className="max-h-[60vh] overflow-y-auto px-4 pb-4">{children}</div>
+      )}
     </div>
   );
 }

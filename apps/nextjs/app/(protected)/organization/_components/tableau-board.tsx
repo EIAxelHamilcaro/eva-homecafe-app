@@ -83,7 +83,7 @@ export function TableauBoard({ board, onDeleteBoard }: TableauBoardProps) {
         </Button>
       </div>
 
-      <div className="overflow-x-auto rounded-lg border border-orange-100">
+      <div className="overflow-auto rounded-lg border border-orange-100">
         <table className="w-full text-sm">
           <thead>
             <tr className="bg-orange-50/50 text-left text-xs text-muted-foreground">

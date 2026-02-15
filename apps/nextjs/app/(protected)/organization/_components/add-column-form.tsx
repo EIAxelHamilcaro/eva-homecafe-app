@@ -30,16 +30,16 @@ export function AddColumnForm({ onSubmit, onCancel }: AddColumnFormProps) {
         type="text"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        placeholder="Column title"
+        placeholder="Titre de la colonne"
         maxLength={100}
         autoFocus
       />
       <div className="mt-2 flex gap-2">
         <Button type="submit" size="sm" disabled={!title.trim()}>
-          Add
+          Ajouter
         </Button>
         <Button type="button" variant="ghost" size="sm" onClick={onCancel}>
-          Cancel
+          Annuler
         </Button>
       </div>
     </form>

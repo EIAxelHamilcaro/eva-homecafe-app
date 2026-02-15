@@ -77,7 +77,7 @@ export function CardEditDialog({
 
         if (!response.ok) {
           const errData = await response.json();
-          setError(errData.error ?? "Failed to update card");
+          setError(errData.error ?? "Impossible de modifier la carte");
           return;
         }
 
@@ -85,7 +85,7 @@ export function CardEditDialog({
         onOpenChange(false);
         onUpdated(data);
       } catch {
-        setError("Failed to update card");
+        setError("Impossible de modifier la carte");
       } finally {
         setSubmitting(false);
       }
@@ -106,7 +106,7 @@ export function CardEditDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Edit Card</DialogTitle>
+          <DialogTitle>Modifier la carte</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -114,7 +114,7 @@ export function CardEditDialog({
               htmlFor="card-title"
               className="mb-1 block text-sm font-medium"
             >
-              Title
+              Titre
             </label>
             <Input
               id="card-title"
@@ -137,7 +137,7 @@ export function CardEditDialog({
               id="card-description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Add a description..."
+              placeholder="Ajouter une description..."
               rows={3}
               maxLength={5000}
             />
@@ -148,7 +148,7 @@ export function CardEditDialog({
               htmlFor="card-progress"
               className="mb-1 block text-sm font-medium"
             >
-              Progress: {progress}%
+              Progression : {progress}%
             </label>
             <div className="flex items-center gap-3">
               <input
@@ -169,7 +169,7 @@ export function CardEditDialog({
               htmlFor="card-due-date"
               className="mb-1 block text-sm font-medium"
             >
-              Due Date
+              Date d'échéance
             </label>
             <Input
               id="card-due-date"
@@ -187,10 +187,10 @@ export function CardEditDialog({
               variant="outline"
               onClick={() => onOpenChange(false)}
             >
-              Cancel
+              Annuler
             </Button>
             <Button type="submit" disabled={submitting || !title.trim()}>
-              {submitting ? "Saving..." : "Save"}
+              {submitting ? "Enregistrement..." : "Enregistrer"}
             </Button>
           </div>
         </form>

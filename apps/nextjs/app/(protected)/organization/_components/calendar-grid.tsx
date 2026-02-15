@@ -120,7 +120,7 @@ export function CalendarGrid({ month, cards }: CalendarGridProps) {
   );
 
   return (
-    <div className="overflow-hidden rounded-lg border border-orange-100">
+    <div className="overflow-auto rounded-lg border border-orange-100">
       <div className="grid grid-cols-7 border-b border-orange-100 bg-orange-50/50">
         {DAY_NAMES.map((name) => (
           <div
@@ -140,7 +140,7 @@ export function CalendarGrid({ month, cards }: CalendarGridProps) {
           return (
             <div
               key={day.dateKey}
-              className={`min-h-[100px] border-b border-r border-orange-50 p-2 ${
+              className={`min-h-[60px] border-b border-r border-orange-50 p-1.5 sm:min-h-[80px] sm:p-2 lg:min-h-[100px] ${
                 day.isCurrentMonth ? "bg-white" : "bg-gray-50/50"
               }`}
             >

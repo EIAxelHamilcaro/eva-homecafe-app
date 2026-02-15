@@ -7,10 +7,13 @@ import {
   type DragOverEvent,
   DragOverlay,
   type DragStartEvent,
+  KeyboardSensor,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
+import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,7 +25,13 @@ import {
   AlertDialogTitle,
 } from "@packages/ui/components/ui/alert-dialog";
 import { Button } from "@packages/ui/components/ui/button";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useAddCardMutation,
+  useAddColumnMutation,
+  useDeleteBoardMutation,
+  useMoveCardMutation,
+} from "@/app/(protected)/_hooks/use-boards";
 import type {
   IBoardDto,
   ICardDto,
@@ -53,23 +62,48 @@ export function KanbanBoardView({
   const [showAddColumn, setShowAddColumn] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
+  const boardColumnsRef = useRef(board.columns);
+  useEffect(() => {
+    if (board.columns !== boardColumnsRef.current) {
+      boardColumnsRef.current = board.columns;
+      setColumns(board.columns);
+    }
+  }, [board.columns]);
+
+  const snapshotRef = useRef<IColumnDto[]>([]);
+  const columnsRef = useRef(columns);
+  useEffect(() => {
+    columnsRef.current = columns;
+  }, [columns]);
+
+  const moveCardMutation = useMoveCardMutation(board.id);
+  const addCardMutation = useAddCardMutation(board.id);
+  const addColumnMutation = useAddColumnMutation(board.id);
+  const deleteBoardMutation = useDeleteBoardMutation();
+
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 200, tolerance: 5 },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
   );
 
-  const applyBoardResponse = useCallback(
-    (data: IBoardDto) => {
-      setColumns(data.columns);
-      onUpdate();
-    },
-    [onUpdate],
+  const sortedColumns = useMemo(
+    () => [...columns].sort((a, b) => a.position - b.position),
+    [columns],
   );
 
   const handleDragStart = useCallback(
     (event: DragStartEvent) => {
-      const { active } = event;
-      const cardId = active.id as string;
+      snapshotRef.current = columns.map((c) => ({
+        ...c,
+        cards: [...c.cards],
+      }));
 
+      const cardId = event.active.id as string;
       for (const col of columns) {
         const card = col.cards.find((c) => c.id === cardId);
         if (card) {
@@ -83,7 +117,7 @@ export function KanbanBoardView({
 
   const handleDragOver = useCallback((event: DragOverEvent) => {
     const { active, over } = event;
-    if (!over) return;
+    if (!over || active.id === over.id) return;
 
     const activeId = active.id as string;
     const overId = over.id as string;
@@ -92,31 +126,41 @@ export function KanbanBoardView({
       let sourceColIdx = -1;
       let sourceCardIdx = -1;
       let destColIdx = -1;
+      let destCardIdx = -1;
 
       for (let ci = 0; ci < prev.length; ci++) {
         const col = prev[ci];
         if (!col) continue;
+
         const cardIdx = col.cards.findIndex((c) => c.id === activeId);
         if (cardIdx !== -1) {
           sourceColIdx = ci;
           sourceCardIdx = cardIdx;
         }
+
         if (col.id === overId) {
           destColIdx = ci;
         }
-        const overCardIdx = col.cards.findIndex((c) => c.id === overId);
-        if (overCardIdx !== -1) {
+
+        const overIdx = col.cards.findIndex((c) => c.id === overId);
+        if (overIdx !== -1) {
           destColIdx = ci;
+          destCardIdx = overIdx;
         }
       }
 
       if (sourceColIdx === -1 || destColIdx === -1) return prev;
-      if (sourceColIdx === destColIdx) return prev;
 
-      const next = prev.map((col) => ({
-        ...col,
-        cards: [...col.cards],
-      }));
+      if (sourceColIdx === destColIdx) {
+        if (destCardIdx === -1 || sourceCardIdx === destCardIdx) return prev;
+        const next = prev.map((col) => ({ ...col, cards: [...col.cards] }));
+        const col = next[sourceColIdx];
+        if (!col) return prev;
+        col.cards = arrayMove(col.cards, sourceCardIdx, destCardIdx);
+        return next;
+      }
+
+      const next = prev.map((col) => ({ ...col, cards: [...col.cards] }));
       const sourceCol = next[sourceColIdx];
       const destCol = next[destColIdx];
       if (!sourceCol || !destCol) return prev;
@@ -124,9 +168,8 @@ export function KanbanBoardView({
       const [movedCard] = sourceCol.cards.splice(sourceCardIdx, 1);
       if (!movedCard) return prev;
 
-      const overCardIdx = destCol.cards.findIndex((c) => c.id === overId);
-      if (overCardIdx !== -1) {
-        destCol.cards.splice(overCardIdx, 0, movedCard);
+      if (destCardIdx !== -1) {
+        destCol.cards.splice(destCardIdx, 0, movedCard);
       } else {
         destCol.cards.push(movedCard);
       }
@@ -136,105 +179,100 @@ export function KanbanBoardView({
 
   const handleDragEnd = useCallback(
     (event: DragEndEvent) => {
-      const { active, over } = event;
       setActiveCard(null);
 
-      if (!over) return;
+      const { active, over } = event;
+      if (!over) {
+        setColumns(snapshotRef.current);
+        return;
+      }
 
       const activeId = active.id as string;
-      const overId = over.id as string;
+      const currentCols = columnsRef.current;
 
-      setColumns((prev) => {
-        let targetColId: string | null = null;
-        let newPosition = 0;
-
-        for (const col of prev) {
-          const cardIdx = col.cards.findIndex((c) => c.id === activeId);
-          if (cardIdx !== -1) {
-            targetColId = col.id;
-            newPosition = cardIdx;
-            break;
-          }
-          if (col.id === overId) {
-            targetColId = col.id;
-            newPosition = col.cards.length;
-          }
+      let targetColId: string | null = null;
+      let newPosition = 0;
+      for (const col of currentCols) {
+        const idx = col.cards.findIndex((c) => c.id === activeId);
+        if (idx !== -1) {
+          targetColId = col.id;
+          newPosition = idx;
+          break;
         }
+      }
 
-        if (!targetColId) return prev;
+      if (!targetColId) return;
 
-        fetch(`/api/v1/boards/${board.id}/cards/${activeId}/move`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ toColumnId: targetColId, newPosition }),
-        })
-          .then((res) => (res.ok ? res.json() : null))
-          .then((data) => {
-            if (data) applyBoardResponse(data);
-          })
-          .catch(() => onUpdate());
-
-        return prev;
-      });
+      moveCardMutation.mutate(
+        { cardId: activeId, toColumnId: targetColId, newPosition },
+        {
+          onSuccess: (data) => {
+            setColumns(data.columns);
+            onUpdate();
+          },
+          onError: () => {
+            setColumns(snapshotRef.current);
+          },
+        },
+      );
     },
-    [board.id, applyBoardResponse, onUpdate],
+    [moveCardMutation, onUpdate],
   );
 
+  const handleDragCancel = useCallback(() => {
+    setActiveCard(null);
+    setColumns(snapshotRef.current);
+  }, []);
+
   const handleAddCard = useCallback(
-    async (columnId: string, title: string) => {
-      try {
-        const response = await fetch(`/api/v1/boards/${board.id}/cards`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ columnId, title }),
-        });
-        if (response.ok) {
-          const data = await response.json();
-          applyBoardResponse(data);
-        }
-      } catch {
-        /* ignore */
-      }
+    (columnId: string, title: string) => {
+      addCardMutation.mutate(
+        { columnId, title },
+        {
+          onSuccess: (data) => {
+            setColumns(data.columns);
+            onUpdate();
+          },
+        },
+      );
     },
-    [board.id, applyBoardResponse],
+    [addCardMutation, onUpdate],
   );
 
   const handleAddColumn = useCallback(
-    async (title: string) => {
-      try {
-        const response = await fetch(`/api/v1/boards/${board.id}/columns`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ title }),
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setShowAddColumn(false);
-          applyBoardResponse(data);
-        }
-      } catch {
-        /* ignore */
-      }
+    (title: string) => {
+      addColumnMutation.mutate(
+        { title },
+        {
+          onSuccess: (data) => {
+            setShowAddColumn(false);
+            setColumns(data.columns);
+            onUpdate();
+          },
+        },
+      );
     },
-    [board.id, applyBoardResponse],
+    [addColumnMutation, onUpdate],
   );
 
-  const handleDeleteBoard = useCallback(async () => {
-    try {
-      await fetch(`/api/v1/boards/${board.id}`, { method: "DELETE" });
-      onUpdate();
-      onBack();
-    } catch {
-      /* ignore */
-    }
-  }, [board.id, onUpdate, onBack]);
+  const handleDeleteBoard = useCallback(() => {
+    deleteBoardMutation.mutate(
+      { boardId: board.id },
+      {
+        onSuccess: () => {
+          onUpdate();
+          onBack();
+        },
+      },
+    );
+  }, [deleteBoardMutation, board.id, onUpdate, onBack]);
 
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="sm" onClick={onBack}>
-            Back
+            Retour
           </Button>
           <h2 className="text-lg font-semibold">{board.title}</h2>
         </div>
@@ -244,14 +282,14 @@ export function KanbanBoardView({
             size="sm"
             onClick={() => setShowAddColumn(true)}
           >
-            + Column
+            + Colonne
           </Button>
           <Button
             variant="destructive"
             size="sm"
             onClick={() => setDeleteDialogOpen(true)}
           >
-            Delete
+            Supprimer
           </Button>
         </div>
       </div>
@@ -262,20 +300,17 @@ export function KanbanBoardView({
         onDragStart={handleDragStart}
         onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}
+        onDragCancel={handleDragCancel}
       >
         <div className="flex gap-4 overflow-x-auto pb-4">
-          {columns
-            .sort((a, b) => a.position - b.position)
-            .map((col) => (
-              <KanbanColumn
-                key={col.id}
-                column={col}
-                onAddCard={(title) => handleAddCard(col.id, title)}
-                onEditCard={(card) =>
-                  setEditingCard({ card, columnId: col.id })
-                }
-              />
-            ))}
+          {sortedColumns.map((col) => (
+            <KanbanColumn
+              key={col.id}
+              column={col}
+              onAddCard={(title) => handleAddCard(col.id, title)}
+              onEditCard={(card) => setEditingCard({ card, columnId: col.id })}
+            />
+          ))}
           {showAddColumn && (
             <div className="w-72 shrink-0">
               <AddColumnForm
@@ -286,7 +321,12 @@ export function KanbanBoardView({
           )}
         </div>
 
-        <DragOverlay>
+        <DragOverlay
+          dropAnimation={{
+            duration: 200,
+            easing: "cubic-bezier(0.25, 1, 0.5, 1)",
+          }}
+        >
           {activeCard ? <KanbanCard card={activeCard} isOverlay /> : null}
         </DragOverlay>
       </DndContext>
@@ -299,23 +339,26 @@ export function KanbanBoardView({
           onOpenChange={(open) => {
             if (!open) setEditingCard(null);
           }}
-          onUpdated={applyBoardResponse}
+          onUpdated={(data) => {
+            setColumns(data.columns);
+            onUpdate();
+          }}
         />
       )}
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete board</AlertDialogTitle>
+            <AlertDialogTitle>Supprimer le board</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete &quot;{board.title}&quot;? This
-              action cannot be undone.
+              Êtes-vous sûr de vouloir supprimer &quot;{board.title}&quot; ?
+              Cette action est irréversible.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
             <AlertDialogAction onClick={handleDeleteBoard}>
-              Delete
+              Supprimer
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

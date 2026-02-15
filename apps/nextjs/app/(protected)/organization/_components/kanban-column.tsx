@@ -25,7 +25,7 @@ export function KanbanColumn({
   onEditCard,
 }: KanbanColumnProps) {
   const [newCardTitle, setNewCardTitle] = useState("");
-  const { setNodeRef } = useDroppable({ id: column.id });
+  const { setNodeRef, isOver } = useDroppable({ id: column.id });
 
   const handleAddCard = useCallback(
     (e: React.FormEvent) => {
@@ -49,7 +49,12 @@ export function KanbanColumn({
       </div>
 
       <SortableContext items={cardIds} strategy={verticalListSortingStrategy}>
-        <div ref={setNodeRef} className="flex min-h-[2rem] flex-col gap-2">
+        <div
+          ref={setNodeRef}
+          className={`flex min-h-[2rem] max-h-[40vh] flex-col gap-2 overflow-y-auto overscroll-y-contain rounded-md p-1 transition-colors ${
+            isOver ? "bg-primary/5 ring-2 ring-primary/10" : ""
+          }`}
+        >
           {column.cards.map((card) => (
             <KanbanCard
               key={card.id}
@@ -65,7 +70,7 @@ export function KanbanColumn({
           type="text"
           value={newCardTitle}
           onChange={(e) => setNewCardTitle(e.target.value)}
-          placeholder="+ Add card"
+          placeholder="+ Ajouter une carte"
           className="text-sm"
           maxLength={200}
         />
