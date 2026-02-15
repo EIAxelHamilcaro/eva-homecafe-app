@@ -25,9 +25,11 @@ export async function GET(request: Request) {
       return NextResponse.json({ events: [], connected: false });
     }
 
-    const [year, m] = month.split("-").map(Number);
-    const timeMin = new Date(year!, m! - 1, 1).toISOString();
-    const timeMax = new Date(year!, m!, 0, 23, 59, 59).toISOString();
+    const parts = month.split("-").map(Number);
+    const year = parts[0] ?? 2026;
+    const m = parts[1] ?? 1;
+    const timeMin = new Date(year, m - 1, 1).toISOString();
+    const timeMax = new Date(year, m, 0, 23, 59, 59).toISOString();
 
     const response = await fetch(
       `https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${timeMin}&timeMax=${timeMax}&singleEvents=true&orderBy=startTime`,
