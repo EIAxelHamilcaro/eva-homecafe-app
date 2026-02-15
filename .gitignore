@@ -114,3 +114,22 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# Claude Code sandbox artifacts
+.bash_profile
+.bashrc
+.gitconfig
+.gitmodules
+.mcp.json
+.profile
+.ripgreprc
+.zprofile
+.zshrc
+**/HEAD
+**/config
+**/hooks
+**/objects
+**/refs
+**/.claude/commands
+**/.claude/settings.json
+**/.claude/skills
