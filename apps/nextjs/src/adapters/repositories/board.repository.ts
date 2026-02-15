@@ -11,7 +11,6 @@ import {
   asc,
   type DbClient,
   db,
-  desc,
   eq,
   inArray,
   count as sqlCount,
