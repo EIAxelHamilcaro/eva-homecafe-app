@@ -9,14 +9,7 @@ export const rowStatusValues = [
 ] as const;
 export type RowStatusValue = (typeof rowStatusValues)[number];
 
-const validValues: ReadonlySet<string> = new Set(rowStatusValues);
-
-const schema = z
-  .string()
-  .refine(
-    (val) => validValues.has(val),
-    "Status must be 'todo', 'in_progress', 'waiting' or 'done'",
-  );
+const schema = z.string().min(1, "Status cannot be empty");
 
 export class RowStatus extends ValueObject<string> {
   protected validate(value: string): Result<string> {

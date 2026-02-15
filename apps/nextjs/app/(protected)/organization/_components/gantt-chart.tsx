@@ -1,118 +1,164 @@
 "use client";
 
-import { useMemo } from "react";
-import type { IChronologyCardDto } from "@/application/dto/board/get-chronology.dto";
+import { Input } from "@packages/ui/components/ui/input";
+import { Plus } from "lucide-react";
+import { useMemo, useState } from "react";
+import { useAddEntryMutation } from "@/app/(protected)/_hooks/use-chronology";
+import type { IChronologieEntryDto } from "@/application/dto/chronologie/common-chronologie.dto";
 
 const BAR_COLORS = [
-  "bg-pink-400",
-  "bg-orange-400",
-  "bg-green-400",
+  "bg-amber-400",
+  "bg-pink-300",
+  "bg-orange-500",
+  "bg-emerald-500",
   "bg-blue-400",
   "bg-purple-400",
-  "bg-yellow-400",
-];
-
-const WEEK_COLUMNS = [
-  "Tâche",
-  "Semaine 1",
-  "Semaine 2",
-  "Semaine 3",
-  "Semaine 4",
-];
-
-const MONTH_COLUMNS = [
-  "Tâche",
-  "Janvier",
-  "Février",
-  "Mars",
-  "Avril",
-  "Mai",
-  "Juin",
 ];
 
 interface GanttChartProps {
-  cards: IChronologyCardDto[];
-  viewMode: "weeks" | "months";
+  chronologieId: string;
+  entries: IChronologieEntryDto[];
+  monthLabels: string[];
+  startDate: Date;
+  endDate: Date;
 }
 
-function getWeekIndex(dueDate: string): number {
-  const date = new Date(`${dueDate}T00:00:00`);
-  const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
-  const firstDayOffset = firstDayOfMonth.getDay();
-  const dayOfMonth = date.getDate();
-  return Math.ceil((dayOfMonth + firstDayOffset) / 7);
+function daysBetween(a: Date, b: Date): number {
+  return Math.round((b.getTime() - a.getTime()) / (1000 * 60 * 60 * 24));
 }
 
-function getMonthIndex(dueDate: string): number {
-  const date = new Date(`${dueDate}T00:00:00`);
-  return date.getMonth() + 1;
+interface BarPosition {
+  entry: IChronologieEntryDto;
+  color: string;
+  leftPercent: number;
+  widthPercent: number;
 }
 
-export function GanttChart({ cards, viewMode }: GanttChartProps) {
-  const columns = viewMode === "weeks" ? WEEK_COLUMNS : MONTH_COLUMNS;
-  const dataColumnCount = columns.length - 1;
+export function GanttChart({
+  chronologieId,
+  entries,
+  monthLabels,
+  startDate,
+  endDate,
+}: GanttChartProps) {
+  const totalDays = Math.max(daysBetween(startDate, endDate), 1);
+  const addEntry = useAddEntryMutation(chronologieId);
+  const [newEntryTitle, setNewEntryTitle] = useState("");
 
   const rows = useMemo(() => {
-    return cards.map((card, index) => {
-      const color = BAR_COLORS[index % BAR_COLORS.length];
-      let columnIndex: number;
+    return entries.map((entry): BarPosition => {
+      const color =
+        BAR_COLORS[entry.color % BAR_COLORS.length] ?? "bg-amber-400";
 
-      if (viewMode === "weeks") {
-        const week = getWeekIndex(card.dueDate);
-        columnIndex = Math.min(Math.max(week, 1), dataColumnCount);
-      } else {
-        const month = getMonthIndex(card.dueDate);
-        columnIndex = Math.min(Math.max(month, 1), dataColumnCount);
+      const barStartRaw = entry.startDate
+        ? new Date(`${entry.startDate}T00:00:00`)
+        : null;
+      const barEndRaw = entry.endDate
+        ? new Date(`${entry.endDate}T00:00:00`)
+        : null;
+
+      if (!barStartRaw && !barEndRaw) {
+        return { entry, color, leftPercent: 0, widthPercent: 0 };
       }
 
-      return { card, color, columnIndex };
-    });
-  }, [cards, viewMode, dataColumnCount]);
+      const barStart = barStartRaw
+        ? barStartRaw < startDate
+          ? startDate
+          : barStartRaw
+        : barEndRaw!;
+      const barEnd = barEndRaw
+        ? barEndRaw > endDate
+          ? endDate
+          : barEndRaw
+        : barStartRaw!;
 
-  if (cards.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-orange-200 p-12 text-center">
-        <p className="text-sm text-muted-foreground">
-          Ajoutez des dates à vos tâches pour les voir sur la timeline.
-        </p>
-      </div>
+      const leftDays = daysBetween(startDate, barStart);
+      const spanDays = Math.max(daysBetween(barStart, barEnd), 1);
+
+      const leftPercent = Math.max((leftDays / totalDays) * 100, 0);
+      const widthPercent = Math.max((spanDays / totalDays) * 100, 2);
+
+      return { entry, color, leftPercent, widthPercent };
+    });
+  }, [entries, startDate, endDate, totalDays]);
+
+  function handleAddEntry(): void {
+    if (!newEntryTitle.trim()) return;
+    addEntry.mutate(
+      { title: newEntryTitle.trim() },
+      { onSuccess: () => setNewEntryTitle("") },
     );
   }
 
-  const gridTemplateColumns = `140px repeat(${dataColumnCount}, 1fr)`;
-
   return (
-    <div className="overflow-auto rounded-lg border border-orange-100">
-      <div className="min-w-[480px] sm:min-w-[600px]">
-        <div className="grid bg-orange-50/50" style={{ gridTemplateColumns }}>
-          {columns.map((col) => (
-            <div
-              key={col}
-              className="px-3 py-2 text-xs font-medium text-muted-foreground"
-            >
-              {col}
-            </div>
-          ))}
+    <div className="overflow-hidden rounded-lg border border-orange-100 bg-white">
+      <div
+        className="grid min-w-[600px]"
+        style={{ gridTemplateColumns: "140px 1fr" }}
+      >
+        <div className="border-b border-r border-orange-100 px-4 py-2.5 text-xs font-medium text-muted-foreground">
+          Tâche
         </div>
-
-        {rows.map(({ card, color, columnIndex }) => (
-          <div
-            key={card.id}
-            className="grid items-center border-b border-orange-50"
-            style={{ gridTemplateColumns }}
-          >
-            <div className="truncate px-3 py-2 text-sm" title={card.title}>
-              {card.title}
-            </div>
-            {columns.slice(1).map((colName, i) => (
-              <div key={colName} className="px-1 py-2">
-                {i + 1 === columnIndex && (
-                  <div className={`h-6 rounded-full ${color}`} />
-                )}
+        <div className="border-b border-orange-100">
+          <div className="flex h-full">
+            {monthLabels.map((label) => (
+              <div
+                key={label}
+                className="flex-1 border-l border-orange-50 px-3 py-2.5 text-xs font-medium text-muted-foreground first:border-l-0"
+              >
+                {label}
               </div>
             ))}
           </div>
+        </div>
+
+        {rows.map(({ entry, color, leftPercent, widthPercent }) => (
+          <div key={entry.id} className="contents">
+            <div
+              className="truncate border-b border-r border-orange-50 px-4 py-3 text-sm"
+              title={entry.title}
+            >
+              {entry.title}
+            </div>
+            <div className="relative border-b border-orange-50">
+              <div className="flex h-full">
+                {monthLabels.map((label) => (
+                  <div
+                    key={label}
+                    className="flex-1 border-l border-orange-50 first:border-l-0"
+                  />
+                ))}
+              </div>
+              {widthPercent > 0 && (
+                <div
+                  className="absolute top-1/2 -translate-y-1/2"
+                  style={{
+                    left: `${leftPercent}%`,
+                    width: `${widthPercent}%`,
+                  }}
+                >
+                  <div className={`h-6 rounded-full ${color}`} />
+                </div>
+              )}
+            </div>
+          </div>
         ))}
+
+        <div className="px-2 py-1.5">
+          <div className="flex items-center gap-1">
+            <Plus className="h-4 w-4 shrink-0 text-muted-foreground" />
+            <Input
+              placeholder="Ajouter..."
+              value={newEntryTitle}
+              onChange={(e) => setNewEntryTitle(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleAddEntry();
+              }}
+              className="h-7 border-0 bg-transparent text-sm shadow-none focus-visible:ring-0"
+            />
+          </div>
+        </div>
+        <div />
       </div>
     </div>
   );

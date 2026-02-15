@@ -1,7 +1,12 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { ITableauDto } from "@/application/dto/tableau/common-tableau.dto";
+import type {
+  IPriorityOptionDto,
+  IStatusOptionDto,
+  ITableauColumnDto,
+  ITableauDto,
+} from "@/application/dto/tableau/common-tableau.dto";
 import type { IDeleteTableauOutputDto } from "@/application/dto/tableau/delete-tableau.dto";
 import type { IGetTableauxOutputDto } from "@/application/dto/tableau/get-tableaux.dto";
 import { apiFetch } from "@/common/api";
@@ -27,6 +32,31 @@ export function useCreateTableauMutation() {
     mutationFn: (input) =>
       apiFetch<ITableauDto>("/api/v1/tableaux", {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(input),
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: tableauKeys.all });
+    },
+  });
+}
+
+export function useUpdateTableauMutation(tableauId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    ITableauDto,
+    Error,
+    {
+      title?: string;
+      statusOptions?: IStatusOptionDto[];
+      priorityOptions?: IPriorityOptionDto[];
+      columns?: ITableauColumnDto[];
+    }
+  >({
+    mutationFn: (input) =>
+      apiFetch<ITableauDto>(`/api/v1/tableaux/${tableauId}`, {
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(input),
       }),
@@ -63,6 +93,7 @@ export function useAddRowMutation(tableauId: string) {
       priority?: string;
       date?: string;
       files?: string[];
+      customFields?: Record<string, unknown>;
     }
   >({
     mutationFn: (input) =>
@@ -91,6 +122,7 @@ export function useUpdateRowMutation(tableauId: string) {
       priority?: string;
       date?: string;
       files?: string[];
+      customFields?: Record<string, unknown>;
     }
   >({
     mutationFn: ({ rowId, ...updates }) =>

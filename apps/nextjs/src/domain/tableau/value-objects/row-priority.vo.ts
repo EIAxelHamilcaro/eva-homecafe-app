@@ -4,14 +4,7 @@ import { z } from "zod";
 export const rowPriorityValues = ["low", "medium", "high", "critical"] as const;
 export type RowPriorityValue = (typeof rowPriorityValues)[number];
 
-const validValues: ReadonlySet<string> = new Set(rowPriorityValues);
-
-const schema = z
-  .string()
-  .refine(
-    (val) => validValues.has(val),
-    "Priority must be 'low', 'medium', 'high' or 'critical'",
-  );
+const schema = z.string().min(1, "Priority cannot be empty");
 
 export class RowPriority extends ValueObject<string> {
   protected validate(value: string): Result<string> {

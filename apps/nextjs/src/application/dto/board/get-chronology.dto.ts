@@ -7,6 +7,7 @@ export const getChronologyInputDtoSchema = z.object({
     .string()
     .regex(/^\d{4}-\d{2}$/, "Month must be in YYYY-MM format")
     .optional(),
+  months: z.coerce.number().int().min(1).max(12).optional(),
 });
 
 export type IGetChronologyInputDto = z.infer<
@@ -18,6 +19,7 @@ export const chronologyCardDtoSchema = z.object({
   title: z.string(),
   description: z.string().nullable(),
   dueDate: z.string(),
+  createdAt: z.string(),
   isCompleted: z.boolean(),
   progress: z.number(),
   boardId: z.string(),

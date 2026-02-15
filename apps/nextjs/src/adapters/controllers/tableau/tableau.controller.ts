@@ -10,6 +10,7 @@ import { deleteTableauInputDtoSchema } from "@/application/dto/tableau/delete-ta
 import type { IGetTableauxOutputDto } from "@/application/dto/tableau/get-tableaux.dto";
 import { removeRowInputDtoSchema } from "@/application/dto/tableau/remove-row.dto";
 import { updateRowInputDtoSchema } from "@/application/dto/tableau/update-row.dto";
+import { updateTableauInputDtoSchema } from "@/application/dto/tableau/update-tableau.dto";
 import { getInjection } from "@/common/di/container";
 
 async function getAuthenticatedUser(
@@ -250,6 +251,52 @@ export async function removeRowController(
       return NextResponse.json({ error }, { status: 403 });
     }
     if (error === "Tableau not found" || error === "Row not found") {
+      return NextResponse.json({ error }, { status: 404 });
+    }
+    return NextResponse.json({ error }, { status: 500 });
+  }
+
+  return NextResponse.json(result.getValue());
+}
+
+export async function updateTableauController(
+  request: Request,
+  tableauId: string,
+): Promise<NextResponse<ITableauDto | { error: string }>> {
+  const session = await getAuthenticatedUser(request);
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  let json: unknown;
+  try {
+    json = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
+
+  const parsed = updateTableauInputDtoSchema.safeParse({
+    ...(json as Record<string, unknown>),
+    tableauId,
+    userId: session.user.id,
+  });
+
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: parsed.error.issues[0]?.message ?? "Invalid input" },
+      { status: 400 },
+    );
+  }
+
+  const useCase = getInjection("UpdateTableauUseCase");
+  const result = await useCase.execute(parsed.data);
+
+  if (result.isFailure) {
+    const error = result.getError();
+    if (error === "Forbidden") {
+      return NextResponse.json({ error }, { status: 403 });
+    }
+    if (error === "Tableau not found") {
       return NextResponse.json({ error }, { status: 404 });
     }
     return NextResponse.json({ error }, { status: 500 });

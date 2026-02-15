@@ -5,21 +5,28 @@ import type {
   IGetChronologyOutputDto,
 } from "@/application/dto/board/get-chronology.dto";
 
-function getMonthRange(month?: string): { start: string; end: string } {
+function getMonthRange(
+  month?: string,
+  monthSpan = 1,
+): { start: string; end: string } {
   const now = new Date();
   const year = month ? Number(month.slice(0, 4)) : now.getFullYear();
   const mon = month ? Number(month.slice(5, 7)) : now.getMonth() + 1;
   const start = `${year}-${String(mon).padStart(2, "0")}-01`;
-  const lastDay = new Date(year, mon, 0).getDate();
-  const end = `${year}-${String(mon).padStart(2, "0")}-${String(lastDay).padStart(2, "0")}`;
+  const endDate = new Date(year, mon - 1 + monthSpan, 0);
+  const endYear = endDate.getFullYear();
+  const endMon = endDate.getMonth() + 1;
+  const lastDay = endDate.getDate();
+  const end = `${endYear}-${String(endMon).padStart(2, "0")}-${String(lastDay).padStart(2, "0")}`;
   return { start, end };
 }
 
 export async function getChronology(
   userId: string,
   month?: string,
+  months?: number,
 ): Promise<IGetChronologyOutputDto> {
-  const { start, end } = getMonthRange(month);
+  const { start, end } = getMonthRange(month, months ?? 1);
 
   const records = await db
     .select({
@@ -27,6 +34,7 @@ export async function getChronology(
       title: card.title,
       description: card.description,
       dueDate: card.dueDate,
+      createdAt: card.createdAt,
       isCompleted: card.isCompleted,
       progress: card.progress,
       boardId: board.id,
@@ -52,6 +60,7 @@ export async function getChronology(
     title: r.title,
     description: r.description,
     dueDate: r.dueDate as string,
+    createdAt: r.createdAt.toISOString().slice(0, 10),
     isCompleted: r.isCompleted,
     progress: r.progress ?? 0,
     boardId: r.boardId,

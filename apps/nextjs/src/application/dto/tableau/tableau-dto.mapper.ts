@@ -6,6 +6,9 @@ export function tableauToDto(tableau: Tableau): ITableauDto {
   return {
     id: tableau.id.value.toString(),
     title: tableau.get("title").value,
+    statusOptions: tableau.get("statusOptions"),
+    priorityOptions: tableau.get("priorityOptions"),
+    columns: tableau.get("columns"),
     rows: tableau
       .get("rows")
       .sort((a, b) => a.get("position") - b.get("position"))
@@ -16,21 +19,14 @@ export function tableauToDto(tableau: Tableau): ITableauDto {
           Some: (t) => t,
           None: () => null,
         }),
-        status: row.get("status").value as
-          | "todo"
-          | "in_progress"
-          | "waiting"
-          | "done",
-        priority: row.get("priority").value as
-          | "low"
-          | "medium"
-          | "high"
-          | "critical",
+        status: row.get("status").value,
+        priority: row.get("priority").value,
         date: match<string, string | null>(row.get("date"), {
           Some: (d) => d,
           None: () => null,
         }),
         files: row.get("files"),
+        customFields: row.get("customFields"),
         position: row.get("position"),
         createdAt: row.get("createdAt").toISOString(),
         updatedAt: match<Date, string | null>(row.get("updatedAt"), {

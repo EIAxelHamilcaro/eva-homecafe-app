@@ -29,102 +29,116 @@ import {
   Trash2,
   X,
 } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   useAddRowMutation,
   useRemoveRowMutation,
   useUpdateRowMutation,
+  useUpdateTableauMutation,
 } from "@/app/(protected)/_hooks/use-tableaux";
 import type {
+  ITableauColumnDto,
   ITableauDto,
   ITableauRowDto,
 } from "@/application/dto/tableau/common-tableau.dto";
+import { AddColumnPopover } from "./add-column-popover";
+import { CustomFieldCell } from "./custom-field-cell";
+import { DatePickerCell } from "./date-picker-cell";
+import { EditableText } from "./editable-text";
+import { OptionsEditor } from "./options-editor";
 
 interface TableauBoardProps {
   tableau: ITableauDto;
   onDeleteTableau: () => void;
 }
 
-const STATUS_OPTIONS = [
-  { value: "todo", label: "À faire", className: "bg-blue-100 text-blue-700" },
-  {
-    value: "in_progress",
-    label: "En cours",
-    className: "bg-orange-100 text-orange-700",
-  },
-  {
-    value: "waiting",
-    label: "En attente",
-    className: "bg-yellow-100 text-yellow-700",
-  },
-  {
-    value: "done",
-    label: "Terminé",
-    className: "bg-green-100 text-green-700",
-  },
-] as const;
-
-const PRIORITY_OPTIONS = [
-  { value: "low", label: "Basse", bars: 1 },
-  { value: "medium", label: "Moyenne", bars: 2 },
-  { value: "high", label: "Haute", bars: 3 },
-  { value: "critical", label: "Critique", bars: 4 },
-] as const;
-
-function StatusBadge({ status }: { status: string }) {
-  const opt = STATUS_OPTIONS.find((s) => s.value === status);
+function StatusBadge({
+  status,
+  options,
+}: {
+  status: string;
+  options: ITableauDto["statusOptions"];
+}) {
+  const opt = options.find((s) => s.id === status);
   return (
-    <Badge variant="secondary" className={opt?.className ?? ""}>
+    <Badge
+      variant="secondary"
+      className="text-xs"
+      style={opt ? { backgroundColor: opt.color, color: "#374151" } : undefined}
+    >
       {opt?.label ?? status}
     </Badge>
   );
 }
 
-function PriorityBars({ priority }: { priority: string }) {
-  const opt = PRIORITY_OPTIONS.find((p) => p.value === priority);
-  const bars = opt?.bars ?? 1;
-  const colors = [
-    "bg-green-500",
-    "bg-yellow-500",
-    "bg-orange-500",
-    "bg-red-500",
-  ];
+function PriorityBars({
+  priority,
+  options,
+}: {
+  priority: string;
+  options: ITableauDto["priorityOptions"];
+}) {
+  const opt = options.find((p) => p.id === priority);
+  const level = opt?.level ?? 1;
+  const maxLevel = Math.max(...options.map((o) => o.level), 4);
+  const colors = ["#22c55e", "#eab308", "#f97316", "#ef4444"];
+  const colorIndex = Math.min(level - 1, colors.length - 1);
   return (
-    <span className="inline-flex items-end gap-0.5" title={opt?.label}>
-      {[1, 2, 3, 4].map((level) => (
-        <span
-          key={level}
-          className={`w-1 rounded-sm ${level <= bars ? colors[bars - 1] : "bg-muted"}`}
-          style={{ height: `${8 + level * 3}px` }}
-        />
-      ))}
+    <span
+      className="inline-flex items-end gap-0.5"
+      title={opt?.label ?? priority}
+    >
+      {Array.from({ length: maxLevel }, (_, i) => {
+        const barKey = `${priority}-${i}`;
+        return (
+          <span
+            key={barKey}
+            className="w-1 rounded-sm"
+            style={{
+              height: `${8 + (i + 1) * 3}px`,
+              backgroundColor:
+                i < level ? colors[colorIndex] : "hsl(var(--muted))",
+            }}
+          />
+        );
+      })}
     </span>
   );
 }
 
-function formatDate(date: string | null): string {
-  if (!date) return "—";
-  return new Date(date).toLocaleDateString("fr-FR");
-}
-
 function RowItem({
   row,
-  tableauId,
+  tableau,
 }: {
   row: ITableauRowDto;
-  tableauId: string;
+  tableau: ITableauDto;
 }) {
-  const updateRow = useUpdateRowMutation(tableauId);
-  const removeRow = useRemoveRowMutation(tableauId);
+  const updateRow = useUpdateRowMutation(tableau.id);
+  const removeRow = useRemoveRowMutation(tableau.id);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   return (
-    <TableRow className="border-blue-50 last:border-b-0">
-      <TableCell className="text-muted-foreground">
-        {formatDate(row.date)}
+    <TableRow className="group/row border-blue-50 last:border-b-0">
+      <TableCell>
+        <DatePickerCell
+          value={row.date}
+          onSave={(date) => updateRow.mutate({ rowId: row.id, date })}
+        />
       </TableCell>
-      <TableCell className="font-medium">{row.name}</TableCell>
-      <TableCell className="max-w-[200px] truncate text-muted-foreground">
-        {row.text ?? "—"}
+      <TableCell className="font-medium">
+        <EditableText
+          value={row.name}
+          onSave={(name) => updateRow.mutate({ rowId: row.id, name })}
+          placeholder="Sans nom"
+        />
+      </TableCell>
+      <TableCell className="max-w-[200px]">
+        <EditableText
+          value={row.text ?? ""}
+          onSave={(text) => updateRow.mutate({ rowId: row.id, text })}
+          placeholder="—"
+          className="truncate text-muted-foreground"
+        />
       </TableCell>
       <TableCell>
         <Select
@@ -135,13 +149,22 @@ function RowItem({
         >
           <SelectTrigger className="h-7 w-[130px] border-0 bg-transparent p-0 shadow-none">
             <SelectValue>
-              <StatusBadge status={row.status} />
+              <StatusBadge
+                status={row.status}
+                options={tableau.statusOptions}
+              />
             </SelectValue>
           </SelectTrigger>
           <SelectContent>
-            {STATUS_OPTIONS.map((opt) => (
-              <SelectItem key={opt.value} value={opt.value}>
-                {opt.label}
+            {tableau.statusOptions.map((opt) => (
+              <SelectItem key={opt.id} value={opt.id}>
+                <span className="flex items-center gap-2">
+                  <span
+                    className="inline-block h-2.5 w-2.5 rounded-full"
+                    style={{ backgroundColor: opt.color }}
+                  />
+                  {opt.label}
+                </span>
               </SelectItem>
             ))}
           </SelectContent>
@@ -156,14 +179,20 @@ function RowItem({
         >
           <SelectTrigger className="h-7 w-[100px] border-0 bg-transparent p-0 shadow-none">
             <SelectValue>
-              <PriorityBars priority={row.priority} />
+              <PriorityBars
+                priority={row.priority}
+                options={tableau.priorityOptions}
+              />
             </SelectValue>
           </SelectTrigger>
           <SelectContent>
-            {PRIORITY_OPTIONS.map((opt) => (
-              <SelectItem key={opt.value} value={opt.value}>
+            {tableau.priorityOptions.map((opt) => (
+              <SelectItem key={opt.id} value={opt.id}>
                 <span className="flex items-center gap-2">
-                  <PriorityBars priority={opt.value} />
+                  <PriorityBars
+                    priority={opt.id}
+                    options={tableau.priorityOptions}
+                  />
                   {opt.label}
                 </span>
               </SelectItem>
@@ -172,11 +201,30 @@ function RowItem({
         </Select>
       </TableCell>
       <TableCell>
-        <div className="flex items-center justify-between">
-          <span className="flex items-center gap-1 text-muted-foreground">
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            className="flex cursor-pointer items-center gap-1 rounded px-1 py-0.5 text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
+            onClick={() => fileInputRef.current?.click()}
+          >
             <FileText className="h-3.5 w-3.5" />
-            {row.files.length}
-          </span>
+            <span className="text-xs">{row.files.length}</span>
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) {
+                updateRow.mutate({
+                  rowId: row.id,
+                  files: [...row.files, file.name],
+                });
+              }
+              e.target.value = "";
+            }}
+          />
           <Button
             variant="ghost"
             size="icon"
@@ -187,6 +235,20 @@ function RowItem({
           </Button>
         </div>
       </TableCell>
+      {tableau.columns.map((col) => (
+        <TableCell key={col.id}>
+          <CustomFieldCell
+            column={col}
+            value={row.customFields[col.id]}
+            onSave={(value) =>
+              updateRow.mutate({
+                rowId: row.id,
+                customFields: { [col.id]: value },
+              })
+            }
+          />
+        </TableCell>
+      ))}
     </TableRow>
   );
 }
@@ -194,6 +256,9 @@ function RowItem({
 export function TableauBoard({ tableau, onDeleteTableau }: TableauBoardProps) {
   const [newRowName, setNewRowName] = useState("");
   const addRow = useAddRowMutation(tableau.id);
+  const updateTableau = useUpdateTableauMutation(tableau.id);
+
+  const totalColumns = 6 + tableau.columns.length;
 
   const handleAddRow = () => {
     if (!newRowName.trim()) return;
@@ -203,10 +268,34 @@ export function TableauBoard({ tableau, onDeleteTableau }: TableauBoardProps) {
     );
   };
 
+  const handleAddColumn = (column: ITableauColumnDto) => {
+    updateTableau.mutate({
+      columns: [...tableau.columns, column],
+    });
+  };
+
+  const handleRemoveColumn = (columnId: string) => {
+    updateTableau.mutate({
+      columns: tableau.columns.filter((c) => c.id !== columnId),
+    });
+  };
+
+  const handleRenameColumn = (columnId: string, name: string) => {
+    updateTableau.mutate({
+      columns: tableau.columns.map((c) =>
+        c.id === columnId ? { ...c, name } : c,
+      ),
+    });
+  };
+
   return (
     <div>
       <div className="mb-3 flex items-center justify-between">
-        <h3 className="text-sm font-semibold">{tableau.title}</h3>
+        <EditableText
+          value={tableau.title}
+          onSave={(title) => updateTableau.mutate({ title })}
+          className="text-sm font-semibold"
+        />
         <Button
           variant="ghost"
           size="icon"
@@ -218,10 +307,10 @@ export function TableauBoard({ tableau, onDeleteTableau }: TableauBoardProps) {
       </div>
 
       <div className="flex">
-        <div className="min-w-0 flex-1 overflow-auto rounded-l-lg bg-white border border-blue-100">
+        <div className="min-w-0 flex-1 overflow-auto rounded-l-lg border border-blue-100 bg-white">
           <Table>
             <TableHeader>
-              <TableRow className="bg-white text-xs text-muted-foreground hover:bg-blue-50/60">
+              <TableRow className="group/header text-xs text-muted-foreground hover:bg-blue-50/60">
                 <TableHead className="font-medium">
                   <span className="flex items-center gap-1.5">
                     <Calendar className="h-3.5 w-3.5" />
@@ -241,15 +330,42 @@ export function TableauBoard({ tableau, onDeleteTableau }: TableauBoardProps) {
                   </span>
                 </TableHead>
                 <TableHead className="font-medium">
-                  <span className="flex items-center gap-1.5">
+                  <span className="group/header flex items-center gap-1.5">
                     <CheckCheck className="h-3.5 w-3.5" />
                     État
+                    <OptionsEditor
+                      options={tableau.statusOptions}
+                      onSave={(opts) =>
+                        updateTableau.mutate({
+                          statusOptions: opts.map((o) => ({
+                            id: o.id,
+                            label: o.label,
+                            color: o.color ?? "#f1f5f9",
+                          })),
+                        })
+                      }
+                    />
                   </span>
                 </TableHead>
                 <TableHead className="font-medium">
-                  <span className="flex items-center gap-1.5">
+                  <span className="group/header flex items-center gap-1.5">
                     <Timer className="h-3.5 w-3.5" />
                     Priorité
+                    <OptionsEditor
+                      options={tableau.priorityOptions.map((o) => ({
+                        id: o.id,
+                        label: o.label,
+                      }))}
+                      onSave={(opts) =>
+                        updateTableau.mutate({
+                          priorityOptions: opts.map((o, i) => ({
+                            id: o.id,
+                            label: o.label,
+                            level: i + 1,
+                          })),
+                        })
+                      }
+                    />
                   </span>
                 </TableHead>
                 <TableHead className="font-medium">
@@ -258,13 +374,32 @@ export function TableauBoard({ tableau, onDeleteTableau }: TableauBoardProps) {
                     Fichiers
                   </span>
                 </TableHead>
+                {tableau.columns.map((col) => (
+                  <TableHead key={col.id} className="font-medium">
+                    <span className="flex items-center gap-1">
+                      <EditableText
+                        value={col.name}
+                        onSave={(name) => handleRenameColumn(col.id, name)}
+                        className="text-xs"
+                      />
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-4 w-4 shrink-0 opacity-0 transition-opacity hover:text-destructive group-hover/header:opacity-100"
+                        onClick={() => handleRemoveColumn(col.id)}
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </Button>
+                    </span>
+                  </TableHead>
+                ))}
               </TableRow>
             </TableHeader>
             <TableBody>
               {tableau.rows.length === 0 && (
                 <TableRow>
                   <TableCell
-                    colSpan={6}
+                    colSpan={totalColumns}
                     className="py-8 text-center text-muted-foreground"
                   >
                     Aucune ligne
@@ -272,12 +407,12 @@ export function TableauBoard({ tableau, onDeleteTableau }: TableauBoardProps) {
                 </TableRow>
               )}
               {tableau.rows.map((row) => (
-                <RowItem key={row.id} row={row} tableauId={tableau.id} />
+                <RowItem key={row.id} row={row} tableau={tableau} />
               ))}
               <TableRow className="bg-blue-50/30 hover:bg-blue-50/50">
-                <TableCell colSpan={6} className="p-0">
+                <TableCell colSpan={totalColumns} className="p-0">
                   <div className="flex items-center gap-2 px-2">
-                    <Plus className="h-4 w-4 shrink-0 text-blue-400" />
+                    <Plus className="h-4 w-4 shrink-0" />
                     <Input
                       placeholder="Ajouter une ligne..."
                       value={newRowName}
@@ -285,7 +420,7 @@ export function TableauBoard({ tableau, onDeleteTableau }: TableauBoardProps) {
                       onKeyDown={(e) => {
                         if (e.key === "Enter") handleAddRow();
                       }}
-                      className="h-9 border-0 bg-transparent text-sm shadow-none placeholder:text-blue-300 focus-visible:ring-0"
+                      className="h-9 border-0 bg-transparent text-sm shadow-none focus-visible:ring-0"
                     />
                     {newRowName.trim() && (
                       <Button
@@ -293,7 +428,7 @@ export function TableauBoard({ tableau, onDeleteTableau }: TableauBoardProps) {
                         size="sm"
                         onClick={handleAddRow}
                         disabled={addRow.isPending}
-                        className="shrink-0 text-blue-600 hover:text-blue-700"
+                        className="shrink-0"
                       >
                         {addRow.isPending ? "..." : "Ajouter"}
                       </Button>
@@ -305,13 +440,10 @@ export function TableauBoard({ tableau, onDeleteTableau }: TableauBoardProps) {
           </Table>
         </div>
 
-        <button
-          type="button"
-          className="flex w-9 shrink-0 items-center justify-center rounded-r-lg border border-l-0 border-blue-100 bg-blue-50/40 text-blue-300 transition-colors hover:bg-blue-50 hover:text-blue-500"
-          title="Ajouter une colonne"
-        >
-          <Plus className="h-4 w-4" />
-        </button>
+        <AddColumnPopover
+          onAdd={handleAddColumn}
+          nextPosition={tableau.columns.length}
+        />
       </div>
     </div>
   );

@@ -7,6 +7,15 @@ import { Tableau } from "@/domain/tableau/tableau.aggregate";
 import { TableauId } from "@/domain/tableau/tableau-id";
 import { TableauRow } from "@/domain/tableau/tableau-row.entity";
 import { TableauRowId } from "@/domain/tableau/tableau-row-id";
+import type {
+  IPriorityOption,
+  IStatusOption,
+  ITableauColumn,
+} from "@/domain/tableau/tableau-types";
+import {
+  DEFAULT_PRIORITY_OPTIONS,
+  DEFAULT_STATUS_OPTIONS,
+} from "@/domain/tableau/tableau-types";
 import { RowName } from "@/domain/tableau/value-objects/row-name.vo";
 import { RowPriority } from "@/domain/tableau/value-objects/row-priority.vo";
 import { RowStatus } from "@/domain/tableau/value-objects/row-status.vo";
@@ -31,12 +40,12 @@ export function tableauToDomain(
       return Result.fail(nameResult.getError());
     }
 
-    const statusResult = RowStatus.create(rr.status as string);
+    const statusResult = RowStatus.create(rr.status);
     if (statusResult.isFailure) {
       return Result.fail(statusResult.getError());
     }
 
-    const priorityResult = RowPriority.create(rr.priority as string);
+    const priorityResult = RowPriority.create(rr.priority);
     if (priorityResult.isFailure) {
       return Result.fail(priorityResult.getError());
     }
@@ -50,6 +59,7 @@ export function tableauToDomain(
           priority: priorityResult.getValue(),
           date: Option.fromNullable(rr.date),
           files: (rr.files as string[]) ?? [],
+          customFields: (rr.customFields as Record<string, unknown>) ?? {},
           position: rr.position,
           createdAt: rr.createdAt,
           updatedAt: Option.fromNullable(rr.updatedAt),
@@ -64,6 +74,13 @@ export function tableauToDomain(
       userId: tableauRecord.userId,
       title: titleResult.getValue(),
       rows,
+      statusOptions:
+        (tableauRecord.statusOptions as IStatusOption[]) ??
+        DEFAULT_STATUS_OPTIONS,
+      priorityOptions:
+        (tableauRecord.priorityOptions as IPriorityOption[]) ??
+        DEFAULT_PRIORITY_OPTIONS,
+      columns: (tableauRecord.columns as ITableauColumn[]) ?? [],
       createdAt: tableauRecord.createdAt,
       updatedAt: Option.fromNullable(tableauRecord.updatedAt),
     },
@@ -80,6 +97,9 @@ export function tableauToPersistence(tableau: Tableau) {
       id: tableau.id.value.toString(),
       userId: tableau.get("userId"),
       title: tableau.get("title").value,
+      statusOptions: tableau.get("statusOptions"),
+      priorityOptions: tableau.get("priorityOptions"),
+      columns: tableau.get("columns"),
       createdAt: tableau.get("createdAt"),
       updatedAt: updatedAt.isSome() ? updatedAt.unwrap() : null,
     },
@@ -92,18 +112,11 @@ export function tableauToPersistence(tableau: Tableau) {
         tableauId: tableau.id.value.toString(),
         name: row.get("name").value,
         text: rowText.isSome() ? rowText.unwrap() : null,
-        status: row.get("status").value as
-          | "todo"
-          | "in_progress"
-          | "waiting"
-          | "done",
-        priority: row.get("priority").value as
-          | "low"
-          | "medium"
-          | "high"
-          | "critical",
+        status: row.get("status").value,
+        priority: row.get("priority").value,
         date: rowDate.isSome() ? rowDate.unwrap() : null,
         files: row.get("files"),
+        customFields: row.get("customFields"),
         position: row.get("position"),
         createdAt: row.get("createdAt"),
         updatedAt: rowUpdatedAt.isSome() ? rowUpdatedAt.unwrap() : null,

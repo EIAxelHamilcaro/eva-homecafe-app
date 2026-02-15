@@ -2,6 +2,7 @@ import { createContainer } from "@evyweb/ioctopus";
 import { createAuthModule } from "./modules/auth.module";
 import { createBoardModule } from "./modules/board.module";
 import { createChatModule } from "./modules/chat.module";
+import { createChronologieModule } from "./modules/chronologie.module";
 import { createContactModule } from "./modules/contact.module";
 import { createEmotionModule } from "./modules/emotion.module";
 import { createFriendModule } from "./modules/friend.module";
@@ -23,6 +24,10 @@ const ApplicationContainer = createContainer();
 ApplicationContainer.load(Symbol("AuthModule"), createAuthModule());
 ApplicationContainer.load(Symbol("BoardModule"), createBoardModule());
 ApplicationContainer.load(Symbol("ChatModule"), createChatModule());
+ApplicationContainer.load(
+  Symbol("ChronologieModule"),
+  createChronologieModule(),
+);
 ApplicationContainer.load(Symbol("ContactModule"), createContactModule());
 ApplicationContainer.load(Symbol("EmotionModule"), createEmotionModule());
 ApplicationContainer.load(Symbol("FriendModule"), createFriendModule());

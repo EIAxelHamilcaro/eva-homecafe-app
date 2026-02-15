@@ -11,6 +11,7 @@ export interface ITableauRowProps {
   priority: RowPriority;
   date: Option<string>;
   files: string[];
+  customFields: Record<string, unknown>;
   position: number;
   createdAt: Date;
   updatedAt: Option<Date>;
@@ -55,6 +56,16 @@ export class TableauRow extends Entity<ITableauRowProps> {
     this._props.updatedAt = Option.some(new Date());
   }
 
+  updateCustomFields(fields: Record<string, unknown>): void {
+    this._props.customFields = { ...this._props.customFields, ...fields };
+    this._props.updatedAt = Option.some(new Date());
+  }
+
+  removeCustomField(columnId: string): void {
+    const { [columnId]: _, ...rest } = this._props.customFields;
+    this._props.customFields = rest;
+  }
+
   updatePosition(position: number): void {
     this._props.position = position;
   }
@@ -67,6 +78,7 @@ export class TableauRow extends Entity<ITableauRowProps> {
       priority: RowPriority;
       date?: string;
       files?: string[];
+      customFields?: Record<string, unknown>;
       position: number;
     },
     id?: UUID<string | number>,
@@ -79,6 +91,7 @@ export class TableauRow extends Entity<ITableauRowProps> {
         priority: props.priority,
         date: Option.fromNullable(props.date ?? null),
         files: props.files ?? [],
+        customFields: props.customFields ?? {},
         position: props.position,
         createdAt: new Date(),
         updatedAt: Option.none(),

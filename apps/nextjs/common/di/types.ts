@@ -1,5 +1,6 @@
 import type { IAuthProvider } from "@/application/ports/auth.service.port";
 import type { IBoardRepository } from "@/application/ports/board-repository.port";
+import type { IChronologieRepository } from "@/application/ports/chronologie-repository.port";
 import type { IConversationRepository } from "@/application/ports/conversation-repository.port";
 import type { IEmailProvider } from "@/application/ports/email.provider.port";
 import type { IEmotionRepository } from "@/application/ports/emotion-repository.port";
@@ -47,6 +48,12 @@ import type { GetMessagesUseCase } from "@/application/use-cases/chat/get-messag
 import type { MarkConversationReadUseCase } from "@/application/use-cases/chat/mark-conversation-read.use-case";
 import type { SendMessageUseCase } from "@/application/use-cases/chat/send-message.use-case";
 import type { UploadMediaUseCase } from "@/application/use-cases/chat/upload-media.use-case";
+import type { AddChronologieEntryUseCase } from "@/application/use-cases/chronologie/add-chronologie-entry.use-case";
+import type { CreateChronologieUseCase } from "@/application/use-cases/chronologie/create-chronologie.use-case";
+import type { DeleteChronologieUseCase } from "@/application/use-cases/chronologie/delete-chronologie.use-case";
+import type { GetUserChronologiesUseCase } from "@/application/use-cases/chronologie/get-user-chronologies.use-case";
+import type { RemoveChronologieEntryUseCase } from "@/application/use-cases/chronologie/remove-chronologie-entry.use-case";
+import type { UpdateChronologieEntryUseCase } from "@/application/use-cases/chronologie/update-chronologie-entry.use-case";
 import type { SendContactMessageUseCase } from "@/application/use-cases/contact/send-contact-message.use-case";
 import type { RecordEmotionUseCase } from "@/application/use-cases/emotion/record-emotion.use-case";
 import type { AcceptInviteLinkUseCase } from "@/application/use-cases/friend/accept-invite-link.use-case";
@@ -84,6 +91,7 @@ import type { CreateTableauUseCase } from "@/application/use-cases/tableau/creat
 import type { DeleteTableauUseCase } from "@/application/use-cases/tableau/delete-tableau.use-case";
 import type { GetUserTableauxUseCase } from "@/application/use-cases/tableau/get-user-tableaux.use-case";
 import type { RemoveTableauRowUseCase } from "@/application/use-cases/tableau/remove-tableau-row.use-case";
+import type { UpdateTableauUseCase } from "@/application/use-cases/tableau/update-tableau.use-case";
 import type { UpdateTableauRowUseCase } from "@/application/use-cases/tableau/update-tableau-row.use-case";
 import type { GenerateUploadUrlUseCase } from "@/application/use-cases/upload/generate-upload-url.use-case";
 import type { GetUserPreferencesUseCase } from "@/application/use-cases/user-preference/get-user-preferences.use-case";
@@ -161,6 +169,13 @@ export const DI_SYMBOLS = {
   IPushNotificationProvider: Symbol.for("IPushNotificationProvider"),
   IPushTokenRepository: Symbol.for("IPushTokenRepository"),
   IRewardRepository: Symbol.for("IRewardRepository"),
+  IChronologieRepository: Symbol.for("IChronologieRepository"),
+  AddChronologieEntryUseCase: Symbol.for("AddChronologieEntryUseCase"),
+  CreateChronologieUseCase: Symbol.for("CreateChronologieUseCase"),
+  DeleteChronologieUseCase: Symbol.for("DeleteChronologieUseCase"),
+  GetUserChronologiesUseCase: Symbol.for("GetUserChronologiesUseCase"),
+  RemoveChronologieEntryUseCase: Symbol.for("RemoveChronologieEntryUseCase"),
+  UpdateChronologieEntryUseCase: Symbol.for("UpdateChronologieEntryUseCase"),
   ITableauRepository: Symbol.for("ITableauRepository"),
   IUserPreferenceRepository: Symbol.for("IUserPreferenceRepository"),
   CreatePostUseCase: Symbol.for("CreatePostUseCase"),
@@ -173,6 +188,7 @@ export const DI_SYMBOLS = {
   GetUserTableauxUseCase: Symbol.for("GetUserTableauxUseCase"),
   RemoveTableauRowUseCase: Symbol.for("RemoveTableauRowUseCase"),
   UpdateTableauRowUseCase: Symbol.for("UpdateTableauRowUseCase"),
+  UpdateTableauUseCase: Symbol.for("UpdateTableauUseCase"),
   DeletePostUseCase: Symbol.for("DeletePostUseCase"),
   GetUserPostsUseCase: Symbol.for("GetUserPostsUseCase"),
   GetPostDetailUseCase: Symbol.for("GetPostDetailUseCase"),
@@ -254,6 +270,13 @@ export interface DI_RETURN_TYPES {
   IPushNotificationProvider: IPushNotificationProvider;
   IPushTokenRepository: IPushTokenRepository;
   IRewardRepository: IRewardRepository;
+  IChronologieRepository: IChronologieRepository;
+  AddChronologieEntryUseCase: AddChronologieEntryUseCase;
+  CreateChronologieUseCase: CreateChronologieUseCase;
+  DeleteChronologieUseCase: DeleteChronologieUseCase;
+  GetUserChronologiesUseCase: GetUserChronologiesUseCase;
+  RemoveChronologieEntryUseCase: RemoveChronologieEntryUseCase;
+  UpdateChronologieEntryUseCase: UpdateChronologieEntryUseCase;
   ITableauRepository: ITableauRepository;
   IUserPreferenceRepository: IUserPreferenceRepository;
   CreatePostUseCase: CreatePostUseCase;
@@ -266,6 +289,7 @@ export interface DI_RETURN_TYPES {
   GetUserTableauxUseCase: GetUserTableauxUseCase;
   RemoveTableauRowUseCase: RemoveTableauRowUseCase;
   UpdateTableauRowUseCase: UpdateTableauRowUseCase;
+  UpdateTableauUseCase: UpdateTableauUseCase;
   DeletePostUseCase: DeletePostUseCase;
   GetUserPostsUseCase: GetUserPostsUseCase;
   GetPostDetailUseCase: GetPostDetailUseCase;

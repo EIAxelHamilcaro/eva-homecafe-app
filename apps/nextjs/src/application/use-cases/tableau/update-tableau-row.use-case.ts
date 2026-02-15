@@ -50,7 +50,7 @@ export class UpdateTableauRowUseCase
     }
 
     if (input.status !== undefined) {
-      const statusResult = RowStatus.create(input.status as string);
+      const statusResult = RowStatus.create(input.status);
       if (statusResult.isFailure) {
         return Result.fail(statusResult.getError());
       }
@@ -58,7 +58,7 @@ export class UpdateTableauRowUseCase
     }
 
     if (input.priority !== undefined) {
-      const priorityResult = RowPriority.create(input.priority as string);
+      const priorityResult = RowPriority.create(input.priority);
       if (priorityResult.isFailure) {
         return Result.fail(priorityResult.getError());
       }
@@ -71,6 +71,10 @@ export class UpdateTableauRowUseCase
 
     if (input.files !== undefined) {
       updates.files = input.files;
+    }
+
+    if (input.customFields !== undefined) {
+      updates.customFields = input.customFields;
     }
 
     const updateResult = tableau.updateRow(

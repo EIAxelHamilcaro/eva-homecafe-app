@@ -5,6 +5,7 @@ import { CreateTableauUseCase } from "@/application/use-cases/tableau/create-tab
 import { DeleteTableauUseCase } from "@/application/use-cases/tableau/delete-tableau.use-case";
 import { GetUserTableauxUseCase } from "@/application/use-cases/tableau/get-user-tableaux.use-case";
 import { RemoveTableauRowUseCase } from "@/application/use-cases/tableau/remove-tableau-row.use-case";
+import { UpdateTableauUseCase } from "@/application/use-cases/tableau/update-tableau.use-case";
 import { UpdateTableauRowUseCase } from "@/application/use-cases/tableau/update-tableau-row.use-case";
 import { DI_SYMBOLS } from "../types";
 
@@ -41,6 +42,10 @@ export const createTableauModule = () => {
   tableauModule
     .bind(DI_SYMBOLS.UpdateTableauRowUseCase)
     .toClass(UpdateTableauRowUseCase, [DI_SYMBOLS.ITableauRepository]);
+
+  tableauModule
+    .bind(DI_SYMBOLS.UpdateTableauUseCase)
+    .toClass(UpdateTableauUseCase, [DI_SYMBOLS.ITableauRepository]);
 
   return tableauModule;
 };

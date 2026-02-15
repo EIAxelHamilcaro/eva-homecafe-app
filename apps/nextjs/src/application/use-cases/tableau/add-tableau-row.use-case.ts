@@ -39,14 +39,12 @@ export class AddTableauRowUseCase
       return Result.fail(nameResult.getError());
     }
 
-    const statusResult = RowStatus.create((input.status ?? "todo") as string);
+    const statusResult = RowStatus.create(input.status ?? "todo");
     if (statusResult.isFailure) {
       return Result.fail(statusResult.getError());
     }
 
-    const priorityResult = RowPriority.create(
-      (input.priority ?? "medium") as string,
-    );
+    const priorityResult = RowPriority.create(input.priority ?? "medium");
     if (priorityResult.isFailure) {
       return Result.fail(priorityResult.getError());
     }
@@ -59,6 +57,7 @@ export class AddTableauRowUseCase
       priority: priorityResult.getValue(),
       date: input.date,
       files: input.files,
+      customFields: input.customFields,
       position,
     });
 

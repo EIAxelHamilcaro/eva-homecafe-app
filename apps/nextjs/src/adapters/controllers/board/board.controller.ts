@@ -203,10 +203,12 @@ export async function getChronologyController(
 
   const url = new URL(request.url);
   const month = url.searchParams.get("month");
+  const months = url.searchParams.get("months");
 
   const parsed = getChronologyInputDtoSchema.safeParse({
     userId: session.user.id,
     month: month || undefined,
+    months: months ? Number(months) : undefined,
   });
 
   if (!parsed.success) {
@@ -217,7 +219,11 @@ export async function getChronologyController(
   }
 
   try {
-    const result = await getChronology(parsed.data.userId, parsed.data.month);
+    const result = await getChronology(
+      parsed.data.userId,
+      parsed.data.month,
+      parsed.data.months,
+    );
     return NextResponse.json(result);
   } catch {
     return NextResponse.json(

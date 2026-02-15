@@ -1,6 +1,4 @@
 import { z } from "zod";
-import { rowPriorityValues } from "@/domain/tableau/value-objects/row-priority.vo";
-import { rowStatusValues } from "@/domain/tableau/value-objects/row-status.vo";
 import type { tableauDtoSchema } from "./common-tableau.dto";
 
 export const updateRowInputDtoSchema = z.object({
@@ -9,10 +7,11 @@ export const updateRowInputDtoSchema = z.object({
   userId: z.string().min(1),
   name: z.string().min(1).max(200).optional(),
   text: z.string().optional(),
-  status: z.enum(rowStatusValues).optional(),
-  priority: z.enum(rowPriorityValues).optional(),
+  status: z.string().min(1).optional(),
+  priority: z.string().min(1).optional(),
   date: z.string().optional(),
   files: z.array(z.string()).optional(),
+  customFields: z.record(z.string(), z.unknown()).optional(),
 });
 
 export type IUpdateRowInputDto = z.infer<typeof updateRowInputDtoSchema>;
