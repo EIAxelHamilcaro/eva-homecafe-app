@@ -32,7 +32,7 @@ export function chronologieToDomain(
           color: er.color,
           position: er.position,
           createdAt: er.createdAt,
-          updatedAt: er.updatedAt ?? undefined,
+          updatedAt: er.updatedAt ?? null,
         },
         ChronologieEntryId.create(new UUID(er.id)),
       ),

@@ -55,7 +55,7 @@ interface BarPosition {
 
 function EntryEditPopover({
   entry,
-  colorClass,
+  colorClass: _colorClass,
   chronologieId,
   children,
 }: {
@@ -259,12 +259,12 @@ export function GanttChart({
         ? barStartRaw < startDate
           ? startDate
           : barStartRaw
-        : barEndRaw!;
+        : (barEndRaw ?? startDate);
       const barEnd = barEndRaw
         ? barEndRaw > endDate
           ? endDate
           : barEndRaw
-        : barStartRaw!;
+        : (barStartRaw ?? endDate);
 
       const leftDays = daysBetween(startDate, barStart);
       const spanDays = Math.max(daysBetween(barStart, barEnd), 1);

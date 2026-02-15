@@ -5,5 +5,5 @@ export interface IChronologieEntryProps {
   color: number;
   position: number;
   createdAt: Date;
-  updatedAt: Date | undefined;
+  updatedAt: Date | null;
 }

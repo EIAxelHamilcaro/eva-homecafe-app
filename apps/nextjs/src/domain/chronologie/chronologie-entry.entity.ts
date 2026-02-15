@@ -57,7 +57,7 @@ export class ChronologieEntry extends Entity<IChronologieEntryProps> {
         color: props.color ?? 0,
         position: props.position,
         createdAt: new Date(),
-        updatedAt: undefined,
+        updatedAt: null,
       },
       id ?? new UUID(),
     );
