@@ -25,12 +25,15 @@ import {
   ArrowLeft,
   ArrowRight,
   Calendar,
+  CheckCheck,
   ChevronDown,
+  FileText,
   Hash,
   List,
   Pencil,
   Plus,
   SquareCheck,
+  Timer,
   Trash2,
   Type,
 } from "lucide-react";
@@ -48,6 +51,9 @@ const COLUMN_TYPE_CONFIG: Record<
   checkbox: { icon: SquareCheck, label: "Case à cocher" },
   date: { icon: Calendar, label: "Date" },
   select: { icon: List, label: "Liste déroulante" },
+  status: { icon: CheckCheck, label: "Statut" },
+  priority: { icon: Timer, label: "Priorité" },
+  file: { icon: FileText, label: "Fichiers" },
 };
 
 const COLUMN_TYPES: { value: ColumnType; label: string }[] = [
@@ -56,6 +62,9 @@ const COLUMN_TYPES: { value: ColumnType; label: string }[] = [
   { value: "checkbox", label: "Case à cocher" },
   { value: "date", label: "Date" },
   { value: "select", label: "Liste déroulante" },
+  { value: "status", label: "Statut" },
+  { value: "priority", label: "Priorité" },
+  { value: "file", label: "Fichiers" },
 ];
 
 interface ColumnHeaderMenuProps {
@@ -168,7 +177,9 @@ export function ColumnHeaderMenu({
             </Select>
           </div>
 
-          {column.type === "select" && (
+          {(column.type === "select" ||
+            column.type === "status" ||
+            column.type === "priority") && (
             <>
               <DropdownMenuSeparator />
               <div className="px-2 py-1.5">
@@ -267,9 +278,7 @@ function SelectOptionsEditor({
                     style={{ backgroundColor: c }}
                     onClick={() =>
                       setDraft(
-                        draft.map((o, j) =>
-                          j === i ? { ...o, color: c } : o,
-                        ),
+                        draft.map((o, j) => (j === i ? { ...o, color: c } : o)),
                       )
                     }
                   />
@@ -293,8 +302,7 @@ function SelectOptionsEditor({
             size="icon"
             className="h-6 w-6 shrink-0"
             onClick={() => {
-              if (draft.length > 1)
-                setDraft(draft.filter((_, j) => j !== i));
+              if (draft.length > 1) setDraft(draft.filter((_, j) => j !== i));
             }}
             disabled={draft.length <= 1}
           >

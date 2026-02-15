@@ -26,6 +26,9 @@ const COLUMN_TYPES: { value: ColumnType; label: string }[] = [
   { value: "checkbox", label: "Case à cocher" },
   { value: "date", label: "Date" },
   { value: "select", label: "Liste déroulante" },
+  { value: "status", label: "Statut" },
+  { value: "priority", label: "Priorité" },
+  { value: "file", label: "Fichiers" },
 ];
 
 interface AddColumnPopoverProps {
@@ -51,11 +54,28 @@ export function AddColumnPopover({
       ...(type === "select"
         ? {
             options: [
-              { id: "opt_1", label: "Option 1" },
-              { id: "opt_2", label: "Option 2" },
+              { id: "opt_1", label: "Option 1", color: "#dbeafe" },
+              { id: "opt_2", label: "Option 2", color: "#ffedd5" },
             ],
           }
-        : {}),
+        : type === "status"
+          ? {
+              options: [
+                { id: "todo", label: "À faire", color: "#dbeafe" },
+                { id: "in_progress", label: "En cours", color: "#ffedd5" },
+                { id: "done", label: "Terminé", color: "#dcfce7" },
+              ],
+            }
+          : type === "priority"
+            ? {
+                options: [
+                  { id: "low", label: "Basse", color: "#dcfce7" },
+                  { id: "medium", label: "Moyenne", color: "#fef3c7" },
+                  { id: "high", label: "Haute", color: "#ffedd5" },
+                  { id: "critical", label: "Critique", color: "#fce7f3" },
+                ],
+              }
+            : {}),
     };
     onAdd(column);
     setName("");

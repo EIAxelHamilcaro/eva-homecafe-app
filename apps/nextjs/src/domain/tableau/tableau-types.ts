@@ -21,7 +21,10 @@ export type TableauColumnType =
   | "number"
   | "checkbox"
   | "date"
-  | "select";
+  | "select"
+  | "status"
+  | "priority"
+  | "file";
 
 export interface ITableauColumn {
   id: string;

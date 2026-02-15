@@ -1,5 +1,6 @@
 export * from "./auth";
 export * from "./board";
+export * from "./calendar-event";
 export * from "./chat";
 export * from "./chronologie";
 export * from "./dashboard-layout";

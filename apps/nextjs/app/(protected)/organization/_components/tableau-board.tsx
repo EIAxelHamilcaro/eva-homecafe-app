@@ -29,7 +29,7 @@ import {
   Trash2,
   X,
 } from "lucide-react";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import {
   useAddRowMutation,
   useRemoveRowMutation,
@@ -46,6 +46,7 @@ import { ColumnHeaderMenu } from "./column-header-menu";
 import { CustomFieldCell } from "./custom-field-cell";
 import { DatePickerCell } from "./date-picker-cell";
 import { EditableText } from "./editable-text";
+import { FilesDialog } from "./files-dialog";
 import { OptionsEditor } from "./options-editor";
 
 interface TableauBoardProps {
@@ -116,8 +117,6 @@ function RowItem({
 }) {
   const updateRow = useUpdateRowMutation(tableau.id);
   const removeRow = useRemoveRowMutation(tableau.id);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
   return (
     <TableRow className="group/row border-blue-50 last:border-b-0">
       <TableCell>
@@ -203,28 +202,9 @@ function RowItem({
       </TableCell>
       <TableCell>
         <div className="flex items-center gap-1">
-          <button
-            type="button"
-            className="flex cursor-pointer items-center gap-1 rounded px-1 py-0.5 text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
-            onClick={() => fileInputRef.current?.click()}
-          >
-            <FileText className="h-3.5 w-3.5" />
-            <span className="text-xs">{row.files.length}</span>
-          </button>
-          <input
-            ref={fileInputRef}
-            type="file"
-            className="hidden"
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) {
-                updateRow.mutate({
-                  rowId: row.id,
-                  files: [...row.files, file.name],
-                });
-              }
-              e.target.value = "";
-            }}
+          <FilesDialog
+            files={row.files}
+            onUpdate={(files) => updateRow.mutate({ rowId: row.id, files })}
           />
           <Button
             variant="ghost"

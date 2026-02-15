@@ -21,7 +21,16 @@ export const columnOptionDtoSchema = z.object({
 export const tableauColumnDtoSchema = z.object({
   id: z.string(),
   name: z.string(),
-  type: z.enum(["text", "number", "checkbox", "date", "select"]),
+  type: z.enum([
+    "text",
+    "number",
+    "checkbox",
+    "date",
+    "select",
+    "status",
+    "priority",
+    "file",
+  ]),
   position: z.number(),
   options: z.array(columnOptionDtoSchema).optional(),
 });

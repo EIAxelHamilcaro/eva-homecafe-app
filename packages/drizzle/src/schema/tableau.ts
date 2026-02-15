@@ -40,7 +40,15 @@ export const tableau = pgTable(
         {
           id: string;
           name: string;
-          type: "text" | "number" | "checkbox" | "date" | "select";
+          type:
+            | "text"
+            | "number"
+            | "checkbox"
+            | "date"
+            | "select"
+            | "status"
+            | "priority"
+            | "file";
           position: number;
           options?: { id: string; label: string; color?: string }[];
         }[]
