@@ -21,12 +21,12 @@ interface KanbanCardProps {
 }
 
 const TAG_COLORS: Record<string, string> = {
-  Perso: "bg-red-400",
-  Maison: "bg-green-500",
-  Déco: "bg-blue-500",
-  Achats: "bg-emerald-500",
-  "Vu sur Pinterest": "bg-orange-400",
-  Travail: "bg-pink-400",
+  Perso: "bg-[#f46604]",
+  Maison: "bg-[#04a056]",
+  Déco: "bg-[#0062dd]",
+  Achats: "bg-[#04a056]",
+  "Vu sur Pinterest": "bg-[#f691c3]",
+  Travail: "bg-[#f691c3]",
 };
 
 const DEFAULT_PRIORITY = {
@@ -61,7 +61,7 @@ function CardContent({
   return (
     <div className="flex min-w-0 flex-1 flex-col gap-3">
       <div className="flex items-start gap-1">
-        <p className="min-w-0 flex-1 text-base font-medium leading-snug">
+        <p className="min-w-0 flex-1 text-xl font-medium leading-snug">
           {card.title}
         </p>
         <span
@@ -85,17 +85,17 @@ function CardContent({
       </div>
 
       {card.description && (
-        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+        <p className="line-clamp-2 text-sm leading-snug text-[#7a7a7a]">
           {card.description}
         </p>
       )}
 
       {card.tags.length > 0 && (
-        <div className="flex flex-wrap gap-1.5">
+        <div className="flex flex-wrap gap-2">
           {card.tags.map((tag) => (
             <span
               key={tag}
-              className={`rounded-full px-2 py-0.5 text-[10px] font-medium text-white ${TAG_COLORS[tag] ?? "bg-gray-400"}`}
+              className={`rounded-full px-2 py-1 text-[10px] font-medium text-white ${TAG_COLORS[tag] ?? "bg-gray-400"}`}
             >
               {tag}
             </span>
@@ -120,7 +120,7 @@ function CardContent({
 
       {card.content && (
         <div className="space-y-0.5">
-          <p className="text-[10px] font-medium text-muted-foreground">Texte</p>
+          <p className="text-[10px] font-medium text-[#7a7a7a]">Texte</p>
           <p className="line-clamp-3 text-[10px] leading-relaxed">
             {card.content}
           </p>
@@ -183,7 +183,7 @@ export function KanbanCard({
 
   if (isOverlay) {
     return (
-      <div className="w-72 rotate-2 scale-105 rounded-xl border border-[#dadada] bg-background p-4 shadow-xl ring-2 ring-primary/20">
+      <div className="w-72 rotate-2 scale-105 rounded-xl border border-[#dadada] bg-white p-4 shadow-xl ring-2 ring-primary/20">
         <div className="flex items-start gap-2">
           <GripVertical className="mt-1 h-4 w-4 shrink-0 text-muted-foreground/30" />
           <CardContent card={card} userName={userName} userImage={userImage} />
@@ -203,7 +203,7 @@ export function KanbanCard({
       ref={setNodeRef}
       style={style}
       {...attributes}
-      className={`rounded-xl border border-[#dadada] bg-background p-4 shadow-sm transition-shadow ${
+      className={`rounded-xl border border-[#dadada] bg-white p-4 shadow-sm transition-shadow ${
         isDragging ? "shadow-md ring-2 ring-primary/10" : "hover:shadow-md"
       }`}
     >

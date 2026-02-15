@@ -8,8 +8,10 @@ import { DeleteBoardUseCase } from "@/application/use-cases/board/delete-board.u
 import { GetUserBoardsUseCase } from "@/application/use-cases/board/get-user-boards.use-case";
 import { MoveCardUseCase } from "@/application/use-cases/board/move-card.use-case";
 import { RemoveCardUseCase } from "@/application/use-cases/board/remove-card.use-case";
+import { RemoveColumnUseCase } from "@/application/use-cases/board/remove-column.use-case";
 import { UpdateBoardUseCase } from "@/application/use-cases/board/update-board.use-case";
 import { UpdateCardUseCase } from "@/application/use-cases/board/update-card.use-case";
+import { UpdateColumnUseCase } from "@/application/use-cases/board/update-column.use-case";
 import { DI_SYMBOLS } from "../types";
 
 export const createBoardModule = () => {
@@ -53,6 +55,10 @@ export const createBoardModule = () => {
     .toClass(RemoveCardUseCase, [DI_SYMBOLS.IBoardRepository]);
 
   boardModule
+    .bind(DI_SYMBOLS.RemoveColumnUseCase)
+    .toClass(RemoveColumnUseCase, [DI_SYMBOLS.IBoardRepository]);
+
+  boardModule
     .bind(DI_SYMBOLS.UpdateBoardUseCase)
     .toClass(UpdateBoardUseCase, [DI_SYMBOLS.IBoardRepository]);
 
@@ -62,6 +68,10 @@ export const createBoardModule = () => {
       DI_SYMBOLS.IBoardRepository,
       DI_SYMBOLS.IEventDispatcher,
     ]);
+
+  boardModule
+    .bind(DI_SYMBOLS.UpdateColumnUseCase)
+    .toClass(UpdateColumnUseCase, [DI_SYMBOLS.IBoardRepository]);
 
   return boardModule;
 };

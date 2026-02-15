@@ -42,6 +42,7 @@ export const boardColumn = pgTable(
       .references(() => board.id, { onDelete: "cascade" }),
     title: text("title").notNull(),
     position: integer("position").notNull(),
+    color: integer("color"),
     createdAt: timestamp("created_at").notNull().defaultNow(),
   },
   (table) => [

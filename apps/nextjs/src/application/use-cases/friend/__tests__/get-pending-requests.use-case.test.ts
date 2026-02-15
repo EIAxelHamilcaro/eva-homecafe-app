@@ -163,11 +163,13 @@ describe("GetPendingRequestsUseCase", () => {
       expect(result.isSuccess).toBe(true);
       const output = result.getValue();
       expect(output.requests).toHaveLength(1);
-      expect(output.requests[0]?.senderId).toBe(senderId);
-      expect(output.requests[0]?.receiverId).toBe(currentUserId);
-      expect(output.requests[0]?.senderEmail).toBe("sender@test.com");
-      expect(output.requests[0]?.senderName).toBe("SenderName");
-      expect(output.requests[0]?.senderDisplayName).toBe("SenderDisplay");
+      const firstRequest = output.requests[0];
+      expect(firstRequest).toBeDefined();
+      expect(firstRequest?.senderId).toBe(senderId);
+      expect(firstRequest?.receiverId).toBe(currentUserId);
+      expect(firstRequest?.senderEmail).toBe("sender@test.com");
+      expect(firstRequest?.senderName).toBe("SenderName");
+      expect(firstRequest?.senderDisplayName).toBe("SenderDisplay");
       expect(output.pagination.total).toBe(1);
     });
 

@@ -1,6 +1,9 @@
 import { Result } from "@packages/ddd-kit";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { MAX_IMAGE_SIZE } from "@/application/dto/chat/upload-media.dto";
+import {
+  type AllowedImageType,
+  MAX_IMAGE_SIZE,
+} from "@/application/dto/chat/upload-media.dto";
 import type { IStorageProvider } from "@/application/ports/storage.provider.port";
 import { UploadMediaUseCase } from "../upload-media.use-case";
 
@@ -55,7 +58,7 @@ describe("UploadMediaUseCase", () => {
       const result = await useCase.execute({
         file: Buffer.from("fake-pdf-data"),
         filename: "doc.pdf",
-        mimeType: "application/pdf",
+        mimeType: "application/pdf" as unknown as AllowedImageType,
         userId: "user-1",
       });
 

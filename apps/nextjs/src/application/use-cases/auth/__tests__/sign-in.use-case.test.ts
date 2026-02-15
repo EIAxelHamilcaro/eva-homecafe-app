@@ -15,8 +15,8 @@ describe("SignInUseCase", () => {
   let mockUserRepo: IUserRepository;
   let mockAuthProvider: IAuthProvider;
 
-  const email = Email.create("test@example.com").getValue();
-  const name = Name.create("Test User").getValue();
+  const email = Email.create("test@example.com" as string).getValue();
+  const name = Name.create("Test User" as string).getValue();
   const userId = new UUID("user-123");
   const mockUser = User.create(
     { email, name, image: Option.none() },

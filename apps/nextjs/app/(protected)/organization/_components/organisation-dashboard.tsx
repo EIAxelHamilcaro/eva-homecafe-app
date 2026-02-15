@@ -38,6 +38,11 @@ const SECTION_TITLES: Record<string, string> = {
   badges: "Badges",
 };
 
+const SECTION_BG: Record<string, string> = {
+  todo: "bg-orange-50",
+  kanban: "bg-[#DADADA]/20",
+};
+
 const DEFAULT_ORDER = [
   "todo",
   "kanban",
@@ -171,6 +176,7 @@ export function OrganisationDashboard({
                     title={SECTION_TITLES[sectionId] ?? sectionId}
                     isCollapsed={collapsedSections.includes(sectionId)}
                     onToggleCollapse={() => toggleCollapse(sectionId)}
+                    bgClassName={SECTION_BG[sectionId]}
                   >
                     {renderSection(sectionId)}
                   </SectionWrapper>

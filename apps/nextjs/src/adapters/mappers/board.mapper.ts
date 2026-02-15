@@ -77,6 +77,7 @@ export function boardToDomain(
         {
           title: colRecord.title,
           position: colRecord.position,
+          color: Option.fromNullable(colRecord.color),
           cards: domainCards,
           createdAt: colRecord.createdAt,
         },
@@ -125,13 +126,17 @@ export function boardToPersistence(board: Board) {
       createdAt: board.get("createdAt"),
       updatedAt: updatedAt.isSome() ? updatedAt.unwrap() : null,
     },
-    columns: board.get("columns").map((col) => ({
-      id: col.id.value.toString(),
-      boardId: board.id.value.toString(),
-      title: col.get("title"),
-      position: col.get("position"),
-      createdAt: col.get("createdAt"),
-    })),
+    columns: board.get("columns").map((col) => {
+      const colColor = col.get("color");
+      return {
+        id: col.id.value.toString(),
+        boardId: board.id.value.toString(),
+        title: col.get("title"),
+        position: col.get("position"),
+        color: colColor.isSome() ? colColor.unwrap() : null,
+        createdAt: col.get("createdAt"),
+      };
+    }),
     cards: board.get("columns").flatMap((col) =>
       col.get("cards").map((c) => {
         const cardUpdatedAt = c.get("updatedAt");

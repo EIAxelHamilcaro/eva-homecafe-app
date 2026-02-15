@@ -12,8 +12,8 @@ describe("VerifyEmailUseCase", () => {
   let mockUserRepo: IUserRepository;
   let mockAuthProvider: IAuthProvider;
 
-  const email = Email.create("test@example.com").getValue();
-  const name = Name.create("Test User").getValue();
+  const email = Email.create("test@example.com" as string).getValue();
+  const name = Name.create("Test User" as string).getValue();
 
   beforeEach(() => {
     vi.clearAllMocks();

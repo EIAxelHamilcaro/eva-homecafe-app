@@ -12,7 +12,7 @@ describe("AddReactionUseCase", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    const content = MessageContent.create("Hello").getValue();
+    const content = MessageContent.create("Hello" as string).getValue();
     message = Message.create({
       conversationId: "conv-1",
       senderId: "user-1",

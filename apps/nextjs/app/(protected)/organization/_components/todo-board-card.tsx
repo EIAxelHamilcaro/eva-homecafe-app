@@ -189,7 +189,7 @@ export function TodoBoardCard({
   const completedCount = cards.filter((c) => c.isCompleted).length;
 
   return (
-    <div className="rounded-lg border p-4">
+    <div className="rounded-lg border bg-white p-4">
       <div className="mb-3 flex items-center justify-between">
         {editingTitle ? (
           <Input

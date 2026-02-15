@@ -58,7 +58,7 @@ describe("RecordEmotionUseCase", () => {
     });
 
     it("should update existing emotion entry", async () => {
-      const category = EmotionCategory.create("calme").getValue();
+      const category = EmotionCategory.create("calme" as string).getValue();
       const existingEntry = EmotionEntry.create({
         userId: "user-1",
         category,
@@ -137,7 +137,7 @@ describe("RecordEmotionUseCase", () => {
     });
 
     it("should fail when update fails", async () => {
-      const category = EmotionCategory.create("calme").getValue();
+      const category = EmotionCategory.create("calme" as string).getValue();
       const existingEntry = EmotionEntry.create({
         userId: "user-1",
         category,
@@ -186,7 +186,7 @@ describe("RecordEmotionUseCase", () => {
     });
 
     it("should dispatch EmotionRecordedEvent on update", async () => {
-      const category = EmotionCategory.create("calme").getValue();
+      const category = EmotionCategory.create("calme" as string).getValue();
       const existingEntry = EmotionEntry.create({
         userId: "user-1",
         category,

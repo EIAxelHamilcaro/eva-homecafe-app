@@ -32,6 +32,9 @@ import {
   useDeleteBoardMutation,
   useDeleteCardMutation,
   useMoveCardMutation,
+  useRemoveColumnMutation,
+  useUpdateBoardMutation,
+  useUpdateColumnMutation,
 } from "@/app/(protected)/_hooks/use-boards";
 import type {
   IBoardDto,
@@ -66,6 +69,8 @@ export function KanbanBoardView({
   } | null>(null);
   const [showAddColumn, setShowAddColumn] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [editTitle, setEditTitle] = useState(board.title);
 
   const boardColumnsRef = useRef(board.columns);
   useEffect(() => {
@@ -85,6 +90,9 @@ export function KanbanBoardView({
   const addCardMutation = useAddCardMutation(board.id);
   const addColumnMutation = useAddColumnMutation(board.id);
   const deleteCardMutation = useDeleteCardMutation(board.id);
+  const updateColumnMutation = useUpdateColumnMutation(board.id);
+  const removeColumnMutation = useRemoveColumnMutation(board.id);
+  const updateBoardMutation = useUpdateBoardMutation(board.id);
   const deleteBoardMutation = useDeleteBoardMutation();
 
   const sensors = useSensors(
@@ -232,6 +240,9 @@ export function KanbanBoardView({
 
   const handleAddCard = useCallback(
     (columnId: string, title: string) => {
+      const existingIds = new Set(
+        columns.flatMap((c) => c.cards.map((card) => card.id)),
+      );
       const today = new Date().toISOString().split("T")[0];
       addCardMutation.mutate(
         { columnId, title, dueDate: today },
@@ -239,11 +250,18 @@ export function KanbanBoardView({
           onSuccess: (data) => {
             setColumns(data.columns);
             onUpdate();
+            const targetCol = data.columns.find((c) => c.id === columnId);
+            const newCard = targetCol?.cards.find(
+              (card) => !existingIds.has(card.id),
+            );
+            if (newCard) {
+              setEditingCard({ card: newCard, columnId });
+            }
           },
         },
       );
     },
-    [addCardMutation, onUpdate],
+    [addCardMutation, onUpdate, columns],
   );
 
   const handleDeleteCard = useCallback(
@@ -277,6 +295,47 @@ export function KanbanBoardView({
     [addColumnMutation, onUpdate],
   );
 
+  const handleUpdateColumn = useCallback(
+    (columnId: string, data: { title?: string; color?: number | null }) => {
+      updateColumnMutation.mutate(
+        { columnId, ...data },
+        {
+          onSuccess: (result) => {
+            setColumns(result.columns);
+            onUpdate();
+          },
+        },
+      );
+    },
+    [updateColumnMutation, onUpdate],
+  );
+
+  const handleDeleteColumn = useCallback(
+    (columnId: string) => {
+      removeColumnMutation.mutate(
+        { columnId },
+        {
+          onSuccess: (result) => {
+            setColumns(result.columns);
+            onUpdate();
+          },
+        },
+      );
+    },
+    [removeColumnMutation, onUpdate],
+  );
+
+  const handleTitleSubmit = useCallback(() => {
+    const trimmed = editTitle.trim();
+    if (trimmed && trimmed !== board.title) {
+      updateBoardMutation.mutate(
+        { title: trimmed },
+        { onSuccess: () => onUpdate() },
+      );
+    }
+    setIsEditingTitle(false);
+  }, [editTitle, board.title, updateBoardMutation, onUpdate]);
+
   const handleDeleteBoard = useCallback(() => {
     deleteBoardMutation.mutate(
       { boardId: board.id },
@@ -298,7 +357,35 @@ export function KanbanBoardView({
               Retour
             </Button>
           )}
-          <h3 className="text-sm font-semibold">{board.title}</h3>
+          {isEditingTitle ? (
+            <input
+              type="text"
+              value={editTitle}
+              onChange={(e) => setEditTitle(e.target.value)}
+              onBlur={handleTitleSubmit}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleTitleSubmit();
+                if (e.key === "Escape") {
+                  setEditTitle(board.title);
+                  setIsEditingTitle(false);
+                }
+              }}
+              className="border-none bg-transparent text-xl font-medium outline-none"
+              maxLength={100}
+              autoFocus
+            />
+          ) : (
+            <button
+              type="button"
+              onClick={() => {
+                setEditTitle(board.title);
+                setIsEditingTitle(true);
+              }}
+              className="cursor-text text-xl font-medium"
+            >
+              {board.title}
+            </button>
+          )}
         </div>
         <div className="flex gap-2">
           <Button
@@ -330,15 +417,18 @@ export function KanbanBoardView({
       >
         <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
           <div className="flex gap-3 pb-4 sm:gap-4">
-            {sortedColumns.map((col) => (
+            {sortedColumns.map((col, index) => (
               <KanbanColumn
                 key={col.id}
                 column={col}
+                colorIndex={col.color ?? index}
                 onAddCard={(title) => handleAddCard(col.id, title)}
                 onEditCard={(card) =>
                   setEditingCard({ card, columnId: col.id })
                 }
                 onDeleteCard={handleDeleteCard}
+                onUpdateColumn={(data) => handleUpdateColumn(col.id, data)}
+                onDeleteColumn={() => handleDeleteColumn(col.id)}
                 userName={userName}
                 userImage={userImage}
               />

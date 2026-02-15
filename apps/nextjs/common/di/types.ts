@@ -17,6 +17,7 @@ import type { IPushNotificationProvider } from "@/application/ports/push-notific
 import type { IPushTokenRepository } from "@/application/ports/push-token-repository.port";
 import type { IRewardRepository } from "@/application/ports/reward-repository.port";
 import type { IStorageProvider } from "@/application/ports/storage.provider.port";
+import type { ITableauRepository } from "@/application/ports/tableau-repository.port";
 import type { IUserRepository } from "@/application/ports/user.repository.port";
 import type { IUserPreferenceRepository } from "@/application/ports/user-preference-repository.port";
 import type { ForgotPasswordUseCase } from "@/application/use-cases/auth/forgot-password.use-case";
@@ -34,8 +35,10 @@ import type { DeleteBoardUseCase } from "@/application/use-cases/board/delete-bo
 import type { GetUserBoardsUseCase } from "@/application/use-cases/board/get-user-boards.use-case";
 import type { MoveCardUseCase } from "@/application/use-cases/board/move-card.use-case";
 import type { RemoveCardUseCase } from "@/application/use-cases/board/remove-card.use-case";
+import type { RemoveColumnUseCase } from "@/application/use-cases/board/remove-column.use-case";
 import type { UpdateBoardUseCase } from "@/application/use-cases/board/update-board.use-case";
 import type { UpdateCardUseCase } from "@/application/use-cases/board/update-card.use-case";
+import type { UpdateColumnUseCase } from "@/application/use-cases/board/update-column.use-case";
 import type { AddReactionUseCase } from "@/application/use-cases/chat/add-reaction.use-case";
 import type { CreateConversationUseCase } from "@/application/use-cases/chat/create-conversation.use-case";
 import type { DeleteConversationUseCase } from "@/application/use-cases/chat/delete-conversation.use-case";
@@ -76,6 +79,12 @@ import type { UpdateProfileUseCase } from "@/application/use-cases/profile/updat
 import type { RegisterPushTokenUseCase } from "@/application/use-cases/push-token/register-push-token.use-case";
 import type { UnregisterPushTokenUseCase } from "@/application/use-cases/push-token/unregister-push-token.use-case";
 import type { EvaluateAchievementUseCase } from "@/application/use-cases/reward/evaluate-achievement.use-case";
+import type { AddTableauRowUseCase } from "@/application/use-cases/tableau/add-tableau-row.use-case";
+import type { CreateTableauUseCase } from "@/application/use-cases/tableau/create-tableau.use-case";
+import type { DeleteTableauUseCase } from "@/application/use-cases/tableau/delete-tableau.use-case";
+import type { GetUserTableauxUseCase } from "@/application/use-cases/tableau/get-user-tableaux.use-case";
+import type { RemoveTableauRowUseCase } from "@/application/use-cases/tableau/remove-tableau-row.use-case";
+import type { UpdateTableauRowUseCase } from "@/application/use-cases/tableau/update-tableau-row.use-case";
 import type { GenerateUploadUrlUseCase } from "@/application/use-cases/upload/generate-upload-url.use-case";
 import type { GetUserPreferencesUseCase } from "@/application/use-cases/user-preference/get-user-preferences.use-case";
 import type { UpdateUserPreferencesUseCase } from "@/application/use-cases/user-preference/update-user-preferences.use-case";
@@ -133,8 +142,10 @@ export const DI_SYMBOLS = {
   GetUserBoardsUseCase: Symbol.for("GetUserBoardsUseCase"),
   MoveCardUseCase: Symbol.for("MoveCardUseCase"),
   RemoveCardUseCase: Symbol.for("RemoveCardUseCase"),
+  RemoveColumnUseCase: Symbol.for("RemoveColumnUseCase"),
   UpdateBoardUseCase: Symbol.for("UpdateBoardUseCase"),
   UpdateCardUseCase: Symbol.for("UpdateCardUseCase"),
+  UpdateColumnUseCase: Symbol.for("UpdateColumnUseCase"),
   AddPhotoUseCase: Symbol.for("AddPhotoUseCase"),
   DeletePhotoUseCase: Symbol.for("DeletePhotoUseCase"),
   GenerateUploadUrlUseCase: Symbol.for("GenerateUploadUrlUseCase"),
@@ -150,11 +161,18 @@ export const DI_SYMBOLS = {
   IPushNotificationProvider: Symbol.for("IPushNotificationProvider"),
   IPushTokenRepository: Symbol.for("IPushTokenRepository"),
   IRewardRepository: Symbol.for("IRewardRepository"),
+  ITableauRepository: Symbol.for("ITableauRepository"),
   IUserPreferenceRepository: Symbol.for("IUserPreferenceRepository"),
   CreatePostUseCase: Symbol.for("CreatePostUseCase"),
   RegisterPushTokenUseCase: Symbol.for("RegisterPushTokenUseCase"),
   UnregisterPushTokenUseCase: Symbol.for("UnregisterPushTokenUseCase"),
   EvaluateAchievementUseCase: Symbol.for("EvaluateAchievementUseCase"),
+  AddTableauRowUseCase: Symbol.for("AddTableauRowUseCase"),
+  CreateTableauUseCase: Symbol.for("CreateTableauUseCase"),
+  DeleteTableauUseCase: Symbol.for("DeleteTableauUseCase"),
+  GetUserTableauxUseCase: Symbol.for("GetUserTableauxUseCase"),
+  RemoveTableauRowUseCase: Symbol.for("RemoveTableauRowUseCase"),
+  UpdateTableauRowUseCase: Symbol.for("UpdateTableauRowUseCase"),
   DeletePostUseCase: Symbol.for("DeletePostUseCase"),
   GetUserPostsUseCase: Symbol.for("GetUserPostsUseCase"),
   GetPostDetailUseCase: Symbol.for("GetPostDetailUseCase"),
@@ -217,8 +235,10 @@ export interface DI_RETURN_TYPES {
   GetUserBoardsUseCase: GetUserBoardsUseCase;
   MoveCardUseCase: MoveCardUseCase;
   RemoveCardUseCase: RemoveCardUseCase;
+  RemoveColumnUseCase: RemoveColumnUseCase;
   UpdateBoardUseCase: UpdateBoardUseCase;
   UpdateCardUseCase: UpdateCardUseCase;
+  UpdateColumnUseCase: UpdateColumnUseCase;
   AddPhotoUseCase: AddPhotoUseCase;
   DeletePhotoUseCase: DeletePhotoUseCase;
   GenerateUploadUrlUseCase: GenerateUploadUrlUseCase;
@@ -234,11 +254,18 @@ export interface DI_RETURN_TYPES {
   IPushNotificationProvider: IPushNotificationProvider;
   IPushTokenRepository: IPushTokenRepository;
   IRewardRepository: IRewardRepository;
+  ITableauRepository: ITableauRepository;
   IUserPreferenceRepository: IUserPreferenceRepository;
   CreatePostUseCase: CreatePostUseCase;
   RegisterPushTokenUseCase: RegisterPushTokenUseCase;
   UnregisterPushTokenUseCase: UnregisterPushTokenUseCase;
   EvaluateAchievementUseCase: EvaluateAchievementUseCase;
+  AddTableauRowUseCase: AddTableauRowUseCase;
+  CreateTableauUseCase: CreateTableauUseCase;
+  DeleteTableauUseCase: DeleteTableauUseCase;
+  GetUserTableauxUseCase: GetUserTableauxUseCase;
+  RemoveTableauRowUseCase: RemoveTableauRowUseCase;
+  UpdateTableauRowUseCase: UpdateTableauRowUseCase;
   DeletePostUseCase: DeletePostUseCase;
   GetUserPostsUseCase: GetUserPostsUseCase;
   GetPostDetailUseCase: GetPostDetailUseCase;

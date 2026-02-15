@@ -122,7 +122,7 @@ export function SocialFeed() {
       )}
 
       {!isLoading && !error && data && data.data.length > 0 && (
-        <View>
+        <View className="gap-4">
           {data.data.map((post) => {
             const reacted = isLiked(post.id, post.hasReacted);
             const count = likesCount(post.id, post.reactionCount);

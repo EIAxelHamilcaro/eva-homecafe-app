@@ -28,6 +28,10 @@ export function boardToDto(board: Board): IBoardDto {
       id: col.id.value.toString(),
       title: col.get("title"),
       position: col.get("position"),
+      color: match<number, number | null>(col.get("color"), {
+        Some: (c) => c,
+        None: () => null,
+      }),
       cards: col.get("cards").map((c) => ({
         id: c.id.value.toString(),
         title: c.get("title").value,

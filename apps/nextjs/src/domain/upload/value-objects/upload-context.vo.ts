@@ -6,12 +6,13 @@ export const UploadContextEnum = {
   GALLERY: "gallery",
   MOODBOARD: "moodboard",
   AVATAR: "avatar",
+  TABLEAU: "tableau",
 } as const;
 
 export type UploadContextValue =
   (typeof UploadContextEnum)[keyof typeof UploadContextEnum];
 
-const schema = z.enum(["post", "gallery", "moodboard", "avatar"]);
+const schema = z.enum(["post", "gallery", "moodboard", "avatar", "tableau"]);
 
 export class UploadContext extends ValueObject<UploadContextValue> {
   protected validate(value: UploadContextValue): Result<UploadContextValue> {

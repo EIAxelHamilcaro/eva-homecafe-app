@@ -8,6 +8,9 @@ import type { IDeleteBoardOutputDto } from "@/application/dto/board/delete-board
 import type { IGetBoardsOutputDto } from "@/application/dto/board/get-boards.dto";
 import type { IMoveCardOutputDto } from "@/application/dto/board/move-card.dto";
 import type { IRemoveCardOutputDto } from "@/application/dto/board/remove-card.dto";
+import type { IRemoveColumnOutputDto } from "@/application/dto/board/remove-column.dto";
+import type { IUpdateBoardOutputDto } from "@/application/dto/board/update-board.dto";
+import type { IUpdateColumnOutputDto } from "@/application/dto/board/update-column.dto";
 import { apiFetch } from "@/common/api";
 
 export const boardKeys = {
@@ -104,6 +107,48 @@ export function useAddColumnMutation(boardId: string) {
   });
 }
 
+export function useUpdateColumnMutation(boardId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    IUpdateColumnOutputDto,
+    Error,
+    { columnId: string; title?: string; color?: number | null }
+  >({
+    mutationFn: ({ columnId, ...body }) =>
+      apiFetch<IUpdateColumnOutputDto>(
+        `/api/v1/boards/${boardId}/columns/${columnId}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        },
+      ),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: boardKeys.detail(boardId),
+      });
+    },
+  });
+}
+
+export function useRemoveColumnMutation(boardId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation<IRemoveColumnOutputDto, Error, { columnId: string }>({
+    mutationFn: ({ columnId }) =>
+      apiFetch<IRemoveColumnOutputDto>(
+        `/api/v1/boards/${boardId}/columns/${columnId}`,
+        { method: "DELETE" },
+      ),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: boardKeys.detail(boardId),
+      });
+    },
+  });
+}
+
 export function useDeleteCardMutation(boardId: string) {
   const queryClient = useQueryClient();
 
@@ -117,6 +162,22 @@ export function useDeleteCardMutation(boardId: string) {
       queryClient.invalidateQueries({
         queryKey: boardKeys.detail(boardId),
       });
+    },
+  });
+}
+
+export function useUpdateBoardMutation(boardId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation<IUpdateBoardOutputDto, Error, { title?: string }>({
+    mutationFn: (body) =>
+      apiFetch<IUpdateBoardOutputDto>(`/api/v1/boards/${boardId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: boardKeys.all });
     },
   });
 }

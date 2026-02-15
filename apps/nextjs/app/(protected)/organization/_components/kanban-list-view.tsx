@@ -86,7 +86,6 @@ export function KanbanListView({ userName, userImage }: KanbanListViewProps) {
           userImage={userImage}
         />
       ))}
-
       <Button
         variant="outline"
         onClick={() => setDialogOpen(true)}
@@ -95,7 +94,6 @@ export function KanbanListView({ userName, userImage }: KanbanListViewProps) {
         <Plus className="h-4 w-4" />
         Nouveau kanban
       </Button>
-
       <CreateKanbanDialog
         open={dialogOpen}
         onOpenChange={setDialogOpen}

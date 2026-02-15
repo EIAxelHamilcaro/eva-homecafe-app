@@ -5,6 +5,7 @@ import { ColumnId } from "./column-id";
 export interface IColumnProps {
   title: string;
   position: number;
+  color: Option<number>;
   cards: Card[];
   createdAt: Date;
 }
@@ -16,6 +17,14 @@ export class Column extends Entity<IColumnProps> {
 
   get id(): ColumnId {
     return ColumnId.create(this._id);
+  }
+
+  updateTitle(title: string): void {
+    this._props.title = title;
+  }
+
+  updateColor(color: number | undefined): void {
+    this._props.color = Option.fromNullable(color ?? null);
   }
 
   addCard(card: Card): void {
@@ -55,6 +64,7 @@ export class Column extends Entity<IColumnProps> {
     props: {
       title: string;
       position: number;
+      color?: number;
       cards?: Card[];
     },
     id?: UUID<string | number>,
@@ -63,6 +73,7 @@ export class Column extends Entity<IColumnProps> {
       {
         title: props.title,
         position: props.position,
+        color: Option.fromNullable(props.color ?? null),
         cards: props.cards ?? [],
         createdAt: new Date(),
       },

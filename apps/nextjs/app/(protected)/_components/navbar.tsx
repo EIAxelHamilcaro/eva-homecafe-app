@@ -8,7 +8,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@packages/ui/components/ui/sheet";
-import { AlignJustify, Bell, Search, User } from "lucide-react";
+import { AlignJustify, Bell, User } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -57,14 +57,6 @@ export function Navbar({ user }: { user: IUserDto }) {
         </Link>
 
         <div className="hidden items-center gap-1 lg:flex">
-          <Link
-            href="/dashboard"
-            className="rounded-full p-2 font-extrabold text-homecafe-orange transition-colors hover:bg-muted"
-            aria-label="Rechercher"
-          >
-            <Search size={20} />
-          </Link>
-
           {navItems.map((item) => {
             const active = isActive(pathname, item.href);
             return (

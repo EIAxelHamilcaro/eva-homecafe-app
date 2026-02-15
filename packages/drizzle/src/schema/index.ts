@@ -12,4 +12,5 @@ export * from "./post";
 export * from "./profile";
 export * from "./push-token";
 export * from "./reward";
+export * from "./tableau";
 export * from "./user-preference";

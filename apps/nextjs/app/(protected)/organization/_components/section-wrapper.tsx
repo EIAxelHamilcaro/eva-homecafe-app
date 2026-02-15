@@ -13,6 +13,7 @@ interface SectionWrapperProps {
   onToggleCollapse: () => void;
   children: ReactNode;
   onEdit?: () => void;
+  bgClassName?: string;
 }
 
 export function SectionWrapper({
@@ -22,6 +23,7 @@ export function SectionWrapper({
   onToggleCollapse,
   children,
   onEdit,
+  bgClassName,
 }: SectionWrapperProps) {
   const {
     attributes,
@@ -41,7 +43,7 @@ export function SectionWrapper({
     <div
       ref={setNodeRef}
       style={style}
-      className={`rounded-2xl border border-orange-100 bg-white transition-shadow ${
+      className={`rounded-2xl border border-orange-100 ${bgClassName ?? "bg-white"} transition-shadow ${
         isDragging ? "z-10 shadow-lg ring-2 ring-primary/20 opacity-95" : ""
       }`}
     >

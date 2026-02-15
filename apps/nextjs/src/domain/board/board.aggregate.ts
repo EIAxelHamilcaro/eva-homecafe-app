@@ -212,6 +212,30 @@ export class Board extends Aggregate<IBoardProps> {
     return Result.ok();
   }
 
+  updateColumnTitle(columnId: string, title: string): Result<void> {
+    const column = this._props.columns.find(
+      (c) => c.id.value.toString() === columnId,
+    );
+    if (!column) {
+      return Result.fail("Column not found");
+    }
+    column.updateTitle(title);
+    this._props.updatedAt = Option.some(new Date());
+    return Result.ok();
+  }
+
+  updateColumnColor(columnId: string, color: number | undefined): Result<void> {
+    const column = this._props.columns.find(
+      (c) => c.id.value.toString() === columnId,
+    );
+    if (!column) {
+      return Result.fail("Column not found");
+    }
+    column.updateColor(color);
+    this._props.updatedAt = Option.some(new Date());
+    return Result.ok();
+  }
+
   removeColumn(columnId: string): Result<void> {
     const column = this._props.columns.find(
       (c) => c.id.value.toString() === columnId,

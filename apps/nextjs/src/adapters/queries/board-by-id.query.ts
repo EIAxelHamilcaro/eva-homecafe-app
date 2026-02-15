@@ -41,6 +41,7 @@ export async function getBoardById(boardId: string): Promise<IBoardDto | null> {
       id: col.id,
       title: col.title,
       position: col.position,
+      color: col.color ?? null,
       cards: cards
         .filter((c) => c.columnId === col.id)
         .map((c) => ({

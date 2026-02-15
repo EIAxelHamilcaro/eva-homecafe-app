@@ -163,10 +163,12 @@ describe("GetFriendsUseCase", () => {
       expect(result.isSuccess).toBe(true);
       const output = result.getValue();
       expect(output.friends).toHaveLength(1);
-      expect(output.friends[0]?.userId).toBe(friendUserId);
-      expect(output.friends[0]?.email).toBe("friend@test.com");
-      expect(output.friends[0]?.name).toBe("FriendName");
-      expect(output.friends[0]?.displayName).toBe("FriendDisplay");
+      const firstFriend = output.friends[0];
+      expect(firstFriend).toBeDefined();
+      expect(firstFriend?.userId).toBe(friendUserId);
+      expect(firstFriend?.email).toBe("friend@test.com");
+      expect(firstFriend?.name).toBe("FriendName");
+      expect(firstFriend?.displayName).toBe("FriendDisplay");
       expect(output.pagination.total).toBe(1);
     });
 
@@ -232,8 +234,10 @@ describe("GetFriendsUseCase", () => {
       expect(result.isSuccess).toBe(true);
       const output = result.getValue();
       expect(output.friends).toHaveLength(1);
-      expect(output.friends[0]?.displayName).toBeNull();
-      expect(output.friends[0]?.avatarUrl).toBeNull();
+      const friendNoProfile = output.friends[0];
+      expect(friendNoProfile).toBeDefined();
+      expect(friendNoProfile?.displayName).toBeNull();
+      expect(friendNoProfile?.avatarUrl).toBeNull();
     });
 
     it("should use default pagination when not provided", async () => {

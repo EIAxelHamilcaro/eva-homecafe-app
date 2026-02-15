@@ -10,8 +10,12 @@ import type { IMoveCardOutputDto } from "@/application/dto/board/move-card.dto";
 import { moveCardInputDtoSchema } from "@/application/dto/board/move-card.dto";
 import type { IRemoveCardOutputDto } from "@/application/dto/board/remove-card.dto";
 import { removeCardInputDtoSchema } from "@/application/dto/board/remove-card.dto";
+import type { IRemoveColumnOutputDto } from "@/application/dto/board/remove-column.dto";
+import { removeColumnInputDtoSchema } from "@/application/dto/board/remove-column.dto";
 import type { IUpdateCardOutputDto } from "@/application/dto/board/update-card.dto";
 import { updateCardInputDtoSchema } from "@/application/dto/board/update-card.dto";
+import type { IUpdateColumnOutputDto } from "@/application/dto/board/update-column.dto";
+import { updateColumnInputDtoSchema } from "@/application/dto/board/update-column.dto";
 import type { IGetSessionOutputDto } from "@/application/dto/get-session.dto";
 import { getInjection } from "@/common/di/container";
 
@@ -239,6 +243,80 @@ export async function removeCardController(
   }
 
   const useCase = getInjection("RemoveCardUseCase");
+  const result = await useCase.execute(parsed.data);
+
+  if (result.isFailure) {
+    return handleUseCaseError(result.getError());
+  }
+
+  return NextResponse.json(result.getValue());
+}
+
+export async function updateColumnController(
+  request: Request,
+  boardId: string,
+  columnId: string,
+): Promise<NextResponse<IUpdateColumnOutputDto | { error: string }>> {
+  const session = await getAuthenticatedUser(request);
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  let json: unknown;
+  try {
+    json = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
+
+  const parsed = updateColumnInputDtoSchema.safeParse({
+    ...(json as Record<string, unknown>),
+    boardId,
+    columnId,
+    userId: session.user.id,
+  });
+
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: parsed.error.issues[0]?.message ?? "Invalid input" },
+      { status: 400 },
+    );
+  }
+
+  const useCase = getInjection("UpdateColumnUseCase");
+  const result = await useCase.execute(parsed.data);
+
+  if (result.isFailure) {
+    return handleUseCaseError(result.getError());
+  }
+
+  return NextResponse.json(result.getValue());
+}
+
+export async function removeColumnController(
+  request: Request,
+  boardId: string,
+  columnId: string,
+): Promise<NextResponse<IRemoveColumnOutputDto | { error: string }>> {
+  const session = await getAuthenticatedUser(request);
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const parsed = removeColumnInputDtoSchema.safeParse({
+    boardId,
+    columnId,
+    userId: session.user.id,
+  });
+
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: parsed.error.issues[0]?.message ?? "Invalid input" },
+      { status: 400 },
+    );
+  }
+
+  const useCase = getInjection("RemoveColumnUseCase");
   const result = await useCase.execute(parsed.data);
 
   if (result.isFailure) {

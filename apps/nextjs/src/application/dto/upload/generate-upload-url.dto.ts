@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const generateUploadUrlInputDtoSchema = z.object({
-  context: z.enum(["post", "gallery", "moodboard", "avatar"]),
+  context: z.enum(["post", "gallery", "moodboard", "avatar", "tableau"]),
   filename: z.string().min(1, "Filename is required"),
   mimeType: z.enum(["image/jpeg", "image/png", "image/gif", "image/webp"], {
     message: "Only image files are accepted (jpeg, png, gif, webp)",

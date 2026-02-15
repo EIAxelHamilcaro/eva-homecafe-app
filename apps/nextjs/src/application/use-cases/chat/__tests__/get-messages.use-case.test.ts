@@ -53,7 +53,7 @@ describe("GetMessagesUseCase", () => {
 
   describe("happy path", () => {
     it("should return paginated messages", async () => {
-      const content = MessageContent.create("Hello").getValue();
+      const content = MessageContent.create("Hello" as string).getValue();
       const message = Message.create({
         conversationId: conversation.id.value.toString(),
         senderId: "user-1",
@@ -76,7 +76,7 @@ describe("GetMessagesUseCase", () => {
       expect(result.isSuccess).toBe(true);
       const output = result.getValue();
       expect(output.messages).toHaveLength(1);
-      expect(output.messages[0].content).toBe("Hello");
+      expect(output.messages[0]?.content).toBe("Hello");
       expect(output.pagination.total).toBe(1);
     });
   });

@@ -20,6 +20,7 @@ export const columnDtoSchema = z.object({
   id: z.string(),
   title: z.string(),
   position: z.number(),
+  color: z.number().nullable(),
   cards: z.array(cardDtoSchema),
 });
 

@@ -15,8 +15,8 @@ describe("SignUpUseCase", () => {
   let mockUserRepo: IUserRepository;
   let mockAuthProvider: IAuthProvider;
 
-  const email = Email.create("new@example.com").getValue();
-  const name = Name.create("New User").getValue();
+  const email = Email.create("new@example.com" as string).getValue();
+  const name = Name.create("New User" as string).getValue();
   const userId = new UUID("user-456");
   const mockUser = User.create(
     { email, name, image: Option.none() },
