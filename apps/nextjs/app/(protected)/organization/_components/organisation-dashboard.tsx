@@ -30,7 +30,8 @@ import { TableauView } from "./tableau-view";
 import { TodoListView } from "./todo-list-view";
 
 const SECTION_TITLES: Record<string, string> = {
-  "todo-kanban": "To-do & Kanban",
+  todo: "To-do list",
+  kanban: "Kanban",
   tableau: "Tableau",
   chronologie: "Chronologie",
   calendrier: "Calendrier",
@@ -38,7 +39,8 @@ const SECTION_TITLES: Record<string, string> = {
 };
 
 const DEFAULT_ORDER = [
-  "todo-kanban",
+  "todo",
+  "kanban",
   "tableau",
   "chronologie",
   "calendrier",
@@ -51,13 +53,26 @@ export function OrganisationDashboard() {
 
   const [sectionOrder, setSectionOrder] = useState<string[]>(DEFAULT_ORDER);
   const [collapsedSections, setCollapsedSections] = useState<string[]>([]);
+  const [migrated, setMigrated] = useState(false);
 
   useEffect(() => {
-    if (layoutConfig) {
-      setSectionOrder(layoutConfig.sectionOrder);
-      setCollapsedSections(layoutConfig.collapsedSections);
+    if (!layoutConfig) return;
+
+    let order = layoutConfig.sectionOrder;
+    if (!migrated && order.includes("todo-kanban")) {
+      const idx = order.indexOf("todo-kanban");
+      order = [
+        ...order.slice(0, idx),
+        "todo",
+        "kanban",
+        ...order.slice(idx + 1),
+      ];
+      updateLayout.mutate({ sectionOrder: order });
+      setMigrated(true);
     }
-  }, [layoutConfig]);
+    setSectionOrder(order);
+    setCollapsedSections(layoutConfig.collapsedSections);
+  }, [layoutConfig, updateLayout, migrated]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
@@ -97,13 +112,10 @@ export function OrganisationDashboard() {
 
   const renderSection = (sectionId: string) => {
     switch (sectionId) {
-      case "todo-kanban":
-        return (
-          <div className="grid gap-6 lg:grid-cols-[1fr_2fr]">
-            <TodoListView />
-            <KanbanListView />
-          </div>
-        );
+      case "todo":
+        return <TodoListView />;
+      case "kanban":
+        return <KanbanListView />;
       case "tableau":
         return <TableauView />;
       case "chronologie":
@@ -130,18 +142,57 @@ export function OrganisationDashboard() {
           strategy={verticalListSortingStrategy}
         >
           <div className="space-y-6 pb-8">
-            {sectionOrder.map((sectionId) => (
-              <div key={sectionId} id={`section-${sectionId}`}>
-                <SectionWrapper
-                  id={sectionId}
-                  title={SECTION_TITLES[sectionId] ?? sectionId}
-                  isCollapsed={collapsedSections.includes(sectionId)}
-                  onToggleCollapse={() => toggleCollapse(sectionId)}
-                >
-                  {renderSection(sectionId)}
-                </SectionWrapper>
-              </div>
-            ))}
+            {sectionOrder.map((sectionId, index) => {
+              const isTodo = sectionId === "todo";
+              const isKanban = sectionId === "kanban";
+              const nextId = sectionOrder[index + 1];
+              const prevId = sectionOrder[index - 1];
+
+              if (isTodo && nextId === "kanban") {
+                return (
+                  <div
+                    key="todo-kanban-row"
+                    className="grid gap-6 lg:grid-cols-[1fr_2fr]"
+                  >
+                    <div id="section-todo">
+                      <SectionWrapper
+                        id="todo"
+                        title="To-do list"
+                        isCollapsed={collapsedSections.includes("todo")}
+                        onToggleCollapse={() => toggleCollapse("todo")}
+                      >
+                        <TodoListView />
+                      </SectionWrapper>
+                    </div>
+                    <div id="section-kanban">
+                      <SectionWrapper
+                        id="kanban"
+                        title="Kanban"
+                        isCollapsed={collapsedSections.includes("kanban")}
+                        onToggleCollapse={() => toggleCollapse("kanban")}
+                      >
+                        <KanbanListView />
+                      </SectionWrapper>
+                    </div>
+                  </div>
+                );
+              }
+
+              if (isKanban && prevId === "todo") return null;
+
+              return (
+                <div key={sectionId} id={`section-${sectionId}`}>
+                  <SectionWrapper
+                    id={sectionId}
+                    title={SECTION_TITLES[sectionId] ?? sectionId}
+                    isCollapsed={collapsedSections.includes(sectionId)}
+                    onToggleCollapse={() => toggleCollapse(sectionId)}
+                  >
+                    {renderSection(sectionId)}
+                  </SectionWrapper>
+                </div>
+              );
+            })}
           </div>
         </SortableContext>
       </DndContext>

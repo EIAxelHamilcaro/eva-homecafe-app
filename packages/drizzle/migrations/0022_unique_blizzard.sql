@@ -1,0 +1,1 @@
+ALTER TABLE "dashboard_layout" ALTER COLUMN "section_order" SET DEFAULT '["todo","kanban","tableau","chronologie","calendrier","badges"]'::jsonb;

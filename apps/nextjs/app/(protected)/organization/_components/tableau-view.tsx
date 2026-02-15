@@ -59,7 +59,7 @@ export function TableauView() {
       <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-12 text-center">
         <p className="mb-2 text-lg font-medium">Aucun board.</p>
         <p className="text-sm text-muted-foreground">
-          Cr\u00e9ez des to-do lists ou des kanbans pour les voir ici.
+          Créez des to-do lists ou des kanbans pour les voir ici.
         </p>
       </div>
     );

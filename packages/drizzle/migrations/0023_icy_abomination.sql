@@ -1,0 +1,1 @@
+ALTER TABLE "dashboard_layout" ADD COLUMN "pinned_board_id" text;

@@ -238,7 +238,7 @@ export class DrizzleBoardRepository implements IBoardRepository {
         .select()
         .from(boardTable)
         .where(whereClause)
-        .orderBy(desc(boardTable.createdAt))
+        .orderBy(asc(boardTable.createdAt))
         .limit(pagination.limit)
         .offset(offset);
 
@@ -280,7 +280,7 @@ export class DrizzleBoardRepository implements IBoardRepository {
         db
           .select()
           .from(boardTable)
-          .orderBy(desc(boardTable.createdAt))
+          .orderBy(asc(boardTable.createdAt))
           .limit(pagination.limit)
           .offset(offset),
         this.count(),

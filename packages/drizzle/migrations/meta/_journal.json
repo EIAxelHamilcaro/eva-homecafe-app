@@ -155,6 +155,20 @@
       "when": 1771162709488,
       "tag": "0021_lying_wendell_rand",
       "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1771164536799,
+      "tag": "0022_unique_blizzard",
+      "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1771165036934,
+      "tag": "0023_icy_abomination",
+      "breakpoints": true
     }
   ]
 }

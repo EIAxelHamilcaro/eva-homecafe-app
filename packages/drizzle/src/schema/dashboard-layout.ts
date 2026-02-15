@@ -18,13 +18,18 @@ export const dashboardLayout = pgTable(
       .$type<string[]>()
       .notNull()
       .default([
-        "todo-kanban",
+        "todo",
+        "kanban",
         "tableau",
         "chronologie",
         "calendrier",
         "badges",
       ]),
     collapsedSections: jsonb("collapsed_sections")
+      .$type<string[]>()
+      .notNull()
+      .default([]),
+    pinnedBoardIds: jsonb("pinned_board_ids")
       .$type<string[]>()
       .notNull()
       .default([]),

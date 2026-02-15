@@ -13,15 +13,23 @@ import {
 import { Button } from "@packages/ui/components/ui/button";
 import { Checkbox } from "@packages/ui/components/ui/checkbox";
 import { Input } from "@packages/ui/components/ui/input";
+import { Pin, PinOff } from "lucide-react";
 import { useCallback, useState } from "react";
 import type { IBoardDto } from "@/application/dto/board/common-board.dto";
 
 interface TodoBoardCardProps {
   board: IBoardDto;
   onUpdate: () => void;
+  isPinned?: boolean;
+  onTogglePin?: (boardId: string) => void;
 }
 
-export function TodoBoardCard({ board, onUpdate }: TodoBoardCardProps) {
+export function TodoBoardCard({
+  board,
+  onUpdate,
+  isPinned,
+  onTogglePin,
+}: TodoBoardCardProps) {
   const [editingTitle, setEditingTitle] = useState(false);
   const [title, setTitle] = useState(board.title);
   const [newItemTitle, setNewItemTitle] = useState("");
@@ -181,6 +189,21 @@ export function TodoBoardCard({ board, onUpdate }: TodoBoardCardProps) {
           <span className="text-xs text-muted-foreground">
             {completedCount}/{cards.length}
           </span>
+          {onTogglePin && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => onTogglePin(board.id)}
+              className={`h-7 w-7 ${isPinned ? "text-orange-500" : "text-muted-foreground hover:text-orange-500"}`}
+              aria-label={isPinned ? "Dépingler" : "Épingler au dashboard"}
+            >
+              {isPinned ? (
+                <PinOff className="h-4 w-4" />
+              ) : (
+                <Pin className="h-4 w-4" />
+              )}
+            </Button>
+          )}
           <Button
             variant="ghost"
             onClick={() => setDeleteDialogOpen(true)}

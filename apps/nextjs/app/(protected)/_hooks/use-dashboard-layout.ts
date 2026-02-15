@@ -5,6 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 interface DashboardLayoutConfig {
   sectionOrder: string[];
   collapsedSections: string[];
+  pinnedBoardIds: string[];
 }
 
 export function useDashboardLayoutQuery() {

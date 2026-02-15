@@ -141,6 +141,7 @@ export function CreateTodoDialog({
                   />
                   {items.length > 1 && (
                     <Button
+                      type="button"
                       variant="ghost"
                       onClick={() => handleRemoveItem(index)}
                       className="rounded-md px-2 text-sm text-muted-foreground hover:text-destructive"
@@ -153,6 +154,7 @@ export function CreateTodoDialog({
               ))}
             </div>
             <Button
+              type="button"
               variant="ghost"
               onClick={handleAddItem}
               className="mt-2 text-sm text-primary hover:underline"

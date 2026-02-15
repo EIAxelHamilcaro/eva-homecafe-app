@@ -9,9 +9,9 @@ interface TabNavigationProps {
 }
 
 const TABS = [
-  { id: "todo-kanban", label: "To-do list", scrollTo: "todo-kanban" },
+  { id: "todo", label: "To-do list", scrollTo: "todo" },
+  { id: "kanban", label: "Kanban", scrollTo: "kanban" },
   { id: "tableau", label: "Tableau", scrollTo: "tableau" },
-  { id: "kanban", label: "Kanban", scrollTo: "todo-kanban" },
   { id: "chronologie", label: "Chronologie", scrollTo: "chronologie" },
   { id: "calendrier", label: "Calendrier", scrollTo: "calendrier" },
 ] as const;

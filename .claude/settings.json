@@ -21,12 +21,8 @@
     "ask": ["Bash(git push:*)"],
     "defaultMode": "acceptEdits"
   },
+  "skipDangerousModePermissionPrompt": true,
   "sandbox": {
-    "enabled": true,
-    "autoAllowBashIfSandboxed": true,
-    "allowUnsandboxedCommands": false,
-    "network": {
-      "allowLocalBinding": true
-    }
+    "enabled": false
   }
 }

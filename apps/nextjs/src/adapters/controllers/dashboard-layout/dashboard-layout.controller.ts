@@ -8,7 +8,8 @@ import type { IGetSessionOutputDto } from "@/application/dto/get-session.dto";
 import { getInjection } from "@/common/di/container";
 
 const DEFAULT_SECTION_ORDER = [
-  "todo-kanban",
+  "todo",
+  "kanban",
   "tableau",
   "chronologie",
   "calendrier",
@@ -37,6 +38,7 @@ async function getAuthenticatedUser(
 interface DashboardLayoutResponse {
   sectionOrder: string[];
   collapsedSections: string[];
+  pinnedBoardIds: string[];
 }
 
 export async function getDashboardLayoutController(
@@ -57,12 +59,14 @@ export async function getDashboardLayoutController(
     return NextResponse.json({
       sectionOrder: existing.sectionOrder as string[],
       collapsedSections: existing.collapsedSections as string[],
+      pinnedBoardIds: (existing.pinnedBoardIds as string[]) ?? [],
     });
   }
 
   return NextResponse.json({
     sectionOrder: DEFAULT_SECTION_ORDER,
     collapsedSections: [],
+    pinnedBoardIds: [],
   });
 }
 
@@ -74,7 +78,11 @@ export async function updateDashboardLayoutController(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  let body: { sectionOrder?: string[]; collapsedSections?: string[] };
+  let body: {
+    sectionOrder?: string[];
+    collapsedSections?: string[];
+    pinnedBoardIds?: string[];
+  };
   try {
     body = await request.json();
   } catch {
@@ -94,6 +102,7 @@ export async function updateDashboardLayoutController(
     if (body.sectionOrder) updates.sectionOrder = body.sectionOrder;
     if (body.collapsedSections !== undefined)
       updates.collapsedSections = body.collapsedSections;
+    if ("pinnedBoardIds" in body) updates.pinnedBoardIds = body.pinnedBoardIds;
 
     await db
       .update(dashboardLayout)
@@ -105,6 +114,7 @@ export async function updateDashboardLayoutController(
       userId,
       sectionOrder: body.sectionOrder ?? DEFAULT_SECTION_ORDER,
       collapsedSections: body.collapsedSections ?? [],
+      pinnedBoardIds: body.pinnedBoardIds ?? [],
     });
   }
 

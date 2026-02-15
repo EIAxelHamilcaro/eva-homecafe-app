@@ -9,8 +9,8 @@ import { JournalWidget } from "./_components/journal-widget";
 import { MessagesWidget } from "./_components/messages-widget";
 import { MoodWidget } from "./_components/mood-widget";
 import { MoodboardWidgetServer } from "./_components/moodboard-widget-server";
+import { PinnedTodoWidget } from "./_components/pinned-todo-widget";
 import { SuiviWeeklyWidget } from "./_components/suivi-weekly-widget";
-import { TasksWidget } from "./_components/tasks-widget";
 import { WidgetSkeleton } from "./_components/widget-skeleton";
 
 function getLocalToday(): string {
@@ -60,7 +60,7 @@ export default async function DashboardPage({
             <CalendarWidget userId={userId} selectedDate={selectedDate} />
           </Suspense>
           <Suspense fallback={<WidgetSkeleton />}>
-            <TasksWidget userId={userId} />
+            <PinnedTodoWidget />
           </Suspense>
         </div>
 

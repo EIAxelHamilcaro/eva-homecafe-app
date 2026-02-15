@@ -28,7 +28,7 @@ interface FlatCard extends ICardDto {
 
 function getStatusBadge(card: FlatCard): { label: string; className: string } {
   if (card.isCompleted) {
-    return { label: "Termin\u00e9", className: "bg-green-100 text-green-700" };
+    return { label: "Terminé", className: "bg-green-100 text-green-700" };
   }
 
   const col = card.columnTitle.toLowerCase();
@@ -41,7 +41,7 @@ function getStatusBadge(card: FlatCard): { label: string; className: string } {
     return { label: "En cours", className: "bg-orange-100 text-orange-700" };
   }
 
-  return { label: "\u00c0 faire", className: "bg-blue-100 text-blue-700" };
+  return { label: "À faire", className: "bg-blue-100 text-blue-700" };
 }
 
 function getPriorityLabel(progress: number): {
@@ -56,11 +56,11 @@ function getPriorityLabel(progress: number): {
     return { label: "Prioritaire", className: "text-orange-600 font-medium" };
   }
 
-  return { label: "\u2014", className: "text-muted-foreground" };
+  return { label: "—", className: "text-muted-foreground" };
 }
 
 function formatDate(dueDate: string | null): string {
-  if (!dueDate) return "\u2014";
+  if (!dueDate) return "—";
   return new Date(dueDate).toLocaleDateString("fr-FR");
 }
 
@@ -108,13 +108,13 @@ export function TableauBoard({ board, onDeleteBoard }: TableauBoardProps) {
               <th className="px-4 py-2 font-medium">
                 <span className="flex items-center gap-1.5">
                   <CheckCheck className="h-3.5 w-3.5" />
-                  \u00c9tat
+                  État
                 </span>
               </th>
               <th className="px-4 py-2 font-medium">
                 <span className="flex items-center gap-1.5">
                   <Timer className="h-3.5 w-3.5" />
-                  Priorit\u00e9
+                  Priorité
                 </span>
               </th>
               <th className="px-4 py-2 font-medium">
@@ -132,7 +132,7 @@ export function TableauBoard({ board, onDeleteBoard }: TableauBoardProps) {
                   colSpan={6}
                   className="px-4 py-8 text-center text-muted-foreground"
                 >
-                  Aucune t\u00e2che
+                  Aucune tâche
                 </td>
               </tr>
             ) : (
@@ -150,7 +150,7 @@ export function TableauBoard({ board, onDeleteBoard }: TableauBoardProps) {
                     </td>
                     <td className="px-4 py-2 font-medium">{card.title}</td>
                     <td className="max-w-[200px] truncate px-4 py-2 text-muted-foreground">
-                      {card.description ?? "\u2014"}
+                      {card.description ?? "—"}
                     </td>
                     <td className="px-4 py-2">
                       <Badge variant="secondary" className={status.className}>

@@ -1,5 +1,6 @@
 "use client";
 
+import { TooltipProvider } from "@packages/ui/components/ui/tooltip";
 import { ThemeProvider, Toaster } from "@packages/ui/index";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { NextIntlClientProvider } from "next-intl";
@@ -25,7 +26,7 @@ export default function Providers({
           }
           enableSystem
         >
-          {children}
+          <TooltipProvider>{children}</TooltipProvider>
           <Toaster richColors position="top-right" />
         </ThemeProvider>
       </NextIntlClientProvider>
