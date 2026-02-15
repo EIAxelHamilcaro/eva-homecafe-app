@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@packages/ui/components/ui/dialog";
-import { FileText, Plus, Trash2, Upload } from "lucide-react";
+import { FileText, Trash2, Upload } from "lucide-react";
 import { useRef } from "react";
 
 interface FilesDialogProps {
@@ -56,9 +56,9 @@ export function FilesDialog({ files, onUpdate, trigger }: FilesDialogProps) {
             </p>
           ) : (
             <div className="max-h-[300px] space-y-1 overflow-auto">
-              {files.map((file, i) => (
+              {files.map((file, index) => (
                 <div
-                  key={`${file}-${i}`}
+                  key={file}
                   className="group flex items-center justify-between rounded-md border px-3 py-2"
                 >
                   <div className="flex min-w-0 items-center gap-2">
@@ -69,7 +69,7 @@ export function FilesDialog({ files, onUpdate, trigger }: FilesDialogProps) {
                     variant="ghost"
                     size="icon"
                     className="h-7 w-7 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 hover:text-destructive"
-                    onClick={() => handleRemoveFile(i)}
+                    onClick={() => handleRemoveFile(index)}
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                   </Button>
