@@ -46,7 +46,7 @@ export async function MessagesWidget({ userId }: MessagesWidgetProps) {
           </p>
           <Link
             href="/messages"
-            className="mt-4 inline-block rounded-full bg-homecafe-pink px-4 py-1.5 text-sm font-medium text-white hover:opacity-90"
+            className="mt-4 inline-block rounded-full bg-primary px-4 py-1.5 text-sm font-medium text-white hover:opacity-90"
           >
             Voir plus
           </Link>

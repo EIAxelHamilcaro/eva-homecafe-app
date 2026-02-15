@@ -93,10 +93,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
         <p className="text-sm text-homecafe-grey-dark">
           Votre mot de passe a été réinitialisé avec succès.
         </p>
-        <Button
-          asChild
-          className="rounded-full bg-homecafe-pink px-8 py-2.5 text-sm font-medium text-white transition-colors hover:bg-homecafe-pink/80"
-        >
+        <Button asChild className="rounded-full px-8 py-2.5">
           <Link href="/login">Se connecter</Link>
         </Button>
       </div>
@@ -212,7 +209,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
       <Button
         type="submit"
         disabled={submitting}
-        className="rounded-full bg-homecafe-pink px-8 py-2.5 text-sm font-medium text-white transition-colors hover:bg-homecafe-pink/80 disabled:opacity-50"
+        className="rounded-full px-8 py-2.5"
       >
         {submitting ? "Réinitialisation..." : "Réinitialiser"}
       </Button>

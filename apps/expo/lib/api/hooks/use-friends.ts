@@ -5,7 +5,7 @@ import type {
   SendFriendRequestResponse,
 } from "@/types/friend";
 import { api } from "../client";
-import { friendKeys, friendRequestKeys } from "./query-keys";
+import { friendKeys, friendRequestKeys, notificationKeys } from "./query-keys";
 
 export { friendKeys };
 
@@ -32,6 +32,21 @@ export function useSendFriendRequest() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: friendRequestKeys.all });
       queryClient.invalidateQueries({ queryKey: friendKeys.all });
+    },
+  });
+}
+
+export function useRemoveFriend() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ friendUserId }: { friendUserId: string }) =>
+      api.post<{ success: boolean }>("/api/v1/friends/remove", {
+        friendUserId,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: friendKeys.all });
+      queryClient.invalidateQueries({ queryKey: notificationKeys.all });
     },
   });
 }

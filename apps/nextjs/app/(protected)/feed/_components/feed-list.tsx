@@ -165,7 +165,7 @@ export function FeedList({ currentUserId }: FeedListProps) {
             variant="outline"
             disabled={!data.pagination.hasPreviousPage}
             onClick={() => setPage((p) => p - 1)}
-            className="rounded-md border px-3 py-1 text-sm disabled:opacity-50"
+            className="rounded-md border px-3 py-1"
           >
             Précédent
           </Button>
@@ -176,7 +176,7 @@ export function FeedList({ currentUserId }: FeedListProps) {
             variant="outline"
             disabled={!data.pagination.hasNextPage}
             onClick={() => setPage((p) => p + 1)}
-            className="rounded-md border px-3 py-1 text-sm disabled:opacity-50"
+            className="rounded-md border px-3 py-1"
           >
             Suivant
           </Button>

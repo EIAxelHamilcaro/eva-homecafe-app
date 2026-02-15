@@ -5,7 +5,10 @@ import type {
   ISendMessageOutputDto,
 } from "@/application/dto/chat/send-message.dto";
 import type { IConversationRepository } from "@/application/ports/conversation-repository.port";
+import type { IEventDispatcher } from "@/application/ports/event-dispatcher.port";
 import type { IMessageRepository } from "@/application/ports/message-repository.port";
+import type { INotificationRepository } from "@/application/ports/notification-repository.port";
+import type { Conversation } from "@/domain/conversation/conversation.aggregate";
 import { ConversationId } from "@/domain/conversation/conversation-id";
 import {
   ConversationNotFoundError,
@@ -19,6 +22,8 @@ import {
   MediaAttachment,
 } from "@/domain/message/value-objects/media-attachment.vo";
 import { MessageContent } from "@/domain/message/value-objects/message-content.vo";
+import { Notification } from "@/domain/notification/notification.aggregate";
+import { NotificationType } from "@/domain/notification/value-objects/notification-type.vo";
 
 export class SendMessageUseCase
   implements UseCase<ISendMessageInputDto, ISendMessageOutputDto>
@@ -26,6 +31,8 @@ export class SendMessageUseCase
   constructor(
     private readonly conversationRepo: IConversationRepository,
     private readonly messageRepo: IMessageRepository,
+    private readonly notificationRepo: INotificationRepository,
+    private readonly eventDispatcher: IEventDispatcher,
   ) {}
 
   async execute(
@@ -90,7 +97,46 @@ export class SendMessageUseCase
       await this.conversationRepo.update(conversation);
     }
 
+    await this.notifyOtherParticipants(conversation, senderId, content);
+
     return Result.ok(this.toDto(message, attachments ?? []));
+  }
+
+  private async notifyOtherParticipants(
+    conversation: Conversation,
+    senderId: string,
+    content?: string,
+  ): Promise<void> {
+    try {
+      const typeResult = NotificationType.createNewMessage();
+      if (typeResult.isFailure) return;
+
+      const otherParticipants = conversation.getOtherParticipants(senderId);
+      const preview = content
+        ? content.length > 50
+          ? `${content.substring(0, 50)}...`
+          : content
+        : "Pièce jointe";
+
+      for (const participant of otherParticipants) {
+        const notificationResult = Notification.create({
+          userId: participant.userId,
+          type: typeResult.getValue(),
+          title: "Nouveau message",
+          body: preview,
+          data: {
+            conversationId: conversation.id.value.toString(),
+            senderId,
+          },
+        });
+        if (notificationResult.isFailure) continue;
+
+        const notification = notificationResult.getValue();
+        await this.notificationRepo.create(notification);
+        await this.eventDispatcher.dispatchAll(notification.domainEvents);
+        notification.clearEvents();
+      }
+    } catch {}
   }
 
   private async validateAndGetConversation(
@@ -153,7 +199,7 @@ export class SendMessageUseCase
         mimeType: attachment.mimeType as AllowedMimeType,
         size: attachment.size,
         filename: attachment.filename,
-        dimensions: attachment.dimensions,
+        dimensions: attachment.dimensions ?? undefined,
       });
 
       if (attachmentResult.isFailure) {

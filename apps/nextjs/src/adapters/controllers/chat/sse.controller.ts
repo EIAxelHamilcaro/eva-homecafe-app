@@ -10,6 +10,7 @@ export interface SSEMessage {
     | "reaction_removed"
     | "conversation_read"
     | "conversation_created"
+    | "conversation_deleted"
     | "notification"
     | "ping";
   data: unknown;
@@ -61,7 +62,13 @@ class SSEConnectionManager {
   }
 }
 
-export const sseConnectionManager = new SSEConnectionManager();
+const globalForSSE = globalThis as unknown as {
+  sseConnectionManager: SSEConnectionManager | undefined;
+};
+
+export const sseConnectionManager =
+  globalForSSE.sseConnectionManager ?? new SSEConnectionManager();
+globalForSSE.sseConnectionManager = sseConnectionManager;
 
 async function getAuthenticatedUser(
   request: Request,
@@ -222,14 +229,28 @@ export function broadcastConversationCreated(
   });
 }
 
+export function broadcastConversationDeleted(
+  participantIds: string[],
+  data: {
+    conversationId: string;
+    deletedBy: string;
+  },
+): void {
+  sseConnectionManager.sendToUsers(participantIds, {
+    type: "conversation_deleted",
+    data,
+    timestamp: new Date().toISOString(),
+  });
+}
+
 export function broadcastNotification(
   userId: string,
   data: {
     notificationId: string;
-    type: "friend_request" | "friend_accepted" | "new_message";
+    userId: string;
+    notificationType: string;
     title: string;
     body: string;
-    data: Record<string, unknown> | null;
   },
 ): void {
   sseConnectionManager.sendToUser(userId, {

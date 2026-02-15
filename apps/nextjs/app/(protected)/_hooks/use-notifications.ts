@@ -16,7 +16,6 @@ export function useNotificationsQuery() {
     queryKey: notificationKeys.list,
     queryFn: () =>
       apiFetch<IGetNotificationsOutputDto>("/api/v1/notifications"),
-    refetchInterval: 30_000,
   });
 }
 
@@ -25,7 +24,6 @@ export function useUnreadCountQuery() {
     queryKey: notificationKeys.unreadCount,
     queryFn: () =>
       apiFetch<{ unreadCount: number }>("/api/v1/notifications/unread-count"),
-    refetchInterval: 30_000,
   });
 }
 

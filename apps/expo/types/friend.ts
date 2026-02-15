@@ -31,8 +31,15 @@ export interface GetFriendsResponse {
   pagination: Pagination;
 }
 
+export interface PendingRequestWithSender extends FriendRequest {
+  senderEmail: string;
+  senderName: string | null;
+  senderDisplayName: string | null;
+  senderAvatarUrl: string | null;
+}
+
 export interface GetPendingRequestsResponse {
-  requests: FriendRequest[];
+  requests: PendingRequestWithSender[];
   pagination: Pagination;
 }
 

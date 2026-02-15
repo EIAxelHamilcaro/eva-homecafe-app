@@ -1,4 +1,5 @@
 import { createModule } from "@evyweb/ioctopus";
+import { broadcastNotification } from "@/adapters/controllers/chat/sse.controller";
 import {
   getCountQueryForEventType,
   getQueryForField,
@@ -8,6 +9,10 @@ import { InProcessEventDispatcher } from "@/adapters/services/gamification/in-pr
 import { ExpoPushNotificationService } from "@/adapters/services/push/expo-push-notification.service";
 import { EmailNotificationHandler } from "@/application/event-handlers/email-notification.handler";
 import { GamificationHandler } from "@/application/event-handlers/gamification.handler";
+import {
+  type INotificationBroadcast,
+  NotificationSSEHandler,
+} from "@/application/event-handlers/notification-sse.handler";
 import { PushNotificationHandler } from "@/application/event-handlers/push-notification.handler";
 import type { IAchievementQueryProvider } from "@/application/ports/achievement-query.provider.port";
 import type { IEmailProvider } from "@/application/ports/email.provider.port";
@@ -23,6 +28,10 @@ import { DI_SYMBOLS } from "../types";
 const queryProvider: IAchievementQueryProvider = {
   getQueryForField,
   getCountQueryForEventType,
+};
+
+const notificationBroadcast: INotificationBroadcast = {
+  sendNotification: broadcastNotification,
 };
 
 export const createRewardModule = () => {
@@ -72,11 +81,15 @@ export const createRewardModule = () => {
         userRepo,
         userPrefRepo,
       );
-      return new InProcessEventDispatcher(
+      const sseHandler = new NotificationSSEHandler(notificationBroadcast);
+      const dispatcher = new InProcessEventDispatcher(
         gamificationHandler,
         pushHandler,
         emailHandler,
+        sseHandler,
       );
+      evaluateUseCase.setEventDispatcher(dispatcher);
+      return dispatcher;
     },
     [
       DI_SYMBOLS.EvaluateAchievementUseCase,

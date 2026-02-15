@@ -169,28 +169,33 @@ export class AcceptInviteLinkUseCase
     });
   }
 
+  private async resolveUserName(userId: string): Promise<string> {
+    const userResult = await this.userRepo.findById(
+      UserId.create(new UUID(userId)),
+    );
+    const userName = userResult.isSuccess
+      ? match(userResult.getValue(), {
+          Some: (user) => user.get("name").value,
+          None: () => "Un ami",
+        })
+      : "Un ami";
+
+    const profileResult = await this.profileRepo.findByUserId(userId);
+    if (profileResult.isSuccess) {
+      return match(profileResult.getValue(), {
+        Some: (profile) => profile.get("displayName").value ?? userName,
+        None: () => userName,
+      });
+    }
+    return userName;
+  }
+
   private async createNotifications(
     inviterId: string,
     acceptorId: string,
   ): Promise<Result<void>> {
-    const acceptorProfileResult =
-      await this.profileRepo.findByUserId(acceptorId);
-    let acceptorName = "Someone";
-    if (acceptorProfileResult.isSuccess) {
-      acceptorName = match(acceptorProfileResult.getValue(), {
-        Some: (profile) => profile.get("displayName").value ?? "Someone",
-        None: () => "Someone",
-      });
-    }
-
-    const inviterProfileResult = await this.profileRepo.findByUserId(inviterId);
-    let inviterName = "Someone";
-    if (inviterProfileResult.isSuccess) {
-      inviterName = match(inviterProfileResult.getValue(), {
-        Some: (profile) => profile.get("displayName").value ?? "Someone",
-        None: () => "Someone",
-      });
-    }
+    const acceptorName = await this.resolveUserName(acceptorId);
+    const inviterName = await this.resolveUserName(inviterId);
 
     const friendAcceptedTypeResult = NotificationType.createFriendAccepted();
     if (friendAcceptedTypeResult.isFailure) {

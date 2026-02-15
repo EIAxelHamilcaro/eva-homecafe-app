@@ -140,12 +140,31 @@ export async function updateProfileController(
   const useCase = getInjection("UpdateProfileUseCase");
   const result = await useCase.execute(parsed.data);
 
-  if (result.isFailure) {
-    const error = result.getError();
-    if (error.includes("not found")) {
-      return NextResponse.json({ error }, { status: 404 });
+  if (result.isFailure && result.getError().includes("not found")) {
+    const createUseCase = getInjection("CreateProfileUseCase");
+    const createResult = await createUseCase.execute({
+      userId: session.user.id,
+      displayName: json.displayName ?? session.user.name,
+      bio: json.bio,
+      avatarUrl: json.avatarUrl,
+      phone: json.phone,
+      birthday: json.birthday,
+      profession: json.profession,
+      address: json.address,
+    });
+
+    if (createResult.isFailure) {
+      return NextResponse.json(
+        { error: createResult.getError() },
+        { status: 400 },
+      );
     }
-    return NextResponse.json({ error }, { status: 400 });
+
+    return NextResponse.json(createResult.getValue(), { status: 201 });
+  }
+
+  if (result.isFailure) {
+    return NextResponse.json({ error: result.getError() }, { status: 400 });
   }
 
   if (json.avatarUrl !== undefined) {

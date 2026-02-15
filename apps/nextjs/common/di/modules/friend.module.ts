@@ -12,6 +12,7 @@ import { AcceptInviteLinkUseCase } from "@/application/use-cases/friend/accept-i
 import { GetFriendsUseCase } from "@/application/use-cases/friend/get-friends.use-case";
 import { GetInviteLinkUseCase } from "@/application/use-cases/friend/get-invite-link.use-case";
 import { GetPendingRequestsUseCase } from "@/application/use-cases/friend/get-pending-requests.use-case";
+import { RemoveFriendUseCase } from "@/application/use-cases/friend/remove-friend.use-case";
 import { RespondFriendRequestUseCase } from "@/application/use-cases/friend/respond-friend-request.use-case";
 import { SendFriendRequestUseCase } from "@/application/use-cases/friend/send-friend-request.use-case";
 import { SendInviteEmailUseCase } from "@/application/use-cases/friend/send-invite-email.use-case";
@@ -72,6 +73,7 @@ export const createFriendModule = () => {
       DI_SYMBOLS.IFriendRequestRepository,
       DI_SYMBOLS.INotificationRepository,
       DI_SYMBOLS.IProfileRepository,
+      DI_SYMBOLS.IUserRepository,
       DI_SYMBOLS.IEventDispatcher,
     ]);
 
@@ -109,6 +111,10 @@ export const createFriendModule = () => {
       DI_SYMBOLS.INotificationRepository,
       DI_SYMBOLS.IEventDispatcher,
     ]);
+
+  friendModule
+    .bind(DI_SYMBOLS.RemoveFriendUseCase)
+    .toClass(RemoveFriendUseCase, [DI_SYMBOLS.IFriendRequestRepository]);
 
   friendModule
     .bind(DI_SYMBOLS.SendInviteEmailUseCase)

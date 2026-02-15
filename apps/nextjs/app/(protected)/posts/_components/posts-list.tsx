@@ -205,7 +205,7 @@ export function PostsList() {
         </p>
         <Link
           href="/posts/new"
-          className="mt-4 inline-flex rounded-full bg-homecafe-pink px-6 py-2 text-sm font-medium text-white"
+          className="mt-4 inline-flex rounded-full bg-primary px-6 py-2 text-sm font-medium text-white"
         >
           Créer ton premier post
         </Link>
@@ -225,7 +225,7 @@ export function PostsList() {
             variant="outline"
             disabled={!data.pagination.hasPreviousPage}
             onClick={() => setPage((p) => p - 1)}
-            className="rounded-md border px-3 py-1 text-sm disabled:opacity-50"
+            className="rounded-md border px-3 py-1"
           >
             Précédent
           </Button>
@@ -236,7 +236,7 @@ export function PostsList() {
             variant="outline"
             disabled={!data.pagination.hasNextPage}
             onClick={() => setPage((p) => p + 1)}
-            className="rounded-md border px-3 py-1 text-sm disabled:opacity-50"
+            className="rounded-md border px-3 py-1"
           >
             Suivant
           </Button>

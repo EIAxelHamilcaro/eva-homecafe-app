@@ -25,7 +25,7 @@ export function GalleryClient() {
         </div>
         <Button
           onClick={() => uploadRef.current?.trigger()}
-          className="flex items-center gap-1.5 rounded-full bg-homecafe-pink px-4 py-1.5 text-sm font-medium text-white hover:opacity-90"
+          className="rounded-full gap-1.5"
         >
           <Plus size={16} />
           Ajouter une photo

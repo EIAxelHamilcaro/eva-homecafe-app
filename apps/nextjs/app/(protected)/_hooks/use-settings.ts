@@ -29,6 +29,7 @@ export function useUpdateSettingsMutation() {
       notifyNewMessages: boolean;
       notifyFriendActivity: boolean;
       notifyBadgesEarned: boolean;
+      notifyPostActivity: boolean;
       notifyJournalReminder: boolean;
       profileVisibility: boolean;
       rewardsVisibility: "everyone" | "friends" | "nobody";

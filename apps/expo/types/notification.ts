@@ -1,7 +1,10 @@
 export type NotificationType =
   | "friend_request"
   | "friend_accepted"
-  | "new_message";
+  | "new_message"
+  | "post_reaction"
+  | "post_comment"
+  | "reward_earned";
 
 export interface Notification {
   id: string;

@@ -53,7 +53,7 @@ export function GalleryGrid() {
         <p>{error.message}</p>
         <Button
           onClick={() => setPage(page)}
-          className="mt-3 rounded-full bg-red-600 px-4 py-1.5 text-white text-xs hover:bg-red-700"
+          className="mt-3 rounded-full bg-red-600 px-4 text-white text-xs hover:bg-red-700"
         >
           Réessayer
         </Button>
@@ -118,7 +118,7 @@ export function GalleryGrid() {
             variant="outline"
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={!data.pagination.hasPreviousPage || isLoading}
-            className="rounded-full border px-4 py-1.5 text-sm disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-full border px-4 disabled:cursor-not-allowed"
           >
             Précédent
           </Button>
@@ -129,7 +129,7 @@ export function GalleryGrid() {
             variant="outline"
             onClick={() => setPage((p) => p + 1)}
             disabled={!data.pagination.hasNextPage || isLoading}
-            className="rounded-full border px-4 py-1.5 text-sm disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-full border px-4 disabled:cursor-not-allowed"
           >
             Suivant
           </Button>

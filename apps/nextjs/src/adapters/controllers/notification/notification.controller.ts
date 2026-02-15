@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import type { IGetSessionOutputDto } from "@/application/dto/get-session.dto";
 import type { IGetNotificationsOutputDto } from "@/application/dto/notification/get-notifications.dto";
 import type { IMarkNotificationReadOutputDto } from "@/application/dto/notification/mark-notification-read.dto";
+import type { ISendJournalRemindersOutputDto } from "@/application/dto/notification/send-journal-reminders.dto";
 import { getInjection } from "@/common/di/container";
 
 async function getAuthenticatedUser(
@@ -112,4 +113,25 @@ export async function getUnreadCount(
   }
 
   return NextResponse.json({ unreadCount: result.getValue().unreadCount });
+}
+
+export async function sendJournalReminders(
+  request: Request,
+): Promise<NextResponse<ISendJournalRemindersOutputDto | { error: string }>> {
+  const cronSecret = process.env.CRON_SECRET;
+  if (cronSecret) {
+    const authHeader = request.headers.get("authorization");
+    if (authHeader !== `Bearer ${cronSecret}`) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+  }
+
+  const useCase = getInjection("SendJournalRemindersUseCase");
+  const result = await useCase.execute();
+
+  if (result.isFailure) {
+    return NextResponse.json({ error: result.getError() }, { status: 500 });
+  }
+
+  return NextResponse.json(result.getValue());
 }

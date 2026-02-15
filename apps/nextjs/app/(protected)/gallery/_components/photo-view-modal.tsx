@@ -93,7 +93,7 @@ export function PhotoViewModal({
               variant="outline"
               onClick={() => setDeleteDialogOpen(true)}
               disabled={deleting}
-              className="rounded-full border border-red-200 px-3 py-1 text-red-600 text-sm hover:bg-red-50 disabled:opacity-50"
+              className="rounded-full border border-red-200 px-3 text-red-600 hover:bg-red-50"
             >
               {deleting ? "Suppression…" : "Supprimer"}
             </Button>

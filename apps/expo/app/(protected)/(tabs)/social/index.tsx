@@ -2,7 +2,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { RefreshControl, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { InviteFriendsButton } from "@/components/dashboard/invite-friends-button";
+import { FriendsCard } from "@/components/social/friends-card";
 import { SocialFeed } from "@/components/social/social-feed";
 import { SocialGallery } from "@/components/social/social-gallery";
 import { feedGalleryKeys, feedKeys } from "@/lib/api/hooks/query-keys";
@@ -42,8 +42,8 @@ export default function SocialScreen() {
         </View>
 
         <View className="mt-4 gap-4">
+          <FriendsCard />
           <SocialGallery />
-          <InviteFriendsButton />
         </View>
       </ScrollView>
     </SafeAreaView>

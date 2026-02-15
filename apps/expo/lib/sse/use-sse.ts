@@ -31,10 +31,6 @@ export function useSSE({ conversationId, enabled = true }: UseSSEOptions = {}) {
     (event: SSEMessageSentEvent) => {
       const { data } = event;
 
-      if (data.senderId === user?.id) {
-        return;
-      }
-
       if (conversationId && data.conversationId !== conversationId) {
         return;
       }
@@ -47,17 +43,13 @@ export function useSSE({ conversationId, enabled = true }: UseSSEOptions = {}) {
         queryKey: conversationKeys.all,
       });
     },
-    [queryClient, conversationId, user?.id],
+    [queryClient, conversationId],
   );
 
   const handleReactionAdded = useCallback(
     (event: SSEReactionAddedEvent) => {
       const { data } = event;
 
-      if (data.userId === user?.id) {
-        return;
-      }
-
       if (conversationId && data.conversationId !== conversationId) {
         return;
       }
@@ -66,17 +58,13 @@ export function useSSE({ conversationId, enabled = true }: UseSSEOptions = {}) {
         queryKey: messageKeys.list(data.conversationId),
       });
     },
-    [queryClient, conversationId, user?.id],
+    [queryClient, conversationId],
   );
 
   const handleReactionRemoved = useCallback(
     (event: SSEReactionRemovedEvent) => {
       const { data } = event;
 
-      if (data.userId === user?.id) {
-        return;
-      }
-
       if (conversationId && data.conversationId !== conversationId) {
         return;
       }
@@ -85,7 +73,7 @@ export function useSSE({ conversationId, enabled = true }: UseSSEOptions = {}) {
         queryKey: messageKeys.list(data.conversationId),
       });
     },
-    [queryClient, conversationId, user?.id],
+    [queryClient, conversationId],
   );
 
   const handleConversationRead = useCallback(() => {
@@ -155,6 +143,7 @@ export function useSSE({ conversationId, enabled = true }: UseSSEOptions = {}) {
 
     const client = getSSEClient();
 
+    client.subscribe();
     client.updateConfig({
       onEvent: handleEvent,
       onConnected: () => {
@@ -168,7 +157,7 @@ export function useSSE({ conversationId, enabled = true }: UseSSEOptions = {}) {
     client.connect();
 
     return () => {
-      client.disconnect();
+      client.unsubscribe();
       isConnectedRef.current = false;
     };
   }, [enabled, user, handleEvent]);

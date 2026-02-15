@@ -6,6 +6,10 @@ import type { IGetFriendsOutputDto } from "@/application/dto/friend/get-friends.
 import type { IGetInviteLinkOutputDto } from "@/application/dto/friend/get-invite-link.dto";
 import type { IGetPendingRequestsOutputDto } from "@/application/dto/friend/get-pending-requests.dto";
 import {
+  type IRemoveFriendOutputDto,
+  removeFriendInputDtoSchema,
+} from "@/application/dto/friend/remove-friend.dto";
+import {
   type IRespondFriendRequestOutputDto,
   respondFriendRequestInputDtoSchema,
 } from "@/application/dto/friend/respond-friend-request.dto";
@@ -127,10 +131,13 @@ export async function respondRequest(
     if (error === "Friend request not found") {
       return NextResponse.json({ error }, { status: 404 });
     }
-    if (error === "Not authorized to respond to this request") {
+    if (error === "You are not authorized to respond to this friend request") {
       return NextResponse.json({ error }, { status: 403 });
     }
-    if (error === "Friend request already responded") {
+    if (
+      error === "Can only accept pending friend requests" ||
+      error === "Can only reject pending friend requests"
+    ) {
       return NextResponse.json({ error }, { status: 409 });
     }
     return NextResponse.json({ error }, { status: 500 });
@@ -292,4 +299,44 @@ export async function sendInviteEmail(
   }
 
   return NextResponse.json(result.getValue(), { status: 201 });
+}
+
+export async function removeFriend(
+  request: Request,
+): Promise<NextResponse<IRemoveFriendOutputDto | { error: string }>> {
+  const session = await getAuthenticatedUser(request);
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
+
+  const parseResult = removeFriendInputDtoSchema.safeParse(body);
+  if (!parseResult.success) {
+    return NextResponse.json(
+      { error: parseResult.error.issues[0]?.message ?? "Invalid input" },
+      { status: 400 },
+    );
+  }
+
+  const useCase = getInjection("RemoveFriendUseCase");
+  const result = await useCase.execute({
+    ...parseResult.data,
+    userId: session.user.id,
+  });
+
+  if (result.isFailure) {
+    const error = result.getError();
+    if (error === "Friendship not found") {
+      return NextResponse.json({ error }, { status: 404 });
+    }
+    return NextResponse.json({ error }, { status: 500 });
+  }
+
+  return NextResponse.json(result.getValue());
 }

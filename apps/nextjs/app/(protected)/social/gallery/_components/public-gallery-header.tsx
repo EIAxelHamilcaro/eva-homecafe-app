@@ -21,7 +21,7 @@ export function PublicGalleryHeader() {
       <button
         type="button"
         onClick={() => uploadRef.current?.trigger()}
-        className="flex items-center gap-2 rounded-full bg-homecafe-pink px-4 py-2 text-sm font-medium text-white hover:bg-homecafe-pink/90"
+        className="flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90"
       >
         <Plus className="h-4 w-4" />
         Ajouter une photo

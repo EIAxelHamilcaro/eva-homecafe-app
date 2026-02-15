@@ -155,11 +155,7 @@ export const GalleryUpload = forwardRef<
             <Button variant="outline" onClick={handleCancel}>
               Annuler
             </Button>
-            <Button
-              onClick={handleConfirm}
-              disabled={uploadPhoto.isPending}
-              className="bg-homecafe-pink text-white hover:bg-homecafe-pink/90"
-            >
+            <Button onClick={handleConfirm} disabled={uploadPhoto.isPending}>
               {uploadPhoto.isPending ? "Envoi…" : "Envoyer"}
             </Button>
           </DialogFooter>

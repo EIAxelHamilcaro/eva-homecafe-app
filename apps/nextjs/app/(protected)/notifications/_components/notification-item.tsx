@@ -2,6 +2,7 @@
 
 import { Button } from "@packages/ui/components/ui/button";
 import { Award, Check, X } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useRespondRequestMutation } from "@/app/(protected)/_hooks/use-friends";
@@ -171,13 +172,17 @@ function getNotificationDetails(notification: INotificationDto): {
 
 interface NotificationItemProps {
   notification: INotificationDto;
+  senderImage?: string | null;
 }
 
-export function NotificationItem({ notification }: NotificationItemProps) {
+export function NotificationItem({
+  notification,
+  senderImage,
+}: NotificationItemProps) {
   const markAsRead = useMarkNotificationReadMutation();
   const respondRequest = useRespondRequestMutation();
   const router = useRouter();
-  const [responded, setResponded] = useState(false);
+  const [responded, setResponded] = useState(notification.readAt !== null);
 
   const isUnread = notification.readAt === null;
   const sender = getSenderInfo(notification);
@@ -195,12 +200,22 @@ export function NotificationItem({ notification }: NotificationItemProps) {
     ) {
       router.push(`/posts/${postId}`);
     }
+    if (notification.type === "new_message") {
+      const conversationId = notification.data.conversationId as
+        | string
+        | undefined;
+      if (conversationId) {
+        router.push(`/messages?conversationId=${conversationId}`);
+      } else {
+        router.push("/messages");
+      }
+    }
   }
 
-  function handleAccept() {
+  function handleRespond(accept: boolean) {
     const requestId = notification.data.requestId as string;
     respondRequest.mutate(
-      { requestId, accept: true },
+      { requestId, accept },
       {
         onSuccess: () => {
           setResponded(true);
@@ -208,44 +223,41 @@ export function NotificationItem({ notification }: NotificationItemProps) {
             markAsRead.mutate({ id: notification.id });
           }
         },
-      },
-    );
-  }
-
-  function handleRefuse() {
-    const requestId = notification.data.requestId as string;
-    respondRequest.mutate(
-      { requestId, accept: false },
-      {
-        onSuccess: () => {
+        onError: () => {
           setResponded(true);
-          if (isUnread) {
-            markAsRead.mutate({ id: notification.id });
-          }
         },
       },
     );
   }
+
+  const avatarBgClass =
+    notification.type === "friend_request"
+      ? "bg-indigo-500"
+      : notification.type === "friend_accepted"
+        ? "bg-green-500"
+        : notification.type === "new_message"
+          ? "bg-purple-500"
+          : notification.type === "post_reaction"
+            ? "bg-pink-500"
+            : notification.type === "post_comment"
+              ? "bg-blue-500"
+              : "bg-gray-500";
 
   const letterBadge = details.isReward ? (
     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-amber-500 text-white">
       <Award className="h-5 w-5" />
     </div>
+  ) : senderImage ? (
+    <Image
+      src={senderImage}
+      alt={sender.name}
+      width={40}
+      height={40}
+      className="h-10 w-10 shrink-0 rounded-full object-cover"
+    />
   ) : (
     <div
-      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white ${
-        notification.type === "friend_request"
-          ? "bg-indigo-500"
-          : notification.type === "friend_accepted"
-            ? "bg-green-500"
-            : notification.type === "new_message"
-              ? "bg-purple-500"
-              : notification.type === "post_reaction"
-                ? "bg-pink-500"
-                : notification.type === "post_comment"
-                  ? "bg-blue-500"
-                  : "bg-gray-500"
-      }`}
+      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white ${avatarBgClass}`}
     >
       {sender.initial}
     </div>
@@ -293,7 +305,7 @@ export function NotificationItem({ notification }: NotificationItemProps) {
               className="bg-green-600 text-white hover:bg-green-700"
               onClick={(e) => {
                 e.stopPropagation();
-                handleAccept();
+                handleRespond(true);
               }}
               disabled={respondRequest.isPending}
             >
@@ -305,7 +317,7 @@ export function NotificationItem({ notification }: NotificationItemProps) {
               variant="outline"
               onClick={(e) => {
                 e.stopPropagation();
-                handleRefuse();
+                handleRespond(false);
               }}
               disabled={respondRequest.isPending}
             >

@@ -63,14 +63,20 @@ export class AddReactionUseCase
     emoji: ReactionEmoji,
   ): Result<"added" | "removed"> {
     const reactions = message.get("reactions");
-    const hasReaction = reactions.hasUserReactedWith(userId, emoji);
 
-    if (hasReaction) {
+    if (reactions.hasUserReactedWith(userId, emoji)) {
       const removeResult = message.removeReaction(userId, emoji);
       if (removeResult.isFailure) {
         return Result.fail(removeResult.getError());
       }
       return Result.ok("removed");
+    }
+
+    for (const existing of reactions.getReactionsByUser(userId)) {
+      const removeResult = message.removeReaction(userId, existing.emoji);
+      if (removeResult.isFailure) {
+        return Result.fail(removeResult.getError());
+      }
     }
 
     const addResult = message.addReaction(userId, emoji);

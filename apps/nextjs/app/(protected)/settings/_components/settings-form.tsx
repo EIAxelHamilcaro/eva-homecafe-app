@@ -1,6 +1,20 @@
 "use client";
 
 import { Button } from "@packages/ui/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@packages/ui/components/ui/card";
+import { Label } from "@packages/ui/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@packages/ui/components/ui/select";
 import { useState } from "react";
 import {
   useSettingsQuery,
@@ -16,7 +30,9 @@ interface SettingsState {
   notifyNewMessages: boolean;
   notifyFriendActivity: boolean;
   notifyBadgesEarned: boolean;
+  notifyPostActivity: boolean;
   notifyJournalReminder: boolean;
+  language: "fr" | "en";
 }
 
 const defaultSettings: SettingsState = {
@@ -25,7 +41,9 @@ const defaultSettings: SettingsState = {
   notifyNewMessages: true,
   notifyFriendActivity: true,
   notifyBadgesEarned: true,
+  notifyPostActivity: true,
   notifyJournalReminder: true,
+  language: "fr",
 };
 
 export function SettingsForm() {
@@ -53,9 +71,13 @@ export function SettingsForm() {
       defaultSettings.notifyFriendActivity,
     notifyBadgesEarned:
       serverSettings?.notifyBadgesEarned ?? defaultSettings.notifyBadgesEarned,
+    notifyPostActivity:
+      serverSettings?.notifyPostActivity ?? defaultSettings.notifyPostActivity,
     notifyJournalReminder:
       serverSettings?.notifyJournalReminder ??
       defaultSettings.notifyJournalReminder,
+    language:
+      (serverSettings?.language as "fr" | "en") ?? defaultSettings.language,
   };
 
   const handleChange = (
@@ -101,9 +123,35 @@ export function SettingsForm() {
         notifyNewMessages={settings.notifyNewMessages}
         notifyFriendActivity={settings.notifyFriendActivity}
         notifyBadgesEarned={settings.notifyBadgesEarned}
+        notifyPostActivity={settings.notifyPostActivity}
         notifyJournalReminder={settings.notifyJournalReminder}
         onChange={handleChange}
       />
+
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-lg">Langue</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between">
+            <Label htmlFor="language" className="text-sm">
+              Langue de l'application
+            </Label>
+            <Select
+              value={settings.language}
+              onValueChange={(value) => handleChange("language", value)}
+            >
+              <SelectTrigger id="language" className="w-36">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="fr">Francais</SelectItem>
+                <SelectItem value="en">English</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </CardContent>
+      </Card>
 
       {error && (
         <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">

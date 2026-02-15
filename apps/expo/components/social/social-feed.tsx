@@ -111,9 +111,11 @@ export function SocialFeed() {
           {!data.hasFriends && (
             <Pressable
               onPress={() => router.push("/(protected)/(tabs)/profile" as Href)}
-              className="mt-3 self-center rounded-full bg-homecafe-pink px-4 py-1.5"
+              className="mt-3 self-center rounded-full bg-primary px-4 py-1.5 active:opacity-90"
             >
-              <Text className="text-sm font-medium text-white">Mon profil</Text>
+              <Text className="text-sm font-medium text-primary-foreground">
+                Mon profil
+              </Text>
             </Pressable>
           )}
         </View>

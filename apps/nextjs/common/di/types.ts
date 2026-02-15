@@ -37,6 +37,7 @@ import type { UpdateBoardUseCase } from "@/application/use-cases/board/update-bo
 import type { UpdateCardUseCase } from "@/application/use-cases/board/update-card.use-case";
 import type { AddReactionUseCase } from "@/application/use-cases/chat/add-reaction.use-case";
 import type { CreateConversationUseCase } from "@/application/use-cases/chat/create-conversation.use-case";
+import type { DeleteConversationUseCase } from "@/application/use-cases/chat/delete-conversation.use-case";
 import type { GetConversationsUseCase } from "@/application/use-cases/chat/get-conversations.use-case";
 import type { GetMessagesUseCase } from "@/application/use-cases/chat/get-messages.use-case";
 import type { MarkConversationReadUseCase } from "@/application/use-cases/chat/mark-conversation-read.use-case";
@@ -48,6 +49,7 @@ import type { AcceptInviteLinkUseCase } from "@/application/use-cases/friend/acc
 import type { GetFriendsUseCase } from "@/application/use-cases/friend/get-friends.use-case";
 import type { GetInviteLinkUseCase } from "@/application/use-cases/friend/get-invite-link.use-case";
 import type { GetPendingRequestsUseCase } from "@/application/use-cases/friend/get-pending-requests.use-case";
+import type { RemoveFriendUseCase } from "@/application/use-cases/friend/remove-friend.use-case";
 import type { RespondFriendRequestUseCase } from "@/application/use-cases/friend/respond-friend-request.use-case";
 import type { SendFriendRequestUseCase } from "@/application/use-cases/friend/send-friend-request.use-case";
 import type { SendInviteEmailUseCase } from "@/application/use-cases/friend/send-invite-email.use-case";
@@ -60,6 +62,7 @@ import type { DeleteMoodboardUseCase } from "@/application/use-cases/moodboard/d
 import type { DeletePinUseCase } from "@/application/use-cases/moodboard/delete-pin.use-case";
 import type { GetNotificationsUseCase } from "@/application/use-cases/notification/get-notifications.use-case";
 import type { MarkNotificationReadUseCase } from "@/application/use-cases/notification/mark-notification-read.use-case";
+import type { SendJournalRemindersUseCase } from "@/application/use-cases/notification/send-journal-reminders.use-case";
 import type { CreatePostUseCase } from "@/application/use-cases/post/create-post.use-case";
 import type { DeletePostUseCase } from "@/application/use-cases/post/delete-post.use-case";
 import type { GetPostDetailUseCase } from "@/application/use-cases/post/get-post-detail.use-case";
@@ -100,6 +103,7 @@ export const DI_SYMBOLS = {
   GetMessagesUseCase: Symbol.for("GetMessagesUseCase"),
   SendMessageUseCase: Symbol.for("SendMessageUseCase"),
   AddReactionUseCase: Symbol.for("AddReactionUseCase"),
+  DeleteConversationUseCase: Symbol.for("DeleteConversationUseCase"),
   MarkConversationReadUseCase: Symbol.for("MarkConversationReadUseCase"),
   UploadMediaUseCase: Symbol.for("UploadMediaUseCase"),
   CreateProfileUseCase: Symbol.for("CreateProfileUseCase"),
@@ -116,8 +120,10 @@ export const DI_SYMBOLS = {
   GetPendingRequestsUseCase: Symbol.for("GetPendingRequestsUseCase"),
   GetInviteLinkUseCase: Symbol.for("GetInviteLinkUseCase"),
   AcceptInviteLinkUseCase: Symbol.for("AcceptInviteLinkUseCase"),
+  RemoveFriendUseCase: Symbol.for("RemoveFriendUseCase"),
   GetNotificationsUseCase: Symbol.for("GetNotificationsUseCase"),
   MarkNotificationReadUseCase: Symbol.for("MarkNotificationReadUseCase"),
+  SendJournalRemindersUseCase: Symbol.for("SendJournalRemindersUseCase"),
   AddCardToColumnUseCase: Symbol.for("AddCardToColumnUseCase"),
   AddColumnUseCase: Symbol.for("AddColumnUseCase"),
   CreateBoardUseCase: Symbol.for("CreateBoardUseCase"),
@@ -180,6 +186,7 @@ export interface DI_RETURN_TYPES {
   GetMessagesUseCase: GetMessagesUseCase;
   SendMessageUseCase: SendMessageUseCase;
   AddReactionUseCase: AddReactionUseCase;
+  DeleteConversationUseCase: DeleteConversationUseCase;
   MarkConversationReadUseCase: MarkConversationReadUseCase;
   UploadMediaUseCase: UploadMediaUseCase;
   CreateProfileUseCase: CreateProfileUseCase;
@@ -196,8 +203,10 @@ export interface DI_RETURN_TYPES {
   GetPendingRequestsUseCase: GetPendingRequestsUseCase;
   GetInviteLinkUseCase: GetInviteLinkUseCase;
   AcceptInviteLinkUseCase: AcceptInviteLinkUseCase;
+  RemoveFriendUseCase: RemoveFriendUseCase;
   GetNotificationsUseCase: GetNotificationsUseCase;
   MarkNotificationReadUseCase: MarkNotificationReadUseCase;
+  SendJournalRemindersUseCase: SendJournalRemindersUseCase;
   AddCardToColumnUseCase: AddCardToColumnUseCase;
   AddColumnUseCase: AddColumnUseCase;
   CreateBoardUseCase: CreateBoardUseCase;

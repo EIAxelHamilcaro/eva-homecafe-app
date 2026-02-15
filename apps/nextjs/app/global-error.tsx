@@ -22,10 +22,7 @@ export default function GlobalError({
               Référence : {error.digest}
             </p>
           )}
-          <Button
-            onClick={reset}
-            className="rounded-full bg-[#ffb6c1] px-8 py-2.5 text-white hover:bg-[#e91e63]"
-          >
+          <Button onClick={reset} className="rounded-full px-8 py-2.5">
             Réessayer
           </Button>
         </div>

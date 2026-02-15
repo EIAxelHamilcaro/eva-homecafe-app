@@ -40,7 +40,7 @@ const CONFIG: Record<
     message: "Tes plus belles photos, c'est ici !",
     cta: "Voir plus",
     href: "/(protected)/galerie" as Href,
-    ctaColor: "bg-homecafe-pink",
+    ctaColor: "bg-primary",
   },
   tasks: {
     icon: ListTodo,
@@ -48,7 +48,7 @@ const CONFIG: Record<
     message: "Crée ta première liste pour t'organiser.",
     cta: "Créer",
     href: "/organisation" as Href,
-    ctaColor: "bg-homecafe-pink",
+    ctaColor: "bg-primary",
   },
   messages: {
     icon: MessageCircle,
@@ -56,7 +56,7 @@ const CONFIG: Record<
     message: "Aucun message non lu",
     cta: "Voir plus",
     href: "/(protected)/(tabs)/messages" as Href,
-    ctaColor: "bg-homecafe-pink",
+    ctaColor: "bg-primary",
   },
   mood: {
     icon: Smile,
@@ -80,7 +80,7 @@ const CONFIG: Record<
     message: "Écris ta première entrée ci-dessous.",
     cta: "Écrire",
     href: "/(protected)/(tabs)/journal" as Href,
-    ctaColor: "bg-homecafe-pink",
+    ctaColor: "bg-primary",
   },
   moodboard: {
     icon: ImageIcon,
@@ -88,7 +88,7 @@ const CONFIG: Record<
     message: "Crée un moodboard visuel pour t'exprimer.",
     cta: "Créer",
     href: "/(protected)/inspirations" as Href,
-    ctaColor: "bg-homecafe-pink",
+    ctaColor: "bg-primary",
   },
 };
 
@@ -112,7 +112,9 @@ export function WidgetEmptyState({ type }: WidgetEmptyStateProps) {
         onPress={() => router.push(config.href)}
         className={`self-start rounded-full ${config.ctaColor} px-4 py-1.5 active:opacity-90`}
       >
-        <Text className="text-sm font-medium text-white">{config.cta}</Text>
+        <Text className="text-sm font-medium text-primary-foreground">
+          {config.cta}
+        </Text>
       </Pressable>
     </View>
   );

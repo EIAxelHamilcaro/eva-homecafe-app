@@ -1,5 +1,6 @@
 import { match } from "@packages/ddd-kit";
 import { NextResponse } from "next/server";
+import { getConversationParticipantIds } from "@/adapters/queries/conversation-participants.query";
 import {
   getMessagesInputDtoSchema,
   type IGetMessagesOutputDto,
@@ -16,6 +17,7 @@ import {
 } from "@/application/dto/chat/upload-media.dto";
 import type { IGetSessionOutputDto } from "@/application/dto/get-session.dto";
 import { getInjection } from "@/common/di/container";
+import { broadcastMessageSent } from "./sse.controller";
 
 async function getAuthenticatedUser(
   request: Request,
@@ -111,7 +113,21 @@ export async function sendMessageController(
     return NextResponse.json({ error }, { status: 400 });
   }
 
-  return NextResponse.json(result.getValue(), { status: 201 });
+  const output = result.getValue();
+
+  getConversationParticipantIds(conversationId)
+    .then((participantIds) => {
+      broadcastMessageSent(participantIds, {
+        messageId: output.messageId,
+        conversationId,
+        senderId: session.user.id,
+        content: output.content,
+        hasAttachments: (output.attachments?.length ?? 0) > 0,
+      });
+    })
+    .catch(() => {});
+
+  return NextResponse.json(output, { status: 201 });
 }
 
 export async function uploadMediaController(

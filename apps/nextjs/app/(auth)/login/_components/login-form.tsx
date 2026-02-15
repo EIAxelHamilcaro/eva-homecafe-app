@@ -154,7 +154,7 @@ export function LoginForm() {
         <Button
           type="submit"
           disabled={submitting}
-          className="rounded-full bg-homecafe-pink px-8 py-2.5 text-sm font-medium text-white transition-colors hover:bg-homecafe-pink/80 disabled:opacity-50"
+          className="rounded-full px-8 py-2.5"
         >
           {submitting ? "Connexion..." : "Se connecter"}
         </Button>

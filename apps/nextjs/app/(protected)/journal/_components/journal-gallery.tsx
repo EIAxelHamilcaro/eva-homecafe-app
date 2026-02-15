@@ -62,7 +62,7 @@ export function JournalGallery(_props: JournalGalleryProps) {
         <button
           type="button"
           onClick={() => uploadRef.current?.trigger()}
-          className="flex h-8 w-8 items-center justify-center rounded-full bg-homecafe-pink text-white hover:bg-homecafe-pink/90"
+          className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white hover:bg-primary/90"
         >
           <Plus className="h-4 w-4" />
         </button>
@@ -143,7 +143,7 @@ export function JournalGallery(_props: JournalGalleryProps) {
 
         <Link
           href="/gallery"
-          className="mt-4 inline-block rounded-full bg-homecafe-pink px-4 py-1.5 text-sm font-medium text-white hover:opacity-90"
+          className="mt-4 inline-block rounded-full bg-primary px-4 py-1.5 text-sm font-medium text-white hover:opacity-90"
         >
           Voir plus
         </Link>

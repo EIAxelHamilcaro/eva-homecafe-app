@@ -69,8 +69,8 @@ export default function LoginScreen() {
             <View className="flex-row items-center justify-between py-4">
               <Logo width={100} />
               <Link href="/(auth)/register" asChild>
-                <Pressable className="rounded-full bg-homecafe-pink px-6 py-2.5">
-                  <Text className="text-sm font-medium text-white">
+                <Pressable className="rounded-full bg-primary px-6 py-2.5 active:opacity-90">
+                  <Text className="text-sm font-medium text-primary-foreground">
                     S'inscrire
                   </Text>
                 </Pressable>
@@ -143,7 +143,7 @@ export default function LoginScreen() {
                 <Button
                   onPress={handleSubmit(onSubmit)}
                   loading={signInMutation.isPending}
-                  className="rounded-full bg-homecafe-pink px-8"
+                  className="rounded-full px-8"
                 >
                   Se connecter
                 </Button>

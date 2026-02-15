@@ -11,7 +11,7 @@ export const attachmentInputSchema = z.object({
       width: z.number().int().positive(),
       height: z.number().int().positive(),
     })
-    .optional(),
+    .nullish(),
 });
 
 export const sendMessageInputDtoSchema = z.object({

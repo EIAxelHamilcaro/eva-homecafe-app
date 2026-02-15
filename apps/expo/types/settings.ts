@@ -6,6 +6,7 @@ export interface UserPreferences {
   notifyNewMessages: boolean;
   notifyFriendActivity: boolean;
   notifyBadgesEarned: boolean;
+  notifyPostActivity: boolean;
   notifyJournalReminder: boolean;
   profileVisibility: boolean;
   rewardsVisibility: "everyone" | "friends" | "nobody";
@@ -38,6 +39,7 @@ export interface UpdateSettingsInput {
   notifyNewMessages?: boolean;
   notifyFriendActivity?: boolean;
   notifyBadgesEarned?: boolean;
+  notifyPostActivity?: boolean;
   notifyJournalReminder?: boolean;
   profileVisibility?: boolean;
   rewardsVisibility?: "everyone" | "friends" | "nobody";

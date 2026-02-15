@@ -1,7 +1,7 @@
 import { useRouter } from "expo-router";
-import { ArrowLeft, QrCode, Share2 } from "lucide-react-native";
-import { useCallback } from "react";
-import { Pressable, Share, Text, View } from "react-native";
+import { ArrowLeft, QrCode } from "lucide-react-native";
+import { useCallback, useEffect, useRef } from "react";
+import { Animated, Pressable, Text, View } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -9,11 +9,40 @@ import { Button } from "@/components/ui/button";
 import { useGenerateInvite } from "@/lib/api/hooks/use-invite";
 
 function QRCodeSkeleton() {
+  const animatedValue = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const animation = Animated.loop(
+      Animated.sequence([
+        Animated.timing(animatedValue, {
+          toValue: 1,
+          duration: 1000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(animatedValue, {
+          toValue: 0,
+          duration: 1000,
+          useNativeDriver: true,
+        }),
+      ]),
+    );
+    animation.start();
+    return () => animation.stop();
+  }, [animatedValue]);
+
+  const opacity = animatedValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0.3, 0.7],
+  });
+
   return (
     <View className="items-center justify-center">
-      <View className="h-64 w-64 animate-pulse items-center justify-center rounded-2xl bg-muted">
+      <Animated.View
+        style={{ opacity }}
+        className="h-64 w-64 items-center justify-center rounded-2xl bg-muted"
+      >
         <QrCode size={48} color="#9CA3AF" />
-      </View>
+      </Animated.View>
     </View>
   );
 }
@@ -44,19 +73,6 @@ export default function QRCodeScreen() {
   const handleGoBack = useCallback(() => {
     router.back();
   }, [router]);
-
-  const handleShare = useCallback(async () => {
-    if (!data?.inviteUrl) return;
-
-    try {
-      await Share.share({
-        message: data.inviteUrl,
-        title: "Rejoins-moi sur HomeCafe",
-      });
-    } catch {
-      // User cancelled or system error
-    }
-  }, [data?.inviteUrl]);
 
   return (
     <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
@@ -91,18 +107,9 @@ export default function QRCodeScreen() {
             <Text className="mb-2 text-center text-lg font-semibold text-foreground">
               Scannez pour m'ajouter
             </Text>
-            <Text className="mb-8 text-center text-sm text-muted-foreground">
+            <Text className="text-center text-sm text-muted-foreground">
               Montrez ce QR code a vos amis pour qu'ils vous ajoutent
             </Text>
-
-            <Button variant="outline" onPress={handleShare} className="w-full">
-              <View className="flex-row items-center gap-2">
-                <Share2 size={18} color="#3D2E2E" />
-                <Text className="font-medium text-foreground">
-                  Partager le lien
-                </Text>
-              </View>
-            </Button>
           </View>
         ) : null}
       </View>

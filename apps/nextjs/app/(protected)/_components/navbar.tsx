@@ -15,6 +15,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 import type { IUserDto } from "@/application/dto/common.dto";
+import { useBrowserNotifications } from "../_hooks/use-browser-notifications";
 import { useUnreadCountQuery } from "../_hooks/use-notifications";
 
 const navItems = [
@@ -37,6 +38,7 @@ export function Navbar({ user }: { user: IUserDto }) {
   const [open, setOpen] = useState(false);
   const { data: unreadData } = useUnreadCountQuery();
   const unreadCount = unreadData?.unreadCount ?? 0;
+  useBrowserNotifications();
 
   return (
     <header className="fixed top-0 left-0 z-50 w-full border-b border-border bg-white">

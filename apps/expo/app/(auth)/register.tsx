@@ -88,8 +88,8 @@ export default function RegisterScreen() {
             <View className="flex-row items-center justify-between py-4">
               <Logo width={100} />
               <Link href="/(auth)/login" asChild>
-                <Pressable className="rounded-full bg-homecafe-pink px-6 py-2.5">
-                  <Text className="text-sm font-medium text-white">
+                <Pressable className="rounded-full bg-primary px-6 py-2.5 active:opacity-90">
+                  <Text className="text-sm font-medium text-primary-foreground">
                     S'identifier
                   </Text>
                 </Pressable>
@@ -193,7 +193,7 @@ export default function RegisterScreen() {
               <Button
                 onPress={handleSubmit(onSubmit)}
                 loading={signUpMutation.isPending}
-                className="rounded-full bg-homecafe-pink px-8 self-start"
+                className="rounded-full px-8 self-start"
               >
                 S'inscrire
               </Button>

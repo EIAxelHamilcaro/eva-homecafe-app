@@ -124,7 +124,7 @@ export function MoodboardWidget({
           <Button
             onClick={handleValidate}
             disabled={submitting}
-            className="rounded-full bg-homecafe-pink px-6 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50"
+            className="rounded-full px-6"
           >
             {submitting
               ? "..."

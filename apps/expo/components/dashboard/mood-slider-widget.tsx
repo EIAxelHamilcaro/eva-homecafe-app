@@ -143,12 +143,12 @@ export function MoodSliderWidget({ selectedDate }: MoodSliderWidgetProps) {
         <Pressable
           onPress={handleValidate}
           disabled={recordMood.isPending}
-          className="self-start rounded-full bg-homecafe-pink px-6 py-2 active:opacity-90 disabled:opacity-50"
+          className="self-start rounded-full bg-primary px-6 py-2 active:opacity-90 disabled:opacity-50"
         >
           {recordMood.isPending ? (
             <ActivityIndicator size="small" color={colors.white} />
           ) : (
-            <Text className="text-sm font-semibold text-white">
+            <Text className="text-sm font-semibold text-primary-foreground">
               {success ? "Validé !" : existingCategory ? "Modifier" : "Valider"}
             </Text>
           )}

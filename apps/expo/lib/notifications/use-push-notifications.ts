@@ -43,7 +43,7 @@ export function usePushNotifications(isAuthenticated: boolean) {
             switch (type) {
               case "friend_request":
               case "friend_accepted":
-                router.push("/(protected)/notifications");
+                router.push("/(protected)/(tabs)/notifications");
                 break;
               case "new_message":
                 if (data?.conversationId) {
@@ -58,7 +58,7 @@ export function usePushNotifications(isAuthenticated: boolean) {
                 router.push("/(protected)/(tabs)");
                 break;
               default:
-                router.push("/(protected)/notifications");
+                router.push("/(protected)/(tabs)/notifications");
                 break;
             }
           },

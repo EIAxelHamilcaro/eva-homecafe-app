@@ -5,6 +5,7 @@ import { Button } from "@packages/ui/components/ui/button";
 import { Separator } from "@packages/ui/components/ui/separator";
 import { Bell, CheckCheck } from "lucide-react";
 import { useMemo } from "react";
+import { useProfilesQuery } from "@/app/(protected)/_hooks/use-chat";
 import {
   useMarkNotificationReadMutation,
   useNotificationsQuery,
@@ -18,6 +19,30 @@ export function NotificationsList() {
   const markAsRead = useMarkNotificationReadMutation();
 
   const unreadCount = unreadData?.unreadCount ?? data?.unreadCount ?? 0;
+
+  const senderIds = useMemo(() => {
+    if (!data?.notifications) return [];
+    const ids = new Set<string>();
+    for (const n of data.notifications) {
+      const senderId = (n.data.senderId ?? n.data.acceptorId) as
+        | string
+        | undefined;
+      if (senderId) ids.add(senderId);
+    }
+    return [...ids];
+  }, [data?.notifications]);
+
+  const { data: profilesData } = useProfilesQuery(senderIds);
+
+  const senderProfiles = useMemo(() => {
+    const map = new Map<string, { name: string; image: string | null }>();
+    if (profilesData?.profiles) {
+      for (const p of profilesData.profiles) {
+        map.set(p.id, { name: p.name, image: p.image });
+      }
+    }
+    return map;
+  }, [profilesData?.profiles]);
 
   const { unread, read } = useMemo(() => {
     if (!data?.notifications) return { unread: [], read: [] };
@@ -114,6 +139,12 @@ export function NotificationsList() {
               <NotificationItem
                 key={notification.id}
                 notification={notification}
+                senderImage={
+                  senderProfiles.get(
+                    (notification.data.senderId ??
+                      notification.data.acceptorId) as string,
+                  )?.image ?? null
+                }
               />
             ))}
           </div>
@@ -134,6 +165,12 @@ export function NotificationsList() {
               <NotificationItem
                 key={notification.id}
                 notification={notification}
+                senderImage={
+                  senderProfiles.get(
+                    (notification.data.senderId ??
+                      notification.data.acceptorId) as string,
+                  )?.image ?? null
+                }
               />
             ))}
           </div>

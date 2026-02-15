@@ -60,7 +60,7 @@ function GalleryPlaceholder() {
         </div>
         <Link
           href="/gallery"
-          className="mt-4 inline-block rounded-full bg-homecafe-pink px-4 py-1.5 text-sm font-medium text-white hover:opacity-90"
+          className="mt-4 inline-block rounded-full bg-primary px-4 py-1.5 text-sm font-medium text-white hover:opacity-90"
         >
           Voir plus
         </Link>
@@ -87,7 +87,7 @@ function TasksPlaceholder() {
         </div>
         <Link
           href="/organization"
-          className="mt-2 inline-block rounded-full bg-homecafe-pink px-4 py-1.5 text-sm font-medium text-white hover:opacity-90"
+          className="mt-2 inline-block rounded-full bg-primary px-4 py-1.5 text-sm font-medium text-white hover:opacity-90"
         >
           Créer
         </Link>

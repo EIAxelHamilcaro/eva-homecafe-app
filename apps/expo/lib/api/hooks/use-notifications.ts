@@ -45,7 +45,55 @@ export function useMarkRead() {
       api.post<{ notification: Notification }>(
         `/api/v1/notifications/${notificationId}/read`,
       ),
-    onSuccess: () => {
+    onMutate: async ({ notificationId }) => {
+      const snapshots = queryClient.getQueriesData<GetNotificationsResponse>({
+        queryKey: ["notifications", "list"],
+      });
+
+      queryClient.setQueriesData<GetNotificationsResponse>(
+        { queryKey: ["notifications", "list"] },
+        (old) => {
+          if (!old) return old;
+          const target = old.notifications.find((n) => n.id === notificationId);
+          if (!target || target.readAt !== null) return old;
+          return {
+            ...old,
+            notifications: old.notifications.map((n) =>
+              n.id === notificationId
+                ? { ...n, readAt: new Date().toISOString() }
+                : n,
+            ),
+            unreadCount: Math.max(0, old.unreadCount - 1),
+          };
+        },
+      );
+
+      const countKey = notificationKeys.unreadCount();
+      const previousCount = queryClient.getQueryData<{ unreadCount: number }>(
+        countKey,
+      );
+      if (previousCount && previousCount.unreadCount > 0) {
+        queryClient.setQueryData<{ unreadCount: number }>(countKey, {
+          unreadCount: previousCount.unreadCount - 1,
+        });
+      }
+
+      return { snapshots, previousCount };
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.snapshots) {
+        for (const [key, data] of context.snapshots) {
+          queryClient.setQueryData(key, data);
+        }
+      }
+      if (context?.previousCount) {
+        queryClient.setQueryData(
+          notificationKeys.unreadCount(),
+          context.previousCount,
+        );
+      }
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: notificationKeys.all });
     },
   });

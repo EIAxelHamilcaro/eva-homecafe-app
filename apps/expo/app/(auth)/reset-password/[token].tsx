@@ -80,7 +80,7 @@ export default function ResetPasswordScreen() {
         </Text>
         <Button
           onPress={() => router.replace("/(auth)/forgot-password")}
-          className="mt-6 rounded-full bg-homecafe-pink px-8"
+          className="mt-6 rounded-full px-8"
         >
           Demander un nouveau lien
         </Button>
@@ -105,8 +105,8 @@ export default function ResetPasswordScreen() {
             <View className="flex-row items-center justify-between py-4">
               <Logo width={100} />
               <Link href="/(auth)/login" asChild>
-                <Pressable className="rounded-full bg-homecafe-pink px-6 py-2.5">
-                  <Text className="text-sm font-medium text-white">
+                <Pressable className="rounded-full bg-primary px-6 py-2.5 active:opacity-90">
+                  <Text className="text-sm font-medium text-primary-foreground">
                     Se connecter
                   </Text>
                 </Pressable>
@@ -138,7 +138,7 @@ export default function ResetPasswordScreen() {
                   </Text>
                   <Button
                     onPress={() => router.replace("/(auth)/login")}
-                    className="self-start rounded-full bg-homecafe-pink px-8"
+                    className="self-start rounded-full px-8"
                   >
                     Se connecter
                   </Button>
@@ -203,7 +203,7 @@ export default function ResetPasswordScreen() {
                   <Button
                     onPress={handleSubmit(onSubmit)}
                     loading={resetPasswordMutation.isPending}
-                    className="self-start rounded-full bg-homecafe-pink px-8"
+                    className="self-start rounded-full px-8"
                   >
                     Réinitialiser
                   </Button>

@@ -6,7 +6,7 @@ import type { IFriendRequestRepository } from "@/application/ports/friend-reques
 import type { IInviteTokenRepository } from "@/application/ports/invite-token-repository.port";
 import type { INotificationRepository } from "@/application/ports/notification-repository.port";
 import type { IUserRepository } from "@/application/ports/user.repository.port";
-import type { FriendRequest } from "@/domain/friend/friend-request.aggregate";
+import { FriendRequest } from "@/domain/friend/friend-request.aggregate";
 import type { Notification } from "@/domain/notification/notification.aggregate";
 import { User } from "@/domain/user/user.aggregate";
 import { Email } from "@/domain/user/value-objects/email.vo";
@@ -123,8 +123,8 @@ describe("SendFriendRequestUseCase", () => {
       vi.mocked(mockUserRepo.findByEmail).mockResolvedValue(
         Result.ok(Option.some(receiver)),
       );
-      vi.mocked(mockFriendRequestRepo.existsBetweenUsers).mockResolvedValue(
-        Result.ok(false),
+      vi.mocked(mockFriendRequestRepo.findByUsers).mockResolvedValue(
+        Result.ok(Option.none()),
       );
       vi.mocked(mockFriendRequestRepo.create).mockResolvedValue(
         Result.ok({} as FriendRequest),
@@ -167,7 +167,7 @@ describe("SendFriendRequestUseCase", () => {
       expect(mockFriendRequestRepo.create).not.toHaveBeenCalled();
     });
 
-    it("should return already_friends when request exists between users", async () => {
+    it("should return already_friends when pending or accepted request exists", async () => {
       const senderId = "sender-123";
       const receiverId = "receiver-456";
       const receiver = createMockUser(
@@ -176,11 +176,16 @@ describe("SendFriendRequestUseCase", () => {
         "Receiver",
       );
 
+      const existingRequest = FriendRequest.create({
+        senderId,
+        receiverId,
+      }).getValue();
+
       vi.mocked(mockUserRepo.findByEmail).mockResolvedValue(
         Result.ok(Option.some(receiver)),
       );
-      vi.mocked(mockFriendRequestRepo.existsBetweenUsers).mockResolvedValue(
-        Result.ok(true),
+      vi.mocked(mockFriendRequestRepo.findByUsers).mockResolvedValue(
+        Result.ok(Option.some(existingRequest)),
       );
 
       const result = await useCase.execute({
@@ -193,6 +198,50 @@ describe("SendFriendRequestUseCase", () => {
       const output = result.getValue();
       expect(output.status).toBe("already_friends");
       expect(mockFriendRequestRepo.create).not.toHaveBeenCalled();
+    });
+
+    it("should allow resending after a rejected request", async () => {
+      const senderId = "sender-123";
+      const receiverId = "receiver-456";
+      const receiver = createMockUser(
+        receiverId,
+        "receiver@test.com",
+        "Receiver",
+      );
+
+      const rejectedRequest = FriendRequest.create({
+        senderId,
+        receiverId,
+      }).getValue();
+      rejectedRequest.reject();
+
+      vi.mocked(mockUserRepo.findByEmail).mockResolvedValue(
+        Result.ok(Option.some(receiver)),
+      );
+      vi.mocked(mockFriendRequestRepo.findByUsers).mockResolvedValue(
+        Result.ok(Option.some(rejectedRequest)),
+      );
+      vi.mocked(mockFriendRequestRepo.delete).mockResolvedValue(
+        Result.ok(rejectedRequest.id),
+      );
+      vi.mocked(mockFriendRequestRepo.create).mockResolvedValue(
+        Result.ok({} as FriendRequest),
+      );
+      vi.mocked(mockNotificationRepo.create).mockResolvedValue(
+        Result.ok({} as Notification),
+      );
+
+      const result = await useCase.execute({
+        receiverEmail: "receiver@test.com",
+        senderId,
+        senderName: "Sender",
+      });
+
+      expect(result.isSuccess).toBe(true);
+      const output = result.getValue();
+      expect(output.status).toBe("request_sent");
+      expect(mockFriendRequestRepo.delete).toHaveBeenCalledOnce();
+      expect(mockFriendRequestRepo.create).toHaveBeenCalledOnce();
     });
   });
 
@@ -243,7 +292,7 @@ describe("SendFriendRequestUseCase", () => {
       vi.mocked(mockUserRepo.findByEmail).mockResolvedValue(
         Result.ok(Option.some(receiver)),
       );
-      vi.mocked(mockFriendRequestRepo.existsBetweenUsers).mockResolvedValue(
+      vi.mocked(mockFriendRequestRepo.findByUsers).mockResolvedValue(
         Result.fail("Database error"),
       );
 
@@ -286,8 +335,8 @@ describe("SendFriendRequestUseCase", () => {
       vi.mocked(mockUserRepo.findByEmail).mockResolvedValue(
         Result.ok(Option.some(receiver)),
       );
-      vi.mocked(mockFriendRequestRepo.existsBetweenUsers).mockResolvedValue(
-        Result.ok(false),
+      vi.mocked(mockFriendRequestRepo.findByUsers).mockResolvedValue(
+        Result.ok(Option.none()),
       );
       vi.mocked(mockFriendRequestRepo.create).mockResolvedValue(
         Result.fail("Save failed"),

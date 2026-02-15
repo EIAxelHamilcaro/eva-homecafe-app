@@ -239,7 +239,7 @@ export function PostDetail({ postId, currentUserId }: PostDetailProps) {
             variant="ghost"
             onClick={() => handleToggleReaction("\u2764\uFE0F")}
             disabled={toggleReaction.isPending}
-            className="flex items-center gap-1.5 p-2 transition-colors disabled:opacity-50"
+            className="flex items-center gap-1.5 p-2"
           >
             <Heart
               className={`h-5 w-5 ${userLiked ? "fill-red-500 text-red-500" : "text-red-500"}`}
@@ -284,7 +284,7 @@ export function PostDetail({ postId, currentUserId }: PostDetailProps) {
             <Button
               onClick={handleSubmitComment}
               disabled={!commentText.trim() || addComment.isPending}
-              className="rounded-full bg-homecafe-pink px-6 py-2 text-sm font-medium text-white transition-colors hover:bg-homecafe-pink-dark disabled:opacity-50"
+              className="rounded-full px-6"
             >
               {addComment.isPending ? "Envoi..." : "Envoyer"}
             </Button>
@@ -428,7 +428,7 @@ export function PostDetail({ postId, currentUserId }: PostDetailProps) {
             <Button
               onClick={handleDelete}
               disabled={deletePost.isPending}
-              className="rounded-full bg-destructive px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-destructive/90 disabled:opacity-50"
+              className="rounded-full bg-destructive px-5 text-white hover:bg-destructive/90"
             >
               {deletePost.isPending ? "Suppression..." : "Confirmer"}
             </Button>
@@ -436,7 +436,7 @@ export function PostDetail({ postId, currentUserId }: PostDetailProps) {
               variant="outline"
               onClick={() => setShowDeleteConfirm(false)}
               disabled={deletePost.isPending}
-              className="rounded-full border border-border px-5 py-2 text-sm transition-colors hover:bg-muted disabled:opacity-50"
+              className="rounded-full border border-border px-5 hover:bg-muted"
             >
               Annuler
             </Button>

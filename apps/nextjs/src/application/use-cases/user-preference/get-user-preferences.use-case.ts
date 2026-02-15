@@ -65,6 +65,7 @@ export class GetUserPreferencesUseCase
       notifyNewMessages: preference.get("notifyNewMessages"),
       notifyFriendActivity: preference.get("notifyFriendActivity"),
       notifyBadgesEarned: preference.get("notifyBadgesEarned"),
+      notifyPostActivity: preference.get("notifyPostActivity"),
       notifyJournalReminder: preference.get("notifyJournalReminder"),
       profileVisibility: preference.get("profileVisibility"),
       rewardsVisibility: preference.get("rewardsVisibility").value,

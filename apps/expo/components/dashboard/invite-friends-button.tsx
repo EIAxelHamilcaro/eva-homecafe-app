@@ -7,7 +7,7 @@ export function InviteFriendsButton() {
   return (
     <Pressable
       onPress={() => router.push("/(protected)/friends")}
-      className="self-center rounded-full border border-homecafe-pink/50 px-8 py-3 active:bg-homecafe-pink/5"
+      className="self-center rounded-full border border-primary/50 px-8 py-3 active:bg-primary/5"
     >
       <Text className="text-sm font-medium text-foreground">
         Inviter des ami·es

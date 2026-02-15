@@ -88,7 +88,7 @@ export function FriendsCard({ data }: FriendsCardProps) {
             </Button>
             <Button
               size="sm"
-              className="flex-1 bg-homecafe-pink text-white hover:bg-homecafe-pink/90"
+              className="flex-1"
               onClick={() => {
                 setModalTab("invite");
                 setModalOpen(true);

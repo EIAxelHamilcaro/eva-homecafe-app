@@ -3,7 +3,6 @@ import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CalendarWidget } from "@/components/dashboard/calendar-widget";
 import { GalleryWidget } from "@/components/dashboard/gallery-widget";
-import { InviteFriendsButton } from "@/components/dashboard/invite-friends-button";
 import { JournalWidget } from "@/components/dashboard/journal-widget";
 import { MessagerieWidget } from "@/components/dashboard/messagerie-widget";
 import { MoodSliderWidget } from "@/components/dashboard/mood-slider-widget";
@@ -12,6 +11,7 @@ import {
   SuiviWeeklyWidget,
 } from "@/components/dashboard/suivi-widgets";
 import { TodoWidget } from "@/components/dashboard/todo-widget";
+import { FriendsCard } from "@/components/social/friends-card";
 
 function getLocalDateString(): string {
   const now = new Date();
@@ -47,12 +47,11 @@ export default function HomeScreen() {
           </View>
 
           <View className="rounded-2xl bg-homecafe-orange/10 p-4 gap-4">
+            <FriendsCard />
             <JournalWidget selectedDate={selectedDate} />
             <MoodSliderWidget selectedDate={selectedDate} />
             <SuiviWeeklyWidget />
           </View>
-
-          <InviteFriendsButton />
         </View>
       </ScrollView>
     </SafeAreaView>

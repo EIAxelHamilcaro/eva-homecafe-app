@@ -19,6 +19,7 @@ export interface IUserPreferenceProps {
   notifyNewMessages: boolean;
   notifyFriendActivity: boolean;
   notifyBadgesEarned: boolean;
+  notifyPostActivity: boolean;
   notifyJournalReminder: boolean;
   profileVisibility: boolean;
   rewardsVisibility: RewardsVisibility;
@@ -69,6 +70,7 @@ export class UserPreference extends Aggregate<IUserPreferenceProps> {
           notifyNewMessages: true,
           notifyFriendActivity: true,
           notifyBadgesEarned: true,
+          notifyPostActivity: true,
           notifyJournalReminder: true,
           profileVisibility: true,
           rewardsVisibility: rewardsVisibilityResult.getValue(),
@@ -96,6 +98,7 @@ export class UserPreference extends Aggregate<IUserPreferenceProps> {
     notifyNewMessages?: boolean;
     notifyFriendActivity?: boolean;
     notifyBadgesEarned?: boolean;
+    notifyPostActivity?: boolean;
     notifyJournalReminder?: boolean;
     profileVisibility?: boolean;
     rewardsVisibility?: RewardsVisibility;
@@ -113,6 +116,8 @@ export class UserPreference extends Aggregate<IUserPreferenceProps> {
       this._props.notifyFriendActivity = updates.notifyFriendActivity;
     if (updates.notifyBadgesEarned !== undefined)
       this._props.notifyBadgesEarned = updates.notifyBadgesEarned;
+    if (updates.notifyPostActivity !== undefined)
+      this._props.notifyPostActivity = updates.notifyPostActivity;
     if (updates.notifyJournalReminder !== undefined)
       this._props.notifyJournalReminder = updates.notifyJournalReminder;
     if (updates.profileVisibility !== undefined)

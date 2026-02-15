@@ -21,6 +21,7 @@ export const userPreference = pgTable(
       .notNull()
       .default(true),
     notifyBadgesEarned: boolean("notify_badges_earned").notNull().default(true),
+    notifyPostActivity: boolean("notify_post_activity").notNull().default(true),
     notifyJournalReminder: boolean("notify_journal_reminder")
       .notNull()
       .default(true),

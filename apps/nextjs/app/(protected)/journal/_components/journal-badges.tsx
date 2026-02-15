@@ -111,7 +111,7 @@ export async function JournalBadges({ userId }: JournalBadgesProps) {
         </div>
         <Link
           href="/profile"
-          className="mt-4 inline-block rounded-full bg-homecafe-pink px-6 py-1.5 text-sm font-medium text-white hover:opacity-90"
+          className="mt-4 inline-block rounded-full bg-primary px-6 py-1.5 text-sm font-medium text-white hover:opacity-90"
         >
           Voir tout
         </Link>

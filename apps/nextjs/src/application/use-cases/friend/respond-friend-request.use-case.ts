@@ -7,9 +7,11 @@ import type { IEventDispatcher } from "@/application/ports/event-dispatcher.port
 import type { IFriendRequestRepository } from "@/application/ports/friend-request-repository.port";
 import type { INotificationRepository } from "@/application/ports/notification-repository.port";
 import type { IProfileRepository } from "@/application/ports/profile-repository.port";
+import type { IUserRepository } from "@/application/ports/user.repository.port";
 import { FriendRequestId } from "@/domain/friend/friend-request-id";
 import { Notification } from "@/domain/notification/notification.aggregate";
 import { NotificationType } from "@/domain/notification/value-objects/notification-type.vo";
+import { UserId } from "@/domain/user/user-id";
 
 export class RespondFriendRequestUseCase
   implements
@@ -19,6 +21,7 @@ export class RespondFriendRequestUseCase
     private readonly friendRequestRepo: IFriendRequestRepository,
     private readonly notificationRepo: INotificationRepository,
     private readonly profileRepo: IProfileRepository,
+    private readonly userRepo: IUserRepository,
     private readonly eventDispatcher: IEventDispatcher,
   ) {}
 
@@ -87,15 +90,24 @@ export class RespondFriendRequestUseCase
     senderId: string,
     acceptorId: string,
   ): Promise<Result<void>> {
-    const profileResult = await this.profileRepo.findByUserId(acceptorId);
-    if (profileResult.isFailure) {
-      return Result.fail(profileResult.getError());
+    const userResult = await this.userRepo.findById(
+      UserId.create(new UUID(acceptorId)),
+    );
+    if (userResult.isFailure) {
+      return Result.fail(userResult.getError());
     }
-
-    const acceptorName = match(profileResult.getValue(), {
-      Some: (profile) => profile.get("displayName").value,
-      None: () => "Someone",
+    const userName = match(userResult.getValue(), {
+      Some: (user) => user.get("name").value,
+      None: () => "Un ami",
     });
+
+    const profileResult = await this.profileRepo.findByUserId(acceptorId);
+    const acceptorName = profileResult.isSuccess
+      ? match(profileResult.getValue(), {
+          Some: (profile) => profile.get("displayName").value ?? userName,
+          None: () => userName,
+        })
+      : userName;
 
     const notificationTypeResult = NotificationType.createFriendAccepted();
     if (notificationTypeResult.isFailure) {

@@ -70,8 +70,8 @@ export default function ForgotPasswordScreen() {
             <View className="flex-row items-center justify-between py-4">
               <Logo width={100} />
               <Link href="/(auth)/login" asChild>
-                <Pressable className="rounded-full bg-homecafe-pink px-6 py-2.5">
-                  <Text className="text-sm font-medium text-white">
+                <Pressable className="rounded-full bg-primary px-6 py-2.5 active:opacity-90">
+                  <Text className="text-sm font-medium text-primary-foreground">
                     Se connecter
                   </Text>
                 </Pressable>
@@ -104,7 +104,7 @@ export default function ForgotPasswordScreen() {
                   </Text>
                   <Button
                     onPress={() => router.replace("/(auth)/login")}
-                    className="self-start rounded-full bg-homecafe-pink px-8"
+                    className="self-start rounded-full px-8"
                   >
                     Retour à la connexion
                   </Button>
@@ -137,7 +137,7 @@ export default function ForgotPasswordScreen() {
                   <Button
                     onPress={handleSubmit(onSubmit)}
                     loading={forgotPasswordMutation.isPending}
-                    className="self-start rounded-full bg-homecafe-pink px-8"
+                    className="self-start rounded-full px-8"
                   >
                     Envoyer le lien
                   </Button>

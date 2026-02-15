@@ -30,6 +30,19 @@ export interface UseCreateConversationOptions {
   onError?: () => void;
 }
 
+export function useDeleteConversation(options?: { onSuccess?: () => void }) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (conversationId: string) =>
+      api.delete(`/api/v1/chat/conversations/${conversationId}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: conversationKeys.all });
+      options?.onSuccess?.();
+    },
+  });
+}
+
 export function useCreateConversation(options?: UseCreateConversationOptions) {
   const queryClient = useQueryClient();
 

@@ -13,7 +13,7 @@ export default function RegisterPage() {
         </Link>
         <Link
           href="/login"
-          className="rounded-full bg-homecafe-pink px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-homecafe-pink/80"
+          className="rounded-full bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/80"
         >
           S&apos;identifier
         </Link>

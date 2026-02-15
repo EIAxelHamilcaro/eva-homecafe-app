@@ -36,10 +36,7 @@ export function FriendFeed() {
           <p className="mb-4 text-sm text-muted-foreground">
             Ajoute des amis pour voir leurs publications !
           </p>
-          <Button
-            onClick={() => setInviteModalOpen(true)}
-            className="bg-homecafe-pink text-white hover:bg-homecafe-pink/90"
-          >
+          <Button onClick={() => setInviteModalOpen(true)}>
             <UserPlus className="mr-2 h-4 w-4" />
             Inviter des amis
           </Button>
@@ -73,7 +70,7 @@ export function FriendFeed() {
                 variant="outline"
                 disabled={!data.pagination.hasPreviousPage}
                 onClick={() => setPage((p) => p - 1)}
-                className="rounded-md border px-3 py-1 text-sm disabled:opacity-50"
+                className="rounded-md border px-3 py-1"
               >
                 Précédent
               </Button>
@@ -84,7 +81,7 @@ export function FriendFeed() {
                 variant="outline"
                 disabled={!data.pagination.hasNextPage}
                 onClick={() => setPage((p) => p + 1)}
-                className="rounded-md border px-3 py-1 text-sm disabled:opacity-50"
+                className="rounded-md border px-3 py-1"
               >
                 Suivant
               </Button>

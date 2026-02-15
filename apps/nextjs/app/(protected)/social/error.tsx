@@ -15,10 +15,7 @@ export default function ErrorBoundary({
       <p className="mb-6 text-muted-foreground">
         {error.message || "Quelque chose s'est mal passe."}
       </p>
-      <Button
-        onClick={reset}
-        className="rounded-full bg-homecafe-pink px-6 py-2 text-white hover:opacity-90 hover:bg-homecafe-pink"
-      >
+      <Button onClick={reset} className="rounded-full px-6">
         Reessayer
       </Button>
     </div>

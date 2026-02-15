@@ -91,6 +91,7 @@ export class UpdateUserPreferencesUseCase
       notifyNewMessages?: boolean;
       notifyFriendActivity?: boolean;
       notifyBadgesEarned?: boolean;
+      notifyPostActivity?: boolean;
       notifyJournalReminder?: boolean;
       profileVisibility?: boolean;
       rewardsVisibility?: RewardsVisibility;
@@ -105,6 +106,7 @@ export class UpdateUserPreferencesUseCase
       notifyNewMessages?: boolean;
       notifyFriendActivity?: boolean;
       notifyBadgesEarned?: boolean;
+      notifyPostActivity?: boolean;
       notifyJournalReminder?: boolean;
       profileVisibility?: boolean;
       rewardsVisibility?: RewardsVisibility;
@@ -123,6 +125,8 @@ export class UpdateUserPreferencesUseCase
       updates.notifyFriendActivity = input.notifyFriendActivity;
     if (input.notifyBadgesEarned !== undefined)
       updates.notifyBadgesEarned = input.notifyBadgesEarned;
+    if (input.notifyPostActivity !== undefined)
+      updates.notifyPostActivity = input.notifyPostActivity;
     if (input.notifyJournalReminder !== undefined)
       updates.notifyJournalReminder = input.notifyJournalReminder;
     if (input.profileVisibility !== undefined)
@@ -166,6 +170,7 @@ export class UpdateUserPreferencesUseCase
       notifyNewMessages: preference.get("notifyNewMessages"),
       notifyFriendActivity: preference.get("notifyFriendActivity"),
       notifyBadgesEarned: preference.get("notifyBadgesEarned"),
+      notifyPostActivity: preference.get("notifyPostActivity"),
       notifyJournalReminder: preference.get("notifyJournalReminder"),
       profileVisibility: preference.get("profileVisibility"),
       rewardsVisibility: preference.get("rewardsVisibility").value,

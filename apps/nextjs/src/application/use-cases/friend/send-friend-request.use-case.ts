@@ -64,20 +64,31 @@ export class SendFriendRequestUseCase
       return Result.fail("Cannot send friend request to yourself");
     }
 
-    const existsResult = await this.friendRequestRepo.existsBetweenUsers(
+    const existingResult = await this.friendRequestRepo.findByUsers(
       senderId,
       receiverId,
     );
-    if (existsResult.isFailure) {
-      return Result.fail(existsResult.getError());
+    if (existingResult.isFailure) {
+      return Result.fail(existingResult.getError());
     }
 
-    if (existsResult.getValue()) {
-      return Result.ok({
-        requestId: null,
-        status: "already_friends",
-        message: "A friend request already exists between these users",
-      });
+    const hasExisting = match(existingResult.getValue(), {
+      Some: (existing) => existing,
+      None: () => null,
+    });
+
+    if (hasExisting) {
+      const status = hasExisting.get("status").value;
+
+      if (status === "rejected") {
+        await this.friendRequestRepo.delete(hasExisting.id);
+      } else {
+        return Result.ok({
+          requestId: null,
+          status: "already_friends",
+          message: "A friend request already exists between these users",
+        });
+      }
     }
 
     const friendRequestResult = FriendRequest.create({

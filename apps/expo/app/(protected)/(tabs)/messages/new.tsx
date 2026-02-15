@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
-import { ChevronLeft } from "lucide-react-native";
-import { useCallback, useState } from "react";
+import { ChevronLeft, Search, Users } from "lucide-react-native";
+import { useCallback, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -11,14 +11,11 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CloseButton } from "@/components/messages/close-button";
-import {
-  NoSearchResultsEmpty,
-  SearchPromptEmpty,
-} from "@/components/messages/empty-state";
 import { RecipientItem } from "@/components/messages/recipient-item";
 import { RecipientListSkeleton } from "@/components/messages/skeleton";
 import type { Recipient } from "@/constants/chat";
 import { useCreateConversation } from "@/lib/api/hooks/use-conversations";
+import { useFriends } from "@/lib/api/hooks/use-friends";
 import { useSearchRecipients } from "@/lib/api/hooks/use-recipients";
 import { useToast } from "@/lib/toast/toast-context";
 
@@ -32,10 +29,30 @@ export default function NewMessageScreen() {
     },
   });
 
-  const { data, isLoading } = useSearchRecipients({
+  const isSearchActive = searchQuery.length >= 2;
+
+  const { data: searchData, isLoading: isSearching } = useSearchRecipients({
     query: searchQuery,
-    enabled: searchQuery.length >= 2,
+    enabled: isSearchActive,
   });
+
+  const { data: friendsData, isLoading: isLoadingFriends } = useFriends();
+
+  const recentFriends: Recipient[] = useMemo(() => {
+    if (!friendsData?.friends) return [];
+    return friendsData.friends.slice(0, 5).map((f) => ({
+      id: f.userId,
+      name: f.displayName ?? f.name ?? f.email,
+      email: f.email,
+      image: f.avatarUrl,
+    }));
+  }, [friendsData]);
+
+  const displayedRecipients = isSearchActive
+    ? (searchData?.recipients ?? [])
+    : recentFriends;
+
+  const isLoading = isSearchActive ? isSearching : isLoadingFriends;
 
   const handleBack = useCallback(() => {
     router.back();
@@ -77,12 +94,26 @@ export default function NewMessageScreen() {
       return <RecipientListSkeleton />;
     }
 
-    if (searchQuery.length < 2) {
-      return <SearchPromptEmpty />;
+    if (isSearchActive) {
+      return (
+        <View className="items-center gap-2 px-4 py-8">
+          <Search size={32} color="#999" />
+          <Text className="text-center text-sm text-muted-foreground">
+            Aucun résultat pour "{searchQuery}"
+          </Text>
+        </View>
+      );
     }
 
-    return <NoSearchResultsEmpty />;
-  }, [isLoading, searchQuery.length]);
+    return (
+      <View className="items-center gap-2 px-4 py-8">
+        <Users size={32} color="#999" />
+        <Text className="text-center text-sm text-muted-foreground">
+          Ajoutez des amis pour leur envoyer des messages
+        </Text>
+      </View>
+    );
+  }, [isLoading, isSearchActive, searchQuery]);
 
   return (
     <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
@@ -101,13 +132,14 @@ export default function NewMessageScreen() {
         <CloseButton onPress={handleBack} />
       </View>
 
-      <View className="border-b border-border px-4 py-2">
+      <View className="flex-row items-center border-b border-border px-4 py-2">
+        <Search size={16} color="#999" className="mr-2" />
         <TextInput
           value={searchQuery}
           onChangeText={setSearchQuery}
-          placeholder="Tape le nom de la personne ici..."
+          placeholder="Rechercher un ami..."
           placeholderTextColor="#999"
-          className="text-base text-foreground"
+          className="flex-1 text-base text-foreground"
           autoCapitalize="none"
           autoCorrect={false}
           autoFocus
@@ -115,13 +147,13 @@ export default function NewMessageScreen() {
       </View>
 
       <View className="px-4 py-3">
-        <Text className="text-sm font-medium text-homecafe-orange">
-          Suggestions
+        <Text className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+          {isSearchActive ? "Résultats" : "Amis récents"}
         </Text>
       </View>
 
       <FlatList
-        data={data?.recipients ?? []}
+        data={displayedRecipients}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         ItemSeparatorComponent={ItemSeparator}

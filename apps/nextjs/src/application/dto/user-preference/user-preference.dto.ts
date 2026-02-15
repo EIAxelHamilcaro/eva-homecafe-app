@@ -8,6 +8,7 @@ export const userPreferenceDtoSchema = z.object({
   notifyNewMessages: z.boolean(),
   notifyFriendActivity: z.boolean(),
   notifyBadgesEarned: z.boolean(),
+  notifyPostActivity: z.boolean(),
   notifyJournalReminder: z.boolean(),
   profileVisibility: z.boolean(),
   rewardsVisibility: z.enum(["everyone", "friends", "nobody"]),

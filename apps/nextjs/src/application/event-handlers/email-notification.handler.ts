@@ -11,6 +11,9 @@ const NOTIFICATION_TYPE_TO_PREFERENCE: Record<string, string> = {
   friend_accepted: "notifyFriendActivity",
   new_message: "notifyNewMessages",
   reward_earned: "notifyBadgesEarned",
+  post_reaction: "notifyPostActivity",
+  post_comment: "notifyPostActivity",
+  journal_reminder: "notifyJournalReminder",
 };
 
 export class EmailNotificationHandler {

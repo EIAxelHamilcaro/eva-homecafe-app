@@ -352,14 +352,14 @@ export default function PostDetailScreen() {
               <Pressable
                 onPress={handleSubmitComment}
                 disabled={!commentText.trim() || addComment.isPending}
-                className="rounded-full bg-homecafe-pink px-6 py-2 active:opacity-80"
+                className="rounded-full bg-primary px-6 py-2 active:opacity-80"
                 style={
                   !commentText.trim() || addComment.isPending
                     ? { opacity: 0.5 }
                     : undefined
                 }
               >
-                <Text className="text-sm font-medium text-white">
+                <Text className="text-sm font-medium text-primary-foreground">
                   {addComment.isPending ? "Envoi..." : "Envoyer"}
                 </Text>
               </Pressable>

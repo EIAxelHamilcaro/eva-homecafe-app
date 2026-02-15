@@ -1,9 +1,15 @@
 import { match } from "@packages/ddd-kit";
 import { NextResponse } from "next/server";
+import { getConversationParticipantIds } from "@/adapters/queries/conversation-participants.query";
+import { markConversationNotificationsRead } from "@/adapters/queries/mark-conversation-notifications-read.query";
 import {
   createConversationInputDtoSchema,
   type ICreateConversationOutputDto,
 } from "@/application/dto/chat/create-conversation.dto";
+import {
+  deleteConversationInputDtoSchema,
+  type IDeleteConversationOutputDto,
+} from "@/application/dto/chat/delete-conversation.dto";
 import {
   getConversationsInputDtoSchema,
   type IGetConversationsOutputDto,
@@ -14,6 +20,11 @@ import {
 } from "@/application/dto/chat/mark-conversation-read.dto";
 import type { IGetSessionOutputDto } from "@/application/dto/get-session.dto";
 import { getInjection } from "@/common/di/container";
+import {
+  broadcastConversationCreated,
+  broadcastConversationDeleted,
+  broadcastConversationRead,
+} from "./sse.controller";
 
 async function getAuthenticatedUser(
   request: Request,
@@ -97,6 +108,16 @@ export async function createConversationController(
   }
 
   const output = result.getValue();
+
+  if (output.isNew) {
+    const participantIds = [session.user.id, json.recipientId as string];
+    broadcastConversationCreated(participantIds, {
+      conversationId: output.conversationId,
+      createdBy: session.user.id,
+      participantIds,
+    });
+  }
+
   return NextResponse.json(output, { status: output.isNew ? 201 : 200 });
 }
 
@@ -134,6 +155,67 @@ export async function markConversationReadController(
     }
     return NextResponse.json({ error }, { status: 500 });
   }
+
+  const readOutput = result.getValue();
+
+  getConversationParticipantIds(conversationId)
+    .then((participantIds) => {
+      broadcastConversationRead(participantIds, {
+        conversationId,
+        userId: session.user.id,
+        readAt: readOutput.readAt.toISOString(),
+      });
+    })
+    .catch(() => {});
+
+  markConversationNotificationsRead(session.user.id, conversationId).catch(
+    () => {},
+  );
+
+  return NextResponse.json(readOutput);
+}
+
+export async function deleteConversationController(
+  request: Request,
+  conversationId: string,
+): Promise<NextResponse<IDeleteConversationOutputDto | { error: string }>> {
+  const session = await getAuthenticatedUser(request);
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const parsed = deleteConversationInputDtoSchema.safeParse({
+    conversationId,
+    userId: session.user.id,
+  });
+
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: parsed.error.issues[0]?.message ?? "Invalid input" },
+      { status: 400 },
+    );
+  }
+
+  const participantIds = await getConversationParticipantIds(conversationId);
+
+  const useCase = getInjection("DeleteConversationUseCase");
+  const result = await useCase.execute(parsed.data);
+
+  if (result.isFailure) {
+    const error = result.getError();
+    if (error.includes("not found")) {
+      return NextResponse.json({ error }, { status: 404 });
+    }
+    if (error.includes("not a participant")) {
+      return NextResponse.json({ error }, { status: 403 });
+    }
+    return NextResponse.json({ error }, { status: 500 });
+  }
+
+  broadcastConversationDeleted(participantIds, {
+    conversationId,
+    deletedBy: session.user.id,
+  });
 
   return NextResponse.json(result.getValue());
 }

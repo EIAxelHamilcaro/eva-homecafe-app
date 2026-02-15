@@ -4,11 +4,15 @@ import type { IEventDispatcher } from "@/application/ports/event-dispatcher.port
 import type { IFriendRequestRepository } from "@/application/ports/friend-request-repository.port";
 import type { INotificationRepository } from "@/application/ports/notification-repository.port";
 import type { IProfileRepository } from "@/application/ports/profile-repository.port";
+import type { IUserRepository } from "@/application/ports/user.repository.port";
 import type { FriendRequestAcceptedEvent } from "@/domain/friend/events/friend-request-accepted.event";
 import { FriendRequest } from "@/domain/friend/friend-request.aggregate";
 import type { Notification } from "@/domain/notification/notification.aggregate";
 import { Profile } from "@/domain/profile/profile.aggregate";
 import { DisplayName } from "@/domain/profile/value-objects/display-name.vo";
+import { User } from "@/domain/user/user.aggregate";
+import { Email } from "@/domain/user/value-objects/email.vo";
+import { Name } from "@/domain/user/value-objects/name.vo";
 import { RespondFriendRequestUseCase } from "../respond-friend-request.use-case";
 
 describe("RespondFriendRequestUseCase", () => {
@@ -16,6 +20,7 @@ describe("RespondFriendRequestUseCase", () => {
   let mockFriendRequestRepo: IFriendRequestRepository;
   let mockNotificationRepo: INotificationRepository;
   let mockProfileRepo: IProfileRepository;
+  let mockUserRepo: IUserRepository;
   let mockEventDispatcher: IEventDispatcher;
 
   beforeEach(() => {
@@ -63,6 +68,18 @@ describe("RespondFriendRequestUseCase", () => {
       findByUserId: vi.fn(),
       existsByUserId: vi.fn(),
     } as unknown as IProfileRepository;
+    mockUserRepo = {
+      create: vi.fn(),
+      update: vi.fn(),
+      delete: vi.fn(),
+      findById: vi.fn(),
+      findAll: vi.fn(),
+      findMany: vi.fn(),
+      findBy: vi.fn(),
+      exists: vi.fn(),
+      count: vi.fn(),
+      findByEmail: vi.fn(),
+    } as unknown as IUserRepository;
 
     mockEventDispatcher = {
       dispatch: vi.fn(),
@@ -73,6 +90,7 @@ describe("RespondFriendRequestUseCase", () => {
       mockFriendRequestRepo,
       mockNotificationRepo,
       mockProfileRepo,
+      mockUserRepo,
       mockEventDispatcher,
     );
   });
@@ -83,6 +101,20 @@ describe("RespondFriendRequestUseCase", () => {
   ): FriendRequest => {
     const result = FriendRequest.create({ senderId, receiverId });
     return result.getValue();
+  };
+
+  const createMockUser = (userId: string, name: string): User => {
+    const emailResult = Email.create(`${userId}@test.com`);
+    const nameResult = Name.create(name);
+    const userResult = User.create(
+      {
+        email: emailResult.getValue(),
+        name: nameResult.getValue(),
+        image: Option.none(),
+      },
+      new UUID(userId),
+    );
+    return userResult.getValue();
   };
 
   const createMockProfile = (
@@ -106,12 +138,16 @@ describe("RespondFriendRequestUseCase", () => {
       const requestId = new UUID().value.toString();
       const friendRequest = createMockFriendRequest(senderId, receiverId);
       const profile = createMockProfile(receiverId, "Receiver Name");
+      const user = createMockUser(receiverId, "Receiver");
 
       vi.mocked(mockFriendRequestRepo.findById).mockResolvedValue(
         Result.ok(Option.some(friendRequest)),
       );
       vi.mocked(mockFriendRequestRepo.update).mockResolvedValue(
         Result.ok(friendRequest),
+      );
+      vi.mocked(mockUserRepo.findById).mockResolvedValue(
+        Result.ok(Option.some(user)),
       );
       vi.mocked(mockProfileRepo.findByUserId).mockResolvedValue(
         Result.ok(Option.some(profile as Profile)),
@@ -140,12 +176,16 @@ describe("RespondFriendRequestUseCase", () => {
       const requestId = new UUID().value.toString();
       const friendRequest = createMockFriendRequest(senderId, receiverId);
       const profile = createMockProfile(receiverId, "Receiver Name");
+      const user = createMockUser(receiverId, "Receiver");
 
       vi.mocked(mockFriendRequestRepo.findById).mockResolvedValue(
         Result.ok(Option.some(friendRequest)),
       );
       vi.mocked(mockFriendRequestRepo.update).mockResolvedValue(
         Result.ok(friendRequest),
+      );
+      vi.mocked(mockUserRepo.findById).mockResolvedValue(
+        Result.ok(Option.some(user)),
       );
       vi.mocked(mockProfileRepo.findByUserId).mockResolvedValue(
         Result.ok(Option.some(profile as Profile)),

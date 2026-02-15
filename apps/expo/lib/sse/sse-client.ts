@@ -25,9 +25,21 @@ export class SSEClient {
   private reconnectAttempts = 0;
   private reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
   private shouldReconnect = true;
+  private subscriberCount = 0;
 
   constructor(config: SSEClientConfig = {}) {
     this.config = config;
+  }
+
+  subscribe(): void {
+    this.subscriberCount++;
+  }
+
+  unsubscribe(): void {
+    this.subscriberCount = Math.max(0, this.subscriberCount - 1);
+    if (this.subscriberCount === 0) {
+      this.disconnect();
+    }
   }
 
   async connect(): Promise<void> {

@@ -5,6 +5,7 @@ import type { IAcceptInviteOutputDto } from "@/application/dto/friend/accept-inv
 import type { IGetFriendsOutputDto } from "@/application/dto/friend/get-friends.dto";
 import type { IGetInviteLinkOutputDto } from "@/application/dto/friend/get-invite-link.dto";
 import type { IGetPendingRequestsOutputDto } from "@/application/dto/friend/get-pending-requests.dto";
+import type { IRemoveFriendOutputDto } from "@/application/dto/friend/remove-friend.dto";
 import type { IRespondFriendRequestOutputDto } from "@/application/dto/friend/respond-friend-request.dto";
 import type { ISendFriendRequestOutputDto } from "@/application/dto/friend/send-friend-request.dto";
 import type { ISendInviteEmailOutputDto } from "@/application/dto/friend/send-invite-email.dto";
@@ -100,6 +101,22 @@ export function useSendInviteEmailMutation() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ recipientEmail }),
       }),
+  });
+}
+
+export function useRemoveFriendMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation<IRemoveFriendOutputDto, Error, { friendUserId: string }>({
+    mutationFn: ({ friendUserId }) =>
+      apiFetch<IRemoveFriendOutputDto>("/api/v1/friends/remove", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ friendUserId }),
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: friendKeys.all });
+    },
   });
 }
 

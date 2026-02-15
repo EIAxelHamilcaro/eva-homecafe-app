@@ -14,6 +14,7 @@ import { FAB } from "@/components/messages/fab";
 import { ConversationListSkeleton } from "@/components/messages/skeleton";
 import type { Conversation } from "@/constants/chat";
 import { useConversations } from "@/lib/api/hooks/use-conversations";
+import { useProfilesQuery } from "@/lib/api/hooks/use-profiles";
 import { useSSE } from "@/lib/sse/use-sse";
 import { useAuth } from "@/src/providers/auth-provider";
 
@@ -25,22 +26,34 @@ export default function MessagesScreen() {
 
   useSSE({ enabled: !!user });
 
-  const participantNames = useMemo(() => {
-    const names = new Map<string, string>();
+  const participantIds = useMemo(() => {
+    const ids = new Set<string>();
     if (data?.conversations) {
       for (const conversation of data.conversations) {
         for (const participant of conversation.participants) {
-          if (!names.has(participant.userId)) {
-            names.set(
-              participant.userId,
-              `Utilisateur ${participant.userId.slice(0, 4)}`,
-            );
+          if (participant.userId !== user?.id) {
+            ids.add(participant.userId);
           }
         }
       }
     }
-    return names;
-  }, [data?.conversations]);
+    return [...ids];
+  }, [data?.conversations, user?.id]);
+
+  const { data: profilesData } = useProfilesQuery(participantIds);
+
+  const participantProfiles = useMemo(() => {
+    const profiles = new Map<string, { name: string; image: string | null }>();
+    if (profilesData?.profiles) {
+      for (const profile of profilesData.profiles) {
+        profiles.set(profile.id, {
+          name: profile.name,
+          image: profile.image,
+        });
+      }
+    }
+    return profiles;
+  }, [profilesData?.profiles]);
 
   const handleConversationPress = useCallback(
     (conversationId: string) => {
@@ -65,11 +78,11 @@ export default function MessagesScreen() {
       <ConversationItem
         conversation={item}
         currentUserId={user?.id ?? ""}
-        participantNames={participantNames}
+        participantProfiles={participantProfiles}
         onPress={() => handleConversationPress(item.id)}
       />
     ),
-    [user?.id, participantNames, handleConversationPress],
+    [user?.id, participantProfiles, handleConversationPress],
   );
 
   const keyExtractor = useCallback((item: Conversation) => item.id, []);

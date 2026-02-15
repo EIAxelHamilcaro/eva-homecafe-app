@@ -32,7 +32,7 @@ export function useRespondRequest() {
     mutationFn: ({ requestId, accept }: RespondFriendRequestInput) =>
       api.post<{ request: FriendRequest }>(
         `/api/v1/friends/requests/${requestId}/respond`,
-        { accept },
+        { requestId, accept },
       ),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: friendRequestKeys.all });

@@ -1,11 +1,16 @@
 import { match } from "@packages/ddd-kit";
 import { NextResponse } from "next/server";
+import { getMessageConversationAndParticipants } from "@/adapters/queries/conversation-participants.query";
 import {
   addReactionInputDtoSchema,
   type IAddReactionOutputDto,
 } from "@/application/dto/chat/add-reaction.dto";
 import type { IGetSessionOutputDto } from "@/application/dto/get-session.dto";
 import { getInjection } from "@/common/di/container";
+import {
+  broadcastReactionAdded,
+  broadcastReactionRemoved,
+} from "./sse.controller";
 
 async function getAuthenticatedUser(
   request: Request,
@@ -60,7 +65,25 @@ export async function addReactionController(
     return NextResponse.json({ error }, { status: 400 });
   }
 
-  return NextResponse.json(result.getValue());
+  const output = result.getValue();
+
+  getMessageConversationAndParticipants(messageId)
+    .then((info) => {
+      if (!info) return;
+      const broadcastFn =
+        output.action === "added"
+          ? broadcastReactionAdded
+          : broadcastReactionRemoved;
+      broadcastFn(info.participantIds, {
+        messageId,
+        conversationId: info.conversationId,
+        userId: session.user.id,
+        emoji: output.emoji,
+      });
+    })
+    .catch(() => {});
+
+  return NextResponse.json(output);
 }
 
 export async function removeReactionController(
@@ -106,5 +129,23 @@ export async function removeReactionController(
     return NextResponse.json({ error }, { status: 400 });
   }
 
-  return NextResponse.json(result.getValue());
+  const removeOutput = result.getValue();
+
+  getMessageConversationAndParticipants(messageId)
+    .then((info) => {
+      if (!info) return;
+      const broadcastFn =
+        removeOutput.action === "added"
+          ? broadcastReactionAdded
+          : broadcastReactionRemoved;
+      broadcastFn(info.participantIds, {
+        messageId,
+        conversationId: info.conversationId,
+        userId: session.user.id,
+        emoji: removeOutput.emoji,
+      });
+    })
+    .catch(() => {});
+
+  return NextResponse.json(removeOutput);
 }

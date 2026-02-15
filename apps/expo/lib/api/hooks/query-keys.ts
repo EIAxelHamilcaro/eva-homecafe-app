@@ -64,6 +64,11 @@ export const postKeys = {
   comments: (postId: string) => [...postKeys.all, "comments", postId] as const,
 };
 
+export const profileKeys = {
+  all: ["profiles"] as const,
+  batch: (ids: string[]) => ["profiles", "batch", ...ids.sort()] as const,
+};
+
 export const feedKeys = {
   all: ["feed"] as const,
   list: (page?: number, limit?: number) =>

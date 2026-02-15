@@ -33,7 +33,7 @@ export function LandingFooter() {
             <Button
               variant="ghost"
               size="icon"
-              className="size-10 rounded-full bg-homecafe-pink text-white hover:bg-homecafe-pink/80 hover:text-white"
+              className="size-10 rounded-full bg-primary text-primary-foreground hover:bg-primary/80 hover:text-primary-foreground"
               asChild
             >
               <a
@@ -58,7 +58,7 @@ export function LandingFooter() {
             <Button
               variant="ghost"
               size="icon"
-              className="size-10 rounded-full bg-homecafe-pink text-white hover:bg-homecafe-pink/80 hover:text-white"
+              className="size-10 rounded-full bg-primary text-primary-foreground hover:bg-primary/80 hover:text-primary-foreground"
               asChild
             >
               <a
@@ -83,7 +83,7 @@ export function LandingFooter() {
             <Button
               variant="ghost"
               size="icon"
-              className="size-10 rounded-full bg-homecafe-pink text-white hover:bg-homecafe-pink/80 hover:text-white"
+              className="size-10 rounded-full bg-primary text-primary-foreground hover:bg-primary/80 hover:text-primary-foreground"
               asChild
             >
               <a

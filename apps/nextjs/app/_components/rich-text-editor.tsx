@@ -225,7 +225,7 @@ export function RichTextEditor({
             size="icon-xs"
             onClick={() => fileInputRef.current?.click()}
             disabled={isUploading}
-            className="flex h-7 w-7 items-center justify-center rounded text-homecafe-blue hover:bg-homecafe-blue/20 disabled:opacity-50"
+            className="flex h-7 w-7 items-center justify-center rounded text-homecafe-blue hover:bg-homecafe-blue/20"
           >
             <ImageIcon className="h-4 w-4" />
           </Button>
@@ -292,7 +292,7 @@ export function RichTextEditor({
             variant="ghost"
             onClick={() => fileInputRef.current?.click()}
             disabled={isUploading || images.length >= 10}
-            className="flex w-full items-center justify-center gap-2 border-t px-3 py-2 text-xs text-muted-foreground transition-colors hover:bg-muted/50 disabled:opacity-50"
+            className="flex w-full items-center justify-center gap-2 border-t px-3 py-2 text-xs text-muted-foreground hover:bg-muted/50"
           >
             <Plus className="h-3.5 w-3.5" />
             Ajouter des photos
@@ -305,7 +305,7 @@ export function RichTextEditor({
         <Button
           type="submit"
           disabled={submitting || isUploading}
-          className="rounded-full bg-homecafe-pink px-6 py-2 text-sm font-semibold text-white hover:bg-homecafe-pink/90 disabled:opacity-50"
+          className="rounded-full px-6"
         >
           {submitting ? submittingLabel : submitLabel}
         </Button>

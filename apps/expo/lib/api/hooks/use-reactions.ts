@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type {
-  AddReactionInput,
   AddReactionResponse,
   GetMessagesResponse,
   ReactionEmoji,
@@ -10,22 +9,26 @@ import { messageKeys, reactionKeys } from "./query-keys";
 
 export { reactionKeys };
 
+interface ToggleReactionInput {
+  messageId: string;
+  emoji: ReactionEmoji;
+}
+
 export interface UseToggleReactionOptions {
   conversationId: string;
-  messageId: string;
   userId: string;
   onError?: () => void;
 }
 
 export function useToggleReaction(options: UseToggleReactionOptions) {
-  const { conversationId, messageId, userId, onError } = options;
+  const { conversationId, userId, onError } = options;
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (input: AddReactionInput) =>
+    mutationFn: (input: ToggleReactionInput) =>
       api.post<AddReactionResponse>(
-        `/api/v1/chat/messages/${messageId}/reactions`,
-        input,
+        `/api/v1/chat/messages/${input.messageId}/reactions`,
+        { emoji: input.emoji },
       ),
     onMutate: async (input) => {
       await queryClient.cancelQueries({
@@ -46,13 +49,13 @@ export function useToggleReaction(options: UseToggleReactionOptions) {
         const newPages = old.pages.map((page) => ({
           ...page,
           messages: page.messages.map((message) => {
-            if (message.id !== messageId) return message;
+            if (message.id !== input.messageId) return message;
 
-            const existingReaction = message.reactions.find(
+            const hasSameReaction = message.reactions.some(
               (r) => r.userId === userId && r.emoji === input.emoji,
             );
 
-            if (existingReaction) {
+            if (hasSameReaction) {
               return {
                 ...message,
                 reactions: message.reactions.filter(
@@ -64,7 +67,7 @@ export function useToggleReaction(options: UseToggleReactionOptions) {
             return {
               ...message,
               reactions: [
-                ...message.reactions,
+                ...message.reactions.filter((r) => r.userId !== userId),
                 {
                   userId,
                   emoji: input.emoji,
@@ -97,22 +100,26 @@ export function useToggleReaction(options: UseToggleReactionOptions) {
   });
 }
 
+interface RemoveReactionInput {
+  messageId: string;
+  emoji: ReactionEmoji;
+}
+
 export interface UseRemoveReactionOptions {
   conversationId: string;
-  messageId: string;
   userId: string;
 }
 
 export function useRemoveReaction(options: UseRemoveReactionOptions) {
-  const { conversationId, messageId, userId } = options;
+  const { conversationId, userId } = options;
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (emoji: ReactionEmoji) =>
+    mutationFn: (input: RemoveReactionInput) =>
       api.delete<void>(
-        `/api/v1/chat/messages/${messageId}/reactions?emoji=${encodeURIComponent(emoji)}`,
+        `/api/v1/chat/messages/${input.messageId}/reactions?emoji=${encodeURIComponent(input.emoji)}`,
       ),
-    onMutate: async (emoji) => {
+    onMutate: async (input) => {
       await queryClient.cancelQueries({
         queryKey: messageKeys.list(conversationId),
       });
@@ -131,12 +138,12 @@ export function useRemoveReaction(options: UseRemoveReactionOptions) {
         const newPages = old.pages.map((page) => ({
           ...page,
           messages: page.messages.map((message) => {
-            if (message.id !== messageId) return message;
+            if (message.id !== input.messageId) return message;
 
             return {
               ...message,
               reactions: message.reactions.filter(
-                (r) => !(r.userId === userId && r.emoji === emoji),
+                (r) => !(r.userId === userId && r.emoji === input.emoji),
               ),
             };
           }),

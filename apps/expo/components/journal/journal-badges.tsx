@@ -115,9 +115,11 @@ export function JournalBadges() {
         </View>
         <Pressable
           onPress={() => router.push("/(protected)/recompenses")}
-          className="mt-4 self-start rounded-full bg-homecafe-pink px-6 py-1.5 active:opacity-90"
+          className="mt-4 self-start rounded-full bg-primary px-6 py-1.5 active:opacity-90"
         >
-          <Text className="text-sm font-medium text-white">Voir tout</Text>
+          <Text className="text-sm font-medium text-primary-foreground">
+            Voir tout
+          </Text>
         </Pressable>
       </CardContent>
     </Card>

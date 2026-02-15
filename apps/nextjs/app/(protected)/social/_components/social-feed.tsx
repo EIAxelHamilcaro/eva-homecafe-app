@@ -245,7 +245,7 @@ export function SocialFeed({ userId }: SocialFeedProps) {
             {!data.hasFriends && (
               <Link
                 href="/profile"
-                className="inline-block rounded-full bg-homecafe-pink px-4 py-1.5 text-sm font-medium text-white hover:opacity-90"
+                className="inline-block rounded-full bg-primary px-4 py-1.5 text-sm font-medium text-white hover:opacity-90"
               >
                 Mon profil
               </Link>

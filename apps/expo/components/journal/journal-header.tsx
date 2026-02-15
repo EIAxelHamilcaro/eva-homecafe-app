@@ -43,7 +43,7 @@ export function JournalHeader({ today }: JournalHeaderProps) {
           onPress={() =>
             router.push("/(protected)/(tabs)/journal/create" as Href)
           }
-          className="min-w-0 flex-1 items-start justify-center rounded-full border border-homecafe-pink bg-transparent px-4 py-3 active:bg-homecafe-pink/10"
+          className="min-w-0 flex-1 items-start justify-center rounded-full border border-primary bg-transparent px-4 py-3 active:bg-primary/10"
         >
           <Text className="text-sm text-foreground">Ajouter un post</Text>
         </Pressable>

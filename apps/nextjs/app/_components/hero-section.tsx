@@ -31,11 +31,7 @@ export function HeroSection() {
               vivant, pensé pour te faire du bien.
             </p>
             <div className="mt-10">
-              <Button
-                asChild
-                size="lg"
-                className="rounded-full bg-homecafe-pink px-8 text-white shadow-md hover:bg-homecafe-pink/80"
-              >
+              <Button asChild size="lg" className="rounded-full px-8 shadow-md">
                 <Link href="/register">Commencer</Link>
               </Button>
             </div>

@@ -12,10 +12,7 @@ export function LandingNavbar() {
         <Link href="/">
           <LandingLogo width={107} height={67} />
         </Link>
-        <Button
-          asChild
-          className="rounded-full bg-homecafe-pink px-6 text-white hover:bg-homecafe-pink/80"
-        >
+        <Button asChild className="rounded-full px-6">
           <Link href="/register">S&apos;inscrire</Link>
         </Button>
       </nav>

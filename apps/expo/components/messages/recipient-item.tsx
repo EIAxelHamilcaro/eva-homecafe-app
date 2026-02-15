@@ -1,5 +1,4 @@
-import { PenSquare } from "lucide-react-native";
-import { Pressable, Text, View } from "react-native";
+import { Image, Pressable, Text, View } from "react-native";
 import type { Recipient } from "@/constants/chat";
 
 interface RecipientItemProps {
@@ -44,19 +43,29 @@ export function RecipientItem({ recipient, onPress }: RecipientItemProps) {
   return (
     <Pressable
       onPress={onPress}
-      className="flex-row items-center justify-between px-4 py-3 active:bg-muted"
+      className="flex-row items-center px-4 py-3 active:bg-muted"
     >
-      <View className="flex-row items-center">
+      {recipient.image ? (
+        <Image
+          source={{ uri: recipient.image }}
+          className="mr-3 h-12 w-12 rounded-full"
+        />
+      ) : (
         <View
           className="mr-3 h-12 w-12 items-center justify-center rounded-full"
           style={{ backgroundColor: avatarColor }}
         >
           <Text className="text-lg font-semibold text-white">{initials}</Text>
         </View>
-        <Text className="text-base text-foreground">{recipient.name}</Text>
+      )}
+      <View className="min-w-0 flex-1">
+        <Text className="text-base font-medium text-foreground">
+          {recipient.name}
+        </Text>
+        <Text className="text-sm text-muted-foreground" numberOfLines={1}>
+          {recipient.email}
+        </Text>
       </View>
-
-      <PenSquare size={20} color="#999" />
     </Pressable>
   );
 }

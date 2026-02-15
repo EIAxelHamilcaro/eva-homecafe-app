@@ -1,12 +1,17 @@
-import { Pressable, Text, View } from "react-native";
+import { Image, Pressable, Text, View } from "react-native";
 import type { Conversation, Participant } from "@/constants/chat";
 import { cn } from "@/src/libs/utils";
 import { UnreadBadge } from "./unread-badge";
 
+export interface ParticipantProfile {
+  name: string;
+  image: string | null;
+}
+
 interface ConversationItemProps {
   conversation: Conversation;
   currentUserId: string;
-  participantNames: Map<string, string>;
+  participantProfiles: Map<string, ParticipantProfile>;
   onPress: () => void;
 }
 
@@ -66,7 +71,7 @@ function getOtherParticipant(
 export function ConversationItem({
   conversation,
   currentUserId,
-  participantNames,
+  participantProfiles,
   onPress,
 }: ConversationItemProps) {
   const otherParticipant = getOtherParticipant(
@@ -74,15 +79,18 @@ export function ConversationItem({
     currentUserId,
   );
   const otherUserId = otherParticipant?.userId ?? "";
-  const otherUserName = participantNames.get(otherUserId) ?? "Utilisateur";
+  const profile = participantProfiles.get(otherUserId);
+  const otherUserName = profile?.name ?? "Utilisateur";
+  const otherUserImage = profile?.image ?? null;
   const avatarColor = getAvatarColor(otherUserId);
   const initials = getInitials(otherUserName);
 
   const lastMessagePreview = conversation.lastMessage
-    ? conversation.lastMessage.hasAttachments &&
-      !conversation.lastMessage.content
-      ? "📷 Photo"
-      : conversation.lastMessage.content
+    ? conversation.lastMessage.hasAttachments
+      ? conversation.lastMessage.content
+        ? `📷 ${conversation.lastMessage.content}`
+        : "📷 Photo"
+      : conversation.lastMessage.content || "Aucun message"
     : "Aucun message";
 
   const timestamp = conversation.lastMessage
@@ -99,12 +107,20 @@ export function ConversationItem({
         hasUnread && "bg-muted/30",
       )}
     >
-      <View
-        className="mr-3 h-12 w-12 items-center justify-center rounded-full"
-        style={{ backgroundColor: avatarColor }}
-      >
-        <Text className="text-lg font-semibold text-white">{initials}</Text>
-      </View>
+      {otherUserImage ? (
+        <Image
+          source={{ uri: otherUserImage }}
+          className="mr-3 h-12 w-12 rounded-full"
+          resizeMode="cover"
+        />
+      ) : (
+        <View
+          className="mr-3 h-12 w-12 items-center justify-center rounded-full"
+          style={{ backgroundColor: avatarColor }}
+        >
+          <Text className="text-lg font-semibold text-white">{initials}</Text>
+        </View>
+      )}
 
       <View className="flex-1">
         <View className="flex-row items-center justify-between">

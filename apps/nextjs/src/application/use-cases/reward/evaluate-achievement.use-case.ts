@@ -4,6 +4,7 @@ import type {
   IEvaluateAchievementOutputDto,
 } from "@/application/dto/reward/evaluate-achievement.dto";
 import type { IAchievementQueryProvider } from "@/application/ports/achievement-query.provider.port";
+import type { IEventDispatcher } from "@/application/ports/event-dispatcher.port";
 import type { INotificationRepository } from "@/application/ports/notification-repository.port";
 import type {
   IAchievementDefinitionRecord,
@@ -18,11 +19,17 @@ export class EvaluateAchievementUseCase
   implements
     UseCase<IEvaluateAchievementInputDto, IEvaluateAchievementOutputDto>
 {
+  private eventDispatcher?: IEventDispatcher;
+
   constructor(
     private readonly rewardRepo: IRewardRepository,
     private readonly notificationRepo: INotificationRepository,
     private readonly queryProvider: IAchievementQueryProvider,
   ) {}
+
+  setEventDispatcher(dispatcher: IEventDispatcher): void {
+    this.eventDispatcher = dispatcher;
+  }
 
   async execute(
     input: IEvaluateAchievementInputDto,
@@ -156,6 +163,11 @@ export class EvaluateAchievementUseCase
 
       const notification = notificationResult.getValue();
       await this.notificationRepo.create(notification);
+
+      if (this.eventDispatcher) {
+        await this.eventDispatcher.dispatchAll(notification.domainEvents);
+        notification.clearEvents();
+      }
     } catch {}
   }
 }

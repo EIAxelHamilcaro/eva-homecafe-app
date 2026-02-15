@@ -1,5 +1,15 @@
 "use client";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@packages/ui/components/ui/alert-dialog";
 import { Badge } from "@packages/ui/components/ui/badge";
 import { Button } from "@packages/ui/components/ui/button";
 import {
@@ -21,6 +31,7 @@ import {
   ChevronRight,
   Loader2,
   Mail,
+  UserMinus,
   UserPlus,
   Users,
   X,
@@ -34,6 +45,7 @@ import type { IPendingRequestWithSenderDto } from "@/application/dto/friend/get-
 import {
   useFriendsQuery,
   usePendingRequestsQuery,
+  useRemoveFriendMutation,
   useRespondRequestMutation,
   useSendFriendRequestMutation,
 } from "../_hooks/use-friends";
@@ -136,7 +148,15 @@ function PaginationControls({
   );
 }
 
-function FriendItem({ friend }: { friend: IFriendDto }) {
+function FriendItem({
+  friend,
+  onRemove,
+  isRemoving,
+}: {
+  friend: IFriendDto;
+  onRemove: (friendUserId: string) => void;
+  isRemoving: boolean;
+}) {
   const displayName = friend.displayName ?? friend.name;
 
   return (
@@ -148,13 +168,30 @@ function FriendItem({ friend }: { friend: IFriendDto }) {
         </p>
         <p className="truncate text-xs text-muted-foreground">{friend.email}</p>
       </div>
+      <Button
+        variant="ghost"
+        size="sm"
+        className="h-8 w-8 shrink-0 p-0 text-muted-foreground hover:text-destructive"
+        disabled={isRemoving}
+        onClick={() => onRemove(friend.userId)}
+      >
+        {isRemoving ? (
+          <Loader2 size={14} className="animate-spin" />
+        ) : (
+          <UserMinus size={14} />
+        )}
+      </Button>
     </div>
   );
 }
 
 function FriendsTab() {
   const [page, setPage] = useState(1);
+  const [confirmingFriendId, setConfirmingFriendId] = useState<string | null>(
+    null,
+  );
   const { data, isLoading } = useFriendsQuery(page);
+  const removeFriendMutation = useRemoveFriendMutation();
 
   if (isLoading) {
     return <FriendsListSkeleton />;
@@ -179,11 +216,21 @@ function FriendsTab() {
     );
   }
 
+  const confirmingFriend = friends.find((f) => f.userId === confirmingFriendId);
+
   return (
     <div>
       <div className="space-y-1">
         {friends.map((friend) => (
-          <FriendItem key={friend.id} friend={friend} />
+          <FriendItem
+            key={friend.id}
+            friend={friend}
+            onRemove={setConfirmingFriendId}
+            isRemoving={
+              removeFriendMutation.isPending &&
+              removeFriendMutation.variables?.friendUserId === friend.userId
+            }
+          />
         ))}
       </div>
       {pagination && (
@@ -195,6 +242,45 @@ function FriendsTab() {
           onPageChange={setPage}
         />
       )}
+
+      <AlertDialog
+        open={confirmingFriendId !== null}
+        onOpenChange={(open) => {
+          if (!open) setConfirmingFriendId(null);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Retirer cet ami ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {confirmingFriend
+                ? `Voulez-vous vraiment retirer ${confirmingFriend.displayName ?? confirmingFriend.name ?? "cet utilisateur"} de votre liste d'amis ?`
+                : "Voulez-vous vraiment retirer cet ami ?"}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              disabled={removeFriendMutation.isPending}
+              onClick={() => {
+                if (!confirmingFriendId) return;
+                removeFriendMutation.mutate(
+                  { friendUserId: confirmingFriendId },
+                  {
+                    onSuccess: () => setConfirmingFriendId(null),
+                  },
+                );
+              }}
+            >
+              {removeFriendMutation.isPending ? (
+                <Loader2 size={14} className="animate-spin" />
+              ) : null}
+              Retirer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
@@ -353,7 +439,7 @@ function InviteTab() {
         </div>
         <Button
           type="submit"
-          className="w-full bg-homecafe-pink text-white hover:bg-homecafe-pink-dark"
+          className="w-full"
           disabled={sendRequestMutation.isPending || !email.trim()}
         >
           {sendRequestMutation.isPending ? (

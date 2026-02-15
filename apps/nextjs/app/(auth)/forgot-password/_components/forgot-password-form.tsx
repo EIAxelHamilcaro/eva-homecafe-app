@@ -57,10 +57,7 @@ export function ForgotPasswordForm() {
           Si un compte existe avec cette adresse, vous recevrez un email de
           réinitialisation.
         </p>
-        <Button
-          asChild
-          className="rounded-full bg-homecafe-pink px-8 py-2.5 text-sm font-medium text-white transition-colors hover:bg-homecafe-pink/80"
-        >
+        <Button asChild className="rounded-full px-8 py-2.5">
           <Link href="/login">Retour à la connexion</Link>
         </Button>
       </div>
@@ -100,7 +97,7 @@ export function ForgotPasswordForm() {
       <Button
         type="submit"
         disabled={submitting}
-        className="rounded-full bg-homecafe-pink px-8 py-2.5 text-sm font-medium text-white transition-colors hover:bg-homecafe-pink/80 disabled:opacity-50"
+        className="rounded-full px-8 py-2.5"
       >
         {submitting ? "Envoi en cours..." : "Envoyer le lien"}
       </Button>

@@ -89,7 +89,7 @@ function QrCodeSection() {
             </div>
             <Button
               size="sm"
-              className="rounded-full bg-homecafe-pink px-5 text-white hover:bg-homecafe-pink/90"
+              className="rounded-full px-5"
               onClick={handleGenerate}
               disabled={isLoading || isFetching}
             >
@@ -127,7 +127,7 @@ function QrCodeSection() {
               </Button>
               <Button
                 size="sm"
-                className="rounded-full bg-homecafe-pink px-4 text-white hover:bg-homecafe-pink/90"
+                className="rounded-full"
                 onClick={handleGenerate}
                 disabled={isFetching}
               >
@@ -541,7 +541,7 @@ export function ProfileContent({
             </div>
             <Button
               onClick={() => setShowRewardsDialog(true)}
-              className="mt-4 inline-block rounded-full bg-homecafe-pink px-6 py-1.5 text-sm font-medium text-white hover:opacity-90"
+              className="mt-4 rounded-full px-6"
             >
               Voir tout
             </Button>
@@ -669,7 +669,7 @@ export function ProfileContent({
               <div className="flex gap-2">
                 <Button
                   size="sm"
-                  className="rounded-full bg-homecafe-pink px-5 text-white hover:bg-homecafe-pink/90"
+                  className="rounded-full px-5"
                   onClick={handleSavePersonalInfo}
                   disabled={savingPersonalInfo}
                 >
@@ -741,7 +741,7 @@ export function ProfileContent({
               </div>
               <Button
                 size="sm"
-                className="mt-5 rounded-full bg-homecafe-pink px-5 text-white hover:bg-homecafe-pink/90"
+                className="mt-5 rounded-full px-5"
                 onClick={() => setEditingPersonalInfo(true)}
               >
                 Modifier les informations
@@ -836,7 +836,7 @@ export function ProfileContent({
                 <div className="flex gap-2">
                   <Button
                     size="sm"
-                    className="rounded-full bg-homecafe-pink px-5 text-white hover:bg-homecafe-pink/90"
+                    className="rounded-full px-5"
                     onClick={handleSaveAddress}
                     disabled={savingAddress}
                   >
@@ -900,7 +900,7 @@ export function ProfileContent({
                 </div>
                 <Button
                   size="sm"
-                  className="mt-5 rounded-full bg-homecafe-pink px-5 text-white hover:bg-homecafe-pink/90"
+                  className="mt-5 rounded-full px-5"
                   onClick={() => setEditingAddress(true)}
                 >
                   Modifier les informations

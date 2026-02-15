@@ -143,9 +143,11 @@ export function SocialGallery() {
             onPress={() =>
               router.push("/(protected)/(tabs)/social/gallery" as Href)
             }
-            className="mt-4 self-start rounded-full bg-homecafe-pink px-4 py-1.5 active:opacity-90"
+            className="mt-4 self-start rounded-full bg-primary px-4 py-1.5 active:opacity-90"
           >
-            <Text className="text-sm font-medium text-white">Voir plus</Text>
+            <Text className="text-sm font-medium text-primary-foreground">
+              Voir plus
+            </Text>
           </Pressable>
         )}
       </CardContent>

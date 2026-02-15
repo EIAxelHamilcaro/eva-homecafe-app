@@ -226,7 +226,7 @@ export function EditPostForm({
           variant="outline"
           onClick={() => fileInputRef.current?.click()}
           disabled={isUploading}
-          className="rounded-md border border-gray-300 px-3 py-1.5 text-sm hover:bg-gray-50 disabled:opacity-50"
+          className="rounded-md border border-gray-300 px-3 hover:bg-gray-50"
         >
           {isUploading ? "Uploading..." : "Add Image"}
         </Button>
@@ -248,7 +248,7 @@ export function EditPostForm({
         <Button
           type="submit"
           disabled={isSubmitting || isUploading}
-          className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+          className="rounded-md bg-blue-600 px-4 text-white hover:bg-blue-700"
         >
           {isSubmitting ? "Saving..." : "Save Changes"}
         </Button>

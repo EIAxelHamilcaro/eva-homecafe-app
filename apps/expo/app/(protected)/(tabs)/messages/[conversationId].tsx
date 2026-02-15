@@ -1,8 +1,10 @@
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { ChevronLeft } from "lucide-react-native";
-import { useCallback, useMemo, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
+import { ChevronLeft, Trash2 } from "lucide-react-native";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   KeyboardAvoidingView,
   Platform,
@@ -26,12 +28,23 @@ import { MessageInput } from "@/components/messages/message-input";
 import { ReactionPicker } from "@/components/messages/reaction-picker";
 import { MessageListSkeleton } from "@/components/messages/skeleton";
 import type { Attachment, Message, ReactionEmoji } from "@/constants/chat";
+import {
+  useConversations,
+  useDeleteConversation,
+} from "@/lib/api/hooks/use-conversations";
 import { useMultipleMediaUpload } from "@/lib/api/hooks/use-media-upload";
-import { useMessages, useSendMessage } from "@/lib/api/hooks/use-messages";
+import {
+  useMarkConversationRead,
+  useMessages,
+  useSendMessage,
+} from "@/lib/api/hooks/use-messages";
+import { useMarkRead } from "@/lib/api/hooks/use-notifications";
+import { useProfilesQuery } from "@/lib/api/hooks/use-profiles";
 import { useToggleReaction } from "@/lib/api/hooks/use-reactions";
 import { useSSE } from "@/lib/sse/use-sse";
 import { useToast } from "@/lib/toast/toast-context";
 import { useAuth } from "@/src/providers/auth-provider";
+import type { GetNotificationsResponse } from "@/types/notification";
 
 interface MessageWithSeparator {
   type: "message" | "separator";
@@ -77,8 +90,46 @@ function processMessagesWithSeparators(
 export default function ConversationScreen() {
   const { conversationId } = useLocalSearchParams<{ conversationId: string }>();
   const router = useRouter();
+  const navigation = useNavigation();
   const { user } = useAuth();
   const { showToast } = useToast();
+
+  const deleteConversation = useDeleteConversation({
+    onSuccess: () => router.back(),
+  });
+
+  const handleDelete = useCallback(() => {
+    Alert.alert(
+      "Supprimer la conversation",
+      "Cette action est irréversible. Tous les messages seront supprimés.",
+      [
+        { text: "Annuler", style: "cancel" },
+        {
+          text: "Supprimer",
+          style: "destructive",
+          onPress: () => {
+            if (conversationId) {
+              deleteConversation.mutate(conversationId);
+            }
+          },
+        },
+      ],
+    );
+  }, [conversationId, deleteConversation]);
+
+  const isScreenFocusedRef = useRef(true);
+  useEffect(() => {
+    const unsubFocus = navigation.addListener("focus", () => {
+      isScreenFocusedRef.current = true;
+    });
+    const unsubBlur = navigation.addListener("blur", () => {
+      isScreenFocusedRef.current = false;
+    });
+    return () => {
+      unsubFocus();
+      unsubBlur();
+    };
+  }, [navigation]);
 
   const [selectedMessageId, setSelectedMessageId] = useState<string | null>(
     null,
@@ -90,6 +141,9 @@ export default function ConversationScreen() {
   const [viewerVisible, setViewerVisible] = useState(false);
   const [viewerImages, setViewerImages] = useState<Attachment[]>([]);
   const [viewerInitialIndex, setViewerInitialIndex] = useState(0);
+
+  const flatListRef = useRef<FlatList>(null);
+  const newestMessageIdRef = useRef<string | null>(null);
 
   const {
     data,
@@ -118,27 +172,110 @@ export default function ConversationScreen() {
 
   const toggleReaction = useToggleReaction({
     conversationId: conversationId ?? "",
-    messageId: selectedMessageId ?? "",
     userId: user?.id ?? "",
     onError: () => {
       showToast("Impossible d'ajouter la réaction", "error");
     },
   });
 
+  const markAsRead = useMarkConversationRead(conversationId ?? "");
+  const markAsReadRef = useRef(markAsRead);
+  markAsReadRef.current = markAsRead;
+
+  useEffect(() => {
+    if (conversationId) {
+      markAsReadRef.current.mutate();
+    }
+  }, [conversationId]);
+
   useSSE({
     conversationId: conversationId ?? "",
     enabled: !!conversationId && !!user,
   });
 
+  const queryClient = useQueryClient();
+  const markNotificationRead = useMarkRead();
+  const markedNotifIdsRef = useRef(new Set<string>());
+
+  const { data: conversationsData } = useConversations();
+  const otherUserId = useMemo(() => {
+    const conv = conversationsData?.conversations?.find(
+      (c) => c.id === conversationId,
+    );
+    return conv?.participants.find((p) => p.userId !== user?.id)?.userId;
+  }, [conversationsData, conversationId, user?.id]);
+
+  const profileIds = useMemo(() => {
+    const ids: string[] = [];
+    if (user?.id) ids.push(user.id);
+    if (otherUserId) ids.push(otherUserId);
+    return ids;
+  }, [user?.id, otherUserId]);
+
+  const { data: profilesData } = useProfilesQuery(profileIds);
+  const currentUserProfile = user?.id
+    ? profilesData?.profiles?.find((p) => p.id === user.id)
+    : undefined;
+  const otherUserProfile = otherUserId
+    ? profilesData?.profiles?.find((p) => p.id === otherUserId)
+    : undefined;
+
   const allMessages = useMemo(() => {
     if (!data?.pages) return [];
-    return data.pages.flatMap((page) => page.messages);
+    const seen = new Set<string>();
+    const messages: Message[] = [];
+    for (const page of data.pages) {
+      for (const msg of page.messages) {
+        if (!seen.has(msg.id)) {
+          seen.add(msg.id);
+          messages.push(msg);
+        }
+      }
+    }
+    return messages;
   }, [data?.pages]);
 
   const processedMessages = useMemo(
     () => processMessagesWithSeparators(allMessages),
     [allMessages],
   );
+
+  useEffect(() => {
+    if (allMessages.length === 0) return;
+    const newestId = allMessages[0]?.id ?? null;
+    if (
+      newestId !== newestMessageIdRef.current &&
+      newestMessageIdRef.current !== null
+    ) {
+      flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
+    }
+    newestMessageIdRef.current = newestId;
+  }, [allMessages]);
+
+  const latestMessageId = allMessages[0]?.id ?? null;
+  useEffect(() => {
+    if (!isScreenFocusedRef.current || !conversationId || !latestMessageId)
+      return;
+
+    const queries = queryClient.getQueriesData<GetNotificationsResponse>({
+      queryKey: ["notifications", "list"],
+    });
+
+    for (const [, cached] of queries) {
+      if (!cached?.notifications) continue;
+      for (const n of cached.notifications) {
+        if (
+          n.type === "new_message" &&
+          n.readAt === null &&
+          (n.data.conversationId as string | undefined) === conversationId &&
+          !markedNotifIdsRef.current.has(n.id)
+        ) {
+          markedNotifIdsRef.current.add(n.id);
+          markNotificationRead.mutate({ notificationId: n.id });
+        }
+      }
+    }
+  }, [conversationId, latestMessageId, queryClient, markNotificationRead]);
 
   const handleBack = useCallback(() => {
     router.back();
@@ -210,7 +347,7 @@ export default function ConversationScreen() {
   const handleSelectReaction = useCallback(
     (emoji: ReactionEmoji) => {
       if (selectedMessageId) {
-        toggleReaction.mutate({ emoji });
+        toggleReaction.mutate({ messageId: selectedMessageId, emoji });
       }
     },
     [selectedMessageId, toggleReaction],
@@ -219,7 +356,7 @@ export default function ConversationScreen() {
   const handleReactionPress = useCallback(
     (messageId: string, emoji: ReactionEmoji) => {
       setSelectedMessageId(messageId);
-      toggleReaction.mutate({ emoji });
+      toggleReaction.mutate({ messageId, emoji });
     },
     [toggleReaction],
   );
@@ -249,11 +386,22 @@ export default function ConversationScreen() {
       }
 
       if (item.type === "message" && item.message) {
+        const isSent = item.message.senderId === user?.id;
         return (
           <MessageBubble
             message={item.message}
-            isSent={item.message.senderId === user?.id}
+            isSent={isSent}
             userId={user?.id ?? ""}
+            senderName={
+              isSent
+                ? (currentUserProfile?.name ?? user?.name)
+                : (otherUserProfile?.name ?? undefined)
+            }
+            senderImage={
+              isSent
+                ? (currentUserProfile?.image ?? user?.image)
+                : (otherUserProfile?.image ?? undefined)
+            }
             onLongPress={() => {
               if (item.message) handleLongPress(item.message.id);
             }}
@@ -269,7 +417,14 @@ export default function ConversationScreen() {
 
       return null;
     },
-    [user?.id, handleLongPress, handleReactionPress, handleImagePress],
+    [
+      user,
+      currentUserProfile,
+      otherUserProfile,
+      handleLongPress,
+      handleReactionPress,
+      handleImagePress,
+    ],
   );
 
   const keyExtractor = useCallback((item: MessageWithSeparator) => item.id, []);
@@ -301,7 +456,15 @@ export default function ConversationScreen() {
               Nouveau message
             </Text>
           </View>
-          <CloseButton onPress={handleBack} />
+          <View className="flex-row items-center gap-1">
+            <Pressable
+              onPress={handleDelete}
+              className="h-10 w-10 items-center justify-center rounded-full active:bg-muted"
+            >
+              <Trash2 size={20} color="#ef4444" />
+            </Pressable>
+            <CloseButton onPress={handleBack} />
+          </View>
         </View>
         <MessageListSkeleton />
       </SafeAreaView>
@@ -323,7 +486,15 @@ export default function ConversationScreen() {
               Nouveau message
             </Text>
           </View>
-          <CloseButton onPress={handleBack} />
+          <View className="flex-row items-center gap-1">
+            <Pressable
+              onPress={handleDelete}
+              className="h-10 w-10 items-center justify-center rounded-full active:bg-muted"
+            >
+              <Trash2 size={20} color="#ef4444" />
+            </Pressable>
+            <CloseButton onPress={handleBack} />
+          </View>
         </View>
         <ErrorState
           message={error?.message || "Impossible de charger les messages"}
@@ -353,10 +524,19 @@ export default function ConversationScreen() {
                 Nouveau message
               </Text>
             </View>
-            <CloseButton onPress={handleBack} />
+            <View className="flex-row items-center gap-1">
+              <Pressable
+                onPress={handleDelete}
+                className="h-10 w-10 items-center justify-center rounded-full active:bg-muted"
+              >
+                <Trash2 size={20} color="#ef4444" />
+              </Pressable>
+              <CloseButton onPress={handleBack} />
+            </View>
           </View>
 
           <FlatList
+            ref={flatListRef}
             data={processedMessages}
             renderItem={renderItem}
             keyExtractor={keyExtractor}

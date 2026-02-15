@@ -64,7 +64,7 @@ export async function TasksWidget({ userId }: TasksWidgetProps) {
           </div>
           <Link
             href="/organization"
-            className="inline-block rounded-full bg-homecafe-pink px-4 py-1.5 text-sm font-medium text-white hover:opacity-90"
+            className="inline-block rounded-full bg-primary px-4 py-1.5 text-sm font-medium text-white hover:opacity-90"
           >
             Voir plus
           </Link>
@@ -109,7 +109,7 @@ export async function TasksWidget({ userId }: TasksWidgetProps) {
         </ul>
         <Link
           href="/organization"
-          className="mt-4 inline-block rounded-full bg-homecafe-pink px-4 py-1.5 text-sm font-medium text-white hover:opacity-90"
+          className="mt-4 inline-block rounded-full bg-primary px-4 py-1.5 text-sm font-medium text-white hover:opacity-90"
         >
           Voir plus
         </Link>

@@ -10,7 +10,7 @@ import type {
   SendMessageResponse,
 } from "@/constants/chat";
 import { api } from "../client";
-import { conversationKeys, messageKeys } from "./query-keys";
+import { conversationKeys, messageKeys, notificationKeys } from "./query-keys";
 
 export { messageKeys };
 
@@ -22,7 +22,7 @@ export function useMessages(
   conversationId: string,
   options?: UseMessagesOptions,
 ) {
-  const { limit = 20 } = options ?? {};
+  const { limit = 15 } = options ?? {};
 
   return useInfiniteQuery({
     queryKey: messageKeys.list(conversationId),
@@ -113,6 +113,19 @@ export function useSendMessage(options: UseSendMessageOptions) {
         queryKey: messageKeys.list(conversationId),
       });
       queryClient.invalidateQueries({ queryKey: conversationKeys.all });
+    },
+  });
+}
+
+export function useMarkConversationRead(conversationId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () =>
+      api.post(`/api/v1/chat/conversations/${conversationId}/read`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: conversationKeys.all });
+      queryClient.invalidateQueries({ queryKey: notificationKeys.all });
     },
   });
 }

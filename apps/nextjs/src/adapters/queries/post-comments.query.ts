@@ -1,5 +1,5 @@
 import { db, postComment, profile, user } from "@packages/drizzle";
-import { desc, eq } from "drizzle-orm";
+import { asc, eq } from "drizzle-orm";
 
 export interface IPostCommentDto {
   id: string;
@@ -33,7 +33,7 @@ export async function getPostComments(
     .innerJoin(user, eq(postComment.userId, user.id))
     .leftJoin(profile, eq(user.id, profile.userId))
     .where(eq(postComment.postId, postId))
-    .orderBy(desc(postComment.createdAt));
+    .orderBy(asc(postComment.createdAt));
 
   const comments: IPostCommentDto[] = records.map((r) => ({
     id: r.id,

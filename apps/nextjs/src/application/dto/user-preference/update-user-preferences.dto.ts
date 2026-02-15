@@ -8,6 +8,7 @@ export const updateUserPreferencesInputDtoSchema = z.object({
   notifyNewMessages: z.boolean().optional(),
   notifyFriendActivity: z.boolean().optional(),
   notifyBadgesEarned: z.boolean().optional(),
+  notifyPostActivity: z.boolean().optional(),
   notifyJournalReminder: z.boolean().optional(),
   profileVisibility: z.boolean().optional(),
   rewardsVisibility: z.enum(["everyone", "friends", "nobody"]).optional(),

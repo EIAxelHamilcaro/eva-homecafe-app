@@ -17,6 +17,7 @@ interface NotificationPreferencesSectionProps {
   notifyNewMessages: boolean;
   notifyFriendActivity: boolean;
   notifyBadgesEarned: boolean;
+  notifyPostActivity: boolean;
   notifyJournalReminder: boolean;
   onChange: (
     field:
@@ -25,6 +26,7 @@ interface NotificationPreferencesSectionProps {
       | "notifyNewMessages"
       | "notifyFriendActivity"
       | "notifyBadgesEarned"
+      | "notifyPostActivity"
       | "notifyJournalReminder",
     value: boolean | string,
   ) => void;
@@ -36,6 +38,7 @@ export function NotificationPreferencesSection({
   notifyNewMessages,
   notifyFriendActivity,
   notifyBadgesEarned,
+  notifyPostActivity,
   notifyJournalReminder,
   onChange,
 }: NotificationPreferencesSectionProps) {
@@ -114,6 +117,19 @@ export function NotificationPreferencesSection({
             />
             <Label htmlFor="notifyBadgesEarned" className="text-sm">
               Badges obtenus
+            </Label>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Checkbox
+              id="notifyPostActivity"
+              checked={notifyPostActivity}
+              onCheckedChange={(checked) =>
+                onChange("notifyPostActivity", checked === true)
+              }
+            />
+            <Label htmlFor="notifyPostActivity" className="text-sm">
+              Réactions et commentaires sur mes posts
             </Label>
           </div>
 

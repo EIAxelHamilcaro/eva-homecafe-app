@@ -2,7 +2,6 @@ import { Button } from "components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "components/ui/card";
 import { Checkbox } from "components/ui/checkbox";
 import { Dropdown } from "components/ui/dropdown";
-import { RadioGroup, RadioGroupItem } from "components/ui/radio-group";
 import { Toggle } from "components/ui/toggle";
 import { useRouter } from "expo-router";
 import { useSignOut } from "lib/api/hooks/use-auth";
@@ -21,16 +20,12 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getNotificationsModule } from "@/lib/notifications/safe-notifications";
-import {
-  languageOptions,
-  rewardsVisibilityOptions,
-  timeFormatOptions,
-} from "@/types/settings";
+import { languageOptions } from "@/types/settings";
 
 function SettingsSkeleton() {
   return (
     <ScrollView className="flex-1 px-4" showsVerticalScrollIndicator={false}>
-      {[1, 2, 3].map((i) => (
+      {[1, 2].map((i) => (
         <View
           key={i}
           className="mb-4 rounded-xl border border-border bg-card p-4"
@@ -59,14 +54,13 @@ export default function SettingsScreen() {
   const [notifyNewMessages, setNotifyNewMessages] = useState(true);
   const [notifyFriendActivity, setNotifyFriendActivity] = useState(true);
   const [notifyBadgesEarned, setNotifyBadgesEarned] = useState(true);
+  const [notifyPostActivity, setNotifyPostActivity] = useState(true);
   const [notifyJournalReminder, setNotifyJournalReminder] = useState(true);
 
-  const [themeMode, setThemeMode] = useState("system");
   const [language, setLanguage] = useState("fr");
-  const [timeFormat, setTimeFormat] = useState("24h");
 
   const [savingSection, setSavingSection] = useState<
-    "notifications" | "customMode" | null
+    "notifications" | "language" | null
   >(null);
   const [devicePushDenied, setDevicePushDenied] = useState(false);
 
@@ -88,10 +82,9 @@ export default function SettingsScreen() {
       setNotifyNewMessages(settings.notifyNewMessages);
       setNotifyFriendActivity(settings.notifyFriendActivity);
       setNotifyBadgesEarned(settings.notifyBadgesEarned);
+      setNotifyPostActivity(settings.notifyPostActivity);
       setNotifyJournalReminder(settings.notifyJournalReminder);
-      setThemeMode(settings.themeMode);
       setLanguage(settings.language);
-      setTimeFormat(settings.timeFormat);
     }
   }, [settings]);
 
@@ -110,6 +103,7 @@ export default function SettingsScreen() {
         notifyNewMessages,
         notifyFriendActivity,
         notifyBadgesEarned,
+        notifyPostActivity,
         notifyJournalReminder,
       },
       {
@@ -122,42 +116,14 @@ export default function SettingsScreen() {
     );
   };
 
-  const handlePrivacyToggle = (field: "profileVisibility", value: boolean) => {
+  const handleSaveLanguage = () => {
+    setSavingSection("language");
     updateSettings.mutate(
-      { [field]: value },
+      { language: language as "fr" | "en" },
       {
+        onSuccess: () => Alert.alert("Succès", "Langue enregistrée."),
         onError: () =>
-          Alert.alert(
-            "Erreur",
-            "Impossible de mettre à jour la confidentialité.",
-          ),
-      },
-    );
-  };
-
-  const handleRewardsVisibilityChange = (value: string) => {
-    updateSettings.mutate(
-      { rewardsVisibility: value as "everyone" | "friends" | "nobody" },
-      {
-        onError: () =>
-          Alert.alert("Erreur", "Impossible de mettre à jour la visibilité."),
-      },
-    );
-  };
-
-  const handleSaveCustomMode = () => {
-    setSavingSection("customMode");
-    updateSettings.mutate(
-      {
-        themeMode: themeMode as "light" | "dark" | "system",
-        language: language as "fr" | "en",
-        timeFormat: timeFormat as "12h" | "24h",
-      },
-      {
-        onSuccess: () =>
-          Alert.alert("Succès", "Préférences d'affichage enregistrées."),
-        onError: () =>
-          Alert.alert("Erreur", "Impossible de sauvegarder les préférences."),
+          Alert.alert("Erreur", "Impossible de sauvegarder la langue."),
         onSettled: () => setSavingSection(null),
       },
     );
@@ -195,13 +161,6 @@ export default function SettingsScreen() {
       message: `Rejoins-moi sur HomeCafé ! ${url}`,
       url,
     });
-  };
-
-  const handleDownloadData = () => {
-    Alert.alert(
-      "Bientôt disponible",
-      "Le téléchargement des données sera disponible prochainement.",
-    );
   };
 
   return (
@@ -290,6 +249,11 @@ export default function SettingsScreen() {
                     label="Badges obtenus"
                   />
                   <Checkbox
+                    checked={notifyPostActivity}
+                    onCheckedChange={setNotifyPostActivity}
+                    label="Réactions et commentaires sur mes posts"
+                  />
+                  <Checkbox
                     checked={notifyJournalReminder}
                     onCheckedChange={setNotifyJournalReminder}
                     label="Rappel journal"
@@ -312,96 +276,28 @@ export default function SettingsScreen() {
             </CardContent>
           </Card>
 
-          {/* Confidentialité */}
+          {/* Langue */}
           <Card className="mb-4">
             <CardHeader className="pb-2">
-              <CardTitle className="text-lg">Confidentialité</CardTitle>
+              <CardTitle className="text-lg">Langue</CardTitle>
             </CardHeader>
             <CardContent>
               <View className="gap-4">
-                <View className="flex-row items-center justify-between">
-                  <Text className="text-sm text-foreground">
-                    Profil visible
-                  </Text>
-                  <Toggle
-                    checked={settings?.profileVisibility ?? true}
-                    onCheckedChange={(value) =>
-                      handlePrivacyToggle("profileVisibility", value)
-                    }
-                  />
-                </View>
-
-                <View>
-                  <Text className="mb-2 text-sm text-foreground">
-                    Qui peut voir mes récompenses
-                  </Text>
-                  <Dropdown
-                    value={settings?.rewardsVisibility ?? "friends"}
-                    options={rewardsVisibilityOptions}
-                    onValueChange={handleRewardsVisibilityChange}
-                    triggerClassName="w-32"
-                  />
-                </View>
+                <Dropdown
+                  value={language}
+                  options={languageOptions}
+                  onValueChange={setLanguage}
+                />
 
                 <Button
-                  variant="outline"
-                  onPress={handleDownloadData}
-                  className="mt-2 self-start border-primary"
-                >
-                  <Text className="text-sm font-medium text-primary">
-                    Télécharger mes données
-                  </Text>
-                </Button>
-              </View>
-            </CardContent>
-          </Card>
-
-          {/* Custom mode */}
-          <Card className="mb-4">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg">Custom mode</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <View className="gap-4">
-                <RadioGroup
-                  value={themeMode}
-                  onValueChange={setThemeMode}
-                  orientation="horizontal"
-                >
-                  <RadioGroupItem value="light" label="Clair" />
-                  <RadioGroupItem value="dark" label="Sombre" />
-                  <RadioGroupItem value="system" label="Système" />
-                </RadioGroup>
-
-                <View>
-                  <Text className="mb-2 text-sm text-foreground">Langue</Text>
-                  <Dropdown
-                    value={language}
-                    options={languageOptions}
-                    onValueChange={setLanguage}
-                  />
-                </View>
-
-                <View>
-                  <Text className="mb-2 text-sm text-foreground">
-                    Format heure
-                  </Text>
-                  <Dropdown
-                    value={timeFormat}
-                    options={timeFormatOptions}
-                    onValueChange={setTimeFormat}
-                  />
-                </View>
-
-                <Button
-                  onPress={handleSaveCustomMode}
+                  onPress={handleSaveLanguage}
                   loading={
-                    updateSettings.isPending && savingSection === "customMode"
+                    updateSettings.isPending && savingSection === "language"
                   }
                   className="mt-2"
                 >
                   <Text className="font-medium text-white">
-                    Enregistrer les préférences
+                    Enregistrer la langue
                   </Text>
                 </Button>
               </View>

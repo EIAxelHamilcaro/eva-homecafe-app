@@ -108,11 +108,7 @@ export default async function NotFound() {
           </p>
 
           <div className="mt-10 flex flex-col items-center gap-3">
-            <Button
-              asChild
-              size="lg"
-              className="rounded-full bg-homecafe-pink px-8 text-white shadow-md hover:bg-homecafe-pink/80"
-            >
+            <Button asChild size="lg" className="rounded-full px-8 shadow-md">
               <Link href={isAuthenticated ? "/dashboard" : "/"}>
                 {isAuthenticated
                   ? "Retour au dashboard"

@@ -146,9 +146,9 @@ export default function PostsListScreen() {
               onPress={() =>
                 router.push("/(protected)/(tabs)/journal/create" as Href)
               }
-              className="mt-4 self-center rounded-full bg-homecafe-pink px-6 py-2"
+              className="mt-4 self-center rounded-full bg-primary px-6 py-2 active:opacity-90"
             >
-              <Text className="text-sm font-medium text-white">
+              <Text className="text-sm font-medium text-primary-foreground">
                 Créer ton premier post
               </Text>
             </Pressable>

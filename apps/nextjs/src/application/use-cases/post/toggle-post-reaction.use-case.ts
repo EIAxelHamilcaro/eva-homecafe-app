@@ -85,14 +85,20 @@ export class TogglePostReactionUseCase
     emoji: PostReactionEmoji,
   ): Result<"added" | "removed"> {
     const reactions = post.get("reactions");
-    const hasReaction = reactions.hasUserReactedWith(userId, emoji);
 
-    if (hasReaction) {
+    if (reactions.hasUserReactedWith(userId, emoji)) {
       const removeResult = post.removeReaction(userId, emoji);
       if (removeResult.isFailure) {
         return Result.fail(removeResult.getError());
       }
       return Result.ok("removed");
+    }
+
+    for (const existing of reactions.getReactionsByUser(userId)) {
+      const removeResult = post.removeReaction(userId, existing.emoji);
+      if (removeResult.isFailure) {
+        return Result.fail(removeResult.getError());
+      }
     }
 
     const addResult = post.addReaction(userId, emoji);

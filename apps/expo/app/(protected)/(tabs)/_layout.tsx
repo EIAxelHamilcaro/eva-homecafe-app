@@ -1,5 +1,6 @@
 import { Tabs } from "expo-router";
 import {
+  Bell,
   BookOpen,
   CalendarDays,
   House,
@@ -8,13 +9,17 @@ import {
   User,
   Users,
 } from "lucide-react-native";
-import { View } from "react-native";
+import { Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+import { useUnreadCount } from "@/lib/api/hooks/use-notifications";
 
 import { colors } from "@/src/config/colors";
 
 export default function TabLayout() {
   const insets = useSafeAreaInsets();
+  const { data: unreadData } = useUnreadCount();
+  const unreadCount = unreadData?.unreadCount ?? 0;
 
   return (
     <Tabs
@@ -113,6 +118,46 @@ export default function TabLayout() {
                 color={color}
                 fill={focused ? color : "transparent"}
               />
+            </View>
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="notifications"
+        options={{
+          tabBarIcon: ({ color, focused }) => (
+            <View style={{ width: 28, height: 28 }}>
+              <Bell
+                size={24}
+                color={color}
+                fill={focused ? color : "transparent"}
+              />
+              {unreadCount > 0 && (
+                <View
+                  style={{
+                    position: "absolute",
+                    top: -4,
+                    right: -8,
+                    minWidth: 18,
+                    height: 18,
+                    borderRadius: 9,
+                    backgroundColor: "#F691C3",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    paddingHorizontal: 4,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 10,
+                      fontWeight: "700",
+                      color: "#FFFFFF",
+                    }}
+                  >
+                    {unreadCount > 99 ? "99+" : unreadCount}
+                  </Text>
+                </View>
+              )}
             </View>
           ),
         }}

@@ -22,26 +22,9 @@ export default function ProtectedLayout() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="friends" />
-      <Stack.Screen name="profile" />
       <Stack.Screen name="settings" />
-      <Stack.Screen name="moodboard" />
-      <Stack.Screen name="notifications" />
-      <Stack.Screen
-        name="inspirations"
-        options={{
-          presentation: "modal",
-          animation: "fade",
-        }}
-      />
       <Stack.Screen
         name="recompenses"
-        options={{
-          presentation: "modal",
-          animation: "fade",
-        }}
-      />
-      <Stack.Screen
-        name="stickers"
         options={{
           presentation: "modal",
           animation: "fade",

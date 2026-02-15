@@ -3,6 +3,7 @@ import { DrizzleConversationRepository } from "@/adapters/repositories/conversat
 import { DrizzleMessageRepository } from "@/adapters/repositories/message.repository";
 import { AddReactionUseCase } from "@/application/use-cases/chat/add-reaction.use-case";
 import { CreateConversationUseCase } from "@/application/use-cases/chat/create-conversation.use-case";
+import { DeleteConversationUseCase } from "@/application/use-cases/chat/delete-conversation.use-case";
 import { GetConversationsUseCase } from "@/application/use-cases/chat/get-conversations.use-case";
 import { GetMessagesUseCase } from "@/application/use-cases/chat/get-messages.use-case";
 import { MarkConversationReadUseCase } from "@/application/use-cases/chat/mark-conversation-read.use-case";
@@ -40,11 +41,17 @@ export const createChatModule = () => {
     .toClass(SendMessageUseCase, [
       DI_SYMBOLS.IConversationRepository,
       DI_SYMBOLS.IMessageRepository,
+      DI_SYMBOLS.INotificationRepository,
+      DI_SYMBOLS.IEventDispatcher,
     ]);
 
   chatModule
     .bind(DI_SYMBOLS.AddReactionUseCase)
     .toClass(AddReactionUseCase, [DI_SYMBOLS.IMessageRepository]);
+
+  chatModule
+    .bind(DI_SYMBOLS.DeleteConversationUseCase)
+    .toClass(DeleteConversationUseCase, [DI_SYMBOLS.IConversationRepository]);
 
   chatModule
     .bind(DI_SYMBOLS.MarkConversationReadUseCase)
