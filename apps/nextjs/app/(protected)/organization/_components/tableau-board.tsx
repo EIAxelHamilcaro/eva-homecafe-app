@@ -42,6 +42,7 @@ import type {
   ITableauRowDto,
 } from "@/application/dto/tableau/common-tableau.dto";
 import { AddColumnPopover } from "./add-column-popover";
+import { ColumnHeaderMenu } from "./column-header-menu";
 import { CustomFieldCell } from "./custom-field-cell";
 import { DatePickerCell } from "./date-picker-cell";
 import { EditableText } from "./editable-text";
@@ -288,6 +289,58 @@ export function TableauBoard({ tableau, onDeleteTableau }: TableauBoardProps) {
     });
   };
 
+  const handleChangeColumnType = (
+    columnId: string,
+    type: ITableauColumnDto["type"],
+  ) => {
+    updateTableau.mutate({
+      columns: tableau.columns.map((c) =>
+        c.id === columnId
+          ? {
+              ...c,
+              type,
+              options:
+                type === "select" && !c.options?.length
+                  ? [
+                      { id: "opt_1", label: "Option 1" },
+                      { id: "opt_2", label: "Option 2" },
+                    ]
+                  : type === "select"
+                    ? c.options
+                    : undefined,
+            }
+          : c,
+      ),
+    });
+  };
+
+  const handleUpdateColumnOptions = (
+    columnId: string,
+    options: { id: string; label: string; color?: string }[],
+  ) => {
+    updateTableau.mutate({
+      columns: tableau.columns.map((c) =>
+        c.id === columnId ? { ...c, options } : c,
+      ),
+    });
+  };
+
+  const handleMoveColumn = (columnId: string, direction: "left" | "right") => {
+    const idx = tableau.columns.findIndex((c) => c.id === columnId);
+    if (idx === -1) return;
+    const swapIdx = direction === "left" ? idx - 1 : idx + 1;
+    if (swapIdx < 0 || swapIdx >= tableau.columns.length) return;
+    const next = [...tableau.columns];
+    const a = next[idx];
+    const b = next[swapIdx];
+    if (!a || !b) return;
+    next[idx] = b;
+    next[swapIdx] = a;
+    updateTableau.mutate({
+      columns: next.map((c, i) => ({ ...c, position: i })),
+    });
+  };
+
   return (
     <div>
       <div className="mb-3 flex items-center justify-between">
@@ -374,23 +427,23 @@ export function TableauBoard({ tableau, onDeleteTableau }: TableauBoardProps) {
                     Fichiers
                   </span>
                 </TableHead>
-                {tableau.columns.map((col) => (
-                  <TableHead key={col.id} className="font-medium">
-                    <span className="flex items-center gap-1">
-                      <EditableText
-                        value={col.name}
-                        onSave={(name) => handleRenameColumn(col.id, name)}
-                        className="text-xs"
-                      />
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-4 w-4 shrink-0 opacity-0 transition-opacity hover:text-destructive group-hover/header:opacity-100"
-                        onClick={() => handleRemoveColumn(col.id)}
-                      >
-                        <Trash2 className="h-3 w-3" />
-                      </Button>
-                    </span>
+                {tableau.columns.map((col, colIdx) => (
+                  <TableHead key={col.id} className="group/header font-medium">
+                    <ColumnHeaderMenu
+                      column={col}
+                      onRename={(name) => handleRenameColumn(col.id, name)}
+                      onChangeType={(type) =>
+                        handleChangeColumnType(col.id, type)
+                      }
+                      onUpdateOptions={(opts) =>
+                        handleUpdateColumnOptions(col.id, opts)
+                      }
+                      onMoveLeft={() => handleMoveColumn(col.id, "left")}
+                      onMoveRight={() => handleMoveColumn(col.id, "right")}
+                      onDelete={() => handleRemoveColumn(col.id)}
+                      isFirst={colIdx === 0}
+                      isLast={colIdx === tableau.columns.length - 1}
+                    />
                   </TableHead>
                 ))}
               </TableRow>

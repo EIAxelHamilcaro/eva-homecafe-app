@@ -1,5 +1,6 @@
 "use client";
 
+import { Badge } from "@packages/ui/components/ui/badge";
 import { Checkbox } from "@packages/ui/components/ui/checkbox";
 import {
   Select,
@@ -67,15 +68,43 @@ export function CustomFieldCell({
     case "select": {
       const options = column.options ?? [];
       const strVal = typeof value === "string" ? value : "";
+      const selectedOpt = options.find((o) => o.id === strVal);
       return (
         <Select value={strVal} onValueChange={onSave}>
-          <SelectTrigger className="h-7 w-[120px] border-0 bg-transparent p-0 text-sm shadow-none">
-            <SelectValue placeholder="—" />
+          <SelectTrigger className="h-7 w-[130px] border-0 bg-transparent p-0 text-sm shadow-none">
+            <SelectValue placeholder="—">
+              {selectedOpt ? (
+                <Badge
+                  variant="secondary"
+                  className="text-xs"
+                  style={
+                    selectedOpt.color
+                      ? {
+                          backgroundColor: selectedOpt.color,
+                          color: "#374151",
+                        }
+                      : undefined
+                  }
+                >
+                  {selectedOpt.label}
+                </Badge>
+              ) : (
+                <span className="text-muted-foreground">—</span>
+              )}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             {options.map((opt) => (
               <SelectItem key={opt.id} value={opt.id}>
-                {opt.label}
+                <span className="flex items-center gap-2">
+                  {opt.color && (
+                    <span
+                      className="inline-block h-2.5 w-2.5 rounded-full"
+                      style={{ backgroundColor: opt.color }}
+                    />
+                  )}
+                  {opt.label}
+                </span>
               </SelectItem>
             ))}
           </SelectContent>
