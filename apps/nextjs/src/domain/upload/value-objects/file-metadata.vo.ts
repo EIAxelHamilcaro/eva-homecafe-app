@@ -8,25 +8,37 @@ export const ALLOWED_IMAGE_TYPES = [
   "image/webp",
 ] as const;
 
-export type AllowedImageType = (typeof ALLOWED_IMAGE_TYPES)[number];
+export const ALLOWED_FILE_TYPES = [
+  ...ALLOWED_IMAGE_TYPES,
+  "application/pdf",
+  "text/plain",
+  "text/csv",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "application/vnd.ms-excel",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+] as const;
 
-export const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+export type AllowedImageType = (typeof ALLOWED_IMAGE_TYPES)[number];
+export type AllowedFileType = (typeof ALLOWED_FILE_TYPES)[number];
+
+export const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB
 
 export interface IFileMetadataProps {
   filename: string;
-  mimeType: AllowedImageType;
+  mimeType: AllowedFileType;
   size: number;
 }
 
 const schema = z.object({
   filename: z.string().min(1, "Filename is required"),
-  mimeType: z.enum(ALLOWED_IMAGE_TYPES, {
-    message: "Only image files are accepted (jpeg, png, gif, webp)",
+  mimeType: z.enum(ALLOWED_FILE_TYPES, {
+    message: "Unsupported file type",
   }),
   size: z
     .number()
     .positive("File size must be positive")
-    .max(MAX_FILE_SIZE, "File size exceeds 10MB limit"),
+    .max(MAX_FILE_SIZE, "File size exceeds 20MB limit"),
 });
 
 export class FileMetadata extends ValueObject<IFileMetadataProps> {
@@ -43,7 +55,7 @@ export class FileMetadata extends ValueObject<IFileMetadataProps> {
     return this.value.filename;
   }
 
-  get mimeType(): AllowedImageType {
+  get mimeType(): AllowedFileType {
     return this.value.mimeType;
   }
 

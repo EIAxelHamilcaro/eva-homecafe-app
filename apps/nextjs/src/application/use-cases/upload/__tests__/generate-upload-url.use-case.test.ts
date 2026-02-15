@@ -173,10 +173,10 @@ describe("GenerateUploadUrlUseCase", () => {
       ).not.toHaveBeenCalled();
     });
 
-    it("should fail when mimeType is not an image type", async () => {
+    it("should fail when mimeType is unsupported", async () => {
       const result = await useCase.execute({
         ...validInput,
-        mimeType: "application/pdf" as "image/jpeg",
+        mimeType: "application/zip" as "image/jpeg",
       });
 
       expect(result.isFailure).toBe(true);
@@ -185,14 +185,14 @@ describe("GenerateUploadUrlUseCase", () => {
       ).not.toHaveBeenCalled();
     });
 
-    it("should fail when file size exceeds 10MB", async () => {
+    it("should fail when file size exceeds 20MB", async () => {
       const result = await useCase.execute({
         ...validInput,
-        size: 11 * 1024 * 1024,
+        size: 21 * 1024 * 1024,
       });
 
       expect(result.isFailure).toBe(true);
-      expect(result.getError()).toContain("10MB");
+      expect(result.getError()).toContain("20MB");
       expect(
         mockStorageProvider.generatePresignedUploadUrl,
       ).not.toHaveBeenCalled();

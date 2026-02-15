@@ -8,8 +8,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@packages/ui/components/ui/dialog";
-import { FileText, Trash2, Upload } from "lucide-react";
-import { useRef } from "react";
+import { Download, Eye, FileText, Loader2, Trash2, Upload } from "lucide-react";
+import Image from "next/image";
+import { useRef, useState } from "react";
+import type { IGenerateUploadUrlOutputDto } from "@/application/dto/upload/generate-upload-url.dto";
+import { apiFetch } from "@/common/api";
 
 interface FilesDialogProps {
   files: string[];
@@ -17,11 +20,107 @@ interface FilesDialogProps {
   trigger?: React.ReactNode;
 }
 
+function getFileName(url: string): string {
+  try {
+    const path = new URL(url).pathname;
+    const parts = path.split("/");
+    const last = parts[parts.length - 1] ?? "";
+    const withoutUuid = last.replace(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/,
+      "",
+    );
+    return withoutUuid || last;
+  } catch {
+    return url;
+  }
+}
+
+function isImageUrl(url: string): boolean {
+  return /\.(jpg|jpeg|png|gif|webp)(\?|$)/i.test(url);
+}
+
+function FilePreviewDialog({ url }: { url: string }) {
+  const [open, setOpen] = useState(false);
+  const image = isImageUrl(url);
+  const fileName = getFileName(url);
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-7 w-7 shrink-0 text-muted-foreground hover:text-foreground"
+        >
+          <Eye className="h-3.5 w-3.5" />
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-lg">
+        <DialogHeader>
+          <DialogTitle className="truncate text-sm">{fileName}</DialogTitle>
+        </DialogHeader>
+        <div className="flex flex-col items-center gap-4">
+          {image ? (
+            <Image
+              src={url}
+              alt={fileName}
+              width={500}
+              height={400}
+              unoptimized
+              className="max-h-[400px] w-full rounded-md object-contain"
+            />
+          ) : (
+            <div className="flex flex-col items-center gap-2 py-8 text-muted-foreground">
+              <FileText className="h-16 w-16" />
+              <p className="text-sm">{fileName}</p>
+              <p className="text-xs">Aperçu non disponible</p>
+            </div>
+          )}
+          <a href={url} download={fileName} target="_blank" rel="noreferrer">
+            <Button variant="outline" size="sm">
+              <Download className="mr-2 h-3.5 w-3.5" />
+              Télécharger
+            </Button>
+          </a>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 export function FilesDialog({ files, onUpdate, trigger }: FilesDialogProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
 
-  const handleAddFile = (fileName: string) => {
-    onUpdate([...files, fileName]);
+  const handleUploadFile = async (file: File) => {
+    setUploading(true);
+    try {
+      const presign = await apiFetch<IGenerateUploadUrlOutputDto>(
+        "/api/v1/upload",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            context: "tableau",
+            filename: file.name,
+            mimeType: file.type,
+            size: file.size,
+          }),
+        },
+      );
+
+      await fetch(presign.uploadUrl, {
+        method: "PUT",
+        headers: { "Content-Type": file.type },
+        body: file,
+      });
+
+      onUpdate([...files, presign.fileUrl]);
+    } catch (_err) {
+      // Upload silently fails — user sees the spinner stop without new file
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleRemoveFile = (index: number) => {
@@ -56,23 +155,53 @@ export function FilesDialog({ files, onUpdate, trigger }: FilesDialogProps) {
             </p>
           ) : (
             <div className="max-h-[300px] space-y-1 overflow-auto">
-              {files.map((file, index) => (
+              {files.map((fileUrl, index) => (
                 <div
-                  key={file}
+                  key={fileUrl}
                   className="group flex items-center justify-between rounded-md border px-3 py-2"
                 >
                   <div className="flex min-w-0 items-center gap-2">
-                    <FileText className="h-4 w-4 shrink-0 text-muted-foreground" />
-                    <span className="truncate text-sm">{file}</span>
+                    {isImageUrl(fileUrl) ? (
+                      <Image
+                        src={fileUrl}
+                        alt=""
+                        width={32}
+                        height={32}
+                        unoptimized
+                        className="h-8 w-8 shrink-0 rounded object-cover"
+                      />
+                    ) : (
+                      <FileText className="h-4 w-4 shrink-0 text-muted-foreground" />
+                    )}
+                    <span className="truncate text-sm">
+                      {getFileName(fileUrl)}
+                    </span>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-7 w-7 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 hover:text-destructive"
-                    onClick={() => handleRemoveFile(index)}
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </Button>
+                  <div className="flex shrink-0 items-center gap-0.5">
+                    <FilePreviewDialog url={fileUrl} />
+                    <a
+                      href={fileUrl}
+                      download={getFileName(fileUrl)}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7 text-muted-foreground hover:text-foreground"
+                      >
+                        <Download className="h-3.5 w-3.5" />
+                      </Button>
+                    </a>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-7 w-7 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 hover:text-destructive"
+                      onClick={() => handleRemoveFile(index)}
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -83,18 +212,24 @@ export function FilesDialog({ files, onUpdate, trigger }: FilesDialogProps) {
               variant="outline"
               size="sm"
               className="w-full"
+              disabled={uploading}
               onClick={() => fileInputRef.current?.click()}
             >
-              <Upload className="mr-2 h-3.5 w-3.5" />
-              Ajouter un fichier
+              {uploading ? (
+                <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <Upload className="mr-2 h-3.5 w-3.5" />
+              )}
+              {uploading ? "Upload en cours…" : "Ajouter un fichier"}
             </Button>
             <input
               ref={fileInputRef}
               type="file"
               className="hidden"
+              accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt,.csv"
               onChange={(e) => {
                 const file = e.target.files?.[0];
-                if (file) handleAddFile(file.name);
+                if (file) handleUploadFile(file);
                 e.target.value = "";
               }}
             />
