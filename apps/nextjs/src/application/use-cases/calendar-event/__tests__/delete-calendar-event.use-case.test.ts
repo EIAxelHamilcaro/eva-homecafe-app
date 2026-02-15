@@ -3,13 +3,20 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { IDeleteCalendarEventInputDto } from "@/application/dto/calendar-event/delete-calendar-event.dto";
 import type { ICalendarEventRepository } from "@/application/ports/calendar-event-repository.port";
 import { CalendarEvent } from "@/domain/calendar-event/calendar-event.aggregate";
-import { EventColor } from "@/domain/calendar-event/value-objects/event-color.vo";
+import {
+  EventColor,
+  type EventColorValue,
+} from "@/domain/calendar-event/value-objects/event-color.vo";
 import { EventTitle } from "@/domain/calendar-event/value-objects/event-title.vo";
 import { DeleteCalendarEventUseCase } from "../delete-calendar-event.use-case";
 
 const createTestEvent = (userId = "user-123"): CalendarEvent => {
-  const title = EventTitle.create("Test event").getValue() as EventTitle;
-  const color = EventColor.create("blue").getValue() as EventColor;
+  const title = EventTitle.create(
+    "Test event" as string,
+  ).getValue() as EventTitle;
+  const color = EventColor.create(
+    "blue" as EventColorValue,
+  ).getValue() as EventColor;
   return CalendarEvent.create({ userId, title, color, date: "2026-03-15" });
 };
 

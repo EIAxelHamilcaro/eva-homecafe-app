@@ -45,6 +45,10 @@ export class UpdateTableauUseCase
       tableau.updateColumns(input.columns);
     }
 
+    if (input.columnOrder !== undefined) {
+      tableau.updateColumnOrder(input.columnOrder);
+    }
+
     const saveResult = await this.tableauRepo.update(tableau);
     if (saveResult.isFailure) return Result.fail(saveResult.getError());
 

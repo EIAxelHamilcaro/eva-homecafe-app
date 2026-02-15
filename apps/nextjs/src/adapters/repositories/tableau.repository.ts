@@ -107,6 +107,7 @@ export class DrizzleTableauRepository implements ITableauRepository {
             statusOptions: data.tableau.statusOptions,
             priorityOptions: data.tableau.priorityOptions,
             columns: data.tableau.columns,
+            columnOrder: data.tableau.columnOrder,
             updatedAt: data.tableau.updatedAt ?? new Date(),
           })
           .where(eq(tableauTable.id, tableauId));

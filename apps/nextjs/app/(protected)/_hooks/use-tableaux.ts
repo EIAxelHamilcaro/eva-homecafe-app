@@ -52,6 +52,7 @@ export function useUpdateTableauMutation(tableauId: string) {
       statusOptions?: IStatusOptionDto[];
       priorityOptions?: IPriorityOptionDto[];
       columns?: ITableauColumnDto[];
+      columnOrder?: string[];
     }
   >({
     mutationFn: (input) =>

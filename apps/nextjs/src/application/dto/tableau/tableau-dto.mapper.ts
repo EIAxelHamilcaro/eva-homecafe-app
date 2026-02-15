@@ -9,6 +9,7 @@ export function tableauToDto(tableau: Tableau): ITableauDto {
     statusOptions: tableau.get("statusOptions"),
     priorityOptions: tableau.get("priorityOptions"),
     columns: tableau.get("columns"),
+    columnOrder: tableau.get("columnOrder"),
     rows: tableau
       .get("rows")
       .sort((a, b) => a.get("position") - b.get("position"))

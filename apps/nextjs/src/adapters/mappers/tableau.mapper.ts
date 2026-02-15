@@ -3,11 +3,13 @@ import type {
   tableauRow as tableauRowTable,
   tableau as tableauTable,
 } from "@packages/drizzle/schema";
-import { Tableau } from "@/domain/tableau/tableau.aggregate";
+import {
+  DEFAULT_COLUMN_ORDER,
+  Tableau,
+} from "@/domain/tableau/tableau.aggregate";
 import { TableauId } from "@/domain/tableau/tableau-id";
 import { TableauRow } from "@/domain/tableau/tableau-row.entity";
 import { TableauRowId } from "@/domain/tableau/tableau-row-id";
-import { DEFAULT_COLUMN_ORDER } from "@/domain/tableau/tableau.aggregate";
 import type {
   IPriorityOption,
   IStatusOption,

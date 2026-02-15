@@ -2,6 +2,13 @@
 
 import { Badge } from "@packages/ui/components/ui/badge";
 import { Button } from "@packages/ui/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@packages/ui/components/ui/dropdown-menu";
 import { Input } from "@packages/ui/components/ui/input";
 import {
   Select,
@@ -19,8 +26,11 @@ import {
   TableRow,
 } from "@packages/ui/components/ui/table";
 import {
+  ArrowLeft,
+  ArrowRight,
   Calendar,
   CheckCheck,
+  ChevronDown,
   FileText,
   Pencil,
   Plus,
@@ -52,6 +62,32 @@ import { OptionsEditor } from "./options-editor";
 interface TableauBoardProps {
   tableau: ITableauDto;
   onDeleteTableau: () => void;
+}
+
+const BUILTIN_IDS = [
+  "_date",
+  "_name",
+  "_text",
+  "_status",
+  "_priority",
+  "_files",
+] as const;
+type BuiltinId = (typeof BUILTIN_IDS)[number];
+
+const BUILTIN_LABELS: Record<
+  BuiltinId,
+  { label: string; icon: React.ComponentType<{ className?: string }> }
+> = {
+  _date: { label: "Date", icon: Calendar },
+  _name: { label: "Nom", icon: Pencil },
+  _text: { label: "Texte", icon: Text },
+  _status: { label: "État", icon: CheckCheck },
+  _priority: { label: "Priorité", icon: Timer },
+  _files: { label: "Fichiers", icon: FileText },
+};
+
+function isBuiltinId(id: string): id is BuiltinId {
+  return BUILTIN_IDS.includes(id as BuiltinId);
 }
 
 function StatusBadge({
@@ -108,39 +144,45 @@ function PriorityBars({
   );
 }
 
-function RowItem({
+function BuiltinCell({
+  colId,
   row,
   tableau,
+  updateRow,
 }: {
+  colId: BuiltinId;
   row: ITableauRowDto;
   tableau: ITableauDto;
+  updateRow: ReturnType<typeof useUpdateRowMutation>;
 }) {
-  const updateRow = useUpdateRowMutation(tableau.id);
-  const removeRow = useRemoveRowMutation(tableau.id);
-  return (
-    <TableRow className="group/row border-blue-50 last:border-b-0">
-      <TableCell>
+  switch (colId) {
+    case "_date":
+      return (
         <DatePickerCell
           value={row.date}
           onSave={(date) => updateRow.mutate({ rowId: row.id, date })}
         />
-      </TableCell>
-      <TableCell className="font-medium">
+      );
+    case "_name":
+      return (
         <EditableText
           value={row.name}
           onSave={(name) => updateRow.mutate({ rowId: row.id, name })}
           placeholder="Sans nom"
+          className="font-medium"
         />
-      </TableCell>
-      <TableCell className="max-w-[200px]">
+      );
+    case "_text":
+      return (
         <EditableText
           value={row.text ?? ""}
           onSave={(text) => updateRow.mutate({ rowId: row.id, text })}
           placeholder="—"
           className="truncate text-muted-foreground"
         />
-      </TableCell>
-      <TableCell>
+      );
+    case "_status":
+      return (
         <Select
           value={row.status}
           onValueChange={(value) =>
@@ -169,8 +211,9 @@ function RowItem({
             ))}
           </SelectContent>
         </Select>
-      </TableCell>
-      <TableCell>
+      );
+    case "_priority":
+      return (
         <Select
           value={row.priority}
           onValueChange={(value) =>
@@ -199,38 +242,170 @@ function RowItem({
             ))}
           </SelectContent>
         </Select>
-      </TableCell>
+      );
+    case "_files":
+      return (
+        <FilesDialog
+          files={row.files}
+          onUpdate={(files) => updateRow.mutate({ rowId: row.id, files })}
+        />
+      );
+  }
+}
+
+function RowItem({
+  row,
+  tableau,
+}: {
+  row: ITableauRowDto;
+  tableau: ITableauDto;
+}) {
+  const updateRow = useUpdateRowMutation(tableau.id);
+  const removeRow = useRemoveRowMutation(tableau.id);
+
+  return (
+    <TableRow className="group/row border-blue-50 last:border-b-0">
+      {tableau.columnOrder.map((colId) => {
+        if (isBuiltinId(colId)) {
+          return (
+            <TableCell
+              key={colId}
+              className={colId === "_text" ? "max-w-[200px]" : undefined}
+            >
+              <BuiltinCell
+                colId={colId}
+                row={row}
+                tableau={tableau}
+                updateRow={updateRow}
+              />
+            </TableCell>
+          );
+        }
+        const col = tableau.columns.find((c) => c.id === colId);
+        if (!col) return null;
+        return (
+          <TableCell key={col.id}>
+            <CustomFieldCell
+              column={col}
+              value={row.customFields[col.id]}
+              onSave={(value) =>
+                updateRow.mutate({
+                  rowId: row.id,
+                  customFields: { [col.id]: value },
+                })
+              }
+            />
+          </TableCell>
+        );
+      })}
       <TableCell>
-        <div className="flex items-center gap-1">
-          <FilesDialog
-            files={row.files}
-            onUpdate={(files) => updateRow.mutate({ rowId: row.id, files })}
-          />
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-6 w-6 text-muted-foreground opacity-0 transition-opacity group-hover/row:opacity-100 hover:text-destructive"
-            onClick={() => removeRow.mutate({ rowId: row.id })}
-          >
-            <Trash2 className="h-3.5 w-3.5" />
-          </Button>
-        </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-6 w-6 text-muted-foreground opacity-0 transition-opacity group-hover/row:opacity-100 hover:text-destructive"
+          onClick={() => removeRow.mutate({ rowId: row.id })}
+        >
+          <Trash2 className="h-3.5 w-3.5" />
+        </Button>
       </TableCell>
-      {tableau.columns.map((col) => (
-        <TableCell key={col.id}>
-          <CustomFieldCell
-            column={col}
-            value={row.customFields[col.id]}
-            onSave={(value) =>
-              updateRow.mutate({
-                rowId: row.id,
-                customFields: { [col.id]: value },
-              })
-            }
-          />
-        </TableCell>
-      ))}
     </TableRow>
+  );
+}
+
+function BuiltinHeaderMenu({
+  colId,
+  tableau,
+  updateTableau,
+  onMoveColumn,
+  onHideColumn,
+  isFirst,
+  isLast,
+}: {
+  colId: BuiltinId;
+  tableau: ITableauDto;
+  updateTableau: ReturnType<typeof useUpdateTableauMutation>;
+  onMoveColumn: (direction: "left" | "right") => void;
+  onHideColumn: () => void;
+  isFirst: boolean;
+  isLast: boolean;
+}) {
+  const config = BUILTIN_LABELS[colId];
+  const Icon = config.icon;
+
+  const showOptionsEditor = colId === "_status" || colId === "_priority";
+
+  return (
+    <div className="flex items-center gap-0.5">
+      <Icon className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+      <span className="text-xs">{config.label}</span>
+
+      {showOptionsEditor && colId === "_status" && (
+        <OptionsEditor
+          options={tableau.statusOptions}
+          onSave={(opts) =>
+            updateTableau.mutate({
+              statusOptions: opts.map((o) => ({
+                id: o.id,
+                label: o.label,
+                color: o.color ?? "#f1f5f9",
+              })),
+            })
+          }
+        />
+      )}
+      {showOptionsEditor && colId === "_priority" && (
+        <OptionsEditor
+          options={tableau.priorityOptions.map((o) => ({
+            id: o.id,
+            label: o.label,
+          }))}
+          onSave={(opts) =>
+            updateTableau.mutate({
+              priorityOptions: opts.map((o, i) => ({
+                id: o.id,
+                label: o.label,
+                level: i + 1,
+              })),
+            })
+          }
+        />
+      )}
+
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button
+            type="button"
+            className="ml-0.5 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded opacity-0 transition-opacity group-hover/header:opacity-100 hover:bg-muted"
+          >
+            <ChevronDown className="h-3 w-3 text-muted-foreground" />
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="start" className="w-44">
+          <DropdownMenuItem
+            onClick={() => onMoveColumn("left")}
+            disabled={isFirst}
+          >
+            <ArrowLeft className="mr-2 h-3.5 w-3.5" />
+            Déplacer à gauche
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => onMoveColumn("right")}
+            disabled={isLast}
+          >
+            <ArrowRight className="mr-2 h-3.5 w-3.5" />
+            Déplacer à droite
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onClick={onHideColumn}
+            className="text-destructive focus:text-destructive"
+          >
+            <X className="mr-2 h-3.5 w-3.5" />
+            Masquer
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
   );
 }
 
@@ -239,7 +414,8 @@ export function TableauBoard({ tableau, onDeleteTableau }: TableauBoardProps) {
   const addRow = useAddRowMutation(tableau.id);
   const updateTableau = useUpdateTableauMutation(tableau.id);
 
-  const totalColumns = 6 + tableau.columns.length;
+  const order = tableau.columnOrder;
+  const totalColumns = order.length + 1;
 
   const handleAddRow = () => {
     if (!newRowName.trim()) return;
@@ -252,12 +428,20 @@ export function TableauBoard({ tableau, onDeleteTableau }: TableauBoardProps) {
   const handleAddColumn = (column: ITableauColumnDto) => {
     updateTableau.mutate({
       columns: [...tableau.columns, column],
+      columnOrder: [...order, column.id],
     });
   };
 
   const handleRemoveColumn = (columnId: string) => {
     updateTableau.mutate({
       columns: tableau.columns.filter((c) => c.id !== columnId),
+      columnOrder: order.filter((id) => id !== columnId),
+    });
+  };
+
+  const handleHideBuiltinColumn = (colId: string) => {
+    updateTableau.mutate({
+      columnOrder: order.filter((id) => id !== colId),
     });
   };
 
@@ -273,6 +457,8 @@ export function TableauBoard({ tableau, onDeleteTableau }: TableauBoardProps) {
     columnId: string,
     type: ITableauColumnDto["type"],
   ) => {
+    const needsOptions =
+      type === "select" || type === "status" || type === "priority";
     updateTableau.mutate({
       columns: tableau.columns.map((c) =>
         c.id === columnId
@@ -280,12 +466,33 @@ export function TableauBoard({ tableau, onDeleteTableau }: TableauBoardProps) {
               ...c,
               type,
               options:
-                type === "select" && !c.options?.length
-                  ? [
-                      { id: "opt_1", label: "Option 1" },
-                      { id: "opt_2", label: "Option 2" },
-                    ]
-                  : type === "select"
+                needsOptions && !c.options?.length
+                  ? type === "status"
+                    ? [
+                        { id: "todo", label: "À faire", color: "#dbeafe" },
+                        {
+                          id: "in_progress",
+                          label: "En cours",
+                          color: "#ffedd5",
+                        },
+                        { id: "done", label: "Terminé", color: "#dcfce7" },
+                      ]
+                    : type === "priority"
+                      ? [
+                          { id: "low", label: "Basse", color: "#dcfce7" },
+                          { id: "medium", label: "Moyenne", color: "#fef3c7" },
+                          { id: "high", label: "Haute", color: "#ffedd5" },
+                          {
+                            id: "critical",
+                            label: "Critique",
+                            color: "#fce7f3",
+                          },
+                        ]
+                      : [
+                          { id: "opt_1", label: "Option 1", color: "#dbeafe" },
+                          { id: "opt_2", label: "Option 2", color: "#ffedd5" },
+                        ]
+                  : needsOptions
                     ? c.options
                     : undefined,
             }
@@ -305,21 +512,21 @@ export function TableauBoard({ tableau, onDeleteTableau }: TableauBoardProps) {
     });
   };
 
-  const handleMoveColumn = (columnId: string, direction: "left" | "right") => {
-    const idx = tableau.columns.findIndex((c) => c.id === columnId);
+  const handleMoveInOrder = (colId: string, direction: "left" | "right") => {
+    const idx = order.indexOf(colId);
     if (idx === -1) return;
     const swapIdx = direction === "left" ? idx - 1 : idx + 1;
-    if (swapIdx < 0 || swapIdx >= tableau.columns.length) return;
-    const next = [...tableau.columns];
+    if (swapIdx < 0 || swapIdx >= order.length) return;
+    const next = [...order];
     const a = next[idx];
     const b = next[swapIdx];
     if (!a || !b) return;
     next[idx] = b;
     next[swapIdx] = a;
-    updateTableau.mutate({
-      columns: next.map((c, i) => ({ ...c, position: i })),
-    });
+    updateTableau.mutate({ columnOrder: next });
   };
+
+  const hiddenBuiltinColumns = BUILTIN_IDS.filter((id) => !order.includes(id));
 
   return (
     <div>
@@ -329,103 +536,99 @@ export function TableauBoard({ tableau, onDeleteTableau }: TableauBoardProps) {
           onSave={(title) => updateTableau.mutate({ title })}
           className="text-sm font-semibold"
         />
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onDeleteTableau}
-          className="h-6 w-6 text-muted-foreground hover:text-destructive"
-        >
-          <X className="h-4 w-4" />
-        </Button>
+        <div className="flex items-center gap-1">
+          {hiddenBuiltinColumns.length > 0 && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-6 text-xs text-muted-foreground"
+                >
+                  <Plus className="mr-1 h-3 w-3" />
+                  Colonnes ({hiddenBuiltinColumns.length})
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {hiddenBuiltinColumns.map((id) => {
+                  const cfg = BUILTIN_LABELS[id];
+                  const Ico = cfg.icon;
+                  return (
+                    <DropdownMenuItem
+                      key={id}
+                      onClick={() =>
+                        updateTableau.mutate({ columnOrder: [...order, id] })
+                      }
+                    >
+                      <Ico className="mr-2 h-3.5 w-3.5" />
+                      {cfg.label}
+                    </DropdownMenuItem>
+                  );
+                })}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onDeleteTableau}
+            className="h-6 w-6 text-muted-foreground hover:text-destructive"
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
 
       <div className="flex">
         <div className="min-w-0 flex-1 overflow-auto rounded-l-lg border border-blue-100 bg-white">
           <Table>
             <TableHeader>
-              <TableRow className="group/header text-xs text-muted-foreground hover:bg-blue-50/60">
-                <TableHead className="font-medium">
-                  <span className="flex items-center gap-1.5">
-                    <Calendar className="h-3.5 w-3.5" />
-                    Date
-                  </span>
-                </TableHead>
-                <TableHead className="font-medium">
-                  <span className="flex items-center gap-1.5">
-                    <Pencil className="h-3.5 w-3.5" />
-                    Nom
-                  </span>
-                </TableHead>
-                <TableHead className="font-medium">
-                  <span className="flex items-center gap-1.5">
-                    <Text className="h-3.5 w-3.5" />
-                    Texte
-                  </span>
-                </TableHead>
-                <TableHead className="font-medium">
-                  <span className="group/header flex items-center gap-1.5">
-                    <CheckCheck className="h-3.5 w-3.5" />
-                    État
-                    <OptionsEditor
-                      options={tableau.statusOptions}
-                      onSave={(opts) =>
-                        updateTableau.mutate({
-                          statusOptions: opts.map((o) => ({
-                            id: o.id,
-                            label: o.label,
-                            color: o.color ?? "#f1f5f9",
-                          })),
-                        })
-                      }
-                    />
-                  </span>
-                </TableHead>
-                <TableHead className="font-medium">
-                  <span className="group/header flex items-center gap-1.5">
-                    <Timer className="h-3.5 w-3.5" />
-                    Priorité
-                    <OptionsEditor
-                      options={tableau.priorityOptions.map((o) => ({
-                        id: o.id,
-                        label: o.label,
-                      }))}
-                      onSave={(opts) =>
-                        updateTableau.mutate({
-                          priorityOptions: opts.map((o, i) => ({
-                            id: o.id,
-                            label: o.label,
-                            level: i + 1,
-                          })),
-                        })
-                      }
-                    />
-                  </span>
-                </TableHead>
-                <TableHead className="font-medium">
-                  <span className="flex items-center gap-1.5">
-                    <FileText className="h-3.5 w-3.5" />
-                    Fichiers
-                  </span>
-                </TableHead>
-                {tableau.columns.map((col, colIdx) => (
-                  <TableHead key={col.id} className="group/header font-medium">
-                    <ColumnHeaderMenu
-                      column={col}
-                      onRename={(name) => handleRenameColumn(col.id, name)}
-                      onChangeType={(type) =>
-                        handleChangeColumnType(col.id, type)
-                      }
-                      onUpdateOptions={(opts) =>
-                        handleUpdateColumnOptions(col.id, opts)
-                      }
-                      onMoveLeft={() => handleMoveColumn(col.id, "left")}
-                      onMoveRight={() => handleMoveColumn(col.id, "right")}
-                      onDelete={() => handleRemoveColumn(col.id)}
-                      isFirst={colIdx === 0}
-                      isLast={colIdx === tableau.columns.length - 1}
-                    />
-                  </TableHead>
-                ))}
+              <TableRow className="text-xs text-muted-foreground hover:bg-blue-50/60">
+                {order.map((colId, idx) => {
+                  if (isBuiltinId(colId)) {
+                    return (
+                      <TableHead
+                        key={colId}
+                        className="group/header font-medium"
+                      >
+                        <BuiltinHeaderMenu
+                          colId={colId}
+                          tableau={tableau}
+                          updateTableau={updateTableau}
+                          onMoveColumn={(dir) => handleMoveInOrder(colId, dir)}
+                          onHideColumn={() => handleHideBuiltinColumn(colId)}
+                          isFirst={idx === 0}
+                          isLast={idx === order.length - 1}
+                        />
+                      </TableHead>
+                    );
+                  }
+                  const col = tableau.columns.find((c) => c.id === colId);
+                  if (!col) return null;
+                  return (
+                    <TableHead
+                      key={col.id}
+                      className="group/header font-medium"
+                    >
+                      <ColumnHeaderMenu
+                        column={col}
+                        onRename={(name) => handleRenameColumn(col.id, name)}
+                        onChangeType={(type) =>
+                          handleChangeColumnType(col.id, type)
+                        }
+                        onUpdateOptions={(opts) =>
+                          handleUpdateColumnOptions(col.id, opts)
+                        }
+                        onMoveLeft={() => handleMoveInOrder(col.id, "left")}
+                        onMoveRight={() => handleMoveInOrder(col.id, "right")}
+                        onDelete={() => handleRemoveColumn(col.id)}
+                        isFirst={idx === 0}
+                        isLast={idx === order.length - 1}
+                      />
+                    </TableHead>
+                  );
+                })}
+                <TableHead className="w-10" />
               </TableRow>
             </TableHeader>
             <TableBody>
