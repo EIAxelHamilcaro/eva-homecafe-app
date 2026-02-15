@@ -7,6 +7,7 @@ import { Tableau } from "@/domain/tableau/tableau.aggregate";
 import { TableauId } from "@/domain/tableau/tableau-id";
 import { TableauRow } from "@/domain/tableau/tableau-row.entity";
 import { TableauRowId } from "@/domain/tableau/tableau-row-id";
+import { DEFAULT_COLUMN_ORDER } from "@/domain/tableau/tableau.aggregate";
 import type {
   IPriorityOption,
   IStatusOption,
@@ -81,6 +82,8 @@ export function tableauToDomain(
         (tableauRecord.priorityOptions as IPriorityOption[]) ??
         DEFAULT_PRIORITY_OPTIONS,
       columns: (tableauRecord.columns as ITableauColumn[]) ?? [],
+      columnOrder:
+        (tableauRecord.columnOrder as string[]) ?? DEFAULT_COLUMN_ORDER,
       createdAt: tableauRecord.createdAt,
       updatedAt: Option.fromNullable(tableauRecord.updatedAt),
     },
@@ -100,6 +103,7 @@ export function tableauToPersistence(tableau: Tableau) {
       statusOptions: tableau.get("statusOptions"),
       priorityOptions: tableau.get("priorityOptions"),
       columns: tableau.get("columns"),
+      columnOrder: tableau.get("columnOrder"),
       createdAt: tableau.get("createdAt"),
       updatedAt: updatedAt.isSome() ? updatedAt.unwrap() : null,
     },

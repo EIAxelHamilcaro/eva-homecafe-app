@@ -56,6 +56,7 @@ export const tableauDtoSchema = z.object({
   statusOptions: z.array(statusOptionDtoSchema),
   priorityOptions: z.array(priorityOptionDtoSchema),
   columns: z.array(tableauColumnDtoSchema),
+  columnOrder: z.array(z.string()),
   createdAt: z.string(),
   updatedAt: z.string().nullable(),
 });

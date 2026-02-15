@@ -55,6 +55,10 @@ export const tableau = pgTable(
       >()
       .notNull()
       .default([]),
+    columnOrder: jsonb("column_order")
+      .$type<string[]>()
+      .notNull()
+      .default(["_date", "_name", "_text", "_status", "_priority", "_files"]),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at"),
   },

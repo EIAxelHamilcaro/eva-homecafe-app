@@ -13,6 +13,7 @@ export const updateTableauInputDtoSchema = z.object({
   statusOptions: z.array(statusOptionDtoSchema).min(1).optional(),
   priorityOptions: z.array(priorityOptionDtoSchema).min(1).optional(),
   columns: z.array(tableauColumnDtoSchema).optional(),
+  columnOrder: z.array(z.string()).optional(),
 });
 
 export type IUpdateTableauInputDto = z.infer<

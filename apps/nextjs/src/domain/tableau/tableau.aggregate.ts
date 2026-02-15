@@ -13,6 +13,15 @@ import {
 } from "./tableau-types";
 import type { TableauTitle } from "./value-objects/tableau-title.vo";
 
+export const DEFAULT_COLUMN_ORDER = [
+  "_date",
+  "_name",
+  "_text",
+  "_status",
+  "_priority",
+  "_files",
+];
+
 export interface ITableauProps {
   userId: string;
   title: TableauTitle;
@@ -20,6 +29,7 @@ export interface ITableauProps {
   statusOptions: IStatusOption[];
   priorityOptions: IPriorityOption[];
   columns: ITableauColumn[];
+  columnOrder: string[];
   createdAt: Date;
   updatedAt: Option<Date>;
 }
@@ -50,6 +60,11 @@ export class Tableau extends Aggregate<ITableauProps> {
 
   updateColumns(columns: ITableauColumn[]): void {
     this._props.columns = columns;
+    this._props.updatedAt = Option.some(new Date());
+  }
+
+  updateColumnOrder(order: string[]): void {
+    this._props.columnOrder = order;
     this._props.updatedAt = Option.some(new Date());
   }
 
@@ -140,6 +155,7 @@ export class Tableau extends Aggregate<ITableauProps> {
       statusOptions?: IStatusOption[];
       priorityOptions?: IPriorityOption[];
       columns?: ITableauColumn[];
+      columnOrder?: string[];
     },
     id?: UUID<string | number>,
   ): Result<Tableau> {
@@ -152,6 +168,7 @@ export class Tableau extends Aggregate<ITableauProps> {
         statusOptions: props.statusOptions ?? DEFAULT_STATUS_OPTIONS,
         priorityOptions: props.priorityOptions ?? DEFAULT_PRIORITY_OPTIONS,
         columns: props.columns ?? [],
+        columnOrder: props.columnOrder ?? DEFAULT_COLUMN_ORDER,
         createdAt: new Date(),
         updatedAt: Option.none(),
       },
